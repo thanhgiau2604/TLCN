@@ -123,5 +123,41 @@ module.exports = function(app){
     ///order - history
     app.get("/orderhistory",(req,res)=>{
         res.render("lichsudonhang");
-    })
+    });
+
+
+    app.post("/productHistory",parser,(req,res)=>{
+        const email = req.body.email;
+        User.find({email:email},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                var arrProduct=[];
+                data[0].historylist.forEach(pro => {
+                    Product.findOne({"_id":pro.id},function(err,da){
+                        if (err){
+                            throw err;
+                        } else {
+                            arrProduct.push(da);
+                            if (arrProduct.length==data[0].historylist.length){
+                                res.send(arrProduct);
+                            }
+                        }
+                    });
+                });
+            }
+        })
+    });
+
+    app.post("/delHistory",parser,(req,res)=>{
+        const email = req.body.email;
+        var arrResult=[];
+        User.update({email:email},{$set:{historylist:[]}},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.send([]);
+            }
+        })
+    });
 }

@@ -8,8 +8,8 @@ $(document).ready(function(){
 	$(".current-currency").on( "click", function(){
 		$(".currency-toogle").slideToggle(400);
 	});
-	$(".current-lang").on( "click", function(){
-		$(".language-toogle").slideToggle(400);
+	$(".welcome-info").on( "click", function(){
+		$(".infor-toogle").slideToggle(400);
 	});	
 		
 /*---------------------------------------

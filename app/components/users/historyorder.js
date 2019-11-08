@@ -25,6 +25,7 @@ class RowOrder extends React.Component{
 class TableOrder extends React.Component{
     constructor(props){
         super(props);
+       
     }
     render()
     {
@@ -52,10 +53,10 @@ class ItemHistory extends React.Component{
         return (<div className="col-md-3 col-sm-4 col-xs-12">
             <div className="wishlists-single-item">
                 <div className="wishlist-image">
-                    <a href="#"><img src="img/wishlist/printed-chiffon-dress.jpg" alt="" /></a>
+                    <a href="#"><img src={this.props.image} alt="" /></a>
                 </div>
                 <div className="wishlist-title">
-                    <p>Printed Casul Dress <a href="#"><i className="fa fa-close"></i></a></p>
+                    <p>{this.props.name}<a href="#"><i className="fa fa-close"></i></a></p>
                 </div>
             </div>
         </div>)
@@ -64,14 +65,35 @@ class ItemHistory extends React.Component{
 class ListHistory extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+            listHis : []
+        }
+        this.delHistory = this.delHistory.bind(this);
+    }
+    componentDidMount(){
+        var that = this;
+        $.post("/productHistory",{email:localStorage.getItem('email')},function(data){
+            that.setState({listHis:data});
+        })
+    }
+
+    delHistory(){
+        var that = this;
+        $.post("/delHistory",{email:localStorage.getItem('email')},function(data){
+            that.setState({listHis:data});
+        })
     }
     render()
     {
         return(<div className="row">
         <h3><b>Các sản phẩm đã xem</b></h3>
-        <ItemHistory/>
-        <ItemHistory/>
-        <ItemHistory/>                                        
+        <button class="btn btn-danger" style={{display:'inline', marginTop:'20px'}} onClick={this.delHistory}>
+            Xóa lịch sử xem sản phẩm</button>
+        <div style={{paddingTop:'20px'}}>  
+        {this.state.listHis.map(function(pro,index){
+            return <ItemHistory key={index} name={pro.name} image = {pro.image} />
+        })}   
+        </div>                                           
     </div> )
     }
 }

@@ -11,7 +11,8 @@ const UserSchema = new Schema({
     numberPhone: String,
     dob: String,
     password: {type:String,select:false},
-    favoritelist: [{id:Schema.Types.ObjectId}]
+    favoritelist: [{id:Schema.Types.ObjectId}],
+    historylist: [{id:Schema.Types.ObjectId}]
 });
 //hash password
 UserSchema.pre('save',function(next){

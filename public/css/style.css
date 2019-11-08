@@ -462,22 +462,23 @@ span.mobile-menu-title{
 	position: relative;
 	cursor: pointer;
 }
-.current-lang{}
+
 .current-lang strong{
 	color:#ff4f4f;
 }
-.current-lang-label{}
+
 .languages-choose{
-	background: #78c8ef none repeat scroll 0 0;
+	background: #d9fdb1 none repeat scroll 0 0;
 	display: none;
 	left: 0;
-	padding: 10px 15px;
+	padding-left:10px;
+
 	position: absolute;
 	top: 30px;
 	z-index: 10;
-	width:157px;
+	width:115px;
 }
-.languages-choose li{}
+
 .languages-choose li a{
 	color:black;
 	text-transform:capitalize;
