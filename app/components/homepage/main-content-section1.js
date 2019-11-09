@@ -30,12 +30,13 @@ class Product1 extends React.Component{ //product for polular product
 class Product2 extends React.Component{
 	render(){
 		return(
+			<div className="col-xs-6 col-sm-4 col-md-3 col-lg-3">
 			<div className="item">
 				<div className="new-product">
 					<div className="single-product-item">
 						<div className="product-image">
-							<a href="#"><img src="img/product/sale/8.jpg" alt="product-image" /></a>
-							<a href="#" className="new-mark-box">new</a>
+							<a href="#"><img src={this.props.image} alt="product-image" /></a>
+							<a href="#" className="new-mark-box">{this.props.desc}</a>
 							<div className="overlay-content">
 								<ul>
 									<li><a href="#" title="Quick view"><i className="fa fa-search"></i></a></li>
@@ -58,14 +59,14 @@ class Product2 extends React.Component{
 									<span>3 Review(s)</span>
 								</div>
 							</div>
-							<a href="single-product.html">Printed Dress</a>
+							<a href="single-product.html">{this.props.name}</a>
 							<div className="price-box">
-								<span className="price">$26.00</span>
+								<span className="price">{this.props.curcost}</span>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>)}
+			</div></div>)}
 }
 class PopularProduct extends React.Component{
 	constructor(props){
@@ -130,28 +131,18 @@ class NewProduct extends React.Component{
 				<div className="row">
 					<div className="col-xs-12">
 						<div className="row">
-							<div className="home2-new-pro-carousel">
-								<Product2/>
-								<Product2/>
-								{/* {this.state.listNew.map(function(p,index){
-									return <Product2/>
-								})} */}
+							<div className="home2-sale-carousel">
+								{this.state.listNew.map(function(product,index){
+									return <Product2 key={index} id={product._id}
+									name={product.name} image={product.image} 
+									curcost={product.cost} desc="NEW"/>
+								})}
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>)}
-		// <div className="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-		// 	<div className="tow-column-add zoom-img">
-		// 		<a href="#"><img src="img/product/shope-add12.jpg" alt="shope-add" /></a>
-		// 	</div>
-		// </div>
-		// <div className="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-		// 	<div className="one-column-add zoom-img">
-		// 		<a href="#"><img src="img/product/shope-add22.jpg" alt="shope-add" /></a>
-		// 	</div>
-		// </div>
 }
 class SaleProduct extends React.Component {
 	constructor(props){
@@ -174,14 +165,11 @@ class SaleProduct extends React.Component {
 			</div>
 			<div className="row">				
 				<div className="home2-sale-carousel">					
-						{/* {this.state.listSale.map(function (product, index) {
+						{this.state.listSale.map(function (product, index) {
 							return <Product2 key={index} id={product._id}
 								name={product.name} image={product.image} 
-								curcost={product.cost}/>
-						})}											 */}
-						<Product2/>
-						<Product2/>
-						<Product2/>
+								curcost={product.cost} desc="SALE"/>
+						})}											
 				</div>										
 			</div>
 		</div>								

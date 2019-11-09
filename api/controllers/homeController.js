@@ -46,7 +46,10 @@ module.exports = function(app){
                      index++;
                      arrPopular.push(da);
                      if (index==count)
+                     {
+                         console.log(arrPopular);
                      res.json(arrPopular);
+                     }
                  })
              });
          })
