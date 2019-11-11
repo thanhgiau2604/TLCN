@@ -47,7 +47,7 @@ module.exports = function(app){
                      arrPopular.push(da);
                      if (index==count)
                      {
-                         console.log(arrPopular);
+                       
                      res.json(arrPopular);
                      }
                  })
@@ -57,15 +57,15 @@ module.exports = function(app){
     app.get("/getSale",(req,res)=>{
         ProductCategory.find({name:"SaleProduct"},function(err,data){
             // res.json(data[0]);
-             var arrPopular = new Array();
+             var arrSale = new Array();
              var count = data[0].listProduct.length;
              var index = 0;
              data[0].listProduct.forEach(p=> {
                  Product.findOne({_id:p._id},function(err,da){
                      index++;
-                     arrPopular.push(da);
+                     arrSale.push(da);
                      if (index==count)
-                     res.json(arrPopular);
+                     res.json(arrSale);
                  })
              });
          })
@@ -162,5 +162,95 @@ module.exports = function(app){
                 res.send([]);
             }
         })
+    });
+
+    app.post("/getOrder",parser,(req,res)=>{
+        const email = req.body.email;
+        var arrResult=[];
+        User.findOne({email:email},function(err,data){
+            data.cart.forEach(e => {
+                Product.findOne({_id:e.idProduct},function(err,da){
+                    var cart = {
+                        product: da,
+                        quanty: e.quanty,
+                        size: e.size,
+                        color: e.color,
+                        status: e.status
+                    }
+                    arrResult.push(cart);
+                    if (arrResult.length == data.cart.length){
+                        res.send(arrResult);
+                    }
+                })
+            });
+        })
+    });
+
+    app.get("/getSneaker",(req,res)=>{
+        ProductCategory.find({name:"SneakerProduct"},function(err,data){
+            // res.json(data[0]);
+             var arr = new Array();
+             var count = data[0].listProduct.length;
+             var index = 0;
+             data[0].listProduct.forEach(p=> {
+                 Product.findOne({_id:p._id},function(err,da){
+                     index++;
+                     arr.push(da);
+                     if (index==count)
+                     res.json(arr);
+                 })
+             });
+         })
+    });
+
+    app.get("/getSport",(req,res)=>{
+        ProductCategory.find({name:"SportProduct"},function(err,data){
+            // res.json(data[0]);
+             var arr = new Array();
+             var count = data[0].listProduct.length;
+             var index = 0;
+             data[0].listProduct.forEach(p=> {
+                 Product.findOne({_id:p._id},function(err,da){
+                     index++;
+                     arr.push(da);
+                     if (index==count)
+                     res.json(arr);
+                 })
+             });
+         })
+    });
+
+    app.get("/getPump",(req,res)=>{
+        ProductCategory.find({name:"PumpProduct"},function(err,data){
+            // res.json(data[0]);
+             var arr = new Array();
+             var count = data[0].listProduct.length;
+             var index = 0;
+             data[0].listProduct.forEach(p=> {
+                 Product.findOne({_id:p._id},function(err,da){
+                     index++;
+                     arr.push(da);
+                     if (index==count)
+                     res.json(arr);
+                 })
+             });
+         })
+    });
+
+    app.get("/getKid",(req,res)=>{
+        ProductCategory.find({name:"KidProduct"},function(err,data){
+            // res.json(data[0]);
+             var arr = new Array();
+             var count = data[0].listProduct.length;
+             var index = 0;
+             data[0].listProduct.forEach(p=> {
+                 Product.findOne({_id:p._id},function(err,da){
+                     index++;
+                     arr.push(da);
+                     if (index==count)
+                     res.json(arr);
+                 })
+             });
+         })
     });
 }

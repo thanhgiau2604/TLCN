@@ -12,7 +12,8 @@ const UserSchema = new Schema({
     dob: String,
     password: {type:String,select:false},
     favoritelist: [{id:Schema.Types.ObjectId}],
-    historylist: [{id:Schema.Types.ObjectId}]
+    historylist: [{id:Schema.Types.ObjectId}],
+    cart: [{idProduct: Schema.Types.ObjectId, quanty:Number, size:Number, color: String, status:String}]
 });
 //hash password
 UserSchema.pre('save',function(next){

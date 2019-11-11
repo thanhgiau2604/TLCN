@@ -9,7 +9,8 @@ module.exports = {
         changepassword:'./app/components/manage-account/change-password.js',
         message: './app/components/manage-account/message.js',
         favoritelist:'./app/components/users/favoritelist.js',
-        historyorder:'./app/components/users/historyorder.js'
+        historyorder:'./app/components/users/historyorder.js',
+        detailproduct: './app/components/users/detail-product.js'
     },
     output: {
       path: __dirname,

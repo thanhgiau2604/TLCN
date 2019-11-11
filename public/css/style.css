@@ -2397,17 +2397,17 @@ ul.filtering-menu{
 	display: none;
 }
 .cheker span{
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll 0px -257px;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll 0px -257px;
 	display: block;
 	height: 15px;
 	width: 15px;
 }
 
 .cheker input:checked + span {
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -15px -257px;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -15px -257px;
 }
 .cheker span:hover{
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -30px -257px;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -30px -257px;
 }
 
 ul.product-color-var{
@@ -2558,7 +2558,7 @@ ul.gategory-product li.gategory-product-list div.single-product-item .overlay-co
 	margin-top:4px;
 }
 .short-select-option{
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -302px 0px;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -302px 0px;
 	float: right;
 	height: 27px;
 	border-left:1px solid #d6d4d4;
@@ -2591,7 +2591,7 @@ ul.gategory-product li.gategory-product-list div.single-product-item .overlay-co
 	float: left;
 }
 .s-page-select-option{
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -435px 0px;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -435px 0px;
 	border-left: 1px solid #d6d4d4;
 	float: left;
 	height: 27px;
@@ -2904,7 +2904,7 @@ form.contact-form label{
 	margin: 14px 0;
 }
 .con-form-select{
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -230px 0;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -230px 0;
 	border-left: 1px solid #d6d4d4;
 	height: 27px;
 	width: 262px;	
@@ -2967,7 +2967,7 @@ div.file-uploader input[type=file]{
 }
 div.file-uploader span.action {
 	-moz-user-select: none;
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll 0 -378px;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll 0 -378px;
 	color: #fff;
 	cursor: pointer;
 	display: inline;
@@ -3230,7 +3230,7 @@ form.error-ser-form .error-ser-btn:hover{
 	max-width:270px
 }
 .birth-day, .birth-month, .birth-year{
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -412px 0px;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -412px 0px;
 	border-left: 1px solid #d6d4d4;
 	float: left;
 	height: 27px;
@@ -3469,7 +3469,7 @@ div.wishlists-chart table tr td a:hover{
 }
 .wish-prioriti{}
 .wish-prioriti{
-	background:rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -303px -81px;
+	background:rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -303px -81px;
 	border-left: 1px solid #d6d4d4;
 	height: 27px;
 	width: 189px;
@@ -3908,14 +3908,14 @@ p.filup-below{
 }
 .selected-state, .selected-country, .delivery-address{
 	width:272px;
-	background:rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -221px 0px;
+	background:rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -221px 0px;
 	margin-bottom:0;
 }
 .selected-state select#sel-state, .selected-country select#sel-country, .delivery-address select#deli-address{
 	width:272px;
 }
 .selected-state:hover, .selected-country:hover, .delivery-address:hover{
-	background:rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -221px -27px;
+	background:rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -221px -27px;
 } 
 .deli-address-group label{
 	margin-top:0;
@@ -4434,7 +4434,7 @@ p.small-title{
 .single-product-size select{
 	-moz-appearance: none;
 	-webkit-appearance: none;
-	background: rgba(0, 0, 0, 0) url("img/sprite.png") no-repeat scroll -266px 0;
+	background: rgba(0, 0, 0, 0) url("../img/sprite.png") no-repeat scroll -266px 0;
 	border:none;
 	border-left:1px solid #ccc;
 	color: #777;
@@ -4761,7 +4761,11 @@ a.write-review-btn{
 	width:190px;
 	height:190px;
 }
-.home2-sale-carousel {
+.home2-sale-carousel, .feartured-carousel,.related-product{
 	opacity: 1!important;
 	display: block;
+}
+.single-product-right-sidebar ul li img{
+	width: 80px;
+	height: 80;
 }

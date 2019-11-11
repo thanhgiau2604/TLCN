@@ -6,6 +6,8 @@ const PORT = process.env.PORT|| 3000;
 const authenController = require('./api/controllers/authenController');
 const homeController = require("./api/controllers/homeController");
 const personalController = require("./api/controllers/personalController");
+const adminController = require("./api/controllers/adminController");
+const productController = require("./api/controllers/productController");
 app.set("view engine","ejs");
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
@@ -20,6 +22,8 @@ mongoose.set('useCreateIndex',true);
 authenController(app);
 homeController(app);
 personalController(app);
+adminController(app);
+productController(app);
 app.use(express.static("public"));
 app.get("/login",(req,res)=> res.render("dangnhap"));
 app.get("/signup",(req,res)=> res.render("dangky"));

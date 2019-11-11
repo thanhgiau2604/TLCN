@@ -2,13 +2,21 @@ import React from 'react'
 
 var main;
 class Product1 extends React.Component{ //product for polular product
+	constructor(props){
+		super(props);
+		this.getDetail = this.getDetail.bind(this);
+	}
+	getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct")
+	}
 	render(){
 		return(<div className="single-product-item">
 		<div className="sidebar-product-image">
-			<a href="single-product.html"><img src={this.props.image} alt="product-image" /></a>
+			<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
 		</div>
 		<div className="product-info sede-pro-info">
-			<a href="single-product.html">{this.props.name}</a>
+			<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 			<div className="customar-comments-box">
 				<div className="rating-box">
 					<i className="fa fa-star"></i>
@@ -26,8 +34,15 @@ class Product1 extends React.Component{ //product for polular product
 	</div>)
 	}
 }
-
 class Product2 extends React.Component{
+	constructor(props){
+		super(props);
+		this.getDetail = this.getDetail.bind(this);
+	}
+	getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct")
+	}
 	render(){
 		return(
 			<div className="col-xs-6 col-sm-4 col-md-3 col-lg-3">
@@ -35,7 +50,7 @@ class Product2 extends React.Component{
 				<div className="new-product">
 					<div className="single-product-item">
 						<div className="product-image">
-							<a href="#"><img src={this.props.image} alt="product-image" /></a>
+							<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
 							<a href="#" className="new-mark-box">{this.props.desc}</a>
 							<div className="overlay-content">
 								<ul>
@@ -59,7 +74,7 @@ class Product2 extends React.Component{
 									<span>3 Review(s)</span>
 								</div>
 							</div>
-							<a href="single-product.html">{this.props.name}</a>
+							<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 							<div className="price-box">
 								<span className="price">{this.props.curcost}</span>
 							</div>
@@ -78,8 +93,7 @@ class PopularProduct extends React.Component{
 	componentDidMount(){
 		var that = this;
 		$.get("/getPopular",function(data){			
-			 that.setState({listPoplular:data});
-			 		
+			 that.setState({listPoplular:data});			 		
 		})
 	}
 	render(){

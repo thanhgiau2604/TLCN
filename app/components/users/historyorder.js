@@ -14,18 +14,25 @@ class RowOrder extends React.Component{
     render()
     {
         return(<tr className="text-center">
-        <td className="text-center">1</td>
-        <td className="text-center">name product</td>
-        <td className="text-center">image</td>
-        <td className="text-center"><button className="btn btn-warning">Đã hủy</button></td>
+        <td className="text-center">{this.props.stt}</td>
+        <td className="text-center">{this.props.name}</td>
+        <td className="text-center"><img src={this.props.image} width="100px" height="100px"/></td>
+        <td className="text-center"><button className="btn btn-warning">{this.props.status}</button></td>
       </tr>)
     }
 }
-
 class TableOrder extends React.Component{
     constructor(props){
         super(props);
-       
+        this.state = {
+            listorder : []
+        }    
+    }
+    componentDidMount(){
+        var that = this;
+        $.post("/getOrder",{email:localStorage.getItem('email')},function(data){
+            that.setState({listorder:data});
+        })
     }
     render()
     {
@@ -39,7 +46,10 @@ class TableOrder extends React.Component{
           </tr>
         </thead>
         <tbody>
-          <RowOrder/>
+          {this.state.listorder.map(function(order,index){
+              return <RowOrder key={index} name={order.product.name}
+            image ={order.product.image} status={order.status} stt={index+1}/>
+          })}
         </tbody>
       </table>)
     }

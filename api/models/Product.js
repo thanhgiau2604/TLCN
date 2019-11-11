@@ -28,7 +28,8 @@ const ProductSchema = new Schema({
         idUser: Schema.Types.ObjectId,
         content: String,
         date: Date
-    }]
+    }],
+    category: Schema.Types.ObjectId
 });
 
 module.exports = mongoose.model('products',ProductSchema);
