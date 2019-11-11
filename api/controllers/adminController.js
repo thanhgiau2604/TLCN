@@ -5,17 +5,6 @@ module.exports = function(app){
     app.get("/loginAdmin",(req,res)=>{
         res.render("dangnhapAdmin");
     })
-    // var admin = {
-    //     email : "16110317@student.hcmute.edu.vn",
-    //     firstName : "Nguyen",
-    //     lastName : "Thanh Giau",
-    //     numberPhone : "0969315430",
-    //     dob : "26/04/1998",
-    //     password : "123456789",
-    //     address : "Di An, Binh Duong",
-    //     "__v" : 0
-    // }
-    // Admin.create(admin);
     app.post("/loginadmin",parser,(req,res)=>{
         const emailorphone = req.body.emailphone;
         const password = req.body.psw;
@@ -41,6 +30,6 @@ module.exports = function(app){
         });
     })
     app.get("/dashboard",(req,res)=>{
-        res.send("Dashboard");
+        res.render("dashboard");
     })
 }

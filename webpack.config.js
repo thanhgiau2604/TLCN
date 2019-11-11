@@ -11,7 +11,8 @@ module.exports = {
         favoritelist:'./app/components/users/favoritelist.js',
         historyorder:'./app/components/users/historyorder.js',
         detailproduct: './app/components/users/detail-product.js',
-        loginadmin:'./app/components/admin/login/login.js'
+        loginadmin:'./app/components/admin/login/login.js',
+        dashboard:'./app/components/admin/dashboard/dashboard.js'
     },
     output: {
       path: __dirname,
