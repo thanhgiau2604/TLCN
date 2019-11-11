@@ -40,7 +40,6 @@ $('.next-button').hover(
 
 $('.next-button.password').click(
   function(){
-    console.log("Something");
     $('.password-section').addClass("fold-up");
     $('.repeat-password-section').removeClass("folded");
   }

@@ -33,8 +33,8 @@ AdminSchema.pre('update',function(next){
 })
 AdminSchema.methods.comparePassword = function(password) {
     var user = this;
-    console.log(password);
-    console.log(user.password);
+    // console.log(password);
+    // console.log(user.password);
     return bcrypt.compareSync(password,user.password);
 };
 
