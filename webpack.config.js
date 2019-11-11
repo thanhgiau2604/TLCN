@@ -12,7 +12,8 @@ module.exports = {
         historyorder:'./app/components/users/historyorder.js',
         detailproduct: './app/components/users/detail-product.js',
         loginadmin:'./app/components/admin/login/login.js',
-        dashboard:'./app/components/admin/dashboard/dashboard.js'
+        dashboard:'./app/components/admin/dashboard/dashboard.js',
+        manageuser:'./app/components/admin/manage/user.js'
     },
     output: {
       path: __dirname,

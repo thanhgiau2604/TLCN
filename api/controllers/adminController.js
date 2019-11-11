@@ -31,5 +31,8 @@ module.exports = function(app){
     })
     app.get("/dashboard",(req,res)=>{
         res.render("dashboard");
+    });
+    app.get("/manageuser",(req,res)=>{
+        res.render("quanlyuser");
     })
 }
