@@ -1,5 +1,63 @@
 import React from 'react'
 
+class Cart extends React.Component{
+	constructor(props){
+		super(props);
+		this.state = {
+			say:""
+		}
+	}
+	render(){
+		return(<div className="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea ">
+		<div className="shopping-cart-out pull-right">
+			<div className="shopping-cart">
+				<a className="shop-link" href="cart.html" title="View my shopping cart">
+					<i className="fa fa-shopping-cart cart-icon"></i>
+					<b>Giỏ hàng</b>
+					<span className="ajax-cart-quantity">2</span>
+				</a>
+				<div className="shipping-cart-overly">
+					<div className="shipping-item">
+						<span className="cross-icon"><i className="fa fa-times-circle"></i></span>
+						<div className="shipping-item-image">
+							<a href="#"><img src="img/shopping-image.jpg" alt="shopping image" /></a>
+						</div>
+						<div className="shipping-item-text">
+							<span>2 <span className="pro-quan-x">x</span> <a href="#" className="pro-cat">Watch</a></span>
+							<span className="pro-quality"><a href="#">S,Black</a></span>
+							<p>$22.95</p>
+						</div>
+					</div>
+					<div className="shipping-item">
+						<span className="cross-icon"><i className="fa fa-times-circle"></i></span>
+						<div className="shipping-item-image">
+							<a href="#"><img src="img/shopping-image2.jpg" alt="shopping image" /></a>
+						</div>
+						<div className="shipping-item-text">
+							<span>2 <span className="pro-quan-x">x</span> <a href="#" className="pro-cat">Women Bag</a></span>
+							<span className="pro-quality"><a href="#">S,Gary</a></span>
+							<p>$19.95</p>
+						</div>
+					</div>
+					<div className="shipping-total-bill">
+						<div className="cart-prices">
+							<span className="shipping-cost">$2.00</span>
+							<span>Phí Ship</span>
+						</div>
+						<div className="total-shipping-prices">
+							<span className="shipping-total">$24.95</span>
+							<span>Tổng</span>
+						</div>										
+					</div>
+					<div className="shipping-checkout-btn">
+						<a href="checkout.html">Thanh toán <i className="fa fa-chevron-right"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>)
+	}
+}
 class MainMenu extends React.Component{
     constructor(props){
         super(props);
@@ -9,55 +67,7 @@ class MainMenu extends React.Component{
             <div className="main-menu-area thanhmenu">
 			<div className="container">
 				<div className="row" >
-					<div className="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea ">
-						<div className="shopping-cart-out pull-right">
-							<div className="shopping-cart">
-								<a className="shop-link" href="cart.html" title="View my shopping cart">
-									<i className="fa fa-shopping-cart cart-icon"></i>
-									<b>Giỏ hàng</b>
-									<span className="ajax-cart-quantity">2</span>
-								</a>
-								<div className="shipping-cart-overly">
-									<div className="shipping-item">
-										<span className="cross-icon"><i className="fa fa-times-circle"></i></span>
-										<div className="shipping-item-image">
-											<a href="#"><img src="img/shopping-image.jpg" alt="shopping image" /></a>
-										</div>
-										<div className="shipping-item-text">
-											<span>2 <span className="pro-quan-x">x</span> <a href="#" className="pro-cat">Watch</a></span>
-											<span className="pro-quality"><a href="#">S,Black</a></span>
-											<p>$22.95</p>
-										</div>
-									</div>
-									<div className="shipping-item">
-										<span className="cross-icon"><i className="fa fa-times-circle"></i></span>
-										<div className="shipping-item-image">
-											<a href="#"><img src="img/shopping-image2.jpg" alt="shopping image" /></a>
-										</div>
-										<div className="shipping-item-text">
-											<span>2 <span className="pro-quan-x">x</span> <a href="#" className="pro-cat">Women Bag</a></span>
-											<span className="pro-quality"><a href="#">S,Gary</a></span>
-											<p>$19.95</p>
-										</div>
-									</div>
-									<div className="shipping-total-bill">
-										<div className="cart-prices">
-											<span className="shipping-cost">$2.00</span>
-											<span>Phí Ship</span>
-										</div>
-										<div className="total-shipping-prices">
-											<span className="shipping-total">$24.95</span>
-											<span>Tổng</span>
-										</div>										
-									</div>
-									<div className="shipping-checkout-btn">
-										<a href="checkout.html">Thanh toán <i className="fa fa-chevron-right"></i></a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>	
-
+					<Cart/>	
 					<div className="col-lg-9 col-md-9 col-sm-12 col-xs-12 no-padding-right menuarea">
 						<div className="mainmenu">
 							<nav className="">

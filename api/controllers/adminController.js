@@ -1,6 +1,18 @@
 const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({extended:false});
 const Admin = require("../models/admin");
+const User = require("../models/users");
+
+function getUsers(res) {
+    User.find(function (err, data) {
+        if (err) {
+            res.status(500).json(err);
+        } else {
+            res.json(data);
+        }
+    })
+}
+
 module.exports = function(app){
     app.get("/loginAdmin",(req,res)=>{
         res.render("dangnhapAdmin");
@@ -34,5 +46,29 @@ module.exports = function(app){
     });
     app.get("/manageuser",(req,res)=>{
         res.render("quanlyuser");
+    });
+    app.get("/getListUsers",(req,res)=>{
+        User.find({},function(err,data){
+            res.send(data);
+        })
+    });
+    app.post("/deleteUser",parser,(req,res)=>{
+        const id = req.body.id;
+        User.remove({_id:id},function(err,data){
+            getUsers(res);
+        })
+    });
+
+    app.post("/updateUser",parser,(req,res)=>{
+        const id = req.body.id;
+        const firstname = req.body.firstname;
+        const lastname = req.body.lastname;
+        const email = req.body.email;
+        const phone = req.body.phone;
+        const dob = req.body.dob;
+        User.update({_id:id},{$set:{firstName:firstname, lastName:lastname, email:email, 
+            numberPhone:phone, dob:dob}},function(err,data){
+                getUsers(res);
+        })
     })
 }
