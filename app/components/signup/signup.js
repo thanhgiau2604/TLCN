@@ -16,7 +16,6 @@ class SignUp extends React.Component{
 			<div>
                 <HeaderTop/>
                 <HeaderMiddle/>
-                <MainMenu/>
                 <SignUpForm/>
                 <CompanyFacality/>
                 <Footer/>

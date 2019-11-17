@@ -9,7 +9,8 @@ import MainContentSection2 from '../homepage/main-content-section2'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
-import Cookies from 'js-cookie'
+var {Provider} = require("react-redux");
+var store = require("../../store");
 class HomePage extends React.Component{
     constructor(props){
         super(props);
@@ -31,7 +32,7 @@ class HomePage extends React.Component{
     }
 }
 ReactDOM.render(
-    <div>
+    <Provider store={store}>
         <HomePage/>
-    </div>, document.getElementById('homepage')
+    </Provider>, document.getElementById('homepage')
 )

@@ -6,6 +6,9 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+var {Provider} = require("react-redux");
+var store = require("../../store");
+import {connect} from 'react-redux'
 
 class RowFavorite extends React.Component{
     constructor(props){
@@ -142,14 +145,18 @@ class ListFavorite extends React.Component{
     </section>)
     }
 }
+
+const Favorite = connect(function(state){  
+})(ListFavorite)
+
 ReactDOM.render(
-    <div>
+    <Provider store={store}>
         <HeaderTop />
         <HeaderMiddle />
         <MainMenu />
-        <ListFavorite/>
+        <Favorite/>
         <CompanyFacality />
         <Footer />
         <CopyRight />
-    </div>, document.getElementById("favoriteList")
+    </Provider>, document.getElementById("favoriteList")
 )

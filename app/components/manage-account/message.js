@@ -6,6 +6,9 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+var {Provider} = require("react-redux");
+var store = require("../../store");
+import {connect} from 'react-redux'
 
 var main;
 class DetailMessage extends React.Component {
@@ -102,7 +105,7 @@ class MessageForm extends React.Component{
     }
 }
 ReactDOM.render(
-    <div>
+    <Provider store={store}>
 		<HeaderTop />
 		<HeaderMiddle />
 		<MainMenu />
@@ -110,5 +113,5 @@ ReactDOM.render(
 		<CompanyFacality />
 		<Footer />
 		<CopyRight />
-	</div>,document.getElementById("personal-message")
+	</Provider>,document.getElementById("personal-message")
 )

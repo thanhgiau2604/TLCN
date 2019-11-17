@@ -6,6 +6,9 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+var {Provider} = require("react-redux");
+var store = require("../../store");
+import {connect} from 'react-redux'
 class ManageAccountForm extends React.Component{
     constructor(props){
         super(props);
@@ -33,8 +36,8 @@ class ManageAccountForm extends React.Component{
 								<ul>
 									<li><a href="/personalinfor"><i className="fa fa-user"></i><span>Xem thông tin cá nhân</span>	</a></li>
 									<li><a href="/changepassword"><i className="fa fa-pencil-square-o"></i><span>Đổi mật khẩu</span>	</a></li>
-									<li><a href="history-list.html"><i className="fa fa-list-ol"></i><span>Lịch sử mua hàng</span>	</a></li>
-									<li><a href="love-list.html"><i className="fa fa-heart"></i><span>Danh sách sản phẩm yêu thích</span></a></li>
+									<li><a href="/orderhistory"><i className="fa fa-list-ol"></i><span>Lịch sử mua hàng</span>	</a></li>
+									<li><a href="/listfavorite"><i className="fa fa-heart"></i><span>Danh sách sản phẩm yêu thích</span></a></li>
 									
 									
 								</ul>
@@ -56,7 +59,7 @@ class ManageAccountForm extends React.Component{
 }
 
 ReactDOM.render(
-	<div>
+	<Provider store={store}>
 		<HeaderTop />
 		<HeaderMiddle />
 		<MainMenu />
@@ -64,6 +67,6 @@ ReactDOM.render(
 		<CompanyFacality />
 		<Footer />
 		<CopyRight />
-	</div>,document.getElementById("manage-account")
+	</Provider>,document.getElementById("manage-account")
 )
 

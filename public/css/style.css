@@ -867,6 +867,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	visibility: hidden;
 }
 .shopping-cart:hover .shipping-cart-overly{
+	overflow: scroll;
 	height:428px;
 	opacity:1;
 	visibility: visible;
@@ -4768,4 +4769,10 @@ a.write-review-btn{
 .single-product-right-sidebar ul li img{
 	width: 80px;
 	height: 80;
+}
+
+.price-box .older-price {
+	text-decoration: line-through;
+	color: #888;
+    font-size: 13px;
 }

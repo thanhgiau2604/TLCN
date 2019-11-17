@@ -11,7 +11,7 @@ class CopyRight extends React.Component{
 					<div className="row">
 						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 							<div className="copy-right">
-								<address>Copyright © 2019 <a href="http://bootexperts.com/">SHORELG</a> All Rights Reserved</address>
+								<address>Copyright © 2019 <a href="http://bootexperts.com/">SHOELG</a> All Rights Reserved</address>
 							</div>
 							<div className="scroll-to-top">
 								<a href="#" className="bstore-scrollertop"><i className="fa fa-angle-double-up"></i></a>

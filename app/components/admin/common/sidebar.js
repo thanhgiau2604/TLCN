@@ -10,11 +10,11 @@ class Sidebar extends React.Component{
         <ul id='dock'>
           <li class='active launcher'>
             <i class='icon-dashboard'></i>
-            <a href="dashboard.html">Dashboard</a>
+            <a href="/dashboard">Dashboard</a>
           </li>
           <li class='launcher'>
             <i class='icon-user'></i>
-            <a href="tables.html">Users</a>
+            <a href="/manageuser">Users</a>
           </li>
           <li class='launcher'>
             <i class='icon-list-ul'></i>

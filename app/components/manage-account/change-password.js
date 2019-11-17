@@ -6,6 +6,9 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+var {Provider} = require("react-redux");
+var store = require("../../store");
+import {connect} from 'react-redux'
 
 class PasswordForm extends React.Component{
     constructor(props){
@@ -94,7 +97,7 @@ class PasswordForm extends React.Component{
 }
 
 ReactDOM.render(
-    <div>
+    <Provider store={store}>
         <HeaderTop/>
         <HeaderMiddle/>
         <MainMenu/>
@@ -102,5 +105,5 @@ ReactDOM.render(
         <CompanyFacality/>
         <Footer/>
         <CopyRight/>
-    </div>, document.getElementById("changepassword")
+    </Provider>, document.getElementById("changepassword")
 )

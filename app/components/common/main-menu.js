@@ -1,51 +1,71 @@
 import React from 'react'
-
+import $ from 'jquery'
+import {connect} from 'react-redux'
+var main;
+class Product extends React.Component{
+	constructor(props){
+		super(props);
+		this.removeFromCart = this.removeFromCart.bind(this);
+	}
+	removeFromCart(){
+		$.post("/removeFromCart",{email:localStorage.getItem('email'),id:this.props.id},function(data){
+			console.log(data);
+			var {dispatch} = main.props;
+        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
+		})
+	}
+	render(){
+		return(<div className="shipping-item">
+		<span className="cross-icon"><i className="fa fa-times-circle" onClick={this.removeFromCart}></i></span>
+		<div className="shipping-item-image">
+			<a href="#"><img src={this.props.image} alt="shopping image" width="80px" height="80px" /></a>
+		</div>
+		<div className="shipping-item-text">
+			<span>{this.props.quanty}<span className="pro-quan-x">x</span> <a href="#" className="pro-cat">{this.props.name}</a></span>
+			<span className="pro-quality"><a href="#">{this.props.size},{this.props.color}</a></span>
+			<p>{this.props.cost}</p>
+		</div>
+	</div>)
+	}
+}
 class Cart extends React.Component{
 	constructor(props){
 		super(props);
-		this.state = {
-			say:""
-		}
+	}
+	componentDidMount(){
+		$.post("/cart",{email:localStorage.getItem("email")},function(data){
+			var {dispatch} = main.props;
+        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
+		})
 	}
 	render(){
+		var sum =0;
+		if (main.props.cart){
+			main.props.cart.forEach(e => {
+				sum+=e.product.cost;
+			});
+		}
 		return(<div className="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea ">
 		<div className="shopping-cart-out pull-right">
 			<div className="shopping-cart">
 				<a className="shop-link" href="cart.html" title="View my shopping cart">
 					<i className="fa fa-shopping-cart cart-icon"></i>
 					<b>Giỏ hàng</b>
-					<span className="ajax-cart-quantity">2</span>
+					<span className="ajax-cart-quantity">{main.props.cart.length}</span>
 				</a>
 				<div className="shipping-cart-overly">
-					<div className="shipping-item">
-						<span className="cross-icon"><i className="fa fa-times-circle"></i></span>
-						<div className="shipping-item-image">
-							<a href="#"><img src="img/shopping-image.jpg" alt="shopping image" /></a>
-						</div>
-						<div className="shipping-item-text">
-							<span>2 <span className="pro-quan-x">x</span> <a href="#" className="pro-cat">Watch</a></span>
-							<span className="pro-quality"><a href="#">S,Black</a></span>
-							<p>$22.95</p>
-						</div>
-					</div>
-					<div className="shipping-item">
-						<span className="cross-icon"><i className="fa fa-times-circle"></i></span>
-						<div className="shipping-item-image">
-							<a href="#"><img src="img/shopping-image2.jpg" alt="shopping image" /></a>
-						</div>
-						<div className="shipping-item-text">
-							<span>2 <span className="pro-quan-x">x</span> <a href="#" className="pro-cat">Women Bag</a></span>
-							<span className="pro-quality"><a href="#">S,Gary</a></span>
-							<p>$19.95</p>
-						</div>
-					</div>
+					{main.props.cart.map(function(pro,index){
+						return <Product key={index} image={pro.product.image} 
+						name ={pro.product.name} size={pro.size} color={pro.color}
+						quanty={pro.quanty} cost ={pro.product.cost} id={pro.product._id}/>
+					})}
 					<div className="shipping-total-bill">
 						<div className="cart-prices">
 							<span className="shipping-cost">$2.00</span>
 							<span>Phí Ship</span>
 						</div>
 						<div className="total-shipping-prices">
-							<span className="shipping-total">$24.95</span>
+							<span className="shipping-total">{sum}đ</span>
 							<span>Tổng</span>
 						</div>										
 					</div>
@@ -60,8 +80,9 @@ class Cart extends React.Component{
 }
 class MainMenu extends React.Component{
     constructor(props){
-        super(props);
-    }
+		super(props);
+		main = this;
+	}
     render(){
         return(
             <div className="main-menu-area thanhmenu">
@@ -164,4 +185,8 @@ class MainMenu extends React.Component{
 		</div>)
     }
 }
-export default MainMenu;
+export default connect(function(state){
+    return {
+        cart:state.cart
+    }
+})(MainMenu);

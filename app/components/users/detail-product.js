@@ -6,13 +6,17 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
-
+var {Provider} = require("react-redux");
+var store = require("../../store");
+import {connect} from 'react-redux'
+var main;
 class DetailProduct extends React.Component{
     constructor(props){
         super(props);
         this.state = {
             product:{}
         }
+        this.addToCart = this.addToCart.bind(this);
     }
     componentDidMount(){
         var idproduct = localStorage.getItem('curproduct');
@@ -21,6 +25,12 @@ class DetailProduct extends React.Component{
             console.log(data);
             that.setState({product:data});
         })
+    }
+    addToCart(){
+        $.post("/addToCart",{id:localStorage.getItem('curproduct'),email:localStorage.getItem('email')},function(data){
+			var {dispatch} = main.props;
+        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
+		})
     }
     render(){
         return(<div class="row">
@@ -118,18 +128,14 @@ class DetailProduct extends React.Component{
                         <a href="#">Đánh giá</a>
                     </div>		
                 </div>
-                <div class="single-product-condition">
-                    <p>Điều kiện: <span>Sản phẩm mới</span></p>
-                </div>
                 <div class="single-product-price">
-                    <h2>{this.state.product.cost}</h2>
+                    <h2>{this.state.product.cost}đ</h2>
                 </div>
                 <div class="single-product-desc">
+                    <h4>Mô tả sản phẩm:</h4>
                     <p>{this.state.product.description}</p>
                 </div>
                 <div class="single-product-info">
-                    <a href="#"><i class="fa fa-envelope"></i></a>
-                    <a href="#"><i class="fa fa-print"></i></a>
                     <a href="#"><i class="fa fa-heart"></i></a>
                 </div>
                 <div class="single-product-quantity">
@@ -155,7 +161,8 @@ class DetailProduct extends React.Component{
                     <a class="color-blue" href="#"><span></span></a>
                 </div>
                 <div class="single-product-add-cart">
-                    <a class="add-cart-text" title="Add to cart" href="#">Thêm vào giỏ hàng</a>
+                    <a class="add-cart-text" title="Add to cart" style={{cursor:'pointer'}}
+                    onClick={this.addToCart}>Thêm vào giỏ hàng</a>
                 </div>
             </div>
         </div>
@@ -288,7 +295,7 @@ class SingleRelate extends React.Component{
                 </div>
                 <a href="#">{this.props.name}</a>
                 <div class="price-box">
-                    <span class="price">{this.props.cost}</span>
+                    <span class="price">{this.props.cost}đ</span>
                 </div>
             </div>
         </div>							
@@ -334,6 +341,7 @@ class RelatedProduct extends React.Component{
 class TotalPage extends React.Component{
     constructor(props){
         super(props);
+        main = this;
     }
     render(){
         return(<section class="main-content-section">
@@ -360,15 +368,17 @@ class TotalPage extends React.Component{
     </section>)
     }   
 }
+const Page = connect(function(state){  
+})(TotalPage)
 
 ReactDOM.render(
-    <div>
+    <Provider store={store}>
         <HeaderTop />
         <HeaderMiddle />
         <MainMenu />
-        <TotalPage/>
+        <Page/>
         <CompanyFacality />
         <Footer />
         <CopyRight />
-    </div>, document.getElementById("detail-product")
+    </Provider>, document.getElementById("detail-product")
 )

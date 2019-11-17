@@ -70,5 +70,12 @@ module.exports = function(app){
             numberPhone:phone, dob:dob}},function(err,data){
                 getUsers(res);
         })
+    });
+
+    app.get("/changepswad",(req,res)=>{
+        res.render("doimatkhauAdmin");
+    });
+    app.get("/manageproduct",(req,res)=>{
+        res.render("quanlysanpham");
     })
 }

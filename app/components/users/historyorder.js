@@ -6,6 +6,9 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+var {Provider} = require("react-redux");
+var store = require("../../store");
+import {connect} from 'react-redux'
 
 class RowOrder extends React.Component{
     constructor(props){
@@ -147,14 +150,19 @@ class HistoryOrder extends React.Component{
     </section>)
     }
 }
+
+const History = connect(function(state){  
+})(HistoryOrder)
+
+
 ReactDOM.render(
-    <div>
+    <Provider store={store}>
         <HeaderTop />
         <HeaderMiddle />
         <MainMenu />
-        <HistoryOrder/>
+        <History/>
         <CompanyFacality />
         <Footer />
         <CopyRight />
-    </div>, document.getElementById("historyorder")
+    </Provider>, document.getElementById("historyorder")
 )

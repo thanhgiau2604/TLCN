@@ -1,5 +1,5 @@
 import React from 'react'
-
+import {connect} from 'react-redux'
 var main;
 class Product1 extends React.Component{ //product for polular product
 	constructor(props){
@@ -27,8 +27,7 @@ class Product1 extends React.Component{ //product for polular product
 				</div>
 			</div>
 			<div className="price-box">
-				<span className="price">$22.95</span>
-				<span className="old-price">$27.00</span>
+				<span className="price">{this.props.cost}đ</span>
 			</div>
 		</div>
 	</div>)
@@ -38,10 +37,17 @@ class Product2 extends React.Component{
 	constructor(props){
 		super(props);
 		this.getDetail = this.getDetail.bind(this);
+		this.addToCart = this.addToCart.bind(this);
 	}
 	getDetail(){
 		localStorage.setItem("curproduct",this.props.id);
 		window.location.assign("/detailproduct")
+	}
+	addToCart(){
+		$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			var {dispatch} = main.props;
+        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
+		})
 	}
 	render(){
 		return(
@@ -54,10 +60,10 @@ class Product2 extends React.Component{
 							<a href="#" className="new-mark-box">{this.props.desc}</a>
 							<div className="overlay-content">
 								<ul>
-									<li><a href="#" title="Quick view"><i className="fa fa-search"></i></a></li>
-									<li><a href="#" title="Quick view"><i className="fa fa-shopping-cart"></i></a></li>
-									<li><a href="#" title="Quick view"><i className="fa fa-retweet"></i></a></li>
-									<li><a href="#" title="Quick view"><i className="fa fa-heart-o"></i></a></li>
+									<li><a title="Quick view" style={{cursor:'pointer'}}><i className="fa fa-search"></i></a></li>
+									<li><a title="Thêm vào giỏ hàng" style={{cursor:'pointer'}} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
+									<li><a title="Quick view" style={{cursor:'pointer'}}><i className="fa fa-retweet"></i></a></li>
+									<li><a title="Quick view" style={{cursor:'pointer'}}><i className="fa fa-heart-o"></i></a></li>
 								</ul>
 							</div>
 						</div>
@@ -76,7 +82,8 @@ class Product2 extends React.Component{
 							</div>
 							<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 							<div className="price-box">
-								<span className="price">{this.props.curcost}</span>
+								<span className="price">{this.props.curcost}đ</span>
+								<span className="older-price">{this.props.oldcost}</span>
 							</div>
 						</div>
 					</div>
@@ -105,14 +112,14 @@ class PopularProduct extends React.Component{
 			</div>
 			<div className="single-left-sidebar sidebar-best-seller">
 				<div className="left-title-area">
-					<h2 className="left-title">BÁN CHẠY</h2>
+					<h2 className="left-title">PHỔ BIẾN</h2>
 				</div>
 				<div className="row">
 					<div className="sidebar-best-seller-carousel">
 						<div className="item">
 							{this.state.listPoplular.map(function (product, index) {
 								return <Product1 key={index} id={product._id}
-									name={product.name} image={product.image} />
+									name={product.name} image={product.image} cost={product.cost}/>
 							})}
 						</div>
 					</div>
@@ -182,7 +189,7 @@ class SaleProduct extends React.Component {
 						{this.state.listSale.map(function (product, index) {
 							return <Product2 key={index} id={product._id}
 								name={product.name} image={product.image} 
-								curcost={product.cost} desc="SALE"/>
+								curcost={product.cost} desc="SALE" oldcost={product.oldcost}/>
 						})}											
 				</div>										
 			</div>
@@ -215,4 +222,6 @@ class MainContentSection1 extends React.Component{
 		</section>)
     }
 }
-export default MainContentSection1;
+export default connect(function(state){
+    
+})(MainContentSection1)

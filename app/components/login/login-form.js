@@ -1,4 +1,5 @@
 import React from 'react'
+import $ from 'jquery'
 class LoginForm extends React.Component{
     constructor(props){
 		super(props);

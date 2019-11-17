@@ -19,15 +19,24 @@ class OptionUser extends React.Component {
 	constructor(props){
 		super(props);
 		this.logOut = this.logOut.bind(this);
+		this.state = {
+			countmessage:0
+		}
 	}
 	logOut(){
 		localStorage.removeItem('username');
 		window.location.assign("/");
 	}
+	componentDidMount(){
+        var that=this;
+        $.get("/getMessage",function(data){
+            that.setState({countmessage:data.length});
+        })
+    }
 	render() {
 		return(<nav>
 			<ul className="list-inline">
-				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>(5)</span></a></li>
+				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>({this.state.countmessage})</span></a></li>
 				<li><a href="cart.html">Thanh toán</a></li>
 				<li><a href="/listfavorite">DS yêu thích</a></li>
 				<li><a href="/manageaccount">Tài khoản</a></li>
@@ -39,7 +48,7 @@ class OptionUser extends React.Component {
 }
 class WelcomeUser extends React.Component{
 	render(){
-		return(<div className="welcome-info">
+		return(<div className="welcome-info" style={{cursor:'pointer'}}>
 			Chào, <span>{localStorage.getItem("username")}</span>
 		</div>)
 	}
@@ -47,6 +56,11 @@ class WelcomeUser extends React.Component{
 class HeaderTop extends React.Component {
 	constructor(props) {
 		super(props);
+		this.logOut = this.logOut.bind(this);
+	}
+	logOut(){
+		localStorage.removeItem('username');
+		window.location.assign("/");
 	}
 	render() {
 		var username = localStorage.getItem("username");
@@ -72,17 +86,17 @@ class HeaderTop extends React.Component {
 										</a>
 									</li>
 									<li>
-										<a href="my-account.html">
+										<a href="/manageaccount">
 											<span>Quản lý tài khoản</span>
 										</a>
 									</li>
 									<li>
-										<a href="list-message.html">
+										<a href="/message">
 											<span>Tin nhắn</span>
 										</a>
 									</li>
 									<li>
-										<a href="index-2.html">
+										<a onClick={this.logOut} style={{cursor:'pointer'}}>
 											<span>Đăng xuất</span>
 										</a>
 									</li>

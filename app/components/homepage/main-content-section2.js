@@ -1,20 +1,36 @@
 import React from 'react'
+import {connect} from 'react-redux'
 
-
+var main;
 class Product1 extends React.Component{ 
+	constructor(props){
+		super(props);
+		this.getDetail = this.getDetail.bind(this);
+		this.addToCart = this.addToCart.bind(this);
+	}
+	getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct")
+	}
+	addToCart(){
+		$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			var {dispatch} = main.props;
+        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
+		})
+	}
 	render(){
 		return (<div className="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<div className="item">
 				<div className="single-product-item">
 					<div className="product-image">
-						<a href="#"><img src={this.props.image} alt="product-image" /></a>
+						<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
 						<a href="#" className="new-mark-box">new</a>
 						<div className="overlay-content">
 							<ul>
-								<li><a href="#" title="Quick view"><i className="fa fa-search"></i></a></li>
-								<li><a href="#" title="Quick view"><i className="fa fa-shopping-cart"></i></a></li>
-								<li><a href="#" title="Quick view"><i className="fa fa-retweet"></i></a></li>
-								<li><a href="#" title="Quick view"><i className="fa fa-heart-o"></i></a></li>
+								<li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-search"></i></a></li>
+								<li><a title="Thêm vào giỏ hàng" style={{ cursor: 'pointer' }} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
+								<li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-retweet"></i></a></li>
+								<li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-heart-o"></i></a></li>
 							</ul>
 						</div>
 					</div>
@@ -33,7 +49,7 @@ class Product1 extends React.Component{
 						</div>
 						<a href="single-product.html">{this.props.name}</a>
 						<div className="price-box">
-							<span className="price">{this.props.cost}</span>
+							<span className="price">{this.props.cost}đ</span>
 						</div>
 					</div>
 				</div>
@@ -65,7 +81,7 @@ class Sneaker extends React.Component {
 					<div className="feartured-carousel">
 						{this.state.listSneaker.map(function(sneaker,index){
 							return <Product1 key={index} name={sneaker.name} cost={sneaker.cost}
-							image={sneaker.image}/>
+							image={sneaker.image} id={sneaker._id}/>
 						})}												
 					</div>
 				</div>
@@ -99,7 +115,7 @@ class Sports extends React.Component {
 					<div className="feartured-carousel">									
 				       {this.state.listSport.map(function(sport,index){
 						   return <Product1 key={index} name={sport.name} cost={sport.cost}
-						   image={sport.image}/>
+						   image={sport.image} id={sport._id}/>
 					   })}			
 					</div>					
 				</div>
@@ -133,7 +149,7 @@ class Pumps extends React.Component {
 					<div className="feartured-carousel">
 						{this.state.listPumps.map(function(pumps,index){
 							return <Product1 key={index} name={pumps.name} cost={pumps.cost}
-							image={pumps.image}/>
+							image={pumps.image} id={pumps._id}/>
 						})}																								
 					</div>		
 				</div>
@@ -166,7 +182,7 @@ class Kids extends React.Component{
 					<div className="feartured-carousel">	
 					{this.state.listKids.map(function(kid,index){
 						return <Product1 key={index} name={kid.name} cost={kid.cost}
-						image={kid.image}/>
+						image={kid.image} id={kid._id}/>
 					})}												
 					</div>							
 				</div>
@@ -177,7 +193,8 @@ class Kids extends React.Component{
 }
 class MainContentSection2 extends React.Component{
     constructor(props){
-        super(props);
+		super(props);
+		main = this;
 	}
     render(){
         return(
@@ -212,4 +229,6 @@ class MainContentSection2 extends React.Component{
         )
     }
 }
-export default MainContentSection2;
+export default connect(function(state){
+    
+})(MainContentSection2)

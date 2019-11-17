@@ -17,7 +17,6 @@ class Login extends React.Component{
 			<div>
                 <HeaderTop/>
                 <HeaderMiddle/>
-                <MainMenu/>
                 <LoginForm/>
                 <CompanyFacality/>
                 <Footer/>
