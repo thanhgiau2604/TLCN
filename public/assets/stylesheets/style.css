@@ -1,0 +1,18 @@
+.table>tbody>tr.active>td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  .table>thead>tr>th {
+      text-align: center;
+      color: white;
+      background: #1a5ec3;
+      padding: 13px;
+  }
+  .table>tbody>tr.active>td.action>a {
+      margin-left: 3px;
+      margin-right: 3px;
+  }
+
+  a {
+      cursor: pointer;
+  }

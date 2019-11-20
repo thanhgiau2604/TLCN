@@ -9,13 +9,13 @@ const ProductSchema = new Schema({
     shipcost: Number,
     image: String,
     description: String,
-    sizes: {
+    sizes: [{
         size: Number,
         colors: [{
             color: String,
             quanty: Number
         }]
-    },
+    }],
     votes: {
         vote1: Number,
         vote2: Number,

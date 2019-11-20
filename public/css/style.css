@@ -4776,3 +4776,7 @@ a.write-review-btn{
 	color: #888;
     font-size: 13px;
 }
+
+td {
+	vertical-align: center;
+}

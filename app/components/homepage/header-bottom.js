@@ -2,8 +2,13 @@ import React from 'react'
 
 class HeaderBottom extends React.Component{
     constructor(props){
-        super(props);
-    }
+		super(props);
+		this.getMenCategory = this.getMenCategory.bind(this);
+	}
+	getMenCategory(){
+		localStorage.setItem("curcategory","MenProduct");
+		window.location.assign("/categoryProduct");
+	}
     render(){
         return(
             <section className="header-bottom-area">
@@ -23,17 +28,17 @@ class HeaderBottom extends React.Component{
 												<div className="cat-left-drop-menu-left">
 													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nam</a>
 													<ul>
-														<li><a href="shop-gird.html">Giày tây</a></li>
-														<li><a href="shop-gird.html">Giày lười</a></li>
-														<li><a href="shop-gird.html">Giày cao</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày tây</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày lười</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày cao</a></li>
 													</ul>
 												</div>
 												<div className="cat-left-drop-menu-left">
 													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nam</a>
 													<ul>
-														<li><a href="shop-gird.html">Giày sandal</a></li>
-														<li><a href="shop-gird.html">Giày thể thao</a></li>
-														<li><a href="shop-gird.html">Giày boot</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày sandal</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày thể thao</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày boot</a></li>
 													</ul>
 												</div>
 											</div>										
@@ -44,8 +49,8 @@ class HeaderBottom extends React.Component{
 												<div className="cat-left-drop-menu-left">
 													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nữ</a>
 													<ul>
-														<li><a href="shop-gird.html">Giày cao gót</a></li>
-														<li><a href="shop-gird.html">Giày búp bê</a></li>
+														<li><a href="/getPumpProudct">Giày cao gót</a></li>
+														<li><a href="/getDollProduct">Giày búp bê</a></li>
 														<li><a href="shop-gird.html">Giày thể thao</a></li>
 													</ul>
 												</div>
@@ -53,31 +58,32 @@ class HeaderBottom extends React.Component{
 													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nữ</a>
 													<ul>
 														<li><a href="shop-gird.html">Giày boot</a></li>
-														<li><a href="shop-gird.html">Giày sandal</a></li>
+														<li><a href="/getSandalProduct">Giày sandal</a></li>
 														<li><a href="shop-gird.html">Giày lười</a></li>
 													</ul>														
 												</div>
 											</div>										
 										</li>
-										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/8.png" alt="" /></span>TRẺ EM<i className="fa fa-angle-right"></i></a>
-											
-											<div className="cat-left-drop-menu">
-												<div className="cat-left-drop-menu-left text-center">
-													<a className="menu-item-heading" href="shop-gird.html">Các loại giày trẻ em</a>
-													<ul>
-														<li><a href="shop-gird.html">Giày Sandal</a></li>
-														<li><a href="shop-gird.html">Giày Thể thao</a></li>
-														<li><a href="shop-gird.html">Giày Búp bê</a></li>
-													</ul>
-												</div>
-											</div>										
+										<li>
+												<a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs">
+													<img src="img/layout2/8.png" alt="" /></span>TRẺ EM<i className="fa fa-angle-right"></i></a>
+												<div className="cat-left-drop-menu">
+													<div className="cat-left-drop-menu-left text-center">
+														<a className="menu-item-heading" href="shop-gird.html">Các loại giày trẻ em</a>
+														<ul>
+															<li><a href="/getKidProduct">Giày Sandal</a></li>
+															<li><a href="/getKidProduct">Giày Thể thao</a></li>
+															<li><a href="/getKidProduct">Giày Búp bê</a></li>
+														</ul>
+													</div>
+												</div>										
 										</li>
 										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/9.png" alt="" /></span>ADIDAS<i className="fa fa-angle-right"></i></a>
 											
 											<div className="cat-left-drop-menu-single">
 												<ul>
-													<li><a href="shop-gird.html">NAM</a></li>
-													<li><a href="shop-gird.html">NỮ</a></li>
+													<li><a href="/getAdidasProduct">NAM</a></li>
+													<li><a href="/getAdidasProduct">NỮ</a></li>
 												</ul>
 											</div>										
 										</li>
@@ -85,24 +91,24 @@ class HeaderBottom extends React.Component{
 											
 											<div className="cat-left-drop-menu-single">
 												<ul>
-													<li><a href="shop-gird.html">NAM</a></li>
-													<li><a href="shop-gird.html">NỮ</a></li>
+													<li><a href="/getNikeProduct">NAM</a></li>
+													<li><a href="/getNikeProduct">NỮ</a></li>
 												</ul>
 											</div>											
 										</li>
 										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/11.jpg" alt="" /></span>SNEAKER<i className="fa fa-angle-right"></i></a>									
 											<div className="cat-left-drop-menu-single">
 												<ul>
-													<li><a href="shop-gird.html">NAM</a></li>
-													<li><a href="shop-gird.html">NỮ</a></li>
+													<li><a href="/getSneakerProduct">NAM</a></li>
+													<li><a href="/getSneakerProduct">NỮ</a></li>
 												</ul>
 											</div>											
 										</li>
 										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/12.png" alt="" /></span>JORDAN<i className="fa fa-angle-right"></i></a>
 											<div className="cat-left-drop-menu-single">
 												<ul>
-													<li><a href="shop-gird.html">NAM</a></li>
-													<li><a href="shop-gird.html">NỮ</a></li>
+													<li><a href="/getJordanProduct">NAM</a></li>
+													<li><a href="/getJordanProduct">NỮ</a></li>
 												</ul>
 											</div>
 										</li>

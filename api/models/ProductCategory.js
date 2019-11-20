@@ -5,6 +5,7 @@ const ProductCategorySchema = new Schema({
     name: String,
     quanty: Number,
     description: String,
-    listProduct: [{_id:Schema.Types.ObjectId}]
+    listProduct: [{_id:Schema.Types.ObjectId}],
+    image:String
 });
 module.exports = mongoose.model('productcategory',ProductCategorySchema);

@@ -19,7 +19,7 @@ class ProductGird extends React.Component{
         return(<li class="gategory-product-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
         <div class="single-product-item">
             <div class="product-image">
-                <a href="single-product.html"><img src="img/product/sale/9.jpg" alt="product-image" /></a>
+                <a href="single-product.html"><img src={this.props.image} alt="product-image" /></a>
                 <a href="single-product.html" class="new-mark-box">sale!</a>
                 <div class="overlay-content">
                     <ul>
@@ -43,10 +43,10 @@ class ProductGird extends React.Component{
                         <span>1 Review(s)</span>
                     </div>
                 </div>
-                <a href="single-product.html">Printed Dress</a>
+                <a href="single-product.html">{this.props.name}</a>
                 <div class="price-box">
-                    <span class="price">$23.40</span>
-                    <span class="old-price">$26.00</span>
+                    <span class="price">{this.props.cost}</span>
+                    <span class="old-price"></span>
                 </div>
             </div>
         </div>									
@@ -57,6 +57,7 @@ class ProductGird extends React.Component{
 class ProductList extends React.Component{
     constructor(props){
         super(props);
+        
     }
     render(){
         return(<li class="cat-product-list">
@@ -227,6 +228,17 @@ class OptionView extends React.Component{
 class Category extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+            listProduct: [],
+            category:{}
+        }
+    }
+    componentDidMount(){
+        var name = localStorage.getItem("curcategory");
+        var that = this;
+        $.get("/getCategoryProduct/"+name,function(data){
+            that.setState({listProduct:data.lProduct,category:data.category})
+        })
     }
     render(){
         return(<section class="main-content-section">
@@ -246,15 +258,15 @@ class Category extends React.Component{
                     <div class="right-all-product">
                         <div class="product-category-header">
                             <div class="category-header-image">
-                                <img src="img/category-header.jpg" alt="category-header" />
+                                <img src={this.state.category.image} alt="category-header" />
                                 <div class="category-header-text">
-                                    <h2>GIÀY NỮ</h2>
+                                    <h2>{this.state.category.name}</h2>
                                 </div>									
                             </div>
                         </div>
                         <div class="product-category-title">
                             <h1>
-                                <span class="cat-name">Giày nữ</span>
+                                <span class="cat-name">{this.state.category.name}</span>
                                 <span class="count-product">Có 13 sản phẩm</span>
                             </h1>
                         </div>
@@ -290,22 +302,14 @@ class Category extends React.Component{
                     <div class="all-gategory-product">
                         <div class="row">
                             <ul class="gategory-product">											
-                                <ProductList/>
-                                <ProductList/>
-                                <ProductList/>
-                                <ProductList/>
-                                <ProductList/>
-                                <ProductList/>
+                                {this.state.listProduct.map(function(pro,index){
+                                    return <ProductGird key={index} name={pro.name} cost={pro.cost}
+                                    image={pro.image} id={pro._id}/>
+                                })}
                             </ul>
                         </div>
                     </div>     
                     <div class="product-shooting-result product-shooting-result-border">
-                        <form action="#">
-                            <button class="btn compare-button">
-                                Compare (<strong class="compare-value">1</strong>)
-                                <i class="fa fa-chevron-right"></i>
-                            </button>
-                        </form>
                         <div class="showing-item">
                             <span>Showing 1 - 12 of 13 items</span>
                         </div>

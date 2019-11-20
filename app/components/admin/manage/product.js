@@ -6,212 +6,538 @@ import Tool from '../common/tool'
 import $ from 'jquery'
 
 
-
+var main;
+var curEditProduct;
 class Products extends React.Component {
-    constructor(props){
-        super(props);
+  constructor(props) {
+    super(props);
+    this.updateProduct = this.updateProduct.bind(this);
+    this.deleteProduct = this.deleteProduct.bind(this);
+    this.confirmDelete = this.confirmDelete.bind(this);
+  }
+  updateProduct(){
+    console.log("vào");
+    curEditProduct.setState({product:this.props.product});
+  }
+  deleteProduct(){
+    localStorage.setItem("curDelete",this.props.product._id);
+  }
+  confirmDelete(){
+    $.post("/deleteProduct",{id:localStorage.getItem("curDelete")},function(data){
+      main.setState({listProduct:data.lProduct});
+    })
+  }
+  render() {
+    if (main.state.listProduct.length != 0) {
+      var strSize = "";
+      var that = this;
+      this.props.product.sizes.forEach(function (size, i) {
+        strSize += size.size + "(";
+        size.colors.forEach(function (color, index) {
+          strSize += color.color + ":" + color.quanty;
+          if (index + 1 < size.colors.length) strSize += ", ";
+        });
+        strSize += ")";
+        if (i + 1 < that.props.product.sizes.length) strSize += ", "
+      });
     }
-    render(){
-        return(<tr class='active text-center'>
-        <td class="align-items-center">1</td>
-        <td>161737283899</td>
-        <td>Sneaker1</td>
-        <td class="text-center"><img src="assets/images/sneaker-4.jpg" style={{width: '120px'}}/>
-        </td>
-        <td>180 000đ</td>
-        <td>10 000đ</td>
-        <td>30</td>
-        <td><div>
-          39(20), 40(10)
-        </div></td>
-        <td>........</td>
-        <td class='action'>
-          <a class='btn btn-success' data-toggle='tooltip' href='#' title='Detail'>
-            <i class='icon-zoom-in'></i>
-          </a>
-          <a class='btn btn-info' href='#'>
-            <i class='icon-edit'></i>
-          </a>
-          <a class='btn btn-danger' href='#'>
-            <i class='icon-trash'></i>
-          </a>
-        </td>
-      </tr>)
-    }
-}
-
-class ManageProducts extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            listProduct:[]
-        }
-    }
-    render(){
-        return(<div id='content'>
-        <div class='panel panel-default grid'>
-          <div class='panel-heading'>
-            <i class='icon-table icon-large'></i>
-            Manage Categoy
-            <div class='panel-tools'>
-              <div class='btn-group'>
-                <a class='btn' href='#'>
-                  <i class='icon-wrench'></i>
-                  Settings
-                </a>
-                <a class='btn' href='#'>
-                  <i class='icon-filter'></i>
-                  Filters
-                </a>
-                <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Reload'>
-                  <i class='icon-refresh'></i>
-                </a>
-              </div>
-              <div class='badge'>3 record</div>
+    return (<tr class='active'>
+      <td>{this.props.stt}</td>
+      <td>{this.props.product._id}</td>
+      <td>{this.props.product.name}</td>
+      <td><img src={this.props.product.image} style={{ width: '120px' }} />
+      </td>
+      <td>{this.props.product.cost}</td>
+      <td>{this.props.product.shipcost}</td>
+      <td>{this.props.product.quanty}</td>
+      <td>{strSize}</td>
+      <td>{this.props.product.description}</td>
+      <td class='action'>
+        <a class='btn btn-success' data-toggle='tooltip' style={{cursor:'pointer'}} title='view'>
+          <i class='icon-zoom-in'></i>
+        </a>
+        <a class='btn btn-info' data-toggle='tooltip' style={{cursor:'pointer'}} title='edit' data-toggle="modal" 
+        data-target="#modalUpdateProduct" onClick={this.updateProduct}>
+          <i class='icon-edit'></i>
+        </a>
+        <a class='btn btn-danger' data-toggle='tooltip' style={{cursor:'pointer'}} title='delete' data-toggle="modal" 
+        data-target="#modalDeleteProduct" onClick={this.deleteProduct}>
+          <i class='icon-trash'></i>
+        </a>
+      </td>
+      {/* modal xoa product */}
+      <div class="modal fade" id="modalDeleteProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Confirm</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-          </div>
-          <div class='panel-body filters'>
-            <div class="row">
-              <h3 class="text-center"><b>LIST PRODUCTS</b></h3>
+            <div class="modal-body">
+              <h5>Are you sure to delete this product?</h5>
             </div>
-            <div class='row'>
-              <div class='col-md-9'>       
-              </div>
-              <div class='col-md-3'>
-                <div class='input-group'>
-                  <input class='form-control' placeholder='Quick search...' type='text'/>
-                  <span class='input-group-btn'>
-                    <button class='btn' type='button'>
-                      <i class='icon-search'></i>
-                    </button>
-                  </span>
-                </div>
-              </div>
-              <div class="text-right" style={{marginTop: '50px', paddingRight: '10%'}}>
-                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-new-product">
-                  <i class="icon-plus-sign"></i>New Product
-                </button>
-              </div>
-            </div>
-          </div>
-          <table class='table'>
-            <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">id</th>
-                <th class="text-center">Name</th>
-                <th class="text-center">Image</th>
-                <th class="text-center">Cost</th>
-                <th class="text-center">Shipcost</th>
-                <th class="text-center">Quanty</th>
-                <th class="text-center">Sizes</th>
-                <th class="text-center">Description</th>
-                <th class='actions'>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <Products/>
-              <Products/>
-            </tbody>
-          </table>
-          <div class='panel-footer'>
-            <ul class='pagination pagination-sm'>
-              <li>
-                <a href='#'>«</a>
-              </li>
-              <li class='active'>
-                <a href='#'>1</a>
-              </li>
-              <li>
-                <a href='#'>2</a>
-              </li>
-              <li>
-                <a href='#'>3</a>
-              </li>
-              <li>
-                <a href='#'>4</a>
-              </li>
-              <li>
-                <a href='#'>5</a>
-              </li>
-              <li>
-                <a href='#'>6</a>
-              </li>
-              <li>
-                <a href='#'>7</a>
-              </li>
-              <li>
-                <a href='#'>8</a>
-              </li>
-              <li>
-                <a href='#'>»</a>
-              </li>
-            </ul>
-            <div class='pull-right'>
-              Showing 1 to 10 of 32 entries
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={this.confirmDelete}>Yes</button>
             </div>
           </div>
         </div>
-        
-          <div class="modal fade" id="modal-new-product" role="dialog">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">New Product</h4>
+      </div>
+    </tr>)
+  }
+}
+var image={};
+var classNewProduct;
+class NewProduct extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      curSizes: 1,
+      addSuccess:0,
+    }
+    this.AddSize = this.AddSize.bind(this);
+    this.submitForm = this.submitForm.bind(this);
+    this.ChangeImage = this.ChangeImage.bind(this);
+    this.AddToDatabase = this.AddToDatabase.bind(this);
+  }
+  AddSize() {
+    this.setState({ curSizes: this.state.curSizes + 1 });
+  }
+  ChangeImage(e){
+    image = e.target.files[0];
+  }
+  AddToDatabase(product){
+    var that = this;
+    console.log(product);
+    //send request to server to save product
+    $.post("/addNewProduct",{product: JSON.stringify(product)},function(data){
+      if (data.success==1){
+        main.setState({listProduct:data.lProduct});
+        that.setState({addSuccess:1,curSizes:1})
+        that.refs.name.value = "";
+        that.refs.cost.value="";
+        that.refs.shipcost.value="";
+        that.refs.image.value="";
+        that.refs.description.value="";
+        that.refs.size1.value="";
+        that.refs.color1.value="";
+      }
+    })
+  }
+  submitForm(e) {
+    var sizes = [];
+    for (var i = 1; i <= this.state.curSizes; i++) {
+      var cursize = this.refs["size" + i].value;
+      var curColorQuanty = this.refs["color" + i].value;
+      curColorQuanty = curColorQuanty.replace(/\s/g, "");
+      var arrayCorlorQuanty = curColorQuanty.split(",");
+      var colors = [];
+      for (var j = 0; j < arrayCorlorQuanty.length; j++) {
+        var arrcq = arrayCorlorQuanty[j].split(":");
+        var color = {
+          color: arrcq[0],
+          quanty: parseInt(arrcq[1])
+        }
+        colors.push(color);
+      }
+      var size = {
+        size: parseInt(cursize),
+        colors: colors
+      }
+      sizes.push(size);
+    }
+    var newP = {
+      name: this.refs.name.value,
+      quanty: 0,
+      cost: this.refs.cost.value,
+      shipcost: this.refs.shipcost.value,
+      image: "",
+      description: this.refs.description.value,
+      sizes: sizes,
+      votes: {
+        "vote1": 0,
+        "vote2": 0,
+        "vote3": 0,
+        "vote4": 0,
+        "vote5": 0
+      }
+    }
+    classNewProduct = this;
+    //upload image
+    let imageFormObj = new FormData();
+    imageFormObj.append("imageName","multer-image"+Date.now());
+    imageFormObj.append("imageData",image);
+    $.ajax({
+      type: "POST",
+      url:"/upload",
+      data: imageFormObj,
+      processData: false,
+      contentType: false,
+      success: function (data) {       
+        newP.image = "img/product/" + data;
+        classNewProduct.AddToDatabase(newP);
+      },
+      fail: function (err) {
+        alert(err);
+      }
+  })
+    e.preventDefault();
+  }
+  render() {
+    var arrSizes = [];
+    for (var i = 1; i <= this.state.curSizes; i++) {
+      var htmlSize = (<div className="row">
+        <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+          <label>Size:</label>
+          <input type="text" className="form-control" id="shipcost" placeholder="Enter size" name="size" ref={"size" + i} />
+        </div>
+        <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+          <label>Color:</label>
+          <input type="text" className="form-control" id="shipcost" placeholder="color1:quanty1,color2:quanty2,..." name="color" ref={"color" + i} />
+        </div>
+        <br />
+      </div>);
+      arrSizes.push(htmlSize);
+    }
+    var notifyAddSuccess = <div></div>
+    if (this.state.addSuccess==1){
+    notifyAddSuccess = 
+      <div class="alert alert-success">
+        <strong>Add Product Successfully!</strong>
+      </div>
+    }
+    return (<div className="modal fade right " id="modalNewProduct" role="dialog" aria-labelledby="myModalLabel"
+      aria-hidden="true">
+      <div className="modal-dialog modal-full-height modal-right modal-lg" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h4 className="modal-title w-100 text-center" id="myModalLabel">Add New Product</h4>
+            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className="modal-body">
+            <div className="row">
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div className="form-group">
+                  <label>Product Name:</label>
+                  <input type="text" className="form-control" placeholder="Enter name" ref="name" />
                 </div>
-                <div class="modal-body">
-                  <form>
-                    <div class="form-group">
-                      <label for="name">Name</label>
-                      <input type="text" class="form-control" id="name"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="image">Image</label>
-                      <input type="file" class="form-control" id="image"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="quanty">Quanty</label>
-                      <input type="text" class="form-control" id="quanty"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="cost">Cost</label>
-                      <input type="text" class="form-control" id="cost"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="shipcost">ShipCost</label>
-                      <input type="text" class="form-control" id="shipcost"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="size">Sizes</label>
-                      <input type="text" class="form-control" id="size"/>
-                    </div>
-                    <div class="form-group">
-                      <label for="description">Description</label>
-                      <input type="text" class="form-control" id="description"/>
-                    </div>
-                  </form>
+              </div>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div className="form-group">
+                  <label>Cost(VND):</label>
+                  <input type="text" className="form-control" placeholder="Enter cost" ref="cost" />
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <div className="form-group">
+                  <label>Ship Cost(VND):</label>
+                  <input type="text" className="form-control" placeholder="Enter shipcost" ref="shipcost" />
                 </div>
               </div>
             </div>
-          </div>   
-      </div>)
+            <div className="row">
+              <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <label>Description:</label> <br />
+                <textarea rows="5" style={{ width: "100%" }} ref="description"></textarea>
+              </div>
+            </div>
+            {arrSizes}
+            <div className="row" style={{ marginTop: "10px" }}>
+              <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <button className="btn btn-success" onClick={this.AddSize}>Add size</button>
+              </div>
+            </div>
+            <div className="row" style={{ marginTop: "10px" }}>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <label>Image:</label>
+                <input type="file" className="form-control" ref="image" onChange={(e) => this.ChangeImage(e)}/>
+              </div>
+              <br />
+              <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <button className="btn btn-success">Add image</button>
+              </div>
+            </div>
+          </div>
+          {notifyAddSuccess}
+          <div className="modal-footer justify-content-center">
+            <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" className="btn btn-danger" type="submit" onClick={this.submitForm}>Add product</button>
+          </div>
+        </div>
+      </div>
+    </div>)
+  }
+}
+
+
+class OneSize extends React.Component {
+  constructor(props){
+    super(props);
+  }
+  render(){
+    return(<div className="row">
+    <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+      <label>Size:</label>
+      <input type="text" className="form-control" placeholder="Enter size" defaultValue={this.props.defaultSize}  />
+    </div>
+    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+      <label>Color:Quanty</label>
+      <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." 
+      defaultValue={this.props.defaultColor}/>
+    </div>
+    <br />
+  </div>)
+  }
+}
+class UpdateProduct extends React.Component{
+  constructor(props) {
+    super(props);
+    this.AddSize = this.AddSize.bind(this);
+    this.submitForm = this.submitForm.bind(this);
+    this.ChangeImage = this.ChangeImage.bind(this);
+    this.state = {
+      product:""
     }
+    curEditProduct = this;
+    this._handleChange = this._handleChange.bind(this);
+  }
+  AddSize(){
+
+  }
+  submitForm(){
+
+  }
+  ChangeImage(){
+
+  }
+  _handleChange(e){
+    this.setState({value: e.target.value});
+  }
+  render(){
+    var arrHtmlSizes= new Array();
+    if (this.state.product != "") {
+      var arrSizes = [];
+      arrSizes = this.state.product.sizes;
+      for (var i = 1; i <= arrSizes.length; i++) {
+        var strColorQuanty="";
+        arrSizes[i-1].colors.forEach(color => {
+          strColorQuanty+=color.color+":"+color.quanty+",";
+        });  
+        strColorQuanty = strColorQuanty.slice(0,-1);
+        // var htmlSize = (<div className="row">
+        //   <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+        //     <label>Size:</label>
+        //     <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} value={arrSizes[i - 1].size} onChange={this._handleChange}  />
+        //   </div>
+        //   <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+        //     <label>Color:Quanty</label>
+        //     <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." 
+        //     ref={"color" + i} value={strColorQuanty}/>
+        //   </div>
+        //   <br />
+        // </div>);
+        arrHtmlSizes.push(<OneSize defaultSize={this.state.product.sizes[i-1].size} defaultColor={strColorQuanty}/>);
+      }
+    }
+    return(<div className="modal fade right " id="modalUpdateProduct" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div className="modal-dialog modal-full-height modal-right modal-lg" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h4 className="modal-title w-100 text-center" id="myModalLabel">UPDATE PRODUCT</h4>
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="row">
+            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+              <div className="form-group">
+                <label>Product Name:</label>
+                <input type="text" className="form-control" placeholder="Enter name" ref="name" defaultValue={this.state.product.name}/>
+              </div>
+            </div>
+            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+              <div className="form-group">
+                <label>Cost(VND):</label>
+                <input type="text" className="form-control" placeholder="Enter cost" ref="cost" defaultValue={this.state.product.cost}/>
+              </div>
+            </div>
+            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+              <div className="form-group">
+                <label>Ship Cost(VND):</label>
+                <input type="text" className="form-control" placeholder="Enter shipcost" ref="shipcost" defaultValue={this.state.product.shipcost} />
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+              <label>Description:</label> <br />
+              <textarea rows="5" style={{ width: "100%" }} ref="description" defaultValue={this.state.product.description}></textarea>
+            </div>
+          </div>
+          {arrHtmlSizes}
+          <div className="row" style={{ marginTop: "10px" }}>
+            <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+              <button className="btn btn-success" onClick={this.AddSize}>Add size</button>
+            </div>
+          </div>
+          <div className="row" style={{ marginTop: "10px" }}>
+            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+              <label>Image:</label>
+              <input type="file" className="form-control" ref="image" onChange={(e) => this.ChangeImage(e)}/>
+            </div>
+            <br />
+            <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+              <button className="btn btn-success">Add image</button>
+            </div>
+          </div>
+        </div>
+        <div className="modal-footer justify-content-center">
+          <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" className="btn btn-danger" type="submit" onClick={this.submitForm}>Save</button>
+        </div>
+      </div>
+    </div>
+  </div>)
+  }
+}
+class ManageProducts extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      listProduct: [],
+      curpage: 1
+    }
+    main = this;
+  }
+  componentDidMount() {
+    var that = this;
+    $.get("/getAllProducts", function (data) {
+      that.setState({ listProduct: data });
+    })
+  }
+  changePage(value, event) {
+    this.setState({ curpage: value });
+  }
+  render() {
+    var lCurProduct = [];
+    var page = "";
+    if (this.state.listProduct.length != 0) {
+      page = [];
+      var perpage = 5;
+      var start = (this.state.curpage - 1) * perpage;
+      lCurProduct = this.state.listProduct.slice(start, start + perpage);
+      var numberpage = Math.ceil(this.state.listProduct.length / perpage);
+      for (var i = 1; i <= numberpage; i++) {
+        if (this.state.curpage == i) {
+          page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} >{i}</a></li>);
+        } else {
+          page.push(<li><a onClick={this.changePage.bind(this, i)}>{i}</a></li>)
+        }
+      }
+    }
+    return (<div id='content'>
+      <div class='panel panel-default grid'>
+        <div class='panel-heading'>
+          <i class='icon-table icon-large'></i>
+          Manage Products
+            <div class='panel-tools'>
+            <div class='btn-group'>
+              <a class='btn' href='#'>
+                <i class='icon-wrench'></i>
+                Settings
+                </a>
+              <a class='btn' href='#'>
+                <i class='icon-filter'></i>
+                Filters
+                </a>
+              <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Reload'>
+                <i class='icon-refresh'></i>
+              </a>
+            </div>
+            <div class='badge'>3 record</div>
+          </div>
+        </div>
+        <div class='panel-body filters'>
+          <div class="row">
+            <h3 class="text-center"><b>LIST PRODUCTS</b></h3>
+          </div>
+          <div class='row'>
+            <div class='col-md-9'>
+            </div>
+            <div class='col-md-3'>
+              <div class='input-group'>
+                <input class='form-control' placeholder='Search by id or name' type='text' />
+                <span class='input-group-btn'>
+                  <button class='btn' type='button'>
+                    <i class='icon-search'></i>
+                  </button>
+                </span>
+              </div>
+            </div>
+            <div class="text-right" style={{ marginTop: '50px', paddingRight: '10%' }}>
+              <button class="btn btn-warning" data-toggle="modal" data-target="#modalNewProduct">
+                <i class="icon-plus-sign"></i>Add New Product
+                </button>
+            </div>
+          </div>
+        </div>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th class="text-center">#</th>
+              <th class="text-center">id</th>
+              <th class="text-center">Name</th>
+              <th class="text-center">Image</th>
+              <th class="text-center">Cost</th>
+              <th class="text-center">Shipcost</th>
+              <th class="text-center">Quanty</th>
+              <th class="text-center">Sizes</th>
+              <th class="text-center">Description</th>
+              <th class='actions'>
+                Actions
+                </th>
+            </tr>
+          </thead>
+          <tbody>
+            {lCurProduct.map(function (pro, index) {
+              return <Products key={index} stt={start + (index + 1)} product={pro} />
+            })}
+          </tbody>
+        </table>
+        <div class='panel-footer'>
+          <ul class='pagination pagination-sm'>
+            <li>
+              <a href='#'>«</a>
+            </li>
+            {page}
+            <li>
+              <a href='#'>»</a>
+            </li>
+          </ul>
+          <div class='pull-right'>
+            Showing {start + 1} to {start + perpage} of {this.state.listProduct.length} entries
+            </div>
+        </div>
+      </div>
+      <NewProduct />
+      <UpdateProduct/>
+    </div>)
+  }
 }
 
 ReactDOM.render(
-    <div>
-        <Navbar/>
-        <div id="wrapper">
-            <Sidebar/>
-            <Tool/>
-            <ManageProducts/>
-        </div>
-    </div>,document.getElementById("manage-products")
+  <div>
+    <Navbar />
+    <div id="wrapper">
+      <Sidebar />
+      <Tool />
+      <ManageProducts />
+    </div>
+  </div>, document.getElementById("manage-products")
 )
