@@ -4,8 +4,13 @@ const User = require("../models/users");
 const passport = require("passport");
 const passportfb = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const express = require("express");
+const jwt = require("jsonwebtoken");
 module.exports = function(app){
     var username="", email="";
+    var superSecret = 'iamastudent';
+    var apiRouter = express.Router();
+    var tokenuser;
     app.get("/",(req,res)=> res.render("trangchu",{username:username}))
     app.post("/signup",parser,(req,res)=>{
         const firstName = req.body.firstname;
@@ -48,7 +53,7 @@ module.exports = function(app){
     });
 
 
-    app.post("/login",parser,(req,res)=> {
+    apiRouter.post("/login",parser,(req,res)=> {
         const emailorphone = req.body.EmailOrPhone;
         const password = req.body.password;
         User.findOne({$or:[
@@ -66,14 +71,46 @@ module.exports = function(app){
                     if (!validPassword){
                         res.json({err:1,message:"Không đúng Email/SDT hoặc password"});
                     } else {
-                        req.session.user = user;
-                        
-                        res.json({err:0,username:user.lastName,email:user.email});
+                        var token = jwt.sign({
+                            name: user.name,
+                            username: user.username
+                        },superSecret,{
+                            expiresIn:'24h'
+                        });
+                        tokenuser = token;
+                        res.json({err:0,username:user.lastName,email:user.email, token:token});          
                     }
                 }
             }
         });
     });
+
+    apiRouter.use(function(req,res,next){
+        console.log("Dang lam tren app");
+        // var token = req.headers['x-access-token']; 
+        var token = tokenuser;
+        if (token){
+            jwt.verify(token,superSecret,function(err,decoded){
+                if (err){
+                    return res.json({success:false,message:'Failed to authenticate token'});
+                } else {
+                    req.decoded = decoded;
+                    next();
+                }
+            })
+        } else {
+            return res.status(403).send({
+                success:false,
+                message:'No token provided'
+            })
+        }
+    });
+
+    apiRouter.get("/",(req,res)=>{
+        res.json({message:'Vi du dau tien ve API'});
+    });
+
+    app.use("/api",apiRouter);
 
     app.get("/logout",(req,res)=>{
         res.render("dangnhap");
@@ -107,7 +144,7 @@ module.exports = function(app){
             clientID: '910829922619157',
             clientSecret: '300b1e1b7435d99456cfe3c95e02f4ff',
             callbackURL: 'http://localhost:3000/auth/fb/cb',
-            profileFields: ['email', 'gender', 'locale', 'displayName','first_name,last_name']
+            profileFields: ['email', 'gender', 'locale', 'displayName','first_name','last_name']
         },
         (accessToken, refreshToken, profile, done) => {
             console.log(profile);

@@ -44,7 +44,6 @@ class Users extends React.Component {
   </tr> )
   }
 }
-
 class EditForm extends React.Component{
   constructor(props){
     super(props);
@@ -58,7 +57,8 @@ class EditForm extends React.Component{
     const email = this.email.value;
     const phone = this.phone.value;
     const dob = this.dob.value;
-    $.post("/updateUser",{id:id,firstname:firstname, lastname:lastname, email:email, phone:phone, dob:dob},function(data){
+    $.post("/updateUser",{id:id,firstname:firstname, lastname:lastname, email:email, 
+      phone:phone, dob:dob},function(data){
       main.setState({edit:false,listUsers:data});
     });
     e.preventDefault();
@@ -106,15 +106,79 @@ class EditForm extends React.Component{
     </div>)
   }
 }
+
+class AddForm extends React.Component {
+  constructor(props){
+    super(props);
+    this.AddUser = this.AddUser.bind(this);
+    this.Cancel = this.Cancel.bind(this);
+  }
+  AddUser(e){
+    e.preventDefault();
+    const firstname = this.firstName.value;
+    const lastname = this.lastName.value;
+    const email = this.email.value;
+    const phone = this.phone.value;
+    const dob = this.dob.value;
+    $.post("/addUser",{firstname:firstname, lastname:lastname, email:email, 
+      phone:phone, dob:dob},function(data){
+      main.setState({add:false,listUsers:data});
+    });
+  }
+  Cancel(){
+    main.setState({add:false})
+  }
+  render(){
+    return(<div class="container">
+    <div class="row">
+      <form onSubmit={this.AddUser}>
+        <div class="col-sm-12">
+          <div class="row">
+            <div class="col-sm-4 form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="Enter Firstname" class="form-control"  ref={(data) => { this.firstName = data; }}/>
+            </div>
+            <div class="col-sm-4 form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Enter Firstname" class="form-control" ref={(data) => { this.lastName = data; }}/>
+            </div>
+            <div class="col-sm-4 form-group">
+              <label>Email</label>
+              <input type="text" placeholder="Enter Email" class="form-control" ref={(data) => { this.email = data; }}/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 form-group col-sm-push-2">
+              <label>Phone Number</label>
+              <input type="text" placeholder="Enter Phone Number" class="form-control" ref={(data) => { this.phone = data; }}/>
+            </div>
+            <div class="col-sm-4 form-group col-sm-push-2">
+              <label>Date of Birth</label>
+              <input type="text" placeholder="Enter Date Of Birth" class="form-control" ref={(data) => { this.dob = data; }}/>
+            </div>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-danger">Save</button>
+            <button type="button" class="btn btn-default" onClick={this.Cancel}
+            style={{marginLeft:'10px'}}>Cancel</button>
+          </div>  
+        </div>
+      </form>
+    </div>
+  </div>)
+  }
+}
 class ManageUsers extends React.Component{
     constructor(props){
         super(props);
         this.state = {
           listUsers: [],
           edit:false,
+          add:false,
           curpage: 1
         }
         main = this;
+        this.handleAddUser = this.handleAddUser.bind(this);
     }
     componentDidMount(){
       var that = this;
@@ -125,9 +189,13 @@ class ManageUsers extends React.Component{
     changePage(value,event){
       this.setState({curpage:value});
     }
+    handleAddUser(){
+      this.setState({add:true});
+    }
     render(){
-      var Edit;
+      var Edit,Add;
       if (this.state.edit == true) { Edit = <EditForm /> } else { Edit = "" }
+      if (this.state.add == true) { Add = <AddForm /> } else { Add = "" }
       var lCurUser = [];
       var page = "";
       if (this.state.listUsers.length != 0) {
@@ -184,9 +252,15 @@ class ManageUsers extends React.Component{
                   </span>
                 </div>
               </div>
+              <div class="text-right" style={{ marginTop: '50px', paddingRight: '10%' }}>
+              <button class="btn btn-warning" onClick={this.handleAddUser}>
+                <i class="icon-plus-sign"></i>Add New User
+                </button>
+            </div>
             </div>
           </div>
           {Edit}
+          {Add}
           <table class='table'>
             <thead>
               <tr>

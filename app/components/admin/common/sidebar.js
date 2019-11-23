@@ -18,11 +18,11 @@ class Sidebar extends React.Component{
           </li>
           <li class='launcher'>
             <i class='icon-list-ul'></i>
-            <a href='#'>Categorys</a>
+            <a href='/manageCategory'>Categorys</a>
           </li>
           <li class='launcher'>
             <i class='icon-archive'></i>
-            <a href='#'>Products</a>
+            <a href='/manageproduct'>Products</a>
           </li>
           <li class='launcher'>
             <i class='icon-bar-chart'></i>

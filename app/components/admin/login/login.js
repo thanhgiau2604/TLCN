@@ -12,7 +12,7 @@ class LoginAdmin extends React.Component{
         console.log(this.emailphone.value);
         console.log(this.psw.value);
         var that = this;
-        $.post("loginadmin",{emailphone:that.emailphone.value,psw:that.psw.value},function(data){
+        $.post("/loginadmin",{emailphone:that.emailphone.value,psw:that.psw.value},function(data){
             console.log(data);
             if (data.err==1){
                 that.setState({err:data.message})

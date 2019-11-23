@@ -72,6 +72,24 @@ module.exports = function(app){
         })
     });
 
+    app.post("/addUser",parser,(req,res)=>{
+        var user = {
+            firstName:  req.body.firstname,
+            lastName: req.body.lastname,
+            email:req.body.email,
+            numberPhone: req.body.phone,
+            dob: req.body.dob,
+            password: "12345678"
+        }
+        User.create(user,function(err,data){
+            if (err){
+                throw err;
+            } else {
+                getUsers(res);
+            }
+        })
+    })
+
     app.get("/changepswad",(req,res)=>{
         res.render("doimatkhauAdmin");
     });

@@ -245,8 +245,13 @@ class HistoryProduct extends React.Component{
     } 
     componentDidMount(){
         var that = this;
-        $.post("/productHistory",{email:localStorage.getItem('email')},function(data){
-            that.setState({listHistory:data});
+        var idproduct = localStorage.getItem('curproduct');
+        console.log(idproduct+" "+localStorage.getItem('email'));
+        $.post("/updateProductHistory",{email:localStorage.getItem('email'),idproduct:idproduct},function(data){
+            if (data){
+                var arrView = data.slice(0,5);
+                that.setState({listHistory:arrView});
+            }
         })
     }
     render(){

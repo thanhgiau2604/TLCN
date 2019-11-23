@@ -14,7 +14,7 @@ class LoginForm extends React.Component{
 		console.log(EmailOrPhone);
 		console.log(password);
 		var form = this;
-		$.post("/login",{EmailOrPhone:EmailOrPhone, password:password},function(data){
+		$.post("/api/login",{EmailOrPhone:EmailOrPhone, password:password},function(data){
 			
 			if (data.err==1){
 				form.setState({error:data.message});
@@ -22,6 +22,12 @@ class LoginForm extends React.Component{
 				console.log(data);
 				localStorage.setItem("username",data.username);
 				localStorage.setItem("email",data.email);
+				localStorage.setItem("token",data.token);
+				$.ajaxSetup({
+					headers:{
+						'x-access-token': data.token
+					}
+				})
 				window.location.assign("/");
 			}
 		})		
