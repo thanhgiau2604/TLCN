@@ -169,7 +169,9 @@ class NewProduct extends React.Component {
         "vote3": 0,
         "vote4": 0,
         "vote5": 0
-      }
+      },
+      createat: parseInt(Date.now().toString()),
+      views:0
     }
     classNewProduct = this;
     //upload image
