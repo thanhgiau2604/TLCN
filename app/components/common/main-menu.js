@@ -55,7 +55,7 @@ class Cart extends React.Component{
 				</a>
 				<div className="shipping-cart-overly">
 					{main.props.cart.map(function(pro,index){
-						return <Product key={index} image={pro.product.image} 
+						return <Product key={index} image={pro.product.image.image1} 
 						name ={pro.product.name} size={pro.size} color={pro.color}
 						quanty={pro.quanty} cost ={pro.product.cost} id={pro.product._id}/>
 					})}

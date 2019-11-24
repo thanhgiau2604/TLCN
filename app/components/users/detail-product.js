@@ -14,7 +14,7 @@ class DetailProduct extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            product:{}
+            product:{image: {image1:""}}
         }
         this.addToCart = this.addToCart.bind(this);
     }
@@ -39,9 +39,9 @@ class DetailProduct extends React.Component{
                 <div class="tab-content">
                     <div class="tab-pane active" id="thumbnail_1">
                         <div class="single-product-image">
-                            <img src={this.state.product.image} alt="single-product-image" />
+                            <img src={this.state.product.image.image1} alt="single-product-image" />
                             <a class="new-mark-box" href="#">new</a>
-                            <a class="fancybox" href={this.state.product.image} data-fancybox-group="gallery"><span class="btn large-btn">Phóng to <i class="fa fa-search-plus"></i></span></a>
+                            <a class="fancybox" href={this.state.product.image.image1} data-fancybox-group="gallery"><span class="btn large-btn">Phóng to <i class="fa fa-search-plus"></i></span></a>
                         </div>	
                     </div>
                     <div class="tab-pane" id="thumbnail_2">
@@ -250,6 +250,7 @@ class HistoryProduct extends React.Component{
         $.post("/updateProductHistory",{email:localStorage.getItem('email'),idproduct:idproduct},function(data){
             if (data){
                 var arrView = data.slice(0,5);
+                console.log(arrView);
                 that.setState({listHistory:arrView});
             }
         })
@@ -260,7 +261,7 @@ class HistoryProduct extends React.Component{
             <h2 class="left-title">SẢN PHẨM ĐÃ XEM</h2>
             <ul>
                 {this.state.listHistory.map(function(pro,index){
-                    return <SingleHistory key={index} id={pro._id} name={pro.name} image={pro.image}
+                    return <SingleHistory key={index} id={pro._id} name={pro.name} image={pro.image.image1}
                     description={pro.description} />
                 })}
             </ul>
@@ -317,6 +318,7 @@ class RelatedProduct extends React.Component{
     componentDidMount(){
         var that = this;
         $.post("/getProductRelate",{idproduct:localStorage.getItem('curproduct')},function(data){
+            console.log(data);
             that.setState({listRelate:data});
         })
     } 
@@ -333,7 +335,7 @@ class RelatedProduct extends React.Component{
                     <div class="related-product">
                         {this.state.listRelate.map(function(pro,index){
                             return <SingleRelate key={index} id={pro._id}
-                            name={pro.name} image={pro.image} cost={pro.cost}/>
+                            name={pro.name} image={pro.image.image1} cost={pro.cost}/>
                         })}																				
                     </div>
                 </div>	

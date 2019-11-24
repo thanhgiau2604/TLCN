@@ -13,7 +13,7 @@ class Users extends React.Component {
   }
   editUser(){
     user = this;
-    main.setState({edit:true});
+    main.setState({edit:true, add:false});
   }
   deleteUser(){
     var that = this;
@@ -190,7 +190,7 @@ class ManageUsers extends React.Component{
       this.setState({curpage:value});
     }
     handleAddUser(){
-      this.setState({add:true});
+      this.setState({add:true, edit:false});
     }
     render(){
       var Edit,Add;

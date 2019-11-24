@@ -51,7 +51,7 @@ class TableOrder extends React.Component{
         <tbody>
           {this.state.listorder.map(function(order,index){
               return <RowOrder key={index} name={order.product.name}
-            image ={order.product.image} status={order.status} stt={index+1}/>
+            image ={order.product.image.image1} status={order.status} stt={index+1}/>
           })}
         </tbody>
       </table>)
@@ -104,7 +104,7 @@ class ListHistory extends React.Component{
             Xóa lịch sử xem sản phẩm</button>
         <div style={{paddingTop:'20px'}}>  
         {this.state.listHis.map(function(pro,index){
-            return <ItemHistory key={index} name={pro.name} image = {pro.image} />
+            return <ItemHistory key={index} name={pro.name} image = {pro.image.image1} />
         })}   
         </div>                                           
     </div> )

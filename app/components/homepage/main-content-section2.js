@@ -81,7 +81,7 @@ class Sneaker extends React.Component {
 					<div className="feartured-carousel">
 						{this.state.listSneaker.map(function(sneaker,index){
 							return <Product1 key={index} name={sneaker.name} cost={sneaker.cost}
-							image={sneaker.image} id={sneaker._id}/>
+							image={sneaker.image.image1} id={sneaker._id}/>
 						})}												
 					</div>
 				</div>
@@ -115,7 +115,7 @@ class Sports extends React.Component {
 					<div className="feartured-carousel">									
 				       {this.state.listSport.map(function(sport,index){
 						   return <Product1 key={index} name={sport.name} cost={sport.cost}
-						   image={sport.image} id={sport._id}/>
+						   image={sport.image.image1} id={sport._id}/>
 					   })}			
 					</div>					
 				</div>
@@ -149,7 +149,7 @@ class Pumps extends React.Component {
 					<div className="feartured-carousel">
 						{this.state.listPumps.map(function(pumps,index){
 							return <Product1 key={index} name={pumps.name} cost={pumps.cost}
-							image={pumps.image} id={pumps._id}/>
+							image={pumps.image.image1} id={pumps._id}/>
 						})}																								
 					</div>		
 				</div>
@@ -182,7 +182,7 @@ class Kids extends React.Component{
 					<div className="feartured-carousel">	
 					{this.state.listKids.map(function(kid,index){
 						return <Product1 key={index} name={kid.name} cost={kid.cost}
-						image={kid.image} id={kid._id}/>
+						image={kid.image.image1} id={kid._id}/>
 					})}												
 					</div>							
 				</div>

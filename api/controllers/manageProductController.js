@@ -64,6 +64,22 @@ module.exports = function(app){
         })
     });
 
+    app.post("/updateProduct",parser,(req,res)=>{
+        const id = req.body.id;
+        const name = req.body.name;
+        const cost = req.body.cost;
+        const shipcost = req.body.shipcost;
+        const description =req.body.description;
+        const sizes = JSON.parse(req.body.sizes);
+        Product.update({_id:id},{$set:{name:name,cost:cost,shipcost:shipcost,description:description,
+        sizes:sizes}},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                getProducts(res);
+            }
+        })
+    })
     app.post("/deleteProduct",parser,(req,res)=>{
         const id = req.body.id;
         Product.remove({_id:id},function(err,data){

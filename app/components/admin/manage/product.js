@@ -16,8 +16,7 @@ class Products extends React.Component {
     this.confirmDelete = this.confirmDelete.bind(this);
   }
   updateProduct(){
-    console.log("vào");
-    curEditProduct.setState({product:this.props.product});
+    curEditProduct.setState({product:this.props.product,updateSuccess:0,curSizes:this.props.product.sizes.length});
   }
   deleteProduct(){
     localStorage.setItem("curDelete",this.props.product._id);
@@ -45,7 +44,7 @@ class Products extends React.Component {
       <td>{this.props.stt}</td>
       <td>{this.props.product._id}</td>
       <td>{this.props.product.name}</td>
-      <td><img src={this.props.product.image} style={{ width: '120px' }} />
+      <td><img src={this.props.product.image.image1} style={{ width: '120px' }} />
       </td>
       <td>{this.props.product.cost}</td>
       <td>{this.props.product.shipcost}</td>
@@ -88,7 +87,7 @@ class Products extends React.Component {
     </tr>)
   }
 }
-var image={};
+var image1={},image2={},image3={};
 var classNewProduct;
 class NewProduct extends React.Component {
   constructor(props) {
@@ -99,14 +98,22 @@ class NewProduct extends React.Component {
     }
     this.AddSize = this.AddSize.bind(this);
     this.submitForm = this.submitForm.bind(this);
-    this.ChangeImage = this.ChangeImage.bind(this);
+    this.ChangeImage1 = this.ChangeImage1.bind(this);
+    this.ChangeImage2 = this.ChangeImage2.bind(this);
+    this.ChangeImage3 = this.ChangeImage3.bind(this);
     this.AddToDatabase = this.AddToDatabase.bind(this);
   }
   AddSize() {
     this.setState({ curSizes: this.state.curSizes + 1 });
   }
-  ChangeImage(e){
-    image = e.target.files[0];
+  ChangeImage1(e){
+    image1 = e.target.files[0];
+  }
+  ChangeImage2(e){
+    image2 = e.target.files[0];
+  }
+  ChangeImage3(e){
+    image3 = e.target.files[0];
   }
   AddToDatabase(product){
     var that = this;
@@ -153,7 +160,7 @@ class NewProduct extends React.Component {
       quanty: 0,
       cost: this.refs.cost.value,
       shipcost: this.refs.shipcost.value,
-      image: "",
+      image: {image1:"",image2:"",image3:""},
       description: this.refs.description.value,
       sizes: sizes,
       votes: {
@@ -168,22 +175,57 @@ class NewProduct extends React.Component {
     //upload image
     let imageFormObj = new FormData();
     imageFormObj.append("imageName","multer-image"+Date.now());
-    imageFormObj.append("imageData",image);
+    imageFormObj.append("imageData",image1);
     $.ajax({
       type: "POST",
-      url:"/upload",
+      url: "/upload",
       data: imageFormObj,
       processData: false,
       contentType: false,
-      success: function (data) {       
-        newP.image = "img/product/" + data;
-        classNewProduct.AddToDatabase(newP);
+      success: function (data) {
+        newP.image.image1 = "img/product/" + data;
+        let imageFormObj = new FormData();
+        imageFormObj.append("imageName", "multer-image" + Date.now());
+        imageFormObj.append("imageData", image2);
+        $.ajax({
+          type: "POST",
+          url: "/upload",
+          data: imageFormObj,
+          processData: false,
+          contentType: false,
+          success: function (data) {
+            newP.image.image2 = "img/product/" + data;
+            let imageFormObj = new FormData();
+            imageFormObj.append("imageName", "multer-image" + Date.now());
+            imageFormObj.append("imageData", image3);
+            $.ajax({
+              type: "POST",
+              url: "/upload",
+              data: imageFormObj,
+              processData: false,
+              contentType: false,
+              success: function (data) {
+                newP.image.image3 = "img/product/" + data;
+                classNewProduct.AddToDatabase(newP);
+              },
+              fail: function (err) {
+                alert(err);
+              }
+            })
+          },
+          fail: function (err) {
+            alert(err);
+          }
+        })
       },
       fail: function (err) {
         alert(err);
       }
-  })
+    })
     e.preventDefault();
+  }
+  componentDidMount(){
+    this.setState({addSuccess:0})
   }
   render() {
     var arrSizes = [];
@@ -253,12 +295,20 @@ class NewProduct extends React.Component {
             </div>
             <div className="row" style={{ marginTop: "10px" }}>
               <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <label>Image:</label>
-                <input type="file" className="form-control" ref="image" onChange={(e) => this.ChangeImage(e)}/>
+                <label>Image 1:</label>
+                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)}/>
               </div>
-              <br />
-              <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-                <button className="btn btn-success">Add image</button>
+            </div>
+            <div className="row" style={{ marginTop: "10px" }}>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <label>Image 2:</label>
+                <input type="file" className="form-control" ref="image2" onChange={(e) => this.ChangeImage2(e)}/>
+              </div>
+            </div>
+            <div className="row" style={{ marginTop: "10px" }}>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <label>Image 3:</label>
+                <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)}/>
               </div>
             </div>
           </div>
@@ -273,49 +323,60 @@ class NewProduct extends React.Component {
   }
 }
 
-
-class OneSize extends React.Component {
-  constructor(props){
-    super(props);
-  }
-  render(){
-    return(<div className="row">
-    <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-      <label>Size:</label>
-      <input type="text" className="form-control" placeholder="Enter size" defaultValue={this.props.defaultSize}  />
-    </div>
-    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-      <label>Color:Quanty</label>
-      <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." 
-      defaultValue={this.props.defaultColor}/>
-    </div>
-    <br />
-  </div>)
-  }
-}
 class UpdateProduct extends React.Component{
   constructor(props) {
     super(props);
     this.AddSize = this.AddSize.bind(this);
+    this.RemoveSize = this.RemoveSize.bind(this);
     this.submitForm = this.submitForm.bind(this);
     this.ChangeImage = this.ChangeImage.bind(this);
     this.state = {
-      product:""
+      product:"",
+      updateSuccess:0,
+      curSizes: 0
     }
     curEditProduct = this;
-    this._handleChange = this._handleChange.bind(this);
   }
   AddSize(){
-
+    this.setState({curSizes:this.state.curSizes+1})
+  }
+  RemoveSize(){
+    this.setState({curSizes:this.state.curSizes-1})
   }
   submitForm(){
-
+    const name = this.refs.name.value;
+    const cost = this.refs.cost.value;
+    const shipcost = this.refs.shipcost.value;
+    const description = this.refs.description.value;
+    var sizes = [];
+    for (var i=1; i<=this.state.curSizes; i++){
+      const strSize = this.refs["size"+i].value;
+      const strColor = this.refs["color"+i].value;
+      var size = {};
+      size.size = parseInt(strSize);
+      var colors = [];
+      const arrColorQuanty = strColor.split(",");
+      arrColorQuanty.forEach(element => {
+           var ColorQuanty = element.split(":");
+           var color = {
+             color:ColorQuanty[0],
+             quanty:parseInt(ColorQuanty[1])
+           }
+           colors.push(color);
+      });
+      size.colors = colors;
+      sizes.push(size);
+    }
+    var that = this;
+    $.post("/updateProduct",{id:that.state.product._id,name:name,cost:cost,
+      shipcost:shipcost,description:description,sizes:JSON.stringify(sizes)},function(data){
+        if (data.success==1){
+          main.setState({listProduct:data.lProduct});
+          that.setState({updateSuccess:1});
+        }
+      })
   }
   ChangeImage(){
-
-  }
-  _handleChange(e){
-    this.setState({value: e.target.value});
   }
   render(){
     var arrHtmlSizes= new Array();
@@ -323,25 +384,47 @@ class UpdateProduct extends React.Component{
       var arrSizes = [];
       arrSizes = this.state.product.sizes;
       for (var i = 1; i <= arrSizes.length; i++) {
+        if (i>this.state.curSizes) break;
         var strColorQuanty="";
         arrSizes[i-1].colors.forEach(color => {
           strColorQuanty+=color.color+":"+color.quanty+",";
         });  
         strColorQuanty = strColorQuanty.slice(0,-1);
-        // var htmlSize = (<div className="row">
-        //   <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-        //     <label>Size:</label>
-        //     <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} value={arrSizes[i - 1].size} onChange={this._handleChange}  />
-        //   </div>
-        //   <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-        //     <label>Color:Quanty</label>
-        //     <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." 
-        //     ref={"color" + i} value={strColorQuanty}/>
-        //   </div>
-        //   <br />
-        // </div>);
-        arrHtmlSizes.push(<OneSize defaultSize={this.state.product.sizes[i-1].size} defaultColor={strColorQuanty}/>);
+        var htmlSize = (<div className="row">
+          <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <label>Size:</label>
+            <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} defaultValue={arrSizes[i - 1].size}/>
+          </div>
+          <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <label>Color:Quanty</label>
+            <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." 
+            ref={"color" + i} defaultValue={strColorQuanty}/>
+          </div>
+          <br />
+        </div>);
+        arrHtmlSizes.push(htmlSize);
       }
+      for (var i=arrSizes.length+1; i<=this.state.curSizes; i++){
+        var htmlSize = (<div className="row">
+          <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <label>Size:</label>
+            <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i}/>
+          </div>
+          <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <label>Color:Quanty</label>
+            <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." ref={"color" + i}/>
+          </div>
+          <br />
+        </div>);
+        arrHtmlSizes.push(htmlSize);
+      }
+      var notifyUpdateSuccess = <div></div>
+    if (this.state.updateSuccess==1){
+    notifyUpdateSuccess = 
+      <div class="alert alert-success">
+        <strong>Update Product Successfully!</strong>
+      </div>
+    }
     }
     return(<div className="modal fade right " id="modalUpdateProduct" role="dialog" aria-labelledby="myModalLabel"
     aria-hidden="true">
@@ -356,34 +439,38 @@ class UpdateProduct extends React.Component{
         <div className="modal-body">
           <div className="row">
             <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-              <div className="form-group">
+              <div className="form-group" key={this.state.product._id}>
                 <label>Product Name:</label>
                 <input type="text" className="form-control" placeholder="Enter name" ref="name" defaultValue={this.state.product.name}/>
               </div>
             </div>
             <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-              <div className="form-group">
+              <div className="form-group" key={this.state.product._id}>
                 <label>Cost(VND):</label>
                 <input type="text" className="form-control" placeholder="Enter cost" ref="cost" defaultValue={this.state.product.cost}/>
               </div>
             </div>
             <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-              <div className="form-group">
+              <div className="form-group" key={this.state.product._id}>
                 <label>Ship Cost(VND):</label>
                 <input type="text" className="form-control" placeholder="Enter shipcost" ref="shipcost" defaultValue={this.state.product.shipcost} />
               </div>
             </div>
           </div>
           <div className="row">
-            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"  key={this.state.product._id}>
               <label>Description:</label> <br />
               <textarea rows="5" style={{ width: "100%" }} ref="description" defaultValue={this.state.product.description}></textarea>
             </div>
           </div>
+          <div key={this.state.product._id}>
           {arrHtmlSizes}
+          </div>
+          
           <div className="row" style={{ marginTop: "10px" }}>
             <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
               <button className="btn btn-success" onClick={this.AddSize}>Add size</button>
+              <button className="btn btn-danger" onClick={this.RemoveSize}>Remove size</button>
             </div>
           </div>
           <div className="row" style={{ marginTop: "10px" }}>
@@ -397,6 +484,7 @@ class UpdateProduct extends React.Component{
             </div>
           </div>
         </div>
+        {notifyUpdateSuccess}
         <div className="modal-footer justify-content-center">
           <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
           <button type="button" className="btn btn-danger" type="submit" onClick={this.submitForm}>Save</button>
@@ -441,6 +529,7 @@ class ManageProducts extends React.Component {
         }
       }
     }
+    console.log(lCurProduct);
     return (<div id='content'>
       <div class='panel panel-default grid'>
         <div class='panel-heading'>

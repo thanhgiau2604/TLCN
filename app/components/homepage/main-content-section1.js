@@ -99,7 +99,8 @@ class PopularProduct extends React.Component{
 	}
 	componentDidMount(){
 		var that = this;
-		$.get("/getPopular",function(data){			
+		$.get("/getPopular",function(data){
+			console.log(data);			
 			 that.setState({listPoplular:data});			 		
 		})
 	}
@@ -119,7 +120,7 @@ class PopularProduct extends React.Component{
 						<div className="item">
 							{this.state.listPoplular.map(function (product, index) {
 								return <Product1 key={index} id={product._id}
-									name={product.name} image={product.image} cost={product.cost}/>
+									name={product.name} image={product.image.image1} cost={product.cost}/>
 							})}
 						</div>
 					</div>
@@ -155,7 +156,7 @@ class NewProduct extends React.Component{
 							<div className="home2-sale-carousel">
 								{this.state.listNew.map(function(product,index){
 									return <Product2 key={index} id={product._id}
-									name={product.name} image={product.image} 
+									name={product.name} image={product.image.image1} 
 									curcost={product.cost} desc="NEW"/>
 								})}
 							</div>
@@ -188,7 +189,7 @@ class SaleProduct extends React.Component {
 				<div className="home2-sale-carousel">					
 						{this.state.listSale.map(function (product, index) {
 							return <Product2 key={index} id={product._id}
-								name={product.name} image={product.image} 
+								name={product.name} image={product.image.image1} 
 								curcost={product.cost} desc="SALE" oldcost={product.oldcost}/>
 						})}											
 				</div>										

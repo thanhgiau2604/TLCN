@@ -20,39 +20,22 @@ module.exports = function(app){
     // })
 
     app.get("/getPopular",(req,res)=>{
-        ProductCategory.find({name:"PopularProduct"},function(err,data){
-           // res.json(data[0]);
-            var arrPopular = new Array();
-            var count = data[0].listProduct.length;
-            var index = 0;
-            data[0].listProduct.forEach(p=> {
-                Product.findOne({_id:p._id},function(err,da){
-                    index++;
-                    arrPopular.push(da);
-                    if (index==count)
-                    res.json(arrPopular);
-                })
-            });
+        Product.find({}).sort({views:"descending"}).exec(function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.json(data.slice(0,4));
+            }
         })
     })
     app.get("/getNew",(req,res)=>{
-        ProductCategory.find({name:"NewProduct"},function(err,data){
-            // res.json(data[0]);
-             var arrPopular = new Array();
-             var count = data[0].listProduct.length;
-             var index = 0;
-             data[0].listProduct.forEach(p=> {
-                 Product.findOne({_id:p._id},function(err,da){
-                     index++;
-                     arrPopular.push(da);
-                     if (index==count)
-                     {
-                       
-                     res.json(arrPopular);
-                     }
-                 })
-             });
-         })
+        Product.find({}).sort({createat:"descending"}).exec(function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.json(data.slice(0,4));
+            }
+        })
     })
     app.get("/getSale",(req,res)=>{
         ProductCategory.find({name:"SaleProduct"},function(err,data){

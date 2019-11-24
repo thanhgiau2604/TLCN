@@ -7,7 +7,7 @@ const ProductSchema = new Schema({
     cost: Number,
     oldcost:Number,
     shipcost: Number,
-    image: String,
+    image: {image1:String, image2:String, image3:String},
     description: String,
     sizes: [{
         size: Number,
@@ -29,7 +29,9 @@ const ProductSchema = new Schema({
         content: String,
         date: Date
     }],
-    category: Schema.Types.ObjectId
+    category: Schema.Types.ObjectId,
+    createat: Number,
+    views: Number
 });
 
 module.exports = mongoose.model('products',ProductSchema);

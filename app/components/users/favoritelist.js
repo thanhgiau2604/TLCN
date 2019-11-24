@@ -101,7 +101,7 @@ class ListItems extends React.Component{
     render(){
         return( <div className="row">
         	{this.state.listFav.map(function(item,index){
-                return <Item id={item._id} name={item.name} image={item.image}/>
+                return <Item id={item._id} name={item.name} image={item.image.image1}/>
             })}						
         </div>)
     }
