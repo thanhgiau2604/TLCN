@@ -304,7 +304,7 @@ ReactDOM.render(
     <div>
         <Navbar/>
         <div id="wrapper">
-            <Sidebar/>
+            <Sidebar active={2}/>
             <Tool/>
             <ManageUsers/>
         </div>

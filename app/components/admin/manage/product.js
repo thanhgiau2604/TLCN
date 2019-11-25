@@ -626,7 +626,7 @@ ReactDOM.render(
   <div>
     <Navbar />
     <div id="wrapper">
-      <Sidebar />
+      <Sidebar active={4}/>
       <Tool />
       <ManageProducts />
     </div>

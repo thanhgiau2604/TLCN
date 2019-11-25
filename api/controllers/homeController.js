@@ -38,7 +38,7 @@ module.exports = function(app){
         })
     })
     app.get("/getSale",(req,res)=>{
-        ProductCategory.find({name:"SaleProduct"},function(err,data){
+        ProductCategory.find({name:"Sale Product"},function(err,data){
             // res.json(data[0]);
              var arrSale = new Array();
              var count = data[0].listProduct.length;
@@ -170,7 +170,7 @@ module.exports = function(app){
     });
 
     app.get("/getSneaker",(req,res)=>{
-        ProductCategory.find({name:"SneakerProduct"},function(err,data){
+        ProductCategory.find({name:"Sneaker Product"},function(err,data){
             // res.json(data[0]);
              var arr = new Array();
              var count = data[0].listProduct.length;
@@ -187,7 +187,7 @@ module.exports = function(app){
     });
 
     app.get("/getSport",(req,res)=>{
-        ProductCategory.find({name:"SportProduct"},function(err,data){
+        ProductCategory.find({name:"Sport Product"},function(err,data){
             // res.json(data[0]);
              var arr = new Array();
              var count = data[0].listProduct.length;
@@ -204,7 +204,7 @@ module.exports = function(app){
     });
 
     app.get("/getPump",(req,res)=>{
-        ProductCategory.find({name:"PumpProduct"},function(err,data){
+        ProductCategory.find({name:"Pump Product"},function(err,data){
             // res.json(data[0]);
              var arr = new Array();
              var count = data[0].listProduct.length;
@@ -221,7 +221,7 @@ module.exports = function(app){
     });
 
     app.get("/getKid",(req,res)=>{
-        ProductCategory.find({name:"KidProduct"},function(err,data){
+        ProductCategory.find({name:"Kid Product"},function(err,data){
             // res.json(data[0]);
              var arr = new Array();
              var count = data[0].listProduct.length;

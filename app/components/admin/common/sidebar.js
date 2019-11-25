@@ -5,48 +5,37 @@ class Sidebar extends React.Component{
         super(props);
     }
     render(){
+        var value = this.props.active;
+        console.log(value);
+        var str = "launcher";
+        var classValue1 = str, classValue2 =str, classValue3 = str, classValue4 = str;
+        if (value==1){
+          classValue1 = "active "+str;
+        } else if (value==2){
+          classValue2 = "active "+str;
+        } else if (value==3){
+          classValue3 = "active "+str;
+        } else if (value==4){
+          classValue4 = "active "+str;
+        }
         return(<section id='sidebar'>
         <i class='icon-align-justify icon-large' id='toggle'></i>
         <ul id='dock'>
-          <li class='active launcher'>
+          <li class={classValue1}>
             <i class='icon-dashboard'></i>
             <a href="/dashboard">Dashboard</a>
           </li>
-          <li class='launcher'>
+          <li class={classValue2}>
             <i class='icon-user'></i>
             <a href="/manageuser">Users</a>
           </li>
-          <li class='launcher'>
+          <li class={classValue3}>
             <i class='icon-list-ul'></i>
             <a href='/manageCategory'>Categorys</a>
           </li>
-          <li class='launcher'>
+          <li class={classValue4}>
             <i class='icon-archive'></i>
             <a href='/manageproduct'>Products</a>
-          </li>
-          <li class='launcher'>
-            <i class='icon-bar-chart'></i>
-            <a href='#'>Analytic</a>
-          </li>
-          <li class='launcher dropdown hover'>
-            <i class='icon-flag'></i>
-            <a href='#'>Reports</a>
-            <ul class='dropdown-menu'>
-              <li class='dropdown-header'>Launcher description</li>
-              <li>
-                <a href='#'>Action</a>
-              </li>
-              <li>
-                <a href='#'>Another action</a>
-              </li>
-              <li>
-                <a href='#'>Something else here</a>
-              </li>
-            </ul>
-          </li>
-          <li class='launcher'>
-            <i class='icon-file-text-alt'></i>
-            <a href="forms.html">Forms</a>
           </li>
         </ul>
         <div data-toggle='tooltip' id='beaker' title='Made by lab2023'></div>
