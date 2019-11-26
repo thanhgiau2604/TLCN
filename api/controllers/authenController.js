@@ -87,8 +87,7 @@ module.exports = function(app){
 
     apiRouter.use(function(req,res,next){
         console.log("Dang lam tren app");
-        // var token = req.headers['x-access-token']; 
-        var token = tokenuser;
+        var token = req.query.token;
         if (token){
             jwt.verify(token,superSecret,function(err,decoded){
                 if (err){
@@ -107,7 +106,7 @@ module.exports = function(app){
     });
 
     apiRouter.get("/",(req,res)=>{
-        res.json({message:'Vi du dau tien ve API'});
+        res.send({success:1});
     });
 
     app.use("/api",apiRouter);

@@ -22,13 +22,7 @@ class LoginForm extends React.Component{
 				console.log(data);
 				localStorage.setItem("username",data.username);
 				localStorage.setItem("email",data.email);
-				localStorage.setItem("token",data.token);
-				$.ajaxSetup({
-					headers:{
-						'x-access-token': data.token
-					}
-				})
-				window.location.assign("/");
+				$.get("/api",{token:data.token});
 			}
 		})		
 		e.preventDefault();

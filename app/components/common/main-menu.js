@@ -39,12 +39,16 @@ class Cart extends React.Component{
 		})
 	}
 	render(){
-		var sum =0;
+		var sum =0,maxShip=0;
 		if (main.props.cart){
 			main.props.cart.forEach(e => {
 				sum+=e.product.cost;
+				if (e.product.shipcost > maxShip){
+					maxShip = e.product.shipcost;
+				}
 			});
 		}
+		sum+=maxShip;
 		return(<div className="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea ">
 		<div className="shopping-cart-out pull-right">
 			<div className="shopping-cart">
@@ -61,7 +65,7 @@ class Cart extends React.Component{
 					})}
 					<div className="shipping-total-bill">
 						<div className="cart-prices">
-							<span className="shipping-cost">$2.00</span>
+							<span className="shipping-cost">{maxShip}đ</span>
 							<span>Phí Ship</span>
 						</div>
 						<div className="total-shipping-prices">
