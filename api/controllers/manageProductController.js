@@ -50,9 +50,29 @@ module.exports = function(app){
         fileFilter: fileFilter
     })
 
+    const storageImageCategory = multer.diskStorage({
+        destination: (req, file, cb) => cb(null, "./public/img/banner"),
+        filename: (req, file, cb) => {
+            nameImage = Date.now() + file.originalname;
+            cb(null, nameImage);
+        }
+    });
+
+    const uploadImageCategory = multer({
+        storage: storageImageCategory,
+        limits: {
+            fileSize: 1024 * 1024 * 5
+        },
+        fileFilter: fileFilter
+    })
+
     app.post("/upload", upload.single("imageData"), (req, res, next) => {
         res.send(nameImage);
     });
+
+    app.post("/uploadImageCategory",uploadImageCategory.single("imageData"),(req,res,next) => {
+        res.send(nameImage);
+    })
     app.post("/addNewProduct",parser,(req,res)=>{
         var product = new Product(JSON.parse(req.body.product));
         product.save(function(err,data){

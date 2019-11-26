@@ -7,9 +7,7 @@ class Tool extends React.Component{
     render(){
         return(<section id='tools'>
         <ul class='breadcrumb' id='breadcrumb'>
-          <li class='title'>Dashboard</li>
-          <li><a href="#">Lorem</a></li>
-          <li class='active'><a href="#">ipsum</a></li>
+          <li class='title'>{this.props.curpage}</li>
         </ul>
         <div id='toolbar'>
           <div class='btn-group'>
@@ -26,12 +24,6 @@ class Tool extends React.Component{
             <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Lemon'>
               <i class='icon-lemon'></i>
             </a>
-          </div>
-          <div class='label label-danger'>
-            Danger
-          </div>
-          <div class='label label-info'>
-            Info
           </div>
         </div>
       </section>)

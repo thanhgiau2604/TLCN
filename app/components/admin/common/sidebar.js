@@ -31,7 +31,7 @@ class Sidebar extends React.Component{
           </li>
           <li class={classValue3}>
             <i class='icon-list-ul'></i>
-            <a href='/manageCategory'>Categorys</a>
+            <a href='/manageCategory'>Categories</a>
           </li>
           <li class={classValue4}>
             <i class='icon-archive'></i>

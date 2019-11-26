@@ -627,7 +627,7 @@ ReactDOM.render(
     <Navbar />
     <div id="wrapper">
       <Sidebar active={4}/>
-      <Tool />
+      <Tool curpage="Manage Products"/>
       <ManageProducts />
     </div>
   </div>, document.getElementById("manage-products")

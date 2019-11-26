@@ -305,7 +305,7 @@ ReactDOM.render(
         <Navbar/>
         <div id="wrapper">
             <Sidebar active={2}/>
-            <Tool/>
+            <Tool curpage="Manage Users"/>
             <ManageUsers/>
         </div>
     </div>,document.getElementById("manage-users")

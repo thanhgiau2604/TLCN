@@ -60,5 +60,50 @@ module.exports = function(app){
                 });
             }
         })
+    });
+
+    app.post("/deleteCategory",parser,(req,res)=>{
+        const id = req.body.id;
+        Category.remove({_id:id},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                getCategory(res);
+            }
+        })
+    });
+
+    app.post("/addNewCategory",parser,(req,res)=>{
+        var category = new Category(JSON.parse(req.body.category));
+        category.save(function(err,data){
+            if (err){
+                throw err;
+            } else {
+                getCategory(res);
+            }
+        })
+    });
+    app.post("/updateCategory",parser,(req,res)=>{
+        const cat = JSON.parse(req.body.category);
+        const id = cat.id;
+        const name = cat.name;
+        const quanty = cat.quanty;
+        const description = cat.description;
+        const listProduct = cat.listProduct;
+        const image = cat.image;
+        console.log(id);
+        console.log(name)
+        console.log(quanty)
+        console.log(description)
+        console.log(listProduct)
+        console.log(image)
+        Category.update({_id:id},{$set:{name:name,quanty:quanty,description:description,
+        listProduct:listProduct, image:image}},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                getCategory(res);
+            }
+        })
     })
 }

@@ -12,7 +12,7 @@ class Dashboard extends React.Component{
         <div class='panel panel-default'>
           <div class='panel-heading'>
             <i class='icon-beer icon-large'></i>
-            Hierapolis Rocks!
+            Dashboard!
             <div class='panel-tools'>
               <div class='btn-group'>
                 <a class='btn' href='#'>
@@ -61,7 +61,7 @@ ReactDOM.render(
         <Navbar/>
         <div id="wrapper">
             <Sidebar active={1}/>
-            <Tool/>
+            <Tool curpage="Dashboard"/>
             <Dashboard/>
         </div>
     </div>,document.getElementById("dashboard")
