@@ -6,6 +6,10 @@ const Product = require("../models/Product");
 
 function getCart(data,res){
     var arr = [];
+    if (data.cart.length==0) {
+        res.send(arr);
+        return;
+    }
     data.cart.forEach(pro => {
         Product.findOne({ _id: pro.idProduct }, function (err, da) {
             if (err) {
@@ -24,7 +28,7 @@ function getCart(data,res){
                 }
             }
         })
-    })
+    });
 }
 
 module.exports = function(app){

@@ -1,13 +1,9 @@
 import React from 'react'
-
+import $ from 'jquery'
 class OptionGuest extends React.Component {
 	render() {
 		return(<nav>
 			<ul className="list-inline">
-				<li><a href="cart.html">Thanh toán</a></li>
-				<li><a href="/listfavorite">DS yêu thích</a></li>
-				<li><a href="/manageaccount">Tài khoản</a></li>
-				<li><a href="cart.html">Giỏ hàng</a></li>
 				<li><a href="/signup">Đăng ký</a></li>
 				<li><a href="/login">Đăng nhập</a></li>
 			</ul>
@@ -37,10 +33,9 @@ class OptionUser extends React.Component {
 		return(<nav>
 			<ul className="list-inline">
 				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>({this.state.countmessage})</span></a></li>
-				<li><a href="cart.html">Thanh toán</a></li>
+				<li><a href="/checkout">Thanh toán</a></li>
 				<li><a href="/listfavorite">DS yêu thích</a></li>
 				<li><a href="/manageaccount">Tài khoản</a></li>
-				<li><a href="cart.html">Giỏ hàng</a></li>
 				<li><a onClick={this.logOut} style={{cursor:'pointer'}}>Đăng xuất</a></li>
 			</ul>
 		</nav>)
@@ -57,28 +52,36 @@ class HeaderTop extends React.Component {
 	constructor(props) {
 		super(props);
 		this.logOut = this.logOut.bind(this);
+		this.state = {
+			Option: "",
+			Welcome: ""
+		}
+	}
+	componentDidMount(){
+		var token = localStorage.getItem('token');
+		var that = this;
+		$.get("/api",{token:token},function(data){
+			if (data.success == 0) {
+				localStorage.removeItem('username');
+				localStorage.removeItem('email');
+				that.setState({Option:<OptionGuest/>})
+			} else {
+				that.setState({Option:<OptionUser/>,Welcome:<WelcomeUser/>})
+			}
+		})
 	}
 	logOut(){
 		localStorage.removeItem('username');
 		window.location.assign("/");
 	}
 	render() {
-		var username = localStorage.getItem("username");
-		console.log(username);
-		var Option="",Welcome="";
-		if (!username) {
-			Option = <OptionGuest/>;
-		} else {
-			Option = <OptionUser/>;
-			Welcome = <WelcomeUser/>;
-		}
 		return (
 			<div className="header-top">
 				<div className="container">
 					<div className="row">
 						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 							<div className="header-left-menu">
-								{Welcome}
+								{this.state.Welcome}
 								<ul className="languages-choose infor-toogle">
 									<li>
 										<a href="/orderhistory">
@@ -117,7 +120,7 @@ class HeaderTop extends React.Component {
 						</div>
 						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 							<div className="header-right-menu">
-								{Option}
+								{this.state.Option}
 							</div>
 						</div>
 						<div id="login" className="modal fade" role="dialog">

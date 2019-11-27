@@ -34,6 +34,9 @@ class Cart extends React.Component{
 	}
 	componentDidMount(){
 		$.post("/cart",{email:localStorage.getItem("email")},function(data){
+			if (!data){
+				data = [];
+			}
 			var {dispatch} = main.props;
         	dispatch({type:"UPDATE_PRODUCT",newcart:data});
 		})
@@ -74,7 +77,7 @@ class Cart extends React.Component{
 						</div>										
 					</div>
 					<div className="shipping-checkout-btn">
-						<a href="checkout.html">Thanh toán <i className="fa fa-chevron-right"></i></a>
+						<a href="/checkout">Thanh toán <i className="fa fa-chevron-right"></i></a>
 					</div>
 				</div>
 			</div>

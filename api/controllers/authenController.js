@@ -72,10 +72,10 @@ module.exports = function(app){
                         res.json({err:1,message:"Không đúng Email/SDT hoặc password"});
                     } else {
                         var token = jwt.sign({
-                            name: user.name,
-                            username: user.username
+                            name: user.lastName,
+                            email: user.email
                         },superSecret,{
-                            expiresIn:'24h'
+                            expiresIn: 60
                         });
                         tokenuser = token;
                         res.json({err:0,username:user.lastName,email:user.email, token:token});          
@@ -91,7 +91,7 @@ module.exports = function(app){
         if (token){
             jwt.verify(token,superSecret,function(err,decoded){
                 if (err){
-                    return res.json({success:false,message:'Failed to authenticate token'});
+                    return res.json({success:0,message:'Failed to authenticate token'});
                 } else {
                     req.decoded = decoded;
                     next();
@@ -99,8 +99,7 @@ module.exports = function(app){
             })
         } else {
             return res.status(403).send({
-                success:false,
-                message:'No token provided'
+                success:0
             })
         }
     });

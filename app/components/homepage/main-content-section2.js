@@ -30,7 +30,7 @@ class Product1 extends React.Component{
 								<li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-search"></i></a></li>
 								<li><a title="Thêm vào giỏ hàng" style={{ cursor: 'pointer' }} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
 								<li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-retweet"></i></a></li>
-								<li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-heart-o"></i></a></li>
+								<li><a title="Thêm vào favorite list" style={{ cursor: 'pointer' }}><i className="fa fa-heart-o"></i></a></li>
 							</ul>
 						</div>
 					</div>

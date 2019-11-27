@@ -6,19 +6,6 @@ const Product = require("../models/Product");
 const ObjectId = require('mongodb').ObjectId;
 const message = require("../models/message");
 module.exports = function(app){
-    // var today = new Date();
-    // var datetime = today.getDate()+"-"+(today.getMonth() + 1)+"-"+today.getFullYear() +" "
-    // +today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();; 
-    // var mess = {
-    //     index: Date.now().toString(),
-    //     content:"Giảm giá 30% ngày 6/11/2019 khi mua hàng trực tuyến trong khung giờ từ 17h-19h",
-    //     datetime: datetime,
-    //     sender: ObjectId("5dc1746095bff41c64fe4c51")
-    // }
-    // message.create(mess,function(err,data){
-    //     console.log(data);
-    // })
-
     app.get("/getPopular",(req,res)=>{
         Product.find({}).sort({views:"descending"}).exec(function(err,data){
             if (err){

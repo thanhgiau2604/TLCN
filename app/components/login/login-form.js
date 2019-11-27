@@ -22,7 +22,8 @@ class LoginForm extends React.Component{
 				console.log(data);
 				localStorage.setItem("username",data.username);
 				localStorage.setItem("email",data.email);
-				$.get("/api",{token:data.token});
+				localStorage.setItem('token',data.token);
+				window.location.replace("/");
 			}
 		})		
 		e.preventDefault();

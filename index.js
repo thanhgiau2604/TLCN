@@ -11,6 +11,7 @@ const productController = require("./api/controllers/productController");
 const categoryProductController = require("./api/controllers/categoryProductController");
 const manageProductController = require("./api/controllers/manageProductController");
 const manageCategoryController = require("./api/controllers/manageCategoryController");
+const checkoutController = require("./api/controllers/checkoutController");
 app.set("view engine","ejs");
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
@@ -37,7 +38,9 @@ productController(app);
 categoryProductController(app);
 manageProductController(app);
 manageCategoryController(app);
-app.use(express.static("public"));
+checkoutController(app);
+app.use("/", express.static(__dirname+"/public"));
+app.use(express.static(__dirname+"/public"));
 app.get("/login",(req,res)=> res.render("dangnhap"));
 app.get("/signup",(req,res)=> res.render("dangky"));
 app.get("/manageaccount",(req,res)=>res.render("quanlytaikhoan"));
