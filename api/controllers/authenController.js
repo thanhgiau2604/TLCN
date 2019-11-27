@@ -5,12 +5,10 @@ const passport = require("passport");
 const passportfb = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const express = require("express");
-const jwt = require("jsonwebtoken");
-module.exports = function(app){
-    var username="", email="";
+
+module.exports = function(app,apiRouter,jwt){
+    var username="", email="",token,role="";
     var superSecret = 'iamastudent';
-    var apiRouter = express.Router();
-    var tokenuser;
     app.get("/",(req,res)=> res.render("trangchu",{username:username}))
     app.post("/signup",parser,(req,res)=>{
         const firstName = req.body.firstname;
@@ -59,12 +57,11 @@ module.exports = function(app){
         User.findOne({$or:[
             {email:emailorphone},
             {numberPhone:emailorphone}
-        ]}).select("email firstName lastName numberPhone dateofBirth password").exec(function(err,user){
+        ]}).select("email firstName lastName numberPhone dateofBirth password role").exec(function(err,user){
             if (err){
                 res.send(err);
             } else {
                 if (!user){
-
                     res.json({err:1,message:"Không đúng Email/SDT hoặc password"});
                 } else {
                     var validPassword = user.comparePassword(password);
@@ -75,10 +72,9 @@ module.exports = function(app){
                             name: user.lastName,
                             email: user.email
                         },superSecret,{
-                            expiresIn: 60
+                            expiresIn: "24h"
                         });
-                        tokenuser = token;
-                        res.json({err:0,username:user.lastName,email:user.email, token:token});          
+                        res.json({err:0,username:user.lastName,email:user.email,token:token,role:user.role});          
                     }
                 }
             }
@@ -86,8 +82,8 @@ module.exports = function(app){
     });
 
     apiRouter.use(function(req,res,next){
-        console.log("Dang lam tren app");
-        var token = req.query.token;
+        var token = req.query.token || req.params.token;
+        console.log(token);
         if (token){
             jwt.verify(token,superSecret,function(err,decoded){
                 if (err){
@@ -107,9 +103,6 @@ module.exports = function(app){
     apiRouter.get("/",(req,res)=>{
         res.send({success:1});
     });
-
-    app.use("/api",apiRouter);
-
     app.get("/logout",(req,res)=>{
         res.render("dangnhap");
     });
@@ -131,11 +124,17 @@ module.exports = function(app){
             };
             username = user.lastName;
             email = user.email;
+            token = jwt.sign({
+                name: user.lastName,
+                email: user.email
+            },superSecret,{
+                expiresIn: "24h"
+            });
             return res.redirect("/redirect");
         })(req,res,next);
     });
     app.get("/success",function(req,res){
-        res.json({username:username,email:email});
+        res.json({username:username,email:email,token:token});
     })
     passport.use(new passportfb(
         {
@@ -160,6 +159,12 @@ module.exports = function(app){
                 }
                 username = newUser.lastName;
                 email = newUser.email;
+                token = jwt.sign({
+                    name: user.lastName,
+                    email: user.email
+                },superSecret,{
+                    expiresIn: "24h"
+                });
                 User.create(newUser, (err, user) => {
                     if (err) return done(err);
                     console.log("Da qua dc");

@@ -8,15 +8,14 @@ const message = require("../models/message");
 const express = require("express");
 const Order = require("../models/order");
 const sendmail = require("./mail");
+const jwt = require("jsonwebtoken");
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-module.exports = function(app){
-    // var apiRouter = express.Router();
-    app.get("/checkout",(req,res)=>{
+module.exports = function(app,apiRouter){
+    apiRouter.get("/checkout",(req,res)=>{
         res.render("checkout");
     })
-    // app.use("/user",apiRouter);
 
     app.post("/saveOrder",parser,(req,res)=>{
         const order = JSON.parse(req.body.order);

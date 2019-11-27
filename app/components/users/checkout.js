@@ -259,7 +259,7 @@ class Address extends React.Component {
                             <li class="step-current second">
                                 <span>02. Địa chỉ</span>
                             </li>
-                            <li class="step-todo third step-done">
+                            <li class="step-todo third">
                                 <span>03. Xác nhận</span>
                             </li>
                             <li class="step-todo last" id="step_end">

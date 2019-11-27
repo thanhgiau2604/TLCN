@@ -2,7 +2,7 @@ const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({extended:false});
 const User = require("../models/users");
 const Message = require("../models/message");
-module.exports = function(app){
+module.exports = function(app,apiRouter){
     app.post("/getInforUser",parser,(req,res)=>{
         var email = req.body.email;
         User.findOne({email:email},function(err,data){
@@ -31,7 +31,7 @@ module.exports = function(app){
             });  
         })
     });
-    app.get("/changepassword",(req,res)=>{
+    apiRouter.get("/changepassword",(req,res)=>{
         res.render("doimatkhau");
     });
     app.post("/changepassword",parser,(req,res)=>{
@@ -83,5 +83,9 @@ module.exports = function(app){
                 res.json(data);
             }
         })
-    })
+    });
+
+
+    apiRouter.get("/manageaccount",(req,res)=>res.render("quanlytaikhoan"));
+    apiRouter.get("/personalinfor",(req,res)=> res.render("thongtincanhan"));
 }

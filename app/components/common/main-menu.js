@@ -31,15 +31,26 @@ class Product extends React.Component{
 class Cart extends React.Component{
 	constructor(props){
 		super(props);
+		this.handleCheckout = this.handleCheckout.bind(this);
 	}
 	componentDidMount(){
-		$.post("/cart",{email:localStorage.getItem("email")},function(data){
-			if (!data){
-				data = [];
-			}
-			var {dispatch} = main.props;
-        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
-		})
+		const email = localStorage.getItem("email");
+		var {dispatch} = main.props;
+		if (!email){
+        	dispatch({type:"UPDATE_PRODUCT",newcart:[]});
+		} else {
+			$.post("/cart",{email:localStorage.getItem("email")},function(data){
+				if (!data){
+					data = [];
+				} else {
+					dispatch({type:"UPDATE_PRODUCT",newcart:data});
+				}
+			})
+		}
+	}
+	handleCheckout(){
+		const token = localStorage.getItem('token');
+		window.location.assign("/api/checkout/?token="+token);
 	}
 	render(){
 		var sum =0,maxShip=0;
@@ -77,7 +88,7 @@ class Cart extends React.Component{
 						</div>										
 					</div>
 					<div className="shipping-checkout-btn">
-						<a href="/checkout">Thanh toán <i className="fa fa-chevron-right"></i></a>
+						<a onClick={this.handleCheckout}>Thanh toán <i className="fa fa-chevron-right"></i></a>
 					</div>
 				</div>
 			</div>
@@ -100,8 +111,7 @@ class MainMenu extends React.Component{
 						<div className="mainmenu">
 							<nav className="">
 								<ul className="list-inline mega-menu">
-									<li className="active"><a href="/">Trang chủ</a>
-										
+									<li className="active"><a href="/">Trang chủ</a>										
 									</li>
 									<li>
 										<a href="shop-gird.html">Giày nam</a>
@@ -111,7 +121,6 @@ class MainMenu extends React.Component{
 									</li>
 									<li>
 										<a href="shop-gird.html">Trẻ em</a>
-
 									</li>
 									<li>
 										<a href="shop-gird.html">Phổ biến</a>

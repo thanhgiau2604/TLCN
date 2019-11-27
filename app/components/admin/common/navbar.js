@@ -1,13 +1,27 @@
 import React from 'react'
-
+import $ from 'jquery'
 class Navbar extends React.Component{
     constructor(props){
         super(props);
+        this.handleSignOut = this.handleSignOut.bind(this);
+    }
+    componentDidMount(){
+        var token = localStorage.getItem('tokenad');
+        if (!token)
+        {
+            window.location.assign('/login');
+        }
+    }
+    handleSignOut(){
+        localStorage.removeItem('usernamead');
+        localStorage.removeItem('emailad');
+        localStorage.removeItem('tokenad');
+        window.location.assign("/login");
     }
     render(){
         return (<div class='navbar navbar-default' id='navbar'>
             <a class='navbar-brand' href='#'>
-                <img src="assets/images/logo2.png" />
+                <img src="/assets/images/logo2.png" />
             </a>
             <ul class='nav navbar-nav pull-right'>
                 <li class='dropdown'>
@@ -41,7 +55,7 @@ class Navbar extends React.Component{
                 <li class='dropdown user'>
                     <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
                         <i class='icon-user'></i>
-                        <strong>John DOE</strong>
+                        <strong>{localStorage.getItem('usernamead')}</strong>
                         <img class="img-rounded" src="http://placehold.it/20x20/ccc/777" />
                         <b class='caret'></b>
                     </a>
@@ -51,7 +65,7 @@ class Navbar extends React.Component{
                         </li>
                         <li class='divider'></li>
                         <li>
-                            <a href="/">Sign out</a>
+                            <a onClick={this.handleSignOut} style={{cursor:'pointer'}}>Sign out</a>
                         </li>
                     </ul>
                 </li>

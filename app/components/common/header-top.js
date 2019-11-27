@@ -1,6 +1,10 @@
 import React from 'react'
 import $ from 'jquery'
+var main;
 class OptionGuest extends React.Component {
+	constructor(props){
+		super(props);
+	}
 	render() {
 		return(<nav>
 			<ul className="list-inline">
@@ -21,7 +25,9 @@ class OptionUser extends React.Component {
 	}
 	logOut(){
 		localStorage.removeItem('username');
-		window.location.assign("/");
+		localStorage.removeItem('email');
+		localStorage.removeItem('token');
+		window.location.replace("/");
 	}
 	componentDidMount(){
         var that=this;
@@ -33,9 +39,9 @@ class OptionUser extends React.Component {
 		return(<nav>
 			<ul className="list-inline">
 				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>({this.state.countmessage})</span></a></li>
-				<li><a href="/checkout">Thanh toán</a></li>
-				<li><a href="/listfavorite">DS yêu thích</a></li>
-				<li><a href="/manageaccount">Tài khoản</a></li>
+				<li><a href="/api/checkout">Thanh toán</a></li>
+				<li><a href="/api/listfavorite">DS yêu thích</a></li>
+				<li><a href="/api/manageaccount">Tài khoản</a></li>
 				<li><a onClick={this.logOut} style={{cursor:'pointer'}}>Đăng xuất</a></li>
 			</ul>
 		</nav>)
@@ -53,28 +59,37 @@ class HeaderTop extends React.Component {
 		super(props);
 		this.logOut = this.logOut.bind(this);
 		this.state = {
-			Option: "",
+			Option: <OptionGuest/>,
 			Welcome: ""
 		}
+		main = this;
 	}
 	componentDidMount(){
 		var token = localStorage.getItem('token');
 		var that = this;
-		$.get("/api",{token:token},function(data){
-			if (data.success == 0) {
-				localStorage.removeItem('username');
-				localStorage.removeItem('email');
-				that.setState({Option:<OptionGuest/>})
-			} else {
-				that.setState({Option:<OptionUser/>,Welcome:<WelcomeUser/>})
-			}
-		})
+		if (!token){
+			localStorage.removeItem('username');
+			localStorage.removeItem('email');
+		} else {
+			$.get("/api", { token: token }, function (data) {
+				if (data.success == 0) {
+					localStorage.removeItem('username');
+					localStorage.removeItem('email');
+					that.setState({ Option: <OptionGuest />, Welcome: "" })
+				} else {
+					that.setState({ Option: <OptionUser />, Welcome: <WelcomeUser /> })
+				}
+			})
+		}
 	}
 	logOut(){
 		localStorage.removeItem('username');
-		window.location.assign("/");
+		localStorage.removeItem('email');
+		localStorage.removeItem('token');
+		that.setState({Option:<OptionGuest/>,Welcome:""});
 	}
 	render() {
+		
 		return (
 			<div className="header-top">
 				<div className="container">

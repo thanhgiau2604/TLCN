@@ -5,7 +5,7 @@ const ProductCategory = require("../models/ProductCategory");
 const Product = require("../models/Product");
 const ObjectId = require('mongodb').ObjectId;
 const message = require("../models/message");
-module.exports = function(app){
+module.exports = function(app,apiRouter){
     app.get("/getPopular",(req,res)=>{
         Product.find({}).sort({views:"descending"}).exec(function(err,data){
             if (err){
@@ -41,7 +41,7 @@ module.exports = function(app){
          })
     });
 
-    app.get("/listfavorite",(req,res)=>{
+    apiRouter.get("/listfavorite",(req,res)=>{
         res.render("sanphamyeuthich");
     });
 
@@ -94,7 +94,7 @@ module.exports = function(app){
     });
 
     ///order - history
-    app.get("/orderhistory",(req,res)=>{
+    apiRouter.get("/orderhistory",(req,res)=>{
         res.render("lichsudonhang");
     });
 

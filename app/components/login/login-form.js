@@ -14,16 +14,22 @@ class LoginForm extends React.Component{
 		console.log(EmailOrPhone);
 		console.log(password);
 		var form = this;
-		$.post("/api/login",{EmailOrPhone:EmailOrPhone, password:password},function(data){
-			
+		$.post("/api/login",{EmailOrPhone:EmailOrPhone, password:password},function(data){			
 			if (data.err==1){
 				form.setState({error:data.message});
 			} else {
-				console.log(data);
-				localStorage.setItem("username",data.username);
-				localStorage.setItem("email",data.email);
-				localStorage.setItem('token',data.token);
-				window.location.replace("/");
+				if (data.role=='user'){
+					console.log(data);
+					localStorage.setItem("username", data.username);
+					localStorage.setItem("email", data.email);
+					localStorage.setItem('token', data.token);
+					window.location.replace("/");
+				} else {
+					localStorage.setItem("usernamead", data.username);
+					localStorage.setItem("emailad", data.email);
+					localStorage.setItem('tokenad', data.token);
+					window.location.replace("/dashboard");
+				}
 			}
 		})		
 		e.preventDefault();

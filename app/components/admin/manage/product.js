@@ -505,6 +505,20 @@ class ManageProducts extends React.Component {
     }
     main = this;
   }
+  componentWillMount(){
+    var token = localStorage.getItem('tokenad');
+    if (!token){
+      window.location.assign('/login');
+    } else {
+      $.get("/admin",{token:token},function(data){
+        if (data.success==0){
+          localStorage.removeItem('emailad');
+          localStorage.removeItem('usernamead');
+          window.location.assign("/login");
+        }
+      })
+    }
+  }
   componentDidMount() {
     var that = this;
     $.get("/getAllProducts", function (data) {
@@ -539,7 +553,7 @@ class ManageProducts extends React.Component {
           Manage Products
             <div class='panel-tools'>
             <div class='btn-group'>
-              <a class='btn' href='#'>
+              {/* <a class='btn' href='#'>
                 <i class='icon-wrench'></i>
                 Settings
                 </a>
@@ -549,9 +563,9 @@ class ManageProducts extends React.Component {
                 </a>
               <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Reload'>
                 <i class='icon-refresh'></i>
-              </a>
+              </a> */}
             </div>
-            <div class='badge'>3 record</div>
+            {/* <div class='badge'>3 record</div> */}
           </div>
         </div>
         <div class='panel-body filters'>

@@ -4,7 +4,7 @@ const Admin = require("../models/admin");
 const User = require("../models/users");
 
 function getUsers(res) {
-    User.find(function (err, data) {
+    User.find({role:'user'},function (err, data) {
         if (err) {
             res.status(500).json(err);
         } else {
@@ -12,8 +12,29 @@ function getUsers(res) {
         }
     })
 }
-
-module.exports = function(app){
+module.exports = function(app,adminRouter,jwt){
+    var superSecret = 'iamastudent';
+    adminRouter.use(function(req,res,next){
+        var token = req.query.token || req.params.token;
+        if (token){
+            console.log(token);
+            jwt.verify(token,superSecret,function(err,decoded){
+                if (err){
+                    return res.json({success:0,message:'Failed to authenticate token'});
+                } else {
+                    req.decoded = decoded;
+                    next();
+                }
+            })
+        } else {
+            return res.status(403).send({
+                success:0
+            })
+        }
+    });
+    adminRouter.get("/",(req,res)=>{
+        res.send({success:1});
+    })
     app.get("/loginAdmin",(req,res)=>{
         res.render("dangnhapAdmin");
     })
@@ -48,7 +69,7 @@ module.exports = function(app){
         res.render("quanlyuser");
     });
     app.get("/getListUsers",(req,res)=>{
-        User.find({},function(err,data){
+        User.find({role:'user'},function(err,data){
             res.send(data);
         })
     });
@@ -79,7 +100,8 @@ module.exports = function(app){
             email:req.body.email,
             numberPhone: req.body.phone,
             dob: req.body.dob,
-            password: "12345678"
+            password: "12345678",
+            role:'user'
         }
         User.create(user,function(err,data){
             if (err){

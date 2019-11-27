@@ -9,6 +9,7 @@ class RedirectPage extends React.Component{
         $.get("/success",function(data){
             localStorage.setItem('username',data.username);
             localStorage.setItem('email',data.email);
+            localStorage.setItem('token',data.token);
             window.location.assign("/");
         })
         return(

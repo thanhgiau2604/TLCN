@@ -12,7 +12,7 @@ class HeaderMiddle extends React.Component{
 					<div className="col-sm-12">
 					
 						<div className="logo">
-							<a href="/"><img src="img/logo2.png" alt="bstore logo" /></a>
+							<a href="/"><img src="/img/logo2.png" alt="bstore logo" /></a>
 						</div>
 						
 						<div className="header-right-callus">

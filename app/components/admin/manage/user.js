@@ -180,6 +180,20 @@ class ManageUsers extends React.Component{
         main = this;
         this.handleAddUser = this.handleAddUser.bind(this);
     }
+    componentWillMount(){
+      var token = localStorage.getItem('tokenad');
+      if (!token){
+        window.location.assign('/login');
+      } else {
+        $.get("/admin",{token:token},function(data){
+          if (data.success==0){
+            localStorage.removeItem('emailad');
+            localStorage.removeItem('usernamead');
+            window.location.assign("/login");
+          }
+        })
+      }
+    }
     componentDidMount(){
       var that = this;
       $.get("/getListUsers",function(data){
@@ -220,19 +234,8 @@ class ManageUsers extends React.Component{
             Manage Users
             <div class='panel-tools'>
               <div class='btn-group'>
-                <a class='btn' href='#'>
-                  <i class='icon-wrench'></i>
-                  Settings
-                </a>
-                <a class='btn' href='#'>
-                  <i class='icon-filter'></i>
-                  Filters
-                </a>
-                <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Reload'>
-                  <i class='icon-refresh'></i>
-                </a>
               </div>
-              <div class='badge'>3 record</div>
+              {/* <div class='badge'>3 record</div> */}
             </div>
           </div>
           <div class='panel-body filters'>
