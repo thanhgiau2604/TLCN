@@ -22,6 +22,9 @@ class OptionUser extends React.Component {
 		this.state = {
 			countmessage:0
 		}
+		this.handleAccount = this.handleAccount.bind(this);
+		this.handleCheckout = this.handleCheckout.bind(this);
+		this.handleFL = this.handleFL.bind(this);
 	}
 	logOut(){
 		localStorage.removeItem('username');
@@ -34,14 +37,24 @@ class OptionUser extends React.Component {
         $.get("/getMessage",function(data){
             that.setState({countmessage:data.length});
         })
-    }
+	}
+	handleAccount(){
+
+	}
+	handleCheckout(){
+		const token = localStorage.getItem('token');
+		window.location.assign("/api/checkout/?token="+token);
+	}
+	handleFL(){
+
+	}
 	render() {
 		return(<nav>
 			<ul className="list-inline">
 				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>({this.state.countmessage})</span></a></li>
-				<li><a href="/api/checkout">Thanh toán</a></li>
-				<li><a href="/api/listfavorite">DS yêu thích</a></li>
-				<li><a href="/api/manageaccount">Tài khoản</a></li>
+				<li><a href="/checkout" onClick={this.handleCheckout}>Thanh toán</a></li>
+				<li><a href="/listfavorite" >DS yêu thích</a></li>
+				<li><a href="/manageaccount" onClick={this.handleAccount}>Tài khoản</a></li>
 				<li><a onClick={this.logOut} style={{cursor:'pointer'}}>Đăng xuất</a></li>
 			</ul>
 		</nav>)

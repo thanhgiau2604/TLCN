@@ -31,7 +31,7 @@ module.exports = function(app,apiRouter){
             });  
         })
     });
-    apiRouter.get("/changepassword",(req,res)=>{
+    app.get("/changepassword",(req,res)=>{
         res.render("doimatkhau");
     });
     app.post("/changepassword",parser,(req,res)=>{
@@ -86,6 +86,6 @@ module.exports = function(app,apiRouter){
     });
 
 
-    apiRouter.get("/manageaccount",(req,res)=>res.render("quanlytaikhoan"));
-    apiRouter.get("/personalinfor",(req,res)=> res.render("thongtincanhan"));
+    app.get("/manageaccount",(req,res)=>res.render("quanlytaikhoan"));
+    app.get("/personalinfor",(req,res)=> res.render("thongtincanhan"));
 }

@@ -106,43 +106,70 @@ class ListItems extends React.Component{
         </div>)
     }
 }
-class ListFavorite extends React.Component{
-    constructor(props){
+class ListFavorite extends React.Component {
+    constructor(props) {
         super(props);
+        this.state = {
+            permission: 0
+        }
+        this.goLogin = this.goLogin.bind(this);
     }
-    render(){
-        return(<section className="main-content-section">
-        <div className="container">
-            <div className="row">
-                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
-                    <div className="bstore-breadcrumb">
-                        <a href="index.html">Trang chủ<span><i className="fa fa-caret-right"></i> </span> </a>
-                        <a href="my-account.html">QL Tài khoản<span><i className="fa fa-caret-right"></i></span></a>
-                        <span>Danh sách sản phẩm yêu thích</span>
-                    </div>      
-                </div>
-            </div>
-            <div className="row">				              
-                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h1 className="page-title text-center" style={{color:'blue',fontWeight:'700',paddingBottom:'20px'}}>DANH SÁCH SẢN PHẨM YÊU THÍCH</h1>   
-                    <div className="wishlists-chart table-responsive">                   
-                        <div className="col-lg-8 col-md-8 col-sm-8 col-xs-8 col-md-push-2">
-                            <TableFavorite/>
-                        </div>              
-                    </div>	        
-                    <div className="wishlists-item">
-                        <div className="wishlists-all-item">
-                           <ListItems/>
-                            <div className="wish-back-link">
-                                <a  className="wish-save" href="my-account.html"><i className="fa fa-chevron-left"></i> QL Tài khoản</a>
-                                <a  className="wish-save" href="/"><i className="fa fa-chevron-left"></i> Trang chủ</a>
+    componentDidMount() {
+        var token = localStorage.getItem('token');
+        if (!token) {
+            this.setState({ permission: 0 });
+        }
+        var that = this;
+        $.get("/api", { token: token }, function (data) {
+            if (data.success == 1) {
+                that.setState({ permission: 1 });
+            }
+        })
+    }
+    goLogin(){
+        window.location.replace("/login");
+    }
+    render() {
+        if (this.state.permission == 0) {
+            return (<div className="text-center">
+                <br/>
+                <h3>Để thực hiện chức năng này bạn phải đăng nhập!</h3>
+                <button className="btn btn-primary" onClick={this.goLogin} style={{marginTop:'10px'}}>Đi đến trang đăng nhập</button>
+            </div>)
+        } else {
+            return (<section className="main-content-section">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div className="bstore-breadcrumb">
+                                <a href="index.html">Trang chủ<span><i className="fa fa-caret-right"></i> </span> </a>
+                                <a href="my-account.html">QL Tài khoản<span><i className="fa fa-caret-right"></i></span></a>
+                                <span>Danh sách sản phẩm yêu thích</span>
                             </div>
                         </div>
-                    </div>	
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <h1 className="page-title text-center" style={{ color: 'blue', fontWeight: '700', paddingBottom: '20px' }}>DANH SÁCH SẢN PHẨM YÊU THÍCH</h1>
+                            <div className="wishlists-chart table-responsive">
+                                <div className="col-lg-8 col-md-8 col-sm-8 col-xs-8 col-md-push-2">
+                                    <TableFavorite />
+                                </div>
+                            </div>
+                            <div className="wishlists-item">
+                                <div className="wishlists-all-item">
+                                    <ListItems />
+                                    <div className="wish-back-link">
+                                        <a className="wish-save" href="my-account.html"><i className="fa fa-chevron-left"></i> QL Tài khoản</a>
+                                        <a className="wish-save" href="/"><i className="fa fa-chevron-left"></i> Trang chủ</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </section>)
+            </section>)
+        }
     }
 }
 

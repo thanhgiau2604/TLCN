@@ -146,5 +146,19 @@ module.exports = function(app){
                 getCart(data,res);
             }
         })
+    });
+
+    app.post("/addToFavorite",parser,(req,res)=>{
+        const id = req.body.id;
+        const email = req.body.email;
+        User.findOneAndUpdate({email:email},{'$pull':{favoritelist:{id:id}}},{new:true},function(err,data){
+            User.findOneAndUpdate({email:email},{'$push':{favoritelist:{id:id}}},{new:true},function(err,data){
+                if (err){
+                    throw err;
+                } else {
+                    res.json({success:1});
+                }
+            })
+        })
     })
 }

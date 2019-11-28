@@ -355,19 +355,40 @@ class InforForm extends React.Component{
 		super(props);
 		this.state = {
 			isEdit: false,
-			user : ""
+			user : "",
+			permission: 0
 		}
 		inforuser = this;
+		this.goLogin = this.goLogin.bind(this);
 	}
+
 	componentDidMount(){
-		var email = localStorage.getItem('email');
-		var form = this;
-		$.post("/getInforUser",{email:email},function(data){
-			form.setState({user:data});
-		})
+		var token = localStorage.getItem('token');
+        if (!token) {
+            this.setState({ permission: 0 });
+        }
+        var that = this;
+        $.get("/api", { token: token }, function (data) {
+            if (data.success == 1) {
+				var email = localStorage.getItem('email');
+				$.post("/getInforUser", { email: email }, function (data) {
+					that.setState({ user: data,permission:1 });
+				})
+            }
+        })
 	}
+	goLogin(){
+        window.location.replace("/login");
+    }
     render(){
-		var formrender;
+		if (this.state.permission==0){
+			return (<div className="text-center">
+                <br/>
+                <h3>Để thực hiện chức năng này bạn phải đăng nhập!</h3>
+                <button className="btn btn-primary" onClick={this.goLogin} style={{marginTop:'10px'}}>Đi đến trang đăng nhập</button>
+            </div>)
+		} else {
+			var formrender;
 		if (this.state.isEdit==true)
 		{
 			formrender = <InforEdit/>
@@ -401,6 +422,8 @@ class InforForm extends React.Component{
 		 		</div>
 		 	</div>
 		 </section>)
+		}
+		
     }
 }
 

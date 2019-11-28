@@ -38,6 +38,7 @@ class Product2 extends React.Component{
 		super(props);
 		this.getDetail = this.getDetail.bind(this);
 		this.addToCart = this.addToCart.bind(this);
+		this.handleFavorite = this.handleFavorite.bind(this);
 	}
 	getDetail(){
 		localStorage.setItem("curproduct",this.props.id);
@@ -47,6 +48,13 @@ class Product2 extends React.Component{
 		$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
 			var {dispatch} = main.props;
         	dispatch({type:"UPDATE_PRODUCT",newcart:data});
+		})
+	}
+	handleFavorite(){
+		$.post("/addToFavorite",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			if (data.success==1){
+				console.log("Add thành công");
+			}
 		})
 	}
 	render(){
@@ -60,10 +68,10 @@ class Product2 extends React.Component{
 							<a href="#" className="new-mark-box">{this.props.desc}</a>
 							<div className="overlay-content">
 								<ul>
-									<li><a title="Quick view" style={{cursor:'pointer'}}><i className="fa fa-search"></i></a></li>
+									<li><a title="Xem sản phẩm" style={{cursor:'pointer'}} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
 									<li><a title="Thêm vào giỏ hàng" style={{cursor:'pointer'}} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
 									<li><a title="Quick view" style={{cursor:'pointer'}}><i className="fa fa-retweet"></i></a></li>
-									<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}}><i className="fa fa-heart-o"></i></a></li>
+									<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
 								</ul>
 							</div>
 						</div>

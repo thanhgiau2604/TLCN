@@ -41,7 +41,7 @@ module.exports = function(app,apiRouter){
          })
     });
 
-    apiRouter.get("/listfavorite",(req,res)=>{
+    app.get("/listfavorite",(req,res)=>{
         res.render("sanphamyeuthich");
     });
 
@@ -94,7 +94,7 @@ module.exports = function(app,apiRouter){
     });
 
     ///order - history
-    apiRouter.get("/orderhistory",(req,res)=>{
+    app.get("/orderhistory",(req,res)=>{
         res.render("lichsudonhang");
     });
 
