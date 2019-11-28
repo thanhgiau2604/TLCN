@@ -248,7 +248,7 @@ class Category extends React.Component{
                     <div class="bstore-breadcrumb">
                         <a href="index.html">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
-                        <span>Giày nữ</span>
+                        <span>{this.state.category.name}</span>
                     </div>
                 </div>
             </div>
@@ -304,14 +304,14 @@ class Category extends React.Component{
                             <ul class="gategory-product">											
                                 {this.state.listProduct.map(function(pro,index){
                                     return <ProductGird key={index} name={pro.name} cost={pro.cost}
-                                    image={pro.image} id={pro._id}/>
+                                    image={pro.image.image1} id={pro._id}/>
                                 })}
                             </ul>
                         </div>
                     </div>     
                     <div class="product-shooting-result product-shooting-result-border">
                         <div class="showing-item">
-                            <span>Showing 1 - 12 of 13 items</span>
+                            {/* <span>Showing 1 - 12 of 13 items</span> */}
                         </div>
                         <div class="showing-next-prev">
                             <ul class="pagination-bar">

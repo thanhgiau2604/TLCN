@@ -88,7 +88,7 @@ class Cart extends React.Component{
 						</div>										
 					</div>
 					<div className="shipping-checkout-btn">
-						<a onClick={this.handleCheckout}>Thanh toán <i className="fa fa-chevron-right"></i></a>
+						<a onClick={this.handleCheckout} style={{cursor:'pointer'}}>Thanh toán <i className="fa fa-chevron-right"></i></a>
 					</div>
 				</div>
 			</div>
@@ -100,6 +100,21 @@ class MainMenu extends React.Component{
     constructor(props){
 		super(props);
 		main = this;
+		this.getMenCategory = this.getMenCategory.bind(this);
+		this.getGirlCategory = this.getGirlCategory.bind(this);
+		this.getKidCategory = this.getKidCategory.bind(this);
+	}
+	getMenCategory(){
+		localStorage.setItem("curcategory","Men Product");
+		window.location.assign("/categoryProduct");
+	}
+	getGirlCategory(){
+		localStorage.setItem("curcategory","Girl Product");
+		window.location.assign("/categoryProduct");
+	}
+	getKidCategory(){
+		localStorage.setItem("curcategory","Kid Product");
+		window.location.assign("/categoryProduct");
 	}
     render(){
         return(
@@ -114,19 +129,13 @@ class MainMenu extends React.Component{
 									<li className="active"><a href="/">Trang chủ</a>										
 									</li>
 									<li>
-										<a href="shop-gird.html">Giày nam</a>
+										<a style={{cursor:'pointer'}} onClick={this.getMenCategory}>Giày nam</a>
 									</li>
 									<li>
-										<a href="shop-gird.html">Giày nữ</a>
+										<a style={{cursor:'pointer'}} onClick={this.getGirlCategory}>Giày nữ</a>
 									</li>
 									<li>
-										<a href="shop-gird.html">Trẻ em</a>
-									</li>
-									<li>
-										<a href="shop-gird.html">Phổ biến</a>
-									</li>
-									<li>
-										<a href="shop-gird.html">Sản phẩm mới</a>
+										<a style={{cursor:'pointer'}} onClick={this.getKidCategory}>Trẻ em</a>
 									</li>
 									<li><a href="about-us.html">Liên hệ</a></li>
 								</ul>

@@ -225,10 +225,15 @@ class InforProduct extends React.Component{
 class SingleHistory extends React.Component{
     constructor(props){
         super(props);
+        this.getDetail = this.getDetail.bind(this);
     }
+    getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct")
+	}
     render(){
         return(<li>
-            <a href="#"><img src={this.props.image} /></a>
+            <a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} /></a>
             <div class="r-sidebar-pro-content">
                 <h5><a href="#">{this.props.name}</a></h5>
                 <p>{this.props.description}</p>
@@ -278,13 +283,18 @@ class HistoryProduct extends React.Component{
 class SingleRelate extends React.Component{
     constructor(props){
         super(props);
+        this.getDetail = this.getDetail.bind(this);
     }
+    getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct")
+	}
     render(){
         return(<div className="col-xs-6 col-sm-4 col-md-3 col-lg-3">
         <div class="item">
         <div class="single-product-item">
             <div class="product-image">
-                <a href="#"><img src={this.props.image} alt="product-image" /></a>
+                <a style={{cursor:'pointer'}} onClick={this.getDetail}><img src={this.props.image} alt="product-image" /></a>
             </div>
             <div class="product-info">
                 <div class="customar-comments-box">

@@ -4,9 +4,39 @@ class HeaderBottom extends React.Component{
     constructor(props){
 		super(props);
 		this.getMenCategory = this.getMenCategory.bind(this);
+		this.getGirlCategory = this.getGirlCategory.bind(this);
+		this.getKidCategory = this.getKidCategory.bind(this);
+		this.getAddiasCategory = this.getAddiasCategory.bind(this);
+		this.getNikeCategory = this.getNikeCategory.bind(this);
+		this.getSneakerCategory = this.getSneakerCategory.bind(this);
+		this.getJordanCategory = this.getJordanCategory.bind(this);
 	}
 	getMenCategory(){
-		localStorage.setItem("curcategory","MenProduct");
+		localStorage.setItem("curcategory","Men Product");
+		window.location.assign("/categoryProduct");
+	}
+	getGirlCategory(){
+		localStorage.setItem("curcategory","Girl Product");
+		window.location.assign("/categoryProduct");
+	}
+	getKidCategory(){
+		localStorage.setItem("curcategory","Kid Product");
+		window.location.assign("/categoryProduct");
+	}
+	getAddiasCategory(){
+		localStorage.setItem("curcategory","Adidas Product");
+		window.location.assign("/categoryProduct");
+	}
+	getSneakerCategory(){
+		localStorage.setItem("curcategory","Sneaker Product");
+		window.location.assign("/categoryProduct");
+	}
+	getNikeCategory(){
+		localStorage.setItem("curcategory","Nike Product");
+		window.location.assign("/categoryProduct");
+	}
+	getJordanCategory(){
+		localStorage.setItem("curcategory","Jordan Product");
 		window.location.assign("/categoryProduct");
 	}
     render(){
@@ -22,7 +52,7 @@ class HeaderBottom extends React.Component{
 								</div>
 								<div className="category-menu-list">
 									<ul>
-										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/2.png" alt="" /></span>GIÀY NAM<i className="fa fa-angle-right"></i></a>
+										<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/2.png" alt="" /></span>GIÀY NAM<i className="fa fa-angle-right"></i></a>
 											
 											<div className="cat-left-drop-menu">
 												<div className="cat-left-drop-menu-left">
@@ -43,7 +73,7 @@ class HeaderBottom extends React.Component{
 												</div>
 											</div>										
 										</li>
-										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/1.png" alt="" /></span>GIÀY NỮ<i className="fa fa-angle-right"></i></a>
+										<li><a style={{cursor:'pointer'}} onClick={this.getGirlCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/1.png" alt="" /></span>GIÀY NỮ<i className="fa fa-angle-right"></i></a>
 
 											<div className="cat-left-drop-menu">
 												<div className="cat-left-drop-menu-left">
@@ -65,7 +95,7 @@ class HeaderBottom extends React.Component{
 											</div>										
 										</li>
 										<li>
-												<a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs">
+												<a style={{cursor:'pointer'}} onClick={this.getKidCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs">
 													<img src="img/layout2/8.png" alt="" /></span>TRẺ EM<i className="fa fa-angle-right"></i></a>
 												<div className="cat-left-drop-menu">
 													<div className="cat-left-drop-menu-left text-center">
@@ -78,39 +108,39 @@ class HeaderBottom extends React.Component{
 													</div>
 												</div>										
 										</li>
-										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/9.png" alt="" /></span>ADIDAS<i className="fa fa-angle-right"></i></a>
+										<li><a style={{cursor:'pointer'}} onClick={this.getAddiasCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/9.png" alt="" /></span>ADIDAS<i className="fa fa-angle-right"></i></a>
 											
-											<div className="cat-left-drop-menu-single">
+											{/* <div className="cat-left-drop-menu-single">
 												<ul>
 													<li><a href="/getAdidasProduct">NAM</a></li>
 													<li><a href="/getAdidasProduct">NỮ</a></li>
 												</ul>
-											</div>										
+											</div>										 */}
 										</li>
-										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/10.png" alt="" /></span>NIKE<i className="fa fa-angle-right"></i></a>
+										<li><a style={{cursor:'pointer'}} onClick={this.getNikeCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/10.png" alt="" /></span>NIKE<i className="fa fa-angle-right"></i></a>
 											
-											<div className="cat-left-drop-menu-single">
+											{/* <div className="cat-left-drop-menu-single">
 												<ul>
 													<li><a href="/getNikeProduct">NAM</a></li>
 													<li><a href="/getNikeProduct">NỮ</a></li>
 												</ul>
-											</div>											
+											</div>											 */}
 										</li>
-										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/11.jpg" alt="" /></span>SNEAKER<i className="fa fa-angle-right"></i></a>									
-											<div className="cat-left-drop-menu-single">
+										<li><a style={{cursor:'pointer'}} onClick={this.getSneakerCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/11.jpg" alt="" /></span>SNEAKER<i className="fa fa-angle-right"></i></a>									
+											{/* <div className="cat-left-drop-menu-single">
 												<ul>
 													<li><a href="/getSneakerProduct">NAM</a></li>
 													<li><a href="/getSneakerProduct">NỮ</a></li>
 												</ul>
-											</div>											
+											</div>											 */}
 										</li>
-										<li><a href="shop-gird.html"><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/12.png" alt="" /></span>JORDAN<i className="fa fa-angle-right"></i></a>
-											<div className="cat-left-drop-menu-single">
+										<li><a style={{cursor:'pointer'}} onClick={this.getJordanCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/12.png" alt="" /></span>JORDAN<i className="fa fa-angle-right"></i></a>
+											{/* <div className="cat-left-drop-menu-single">
 												<ul>
 													<li><a href="/getJordanProduct">NAM</a></li>
 													<li><a href="/getJordanProduct">NỮ</a></li>
 												</ul>
-											</div>
+											</div> */}
 										</li>
 									</ul>
 								</div>

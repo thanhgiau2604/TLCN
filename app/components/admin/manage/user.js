@@ -296,7 +296,7 @@ class ManageUsers extends React.Component{
               </li>
             </ul>
             <div class='pull-right'>
-              Showing 1 to 10 of 32 entries
+              {/* Showing 1 to 10 of 32 entries */}
             </div>
           </div>
         </div>

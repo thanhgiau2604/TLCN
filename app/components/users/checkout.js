@@ -20,12 +20,15 @@ class SingleProduct extends React.Component {
         }
     }
     changeQuanty(e){
+        
         this.setState({quanty: e.target.value});
         var arrCost = step1.state.sumcost;
+        var arrProduct = step1.state.listProduct;
         arrCost[this.props.stt-1] = parseInt(e.target.value)*this.props.cost;
-        console.log(this.props.stt-1);
-        console.log(arrCost);
-        step1.setState({sumcost:arrCost});
+        arrProduct[this.props.stt-1].quanty = parseInt(e.target.value);
+        // console.log(this.props.stt-1);
+        // console.log(arrCost);
+        step1.setState({sumcost:arrCost,listProduct:arrProduct});
     }
     render(){
         return((<tr>

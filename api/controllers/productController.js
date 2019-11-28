@@ -52,25 +52,29 @@ module.exports = function(app){
             if (err) {
                 throw err;
             } else {
-                ProductCategory.findOne({_id:product.category},function(err,category){
-                    if (err){
-                        throw err;
-                    } else {
-                        var arrresult = [];
-                        category.listProduct.forEach(pro => {
-                            Product.findOne({_id:pro._id},function(err,data){
-                                if (err) {
-                                    throw err;
-                                } else {
-                                    arrresult.push(data);
-                                    if (category.listProduct.length == arrresult.length){
-                                        res.send(arrresult);
+                if (!product.category){
+                    res.send([]);
+                } else {
+                    ProductCategory.findOne({_id:product.category},function(err,category){
+                        if (err){
+                            throw err;
+                        } else {
+                            var arrresult = [];
+                            category.listProduct.forEach(pro => {
+                                Product.findOne({_id:pro._id},function(err,data){
+                                    if (err) {
+                                        throw err;
+                                    } else {
+                                        arrresult.push(data);
+                                        if (category.listProduct.length == arrresult.length){
+                                            res.send(arrresult);
+                                        }
                                     }
-                                }
-                            })
-                        });
-                    }
-                })
+                                })
+                            });
+                        }
+                    })
+                }
             }
         })
     });

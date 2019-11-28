@@ -52,7 +52,7 @@ class OptionUser extends React.Component {
 		return(<nav>
 			<ul className="list-inline">
 				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>({this.state.countmessage})</span></a></li>
-				<li><a href="/checkout" onClick={this.handleCheckout}>Thanh toán</a></li>
+				<li><a onClick={this.handleCheckout}>Thanh toán</a></li>
 				<li><a href="/listfavorite" >DS yêu thích</a></li>
 				<li><a href="/manageaccount" onClick={this.handleAccount}>Tài khoản</a></li>
 				<li><a onClick={this.logOut} style={{cursor:'pointer'}}>Đăng xuất</a></li>
