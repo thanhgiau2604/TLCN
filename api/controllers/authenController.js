@@ -214,6 +214,13 @@ module.exports = function(app,apiRouter,jwt){
                         if (err) return done(err);
                         if (user) {
                             username = user.lastName;
+                            email = user.email;
+                            token = jwt.sign({
+                                name: user.lastName,
+                                email: user.email
+                            },superSecret,{
+                                expiresIn: "24h"
+                            });
                             return done(null, user);
                         }
                         const newUser = {
@@ -228,6 +235,12 @@ module.exports = function(app,apiRouter,jwt){
                         console.log(newUser);
                         username = newUser.lastName;
                         email = newUser.email;
+                        token = jwt.sign({
+                            name: newUser.lastName,
+                            email: newUser.email
+                        },superSecret,{
+                            expiresIn: "24h"
+                        });
                         User.create(newUser, (err, user) => {
                             if (err) return done(err);
                             console.log("Da qua dc");

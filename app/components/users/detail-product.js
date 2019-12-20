@@ -14,7 +14,8 @@ class DetailProduct extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            product:{image: {image1:""}}
+            product:{image: {image1:""}},
+            curcost:0
         }
         this.addToCart = this.addToCart.bind(this);
     }
@@ -23,7 +24,7 @@ class DetailProduct extends React.Component{
         var that = this;
         $.post("/getDetailProduct",{idproduct:idproduct},function(data){
             console.log(data);
-            that.setState({product:data});
+            that.setState({product:data,curcost:data.costs[data.costs.length-1].cost});
         })
     }
     addToCart(){
@@ -129,7 +130,7 @@ class DetailProduct extends React.Component{
                     </div>		
                 </div>
                 <div class="single-product-price">
-                    <h2>{this.state.product.cost}đ</h2>
+                    <h2>{this.state.curcost}đ</h2>
                 </div>
                 <div class="single-product-desc">
                     <h4>Mô tả sản phẩm:</h4>
@@ -311,7 +312,7 @@ class SingleRelate extends React.Component{
                 </div>
                 <a href="#">{this.props.name}</a>
                 <div class="price-box">
-                    <span class="price">{this.props.cost}đ</span>
+                    <span class="price">{this.props.costs[this.props.costs.length-1].cost}đ</span>
                 </div>
             </div>
         </div>							
@@ -345,7 +346,7 @@ class RelatedProduct extends React.Component{
                     <div class="related-product">
                         {this.state.listRelate.map(function(pro,index){
                             return <SingleRelate key={index} id={pro._id}
-                            name={pro.name} image={pro.image.image1} cost={pro.cost}/>
+                            name={pro.name} image={pro.image.image1} costs={pro.costs}/>
                         })}																				
                     </div>
                 </div>	

@@ -10,6 +10,7 @@ module.exports = {
         message: './app/components/manage-account/message.js',
         favoritelist:'./app/components/users/favoritelist.js',
         historyorder:'./app/components/users/historyorder.js',
+        searchpage:'./app/components/users/search-page.js',
         detailproduct: './app/components/users/detail-product.js',
         loginadmin:'./app/components/admin/login/login.js',
         dashboard:'./app/components/admin/dashboard/dashboard.js',

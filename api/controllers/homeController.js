@@ -26,7 +26,6 @@ module.exports = function(app,apiRouter){
     })
     app.get("/getSale",(req,res)=>{
         ProductCategory.find({name:"Sale Product"},function(err,data){
-            // res.json(data[0]);
              var arrSale = new Array();
              var count = data[0].listProduct.length;
              var index = 0;
@@ -223,4 +222,20 @@ module.exports = function(app,apiRouter){
              });
          })
     });
+
+    //handle Search
+    app.get("/search",(req,res)=>{
+        res.render("timkiemsanpham");
+    });
+
+    app.post("/itemSearch",parser,(req,res)=>{
+        const keysearch = req.body.keysearch;
+        Product.find({name: {$regex : ".*"+keysearch+".*",'$options' : 'i' }},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.send(data);
+            }
+        })
+    })
 }

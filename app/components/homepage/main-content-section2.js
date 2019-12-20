@@ -57,7 +57,7 @@ class Product1 extends React.Component{
 						</div>
 						<a href="single-product.html">{this.props.name}</a>
 						<div className="price-box">
-							<span className="price">{this.props.cost}đ</span>
+							<span className="price">{this.props.costs[this.props.costs.length-1].cost}đ</span>
 						</div>
 					</div>
 				</div>
@@ -88,7 +88,7 @@ class Sneaker extends React.Component {
 				<div className="row">				
 					<div className="feartured-carousel">
 						{this.state.listSneaker.map(function(sneaker,index){
-							return <Product1 key={index} name={sneaker.name} cost={sneaker.cost}
+							return <Product1 key={index} name={sneaker.name} costs={sneaker.costs}
 							image={sneaker.image.image1} id={sneaker._id}/>
 						})}												
 					</div>
@@ -122,7 +122,7 @@ class Sports extends React.Component {
 				<div className="row">									
 					<div className="feartured-carousel">									
 				       {this.state.listSport.map(function(sport,index){
-						   return <Product1 key={index} name={sport.name} cost={sport.cost}
+						   return <Product1 key={index} name={sport.name} costs={sport.costs}
 						   image={sport.image.image1} id={sport._id}/>
 					   })}			
 					</div>					
@@ -156,7 +156,7 @@ class Pumps extends React.Component {
 				<div className="row">							
 					<div className="feartured-carousel">
 						{this.state.listPumps.map(function(pumps,index){
-							return <Product1 key={index} name={pumps.name} cost={pumps.cost}
+							return <Product1 key={index} name={pumps.name} costs={pumps.costs}
 							image={pumps.image.image1} id={pumps._id}/>
 						})}																								
 					</div>		
@@ -189,7 +189,7 @@ class Kids extends React.Component{
 				<div className="row">
 					<div className="feartured-carousel">	
 					{this.state.listKids.map(function(kid,index){
-						return <Product1 key={index} name={kid.name} cost={kid.cost}
+						return <Product1 key={index} name={kid.name} costs={kid.costs}
 						image={kid.image.image1} id={kid._id}/>
 					})}												
 					</div>							

@@ -2,8 +2,16 @@ import React from 'react'
 
 class HeaderMiddle extends React.Component{
     constructor(props){
-        super(props);
-    }
+		super(props);
+		this.actionSearch = this.actionSearch.bind(this);
+	}
+
+	actionSearch(e){
+		var key = this.keysearch.value;
+		localStorage.setItem("keysearch",key);
+		window.location.assign("/search");
+		e.preventDefault();
+	}
     render(){
         return(
             <section className="header-middle">
@@ -23,10 +31,11 @@ class HeaderMiddle extends React.Component{
 						</div>
 						
 						<div className="categorys-product-search">
-							<form action="#" method="get" className="search-form-cat">
+							<form method="get" className="search-form-cat" onSubmit={this.actionSearch} >
 								<div className="search-product form-group">
-									<input type="text" className="form-control search-form" name="s" placeholder="Nhập từ khóa cần tìm ... " />
-									<button className="search-button" value="Search" name="s" type="submit">
+									<input type="text" className="form-control search-form" name="searchinput" 
+									placeholder="Nhập từ khóa cần tìm ... " ref={(data) => { this.keysearch = data; }}/>
+									<button className="search-button" value="Search" type="submit">
 										<i className="fa fa-search"></i>
 									</button>									 
 								</div>

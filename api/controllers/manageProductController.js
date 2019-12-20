@@ -88,10 +88,14 @@ module.exports = function(app){
         const id = req.body.id;
         const name = req.body.name;
         const cost = req.body.cost;
+        const oldcost = req.body.oldcost;
         const shipcost = req.body.shipcost;
         const description =req.body.description;
         const sizes = JSON.parse(req.body.sizes);
-        Product.update({_id:id},{$set:{name:name,cost:cost,shipcost:shipcost,description:description,
+        var newcosts = new Array();
+        newcosts = JSON.parse(oldcost);
+        newcosts.push({cost:cost});
+        Product.update({_id:id},{$set:{name:name,costs:newcosts,shipcost:shipcost,description:description,
         sizes:sizes}},function(err,data){
             if (err){
                 throw err;
@@ -108,6 +112,18 @@ module.exports = function(app){
             } else 
             {
                 getProducts(res);
+            }
+        })
+    });
+
+    //search product
+    app.post("/searchproduct",parser,(req,res)=>{
+        const keysearch = req.body.keysearch;
+        Product.find({name: {$regex : ".*"+keysearch+".*",'$options' : 'i' }},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.send(data);
             }
         })
     })

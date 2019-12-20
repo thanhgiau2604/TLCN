@@ -16,7 +16,9 @@ class Products extends React.Component {
     this.confirmDelete = this.confirmDelete.bind(this);
   }
   updateProduct(){
-    curEditProduct.setState({product:this.props.product,updateSuccess:0,curSizes:this.props.product.sizes.length});
+    console.log(this.props.product);
+    curEditProduct.setState({product:this.props.product,updateSuccess:0, curcost:this.props.product.costs[this.props.product.costs.length-1].cost,
+      curSizes:this.props.product.sizes.length});
   }
   deleteProduct(){
     localStorage.setItem("curDelete",this.props.product._id);
@@ -42,11 +44,10 @@ class Products extends React.Component {
     }
     return (<tr class='active'>
       <td>{this.props.stt}</td>
-      <td>{this.props.product._id}</td>
       <td>{this.props.product.name}</td>
       <td><img src={this.props.product.image.image1} style={{ width: '120px' }} />
       </td>
-      <td>{this.props.product.cost}</td>
+      <td>{this.props.product.costs[this.props.product.costs.length-1].cost}</td>
       <td>{this.props.product.shipcost}</td>
       <td>{this.props.product.quanty}</td>
       <td>{strSize}</td>
@@ -158,7 +159,7 @@ class NewProduct extends React.Component {
     var newP = {
       name: this.refs.name.value,
       quanty: 0,
-      cost: this.refs.cost.value,
+      costs: [{cost:this.refs.cost.value}],
       shipcost: this.refs.shipcost.value,
       image: {image1:"",image2:"",image3:""},
       description: this.refs.description.value,
@@ -185,7 +186,7 @@ class NewProduct extends React.Component {
       processData: false,
       contentType: false,
       success: function (data) {
-        newP.image.image1 = "img/product/" + data;
+        newP.image.image1 = "/img/product/" + data;
         let imageFormObj = new FormData();
         imageFormObj.append("imageName", "multer-image" + Date.now());
         imageFormObj.append("imageData", image2);
@@ -196,7 +197,7 @@ class NewProduct extends React.Component {
           processData: false,
           contentType: false,
           success: function (data) {
-            newP.image.image2 = "img/product/" + data;
+            newP.image.image2 = "/img/product/" + data;
             let imageFormObj = new FormData();
             imageFormObj.append("imageName", "multer-image" + Date.now());
             imageFormObj.append("imageData", image3);
@@ -207,7 +208,7 @@ class NewProduct extends React.Component {
               processData: false,
               contentType: false,
               success: function (data) {
-                newP.image.image3 = "img/product/" + data;
+                newP.image.image3 = "/img/product/" + data;
                 classNewProduct.AddToDatabase(newP);
               },
               fail: function (err) {
@@ -334,6 +335,7 @@ class UpdateProduct extends React.Component{
     this.ChangeImage = this.ChangeImage.bind(this);
     this.state = {
       product:"",
+      curcost: 0,
       updateSuccess:0,
       curSizes: 0
     }
@@ -370,7 +372,7 @@ class UpdateProduct extends React.Component{
       sizes.push(size);
     }
     var that = this;
-    $.post("/updateProduct",{id:that.state.product._id,name:name,cost:cost,
+    $.post("/updateProduct",{id:that.state.product._id,name:name,cost:cost,oldcost: JSON.stringify(this.state.product.costs),
       shipcost:shipcost,description:description,sizes:JSON.stringify(sizes)},function(data){
         if (data.success==1){
           main.setState({listProduct:data.lProduct});
@@ -427,6 +429,7 @@ class UpdateProduct extends React.Component{
         <strong>Update Product Successfully!</strong>
       </div>
     }
+    console.log(this.state.product.costs);
     }
     return(<div className="modal fade right " id="modalUpdateProduct" role="dialog" aria-labelledby="myModalLabel"
     aria-hidden="true">
@@ -449,7 +452,7 @@ class UpdateProduct extends React.Component{
             <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
               <div className="form-group" key={this.state.product._id}>
                 <label>Cost(VND):</label>
-                <input type="text" className="form-control" placeholder="Enter cost" ref="cost" defaultValue={this.state.product.cost}/>
+                <input type="text" className="form-control" placeholder="Enter cost" ref="cost" defaultValue={this.state.curcost}/>
               </div>
             </div>
             <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
@@ -503,6 +506,7 @@ class ManageProducts extends React.Component {
       listProduct: [],
       curpage: 1
     }
+    this.handleChange = this.handleChange.bind(this);
     main = this;
   }
   componentWillMount(){
@@ -527,6 +531,12 @@ class ManageProducts extends React.Component {
   }
   changePage(value, event) {
     this.setState({ curpage: value });
+  }
+  handleChange(event){
+    var that = this;
+      $.post("/searchproduct",{keysearch:event.target.value},function(data){
+        that.setState({listProduct:data});
+      })
   }
   render() {
     var lCurProduct = [];
@@ -577,7 +587,7 @@ class ManageProducts extends React.Component {
             </div>
             <div class='col-md-3'>
               <div class='input-group'>
-                <input class='form-control' placeholder='Search by id or name' type='text' />
+                <input class='form-control' placeholder='Search product' type='text' onChange={this.handleChange}/>
                 <span class='input-group-btn'>
                   <button class='btn' type='button'>
                     <i class='icon-search'></i>
@@ -596,7 +606,6 @@ class ManageProducts extends React.Component {
           <thead>
             <tr>
               <th class="text-center">#</th>
-              <th class="text-center">id</th>
               <th class="text-center">Name</th>
               <th class="text-center">Image</th>
               <th class="text-center">Cost</th>

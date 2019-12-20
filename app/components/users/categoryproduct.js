@@ -9,25 +9,45 @@ import CopyRight from '../common/copyright'
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
-var main;
+var main,choosePrice,chooseSize,listAllProduct;
 
 class ProductGird extends React.Component{
     constructor(props){
         super(props);
+        this.getDetail = this.getDetail.bind(this);
+		this.addToCart = this.addToCart.bind(this);
+		this.handleFavorite = this.handleFavorite.bind(this);
     }
+    getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct")
+	}
+	addToCart(){
+		$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			var {dispatch} = main.props;
+        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
+		})
+	}
+	handleFavorite(){
+		$.post("/addToFavorite",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			if (data.success==1){
+				console.log("Add thành công");
+			}
+		})
+	}
     render(){
         return(<li class="gategory-product-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
         <div class="single-product-item">
             <div class="product-image">
-                <a href="single-product.html"><img src={this.props.image} alt="product-image" /></a>
+            <a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
                 <a href="single-product.html" class="new-mark-box">sale!</a>
                 <div class="overlay-content">
-                    <ul>
-                        <li><a href="#" title="Quick view"><i class="fa fa-search"></i></a></li>
-                        <li><a href="#" title="Quick view"><i class="fa fa-shopping-cart"></i></a></li>
-                        <li><a href="#" title="Quick view"><i class="fa fa-retweet"></i></a></li>
-                        <li><a href="#" title="Quick view"><i class="fa fa-heart-o"></i></a></li>
-                    </ul>
+                        <ul>
+                            <li><a title="Xem sản phẩm" style={{ cursor: 'pointer' }} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
+                            <li><a title="Thêm vào giỏ hàng" style={{ cursor: 'pointer' }} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
+                            <li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-retweet"></i></a></li>
+                            <li><a title="Thêm vào favorite list" style={{ cursor: 'pointer' }} onClick={this.handleFavorite}><i className="fa fa-heart-o"></i></a></li>
+                        </ul>
                 </div>
             </div>
             <div class="product-info">
@@ -43,9 +63,9 @@ class ProductGird extends React.Component{
                         <span>1 Review(s)</span>
                     </div>
                 </div>
-                <a href="single-product.html">{this.props.name}</a>
+                <a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
                 <div class="price-box">
-                    <span class="price">{this.props.cost}</span>
+                    <span class="price">{this.props.costs[this.props.costs.length-1].cost}</span>
                     <span class="old-price"></span>
                 </div>
             </div>
@@ -56,15 +76,14 @@ class ProductGird extends React.Component{
 
 class ProductList extends React.Component{
     constructor(props){
-        super(props);
-        
+        super(props);      
     }
     render(){
         return(<li class="cat-product-list">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="single-product-item">
                 <div class="product-image">
-                    <a href="single-product.html"><img src="img/product/sale/3.jpg" alt="product-image" /></a>
+                    <a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
                     <a href="single-product.html" class="new-mark-box">new</a>
                 </div>
             </div>
@@ -74,7 +93,7 @@ class ProductList extends React.Component{
                 <div class="single-product-item">
                     <div class="product-info">
                         <div class="customar-comments-box">
-                            <a href="single-product.html">Faded Short Sleeves T-shirt </a>
+                            <a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
                             <div class="rating-box">
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
@@ -87,20 +106,20 @@ class ProductList extends React.Component{
                             </div>
                         </div>
                         <div class="product-datails">
-                            <p>Faded short sleeves t-shirt with high neckline. Soft and stretchy material for a comfortable fit. Accessorize with a straw hat and you're ready for summer! </p>
+                            <p>{this.props.desc}</p>
                         </div>
                         <div class="price-box">
-                            <span class="price">$16.51</span>
+                            <span class="price">{this.props.costs[this.props.costs.length-1].cost}</span>
                         </div>
                     </div>
-                    <div class="overlay-content-list">
-                        <ul>
-                            <li><a href="#" title="Add to cart" class="add-cart-text">Thêm vào giỏ hàng</a></li>
-                            <li><a href="#" title="Quick view"><i class="fa fa-search"></i></a></li>
-                            <li><a href="#" title="Add to compare"><i class="fa fa-retweet"></i></a></li>
-                            <li><a href="#" title="Add to wishlist"><i class="fa fa-heart-o"></i></a></li>
-                        </ul>
-                    </div>												
+                        <div class="overlay-content-list">
+                            <ul>
+                                <li><a title="Xem sản phẩm" style={{ cursor: 'pointer' }} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
+                                <li><a title="Thêm vào giỏ hàng" style={{ cursor: 'pointer' }} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
+                                <li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-retweet"></i></a></li>
+                                <li><a title="Thêm vào favorite list" style={{ cursor: 'pointer' }} onClick={this.handleFavorite}><i className="fa fa-heart-o"></i></a></li>
+                            </ul>
+                        </div>												
                 </div>														
             </div>
         </div>
@@ -111,6 +130,56 @@ class ProductList extends React.Component{
 class OptionProduct extends React.Component{
     constructor(props){
         super(props);
+        this.changePrice = this.changePrice.bind(this);
+        this.changeSize = this.changeSize.bind(this);
+        this.checkPrice = this.checkPrice.bind(this);
+    }
+    checkPrice(price){
+
+    }
+    changePrice(event){
+        choosePrice = parseInt(event.target.value);
+        var curProduct = [];
+        var max = 100000*choosePrice;
+        var min = 100000*(choosePrice-1);
+        listAllProduct.forEach(product => {
+            var cost = product.costs[product.costs.length-1].cost;
+            if (cost>min && cost<max){
+                if (chooseSize!=""){
+                    for (var i=0; i<product.sizes.length; i++){
+                        if (product.sizes[i].size==chooseSize){
+                            curProduct.push(product);
+                            break;
+                        }
+                    }
+                } else {
+                    curProduct.push(product);
+                }
+            }
+        });
+        main.setState({listProduct:curProduct});
+    }
+    changeSize(event){
+        chooseSize = parseInt(event.target.value);
+        var curProduct = [];
+        listAllProduct.forEach(product => {
+            for (var i=0; i<product.sizes.length; i++){
+                if (product.sizes[i].size==chooseSize){
+                    if (choosePrice!=""){
+                        var max = 100000 * choosePrice;
+                        var min = 100000 * (choosePrice - 1);
+                        var cost = product.costs[product.costs.length-1].cost;
+                        if (cost>min && cost<max){
+                            curProduct.push(product);
+                        }
+                    } else {
+                        curProduct.push(product);
+                    }
+                    break;
+                }
+            }
+        });
+        main.setState({listProduct:curProduct});
     }
     render(){
         return(<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">      
@@ -129,68 +198,32 @@ class OptionProduct extends React.Component{
                 </ul>
             </div>
             <div class="product-single-sidebar">
-                <span class="sidebar-title">Giá</span>
-                <ul>
-                    <li> 
-                        <label><strong>Khoảng giá:</strong><input type="text" id="slidevalue" /></label>
-                    </li>
-                    <li>
-                        <div id="price-range"></div>	
-                    </li>
-                </ul>
+                <span class="sidebar-title">LỌC THEO GIÁ</span>        
+                    <div class="radio" onChange={this.changePrice}>
+                        <label><input type="radio" name="optionPrice" value="1"/> &lt; 100 000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="2"/>100 000 - 200 000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="3"/>200 000 - 300 000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="4"/>300 000 - 400 000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="5"/>400 000 - 500 000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="6"/>&gt; 500 000 VND</label>
+                    </div>
             </div>
             <div class="product-single-sidebar">
-                <span class="sidebar-title">MÀU SẮC</span>
-                <ul class="product-color-var">
-                    <li>
-                        <i class="fa fa-square color-beige"></i>
-                        <a href="#">Xám<span> (1)</span></a>
-                    </li>
-                    <li>
-                        <i class="fa fa-square color-white"></i>
-                        <a href="#">Trắng<span> (2)</span></a>
-                    </li>	
-                    <li>
-                        <i class="fa fa-square color-black"></i>
-                        <a href="#">Đen<span> (2)</span></a>
-                    </li>									
-                    <li>
-                        <i class="fa fa-square color-orange"></i>
-                        <a href="#">Cam<span> (5)</span></a>
-                    </li>
-                    <li>
-                        <i class="fa fa-square color-blue"></i>
-                        <a href="#">Xanh<span> (8)</span></a>
-                    </li>
-                    <li>
-                        <i class="fa fa-square color-green"></i>
-                        <a href="#">Lục<span> (3)</span></a>
-                    </li>
-                    <li>
-                        <i class="fa fa-square color-yellow"></i>
-                        <a href="#">Vàng<span> (4)</span></a>
-                    </li>
-                    <li>
-                        <i class="fa fa-square color-pink"></i>
-                        <a href="#">Hồng<span> (6)</span></a>
-                    </li>
-                </ul>
+                <span class="sidebar-title">LỌC THEO SIZE</span>
+                    <div class="radio" onChange={this.changeSize}>
+                        <label><input type="radio" name="optionSize" value="35" />Size 35</label> <br/>
+                        <label><input type="radio" name="optionSize" value="36" />Size 36</label> <br/>
+                        <label><input type="radio" name="optionSize" value="37" />Size 37</label> <br/>
+                        <label><input type="radio" name="optionSize" value="38" />Size 38</label> <br/>
+                        <label><input type="radio" name="optionSize" value="39" />Size 39</label> <br/>
+                        <label><input type="radio" name="optionSize" value="40" />Size 40</label> <br/>
+                        <label><input type="radio" name="optionSize" value="41" />Size 41</label> <br/>
+                        <label><input type="radio" name="optionSize" value="42" />Size 42</label> <br/>
+                        <label><input type="radio" name="optionSize" value="43" />Size 43</label> <br/>
+                        <label><input type="radio" name="optionSize" value="44" />Size 44</label> <br/>
+                    </div>
             </div>
             
-        </div>
-        <div class="product-left-sidebar">
-            <h2 class="left-title">Tags </h2>
-            <div class="category-tag">
-                <a href="#">fashion</a>
-                <a href="#">handbags</a>
-                <a href="#">women</a>
-                <a href="#">men</a>
-                <a href="#">kids</a>
-                <a href="#">New</a>
-                <a href="#">Accessories</a>
-                <a href="#">clothing</a>
-                <a href="#">New</a>
-            </div>
         </div>
     </div>)
     }
@@ -199,27 +232,111 @@ class OptionProduct extends React.Component{
 class OptionView extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+            displayview: 1
+        }
+        this.changeToGird = this.changeToGird.bind(this);
+        this.changeToList = this.changeToList.bind(this);
+        this.changeSort = this.changeSort.bind(this);
+    }
+    changeToGird(){
+        if (main.state.display==2){
+            this.setState({displayview:1})
+            main.setState({display:1});
+        }
+    }
+    changeToList(){
+        if (main.state.display==1){
+            this.setState({displayview:2})
+            main.setState({display:2});
+        }
+    }
+    changeSort(event){
+        const optionSort = parseInt(this.refs.sort.value);
+        console.log(optionSort);
+        var dataSort = main.state.listProduct;
+        var tmp;
+        switch(optionSort){
+            case 1:
+                for (var i=0; i<dataSort.length-1; i++){
+                    for (var j=i+1; j<dataSort.length; j++){
+                        if (dataSort[i].costs[dataSort[i].costs.length-1].cost>dataSort[j].costs[dataSort[j].costs.length-1].cost){
+                            tmp = dataSort[i];
+                            dataSort[i]=dataSort[j];
+                            dataSort[j]=tmp;
+                        }
+                    }
+                }
+                break;
+            case 2:
+                for (var i=0; i<dataSort.length-1; i++){
+                    for (var j=i+1; j<dataSort.length; j++){
+                        if (dataSort[i].costs[dataSort[i].costs.length-1].cost<dataSort[j].costs[dataSort[j].costs.length-1].cost){
+                            tmp = dataSort[i];
+                            dataSort[i]=dataSort[j];
+                            dataSort[j]=tmp;
+                        }
+                    }
+                }
+                break;
+            case 3:
+                for (var i=0; i<dataSort.length-1; i++){
+                    for (var j=i+1; j<dataSort.length; j++){
+                        if (dataSort[i].name>dataSort[j].name){
+                            tmp = dataSort[i];
+                            dataSort[i]=dataSort[j];
+                            dataSort[j]=tmp;
+                        }
+                    }
+                }
+                break;
+            case 4:
+                for (var i=0; i<dataSort.length-1; i++){
+                    for (var j=i+1; j<dataSort.length; j++){
+                        if (dataSort[i].name<dataSort[j].name){
+                            tmp = dataSort[i];
+                            dataSort[i]=dataSort[j];
+                            dataSort[j]=tmp;
+                        }
+                    }
+                }
+                break;
+        }
+        if (optionSort==0){
+            main.setState({listProduct:listAllProduct});
+        } else {
+            main.setState({listProduct:dataSort});
+        }
     }
     render(){
+        var optionView="";
+        if (this.state.displayview==1){
+            optionView = <ul>
+                <li class="active"><a style={{ cursor: 'pointer' }} onClick={this.changeToGird}><i class="fa fa-th-large"></i></a><br />Grid</li>
+                <li><a style={{ cursor: 'pointer' }} onClick={this.changeToList}><i class="fa fa-th-list"></i></a><br />List</li>
+            </ul>
+        } else {
+            optionView = <ul>
+                <li><a style={{cursor:'pointer'}} onClick={this.changeToGird}><i class="fa fa-th-large"></i></a><br />Grid</li>
+                <li class="active"><a style={{cursor:'pointer'}} onClick={this.changeToList}><i class="fa fa-th-list"></i></a><br />List</li>
+            </ul>
+        }
         return(<div class="product-shooting-bar">
         <div class="shoort-by">
             <label for="productShort">Sắp xếp</label>
             <div class="short-select-option">
-                <select name="sortby" id="productShort">
-                    <option value="">--</option>
-                    <option value="">Giá: thấp - cao</option>
-                    <option value="">Giá: cao - thấp</option>
-                    <option value="">Tên sản phẩm: A - Z</option>
-                    <option value="">Tên sản phẩm: Z - A</option>
+                <select name="sortby" ref="sort" onChange={this.changeSort}>
+                    <option value="0">--</option>
+                    <option value="1">Giá: thấp - cao</option>
+                    <option value="2">Giá: cao - thấp</option>
+                    <option value="3">Tên sản phẩm: A - Z</option>
+                    <option value="4">Tên sản phẩm: Z - A</option>
                 </select>												
             </div>
         </div>
         <div class="view-systeam">
             <label for="perPage">View:</label>
-            <ul>
-                <li class="active"><a href="shop-gird.html"><i class="fa fa-th-large"></i></a><br />Grid</li>
-                <li><a href="shop-list.html"><i class="fa fa-th-list"></i></a><br />List</li>
-            </ul>
+            {optionView}
         </div>
     </div>)
     }
@@ -230,13 +347,18 @@ class Category extends React.Component{
         super(props);
         this.state = {
             listProduct: [],
-            category:{}
+            category:{},
+            display: 1
         }
+        choosePrice = "";
+        chooseSize = "";
+        main = this;
     }
     componentDidMount(){
         var name = localStorage.getItem("curcategory");
         var that = this;
         $.get("/getCategoryProduct/"+name,function(data){
+            listAllProduct = data.lProduct;
             that.setState({listProduct:data.lProduct,category:data.category})
         })
     }
@@ -267,7 +389,7 @@ class Category extends React.Component{
                         <div class="product-category-title">
                             <h1>
                                 <span class="cat-name">{this.state.category.name}</span>
-                                <span class="count-product">Có 13 sản phẩm</span>
+                                <span class="count-product">Có {this.state.listProduct.length} sản phẩm</span>
                             </h1>
                         </div>
                         <div class="product-shooting-area">
@@ -303,8 +425,13 @@ class Category extends React.Component{
                         <div class="row">
                             <ul class="gategory-product">											
                                 {this.state.listProduct.map(function(pro,index){
-                                    return <ProductGird key={index} name={pro.name} cost={pro.cost}
-                                    image={pro.image.image1} id={pro._id}/>
+                                    if (main.state.display==1){
+                                        return <ProductGird key={index} name={pro.name} costs={pro.costs}
+                                            image={pro.image.image1} id={pro._id}/>
+                                    } else {
+                                        return <ProductList key={index} name={pro.name} costs={pro.costs}
+                                            image={pro.image.image1} id={pro._id} desc={pro.description}/>
+                                    }
                                 })}
                             </ul>
                         </div>

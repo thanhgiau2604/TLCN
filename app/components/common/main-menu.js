@@ -23,7 +23,7 @@ class Product extends React.Component{
 		<div className="shipping-item-text">
 			<span>{this.props.quanty}<span className="pro-quan-x">x</span> <a href="#" className="pro-cat">{this.props.name}</a></span>
 			<span className="pro-quality"><a href="#">{this.props.size},{this.props.color}</a></span>
-			<p>{this.props.cost}</p>
+			<p>{this.props.costs[this.props.costs.length-1].cost}</p>
 		</div>
 	</div>)
 	}
@@ -56,7 +56,7 @@ class Cart extends React.Component{
 		var sum =0,maxShip=0;
 		if (main.props.cart){
 			main.props.cart.forEach(e => {
-				sum+=e.product.cost;
+				sum+=e.product.costs[e.product.costs.length-1].cost;
 				if (e.product.shipcost > maxShip){
 					maxShip = e.product.shipcost;
 				}
@@ -75,7 +75,7 @@ class Cart extends React.Component{
 					{main.props.cart.map(function(pro,index){
 						return <Product key={index} image={pro.product.image.image1} 
 						name ={pro.product.name} size={pro.size} color={pro.color}
-						quanty={pro.quanty} cost ={pro.product.cost} id={pro.product._id}/>
+						quanty={pro.quanty} costs ={pro.product.costs} id={pro.product._id}/>
 					})}
 					<div className="shipping-total-bill">
 						<div className="cart-prices">

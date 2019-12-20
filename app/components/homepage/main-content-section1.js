@@ -27,7 +27,7 @@ class Product1 extends React.Component{ //product for polular product
 				</div>
 			</div>
 			<div className="price-box">
-				<span className="price">{this.props.cost}đ</span>
+				<span className="price">{this.props.costs[this.props.costs.length-1].cost}đ</span>
 			</div>
 		</div>
 	</div>)
@@ -90,8 +90,8 @@ class Product2 extends React.Component{
 							</div>
 							<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 							<div className="price-box">
-								<span className="price">{this.props.curcost}đ</span>
-								<span className="older-price">{this.props.oldcost}</span>
+								<span className="price">{this.props.costs[this.props.costs.length-1].cost}đ</span>
+								<span className="older-price">{this.props.costs[this.props.costs.length-2].cost}đ</span>
 							</div>
 						</div>
 					</div>
@@ -128,7 +128,7 @@ class PopularProduct extends React.Component{
 						<div className="item">
 							{this.state.listPoplular.map(function (product, index) {
 								return <Product1 key={index} id={product._id}
-									name={product.name} image={product.image.image1} cost={product.cost}/>
+									name={product.name} image={product.image.image1} costs={product.costs}/>
 							})}
 						</div>
 					</div>
@@ -165,7 +165,7 @@ class NewProduct extends React.Component{
 								{this.state.listNew.map(function(product,index){
 									return <Product2 key={index} id={product._id}
 									name={product.name} image={product.image.image1} 
-									curcost={product.cost} desc="NEW"/>
+									costs={product.costs} desc="NEW"/>
 								})}
 							</div>
 						</div>
@@ -198,7 +198,7 @@ class SaleProduct extends React.Component {
 						{this.state.listSale.map(function (product, index) {
 							return <Product2 key={index} id={product._id}
 								name={product.name} image={product.image.image1} 
-								curcost={product.cost} desc="SALE" oldcost={product.oldcost}/>
+								costs={product.costs} desc="SALE"/>
 						})}											
 				</div>										
 			</div>

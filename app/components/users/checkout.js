@@ -24,7 +24,7 @@ class SingleProduct extends React.Component {
         this.setState({quanty: e.target.value});
         var arrCost = step1.state.sumcost;
         var arrProduct = step1.state.listProduct;
-        arrCost[this.props.stt-1] = parseInt(e.target.value)*this.props.cost;
+        arrCost[this.props.stt-1] = parseInt(e.target.value)*this.props.costs[this.props.costs.length-1].cost;
         arrProduct[this.props.stt-1].quanty = parseInt(e.target.value);
         // console.log(this.props.stt-1);
         // console.log(arrCost);
@@ -42,7 +42,7 @@ class SingleProduct extends React.Component {
             </td>
             <td class="cart-unit">
                 <ul class="price text-right">
-                    <li class="price">{this.props.cost}đ</li>
+                    <li class="price">{this.props.costs[this.props.costs.length-1].cost}đ</li>
                 </ul>
             </td>
             <td class="cart_quantity text-center">
@@ -56,7 +56,7 @@ class SingleProduct extends React.Component {
                 </span>
             </td>
             <td class="cart-total">
-                <span class="price">{this.props.cost*parseInt(this.state.quanty)}</span>
+                <span class="price">{this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty)}</span>
             </td>
         </tr>))
     }
@@ -76,7 +76,7 @@ class Summary extends React.Component {
         $.post("/cart",{email:localStorage.getItem('email')},function(data){
             var arrayCostProduct=[];
             data.forEach(pro => {
-                arrayCostProduct.push(pro.product.cost*pro.quanty);
+                arrayCostProduct.push(pro.product.costs[pro.product.costs.length-1].cost*pro.quanty);
             });
             console.log(arrayCostProduct);
             that.setState({listProduct:data,sumcost:arrayCostProduct})
@@ -90,7 +90,7 @@ class Summary extends React.Component {
                 quanty: pro.quanty,
                 color: pro.color,
                 size: pro.size,
-                cost: pro.product.cost
+                costs: pro.product.costs
             }
             arrProduct.push(product);
         });
@@ -179,7 +179,7 @@ class Summary extends React.Component {
                                 {this.state.listProduct.map(function(pro,index){
                                     return <SingleProduct key={index} image={pro.product.image.image1} 
                                     name ={pro.product.name} size={pro.size} color={pro.color}
-                                    quanty={pro.quanty} cost ={pro.product.cost} id={pro.product._id} stt={index+1}/>
+                                    quanty={pro.quanty} costs ={pro.product.costs} id={pro.product._id} stt={index+1}/>
                                 })}
                             </tbody>
                             <tfoot>										

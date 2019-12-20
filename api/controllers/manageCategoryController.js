@@ -105,5 +105,16 @@ module.exports = function(app){
                 getCategory(res);
             }
         })
+    });
+    //search category
+    app.post("/searchcategory",parser,(req,res)=>{
+        const keysearch = req.body.keysearch;
+        Category.find({name: {$regex : ".*"+keysearch+".*",'$options' : 'i' }},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.send(data);
+            }
+        })
     })
 }

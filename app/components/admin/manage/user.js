@@ -179,6 +179,7 @@ class ManageUsers extends React.Component{
         }
         main = this;
         this.handleAddUser = this.handleAddUser.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
     componentWillMount(){
       var token = localStorage.getItem('tokenad');
@@ -205,6 +206,12 @@ class ManageUsers extends React.Component{
     }
     handleAddUser(){
       this.setState({add:true, edit:false});
+    }
+    handleChange(event){
+      var that = this;
+      $.post("/searchuser",{keysearch:event.target.value},function(data){
+        that.setState({listUsers:data});
+      })
     }
     render(){
       var Edit,Add;
@@ -247,7 +254,7 @@ class ManageUsers extends React.Component{
               </div>
               <div class='col-md-3'>
                 <div class='input-group'>
-                  <input class='form-control' placeholder='Quick search...' type='text'/>
+                  <input class='form-control' placeholder='Search user' type='text' onChange={this.handleChange}/>
                   <span class='input-group-btn'>
                     <button class='btn' type='button'>
                       <i class='icon-search'></i>

@@ -101,7 +101,7 @@ class ModalViewCategory extends React.Component{
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
                   <label for="name">Name:</label>
-                  <input type="text" class="form-control" defaultValue={this.state.name}/>
+                  <input type="text" class="form-control" defaultValue={this.state.name} readonly="true"/>
                 </div>
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
@@ -536,6 +536,7 @@ class ManageCategory extends React.Component {
       this.state = {
         listCategory:[]
       }
+      this.handleChange = this.handleChange.bind(this);
       main = this;
     }
     componentDidMount(){
@@ -557,6 +558,12 @@ class ManageCategory extends React.Component {
           }
         })
       }
+    }
+    handleChange(event){
+      var that = this;
+      $.post("/searchcategory",{keysearch:event.target.value},function(data){
+        that.setState({listCategory:data});
+      })
     }
     render(){
         return(<div id='content'>
@@ -591,7 +598,7 @@ class ManageCategory extends React.Component {
               </div>
               <div class='col-md-3'>
                 <div class='input-group'>
-                  <input class='form-control' placeholder='Quick search...' type='text'/>
+                  <input class='form-control' placeholder='Search category' type='text' onChange={this.handleChange}/>
                   <span class='input-group-btn'>
                     <button class='btn' type='button'>
                       <i class='icon-search'></i>

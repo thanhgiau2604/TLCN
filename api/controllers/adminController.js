@@ -117,5 +117,22 @@ module.exports = function(app,adminRouter,jwt){
     });
     app.get("/manageproduct",(req,res)=>{
         res.render("quanlysanpham");
+    });
+
+    //search user
+    app.post("/searchuser",parser,(req,res)=>{
+        const keysearch = req.body.keysearch;
+        User.find({$or:[
+            {firstName:{$regex : ".*"+keysearch+".*",'$options' : 'i' }},
+            {lastName: {$regex : ".*"+keysearch+".*",'$options' : 'i' }},
+            {email:{$regex : ".*"+keysearch+".*",'$options' : 'i' }},
+            {numberPhone:{$regex : ".*"+keysearch+".*",'$options' : 'i' }}
+        ]},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.send(data);
+            }
+        })
     })
 }
