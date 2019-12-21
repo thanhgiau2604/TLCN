@@ -14,8 +14,9 @@ class DetailProduct extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            product:{image: {image1:""}},
-            curcost:0
+            product:{image: {image1:"",image2:"",image3:""}},
+            curcost:0,
+            cursize:0
         }
         this.addToCart = this.addToCart.bind(this);
     }
@@ -24,16 +25,29 @@ class DetailProduct extends React.Component{
         var that = this;
         $.post("/getDetailProduct",{idproduct:idproduct},function(data){
             console.log(data);
-            that.setState({product:data,curcost:data.costs[data.costs.length-1].cost});
+            that.setState({product:data,curcost:data.costs[data.costs.length-1].cost,cursize:data.sizes[0].size});
         })
     }
     addToCart(){
-        $.post("/addToCart",{id:localStorage.getItem('curproduct'),email:localStorage.getItem('email')},function(data){
+        $.post("/addToCart",{id:localStorage.getItem('curproduct'),quanty:this.quanty.value,email:localStorage.getItem('email')},function(data){
 			var {dispatch} = main.props;
         	dispatch({type:"UPDATE_PRODUCT",newcart:data});
 		})
     }
     render(){
+        var htmlSize=[],htmlColor=[];
+        if (this.state.product.sizes) {
+            this.state.product.sizes.forEach(e => {
+                var size = <option value={e.size}>{e.size}</option>
+                htmlSize.push(size);
+                if (e.size == this.state.cursize) {
+                    e.colors.forEach(col => {
+                        var color = <label><input type="radio" name="optionColor" value={col.color} />{col.color}</label>
+                        htmlColor.push(color);
+                    });
+                }
+            });
+        }
         return(<div class="row">
         <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
             <div class="single-product-view">
@@ -41,43 +55,19 @@ class DetailProduct extends React.Component{
                     <div class="tab-pane active" id="thumbnail_1">
                         <div class="single-product-image">
                             <img src={this.state.product.image.image1} alt="single-product-image" />
-                            <a class="new-mark-box" href="#">new</a>
                             <a class="fancybox" href={this.state.product.image.image1} data-fancybox-group="gallery"><span class="btn large-btn">Phóng to <i class="fa fa-search-plus"></i></span></a>
                         </div>	
                     </div>
                     <div class="tab-pane" id="thumbnail_2">
                         <div class="single-product-image">
-                            <img src="img/product/sale/3.jpg" alt="single-product-image" />
-                            <a class="new-mark-box" href="#">new</a>
-                            <a class="fancybox" href="img/product/sale/3.jpg" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
+                            <img src={this.state.product.image.image2} alt="single-product-image" />
+                            <a class="fancybox" href={this.state.product.image.image2} data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
                         </div>	
                     </div>
                     <div class="tab-pane" id="thumbnail_3">
                         <div class="single-product-image">
-                            <img src="img/product/sale/9.jpg" alt="single-product-image" />
-                            <a class="new-mark-box" href="#">new</a>
-                            <a class="fancybox" href="img/product/sale/9.jpg" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-                        </div>	
-                    </div>
-                    <div class="tab-pane" id="thumbnail_4">
-                        <div class="single-product-image">
-                            <img src="img/product/sale/13.jpg" alt="single-product-image" />
-                            <a class="new-mark-box" href="#">new</a>
-                            <a class="fancybox" href="img/product/sale/13.jpg" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-                        </div>	
-                    </div>
-                    <div class="tab-pane" id="thumbnail_5">
-                        <div class="single-product-image">
-                            <img src="img/product/sale/7.jpg" alt="single-product-image" />
-                            <a class="new-mark-box" href="#">new</a>
-                            <a class="fancybox" href="img/product/sale/7.jpg" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
-                        </div>	
-                    </div>
-                    <div class="tab-pane" id="thumbnail_6">
-                        <div class="single-product-image">
-                            <img src="img/product/sale/12.jpg" alt="single-product-image" />
-                            <a class="new-mark-box" href="#">new</a>
-                            <a class="fancybox" href="img/product/sale/12.jpg" data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
+                            <img src={this.state.product.image.image3} alt="single-product-image" />
+                            <a class="fancybox" href={this.state.product.image.image3} data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
                         </div>	
                     </div>
                 </div>										
@@ -85,22 +75,13 @@ class DetailProduct extends React.Component{
             <div class="select-product">
                 <ul class="nav nav-tabs select-product-tab bxslider">
                     <li class="active">
-                        <a href="#thumbnail_1" data-toggle="tab"><img src="img/product/treem-1.jpg" alt="pro-thumbnail" /></a>
+                        <a href="#thumbnail_1" data-toggle="tab"><img src={this.state.product.image.image1} alt="pro-thumbnail" /></a>
                     </li>
                     <li>
-                        <a href="#thumbnail_2" data-toggle="tab"><img src="img/product/sidebar_product/2.jpg" alt="pro-thumbnail" /></a>
+                        <a href="#thumbnail_2" data-toggle="tab"><img src={this.state.product.image.image2} alt="pro-thumbnail" /></a>
                     </li>
                     <li>
-                        <a href="#thumbnail_3" data-toggle="tab"><img src="img/product/sidebar_product/3.jpg" alt="pro-thumbnail" /></a>
-                    </li>
-                    <li>
-                        <a href="#thumbnail_4" data-toggle="tab"><img src="img/product/sidebar_product/4.jpg" alt="pro-thumbnail" /></a>
-                    </li>
-                    <li>
-                        <a href="#thumbnail_5" data-toggle="tab"><img src="img/product/sidebar_product/5.jpg" alt="pro-thumbnail" /></a>
-                    </li>
-                    <li>
-                        <a href="#thumbnail_6" data-toggle="tab"><img src="img/product/sidebar_product/6.jpg" alt="pro-thumbnail" /></a>
+                        <a href="#thumbnail_3" data-toggle="tab"><img src={this.state.product.image.image3} alt="pro-thumbnail" /></a>
                     </li>
                 </ul>										
             </div>
@@ -143,23 +124,21 @@ class DetailProduct extends React.Component{
                     <p class="small-title">Số lượng</p> 
                     <div class="cart-quantity">
                         <div class="cart-plus-minus-button single-qty-btn">
-                            <input class="cart-plus-minus sing-pro-qty" type="text" name="qtybutton" value="0"/>
+                            <input class="cart-plus-minus sing-pro-qty" type="text" name="qtybutton" value="1" ref={(data) => { this.quanty = data; }}/>
                         </div>
                     </div>
                 </div>
                 <div class="single-product-size">
                     <p class="small-title">Size </p> 
-                    <select name="product-size" id="product-size">
-                        <option value="">39</option>
-                        <option value="">40</option>
-                        <option value="">41</option>
-                        <option value="">42</option>
+                    <select name="product-size" id="product-size" ref="size">
+                        {htmlSize}
                     </select>
                 </div>
                 <div class="single-product-color">
                     <p class="small-title">Màu sắc </p> 
-                    <a href="#"><span></span></a>
-                    <a class="color-blue" href="#"><span></span></a>
+                    <div class="radio" ref='color'>
+                        {htmlColor}
+                    </div>
                 </div>
                 <div class="single-product-add-cart">
                     <a class="add-cart-text" title="Add to cart" style={{cursor:'pointer'}}
@@ -187,8 +166,7 @@ class InforProduct extends React.Component{
                         <div class="tab-description">
                             
                         </div>
-                    </div>
-                    
+                    </div>            
                     <div class="tab-pane" id="review">
                         <div class="row tab-review-row">
                             <div class="col-xs-5 col-sm-4 col-md-4 col-lg-3 padding-5">

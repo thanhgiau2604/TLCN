@@ -279,5 +279,30 @@ module.exports = function(app,apiRouter,jwt){
         let txtContent = `<h3>Mã xác nhận để đổi mật khẩu của bạn là: ${numberRandom}</h3>`;
         sendmail(txtTo,txtSubject,txtContent);
         res.json(numberRandom);
-    })
+    });
+
+    app.post("/resetPassword",parser,(req,res)=>{
+        const newpass = req.body.newpass;
+        const repass = req.body.repass;
+        console.log(newpass);
+        console.log(repass);
+        var err="";
+        if (!newpass||!repass){
+            err="Vui lòng nhập đầy đủ tất cả các trường"
+            res.send({err:err,user:""});
+        } else 
+        if (newpass!=repass){
+            err="Mật khẩu và xác nhận mật khẩu không khớp!";
+            res.send({err:err,user:""});
+        } else {
+            const email = req.body.email;
+            User.update({email:email},{$set:{password:newpass}},function(err,data){
+                if (err){
+                    throw err;
+                } else {
+                    res.send({err:""});
+                }
+            })
+        }
+    });
 }

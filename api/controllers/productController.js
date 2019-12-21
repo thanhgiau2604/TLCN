@@ -130,6 +130,9 @@ module.exports = function(app){
     app.post("/addToCart",parser,(req,res)=>{
         const id = req.body.id;
         const email = req.body.email;
+        var quantyProduct = req.body.quanty;
+        if (!quantyProduct) quantyProduct=1;
+        quantyProduct = parseInt(quantyProduct);
         User.findOne({email:email},function(err,user){
             if (err){
                 throw err;
@@ -143,7 +146,7 @@ module.exports = function(app){
                     }
                 }
                 if (bool==false){
-                    User.findOneAndUpdate({email:email},{'$push':{cart:{idProduct:id,quanty:1,size:38,color:"",status:"processing"}}},{new:true},function(err,data){
+                    User.findOneAndUpdate({email:email},{'$push':{cart:{idProduct:id,quanty:quantyProduct,size:38,color:"",status:"processing"}}},{new:true},function(err,data){
                         if (err){
                             throw err;
                         } else {
@@ -152,7 +155,7 @@ module.exports = function(app){
                         }
                     })
                 } else {
-                    User.findOneAndUpdate({'email':email,"cart.idProduct":id},{'$set':{"cart.$.quanty":quanty+1}},{new:true},function(err,data){
+                    User.findOneAndUpdate({'email':email,"cart.idProduct":id},{'$set':{"cart.$.quanty":quanty+quantyProduct}},{new:true},function(err,data){
                         if (err){
                             throw err;
                         } else {
@@ -188,6 +191,26 @@ module.exports = function(app){
                     res.json({success:1});
                 }
             })
+        })
+    });
+
+    app.post("/checkFavorite",parser,(req,res)=>{
+        const idProduct = req.body.idProduct;
+        const email = req.body.email;
+        User.findOne({email:email},function(err,user){
+            if (err){
+                throw err;
+            } else {
+                var ok = false;
+                for (var i=0; i<user.favoritelist.length; i++){
+                    if (idProduct==user.favoritelist[i].id){
+                        ok=true;
+                        res.json(1);
+                        break;
+                    }
+                }
+                if (ok==false) res.json(0);
+            }
         })
     })
 }

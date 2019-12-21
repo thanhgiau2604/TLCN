@@ -1,7 +1,7 @@
 import React from 'react'
 import $ from 'jquery'
 
-var main;
+var main,mail;
 class EnterEmail extends React.Component{
 	constructor(props){
 		super(props);
@@ -9,6 +9,7 @@ class EnterEmail extends React.Component{
 	}
 	handleSubmit(e){
 		const email = this.email.value;	
+		mail = email;
 		$.post("/sendCodeToEmail",{email:email},function(data){
 			localStorage.setItem("codeInEmail",data);
 			main.setState({step:2});
@@ -39,7 +40,6 @@ class ConfirmCode extends React.Component{
 			err: ""
 		}
 		this.goChangePassword = this.goChangePassword.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
 		this.reSendCode = this.reSendCode.bind(this);
 	}
 	goChangePassword(){
@@ -51,21 +51,13 @@ class ConfirmCode extends React.Component{
 			main.setState({step:3});
 		}
 	}
-	handleSubmit(e){
-		const newpass = this.newpass.value;
-		const repass = this.repass.value;
-		$.post("/updatePassword",{newpass:newpass,repass:repass},function(data){
-			window.location.replace("/login");
-		})
-		e.preventDefault();
-	}
 	reSendCode(){
 		$.post("/sendCodeToEmail",{email:email},function(data){
 			localStorage.setItem("codeInEmail",data);
 		})
 	}
 	render(){
-		return(<div class="form-group" onSubmit={this.handleSubmit}>
+		return(<div class="form-group">
 		<div class="row">
 			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
 				<h3 class="text-center" style={{color:'#f10668'}}>Một mã xác nhận đã được gửi đến email của bạn</h3>
@@ -88,22 +80,44 @@ class ConfirmCode extends React.Component{
 class ChangePassword extends React.Component{
 	constructor(props){
 		super(props);
+		this.state = {
+			err: ""
+		}
+		this.changePassword = this.changePassword.bind(this);
+	}
+	changePassword(){
+		console.log("vào");
+		var that = this;
+		$.post("/resetPassword",{newpass:this.newpass.value,
+            repass:this.repass.value, email:mail},function(data){
+                console.log(data);
+                if (data.err!=""){
+                    that.setState({err:data.err})
+                } else {
+                    window.location.replace("/login");
+                }
+        })
 	}
 	render(){
-		return(<div class="form-group" >
+		return(<div class="form-group">
 		<div class="row">
 			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
-				<input type="email" class="form-control" placeholder="Nhập mật khẩu mới" required ref={(data) => { this.newpass = data; }}/>
+				<input type="password" class="form-control" placeholder="Nhập mật khẩu mới" required ref={(data) => { this.newpass = data; }}/>
 			</div>
 		</div>
 		<div class="row">
 			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
-				<input type="email" class="form-control" placeholder="Xác nhận mật khẩu" required ref={(data) => { this.repass = data; }}/>
+				<input type="password" class="form-control" placeholder="Xác nhận mật khẩu" required ref={(data) => { this.repass = data; }}/>
 			</div>
 		</div>
 		<div class="row">
 			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
-				<button type="submit" class="btn btn-success">Cập nhật mật khẩu</button>
+				<h3 style={{color:'red'}}>{this.state.err}</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+				<button type="submit" class="btn btn-success" onClick={this.changePassword}>Cập nhật mật khẩu</button>
 			</div>
 		</div>
 	</div>)
