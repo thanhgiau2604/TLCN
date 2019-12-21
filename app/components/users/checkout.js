@@ -19,15 +19,12 @@ class SingleProduct extends React.Component {
             quanty: this.props.quanty
         }
     }
-    changeQuanty(e){
-        
+    changeQuanty(e){   
         this.setState({quanty: e.target.value});
         var arrCost = step1.state.sumcost;
         var arrProduct = step1.state.listProduct;
         arrCost[this.props.stt-1] = parseInt(e.target.value)*this.props.costs[this.props.costs.length-1].cost;
         arrProduct[this.props.stt-1].quanty = parseInt(e.target.value);
-        // console.log(this.props.stt-1);
-        // console.log(arrCost);
         step1.setState({sumcost:arrCost,listProduct:arrProduct});
     }
     render(){
@@ -90,7 +87,7 @@ class Summary extends React.Component {
                 quanty: pro.quanty,
                 color: pro.color,
                 size: pro.size,
-                costs: pro.product.costs
+                cost: pro.product.costs[pro.product.costs.length-1].cost
             }
             arrProduct.push(product);
         });
@@ -106,6 +103,8 @@ class Summary extends React.Component {
         });
         var order = {
             email: localStorage.getItem('email'),
+            time: new Date().toLocaleString(),
+            timestamp: parseInt(Date.now().toString()),
             address: {},
             sumproductcost: sumCost,
             sumshipcost: maxShip,

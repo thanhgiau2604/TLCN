@@ -19,7 +19,8 @@ class RowOrder extends React.Component{
         return(<tr className="text-center">
         <td className="text-center">{this.props.stt}</td>
         <td className="text-center">{this.props.name}</td>
-        <td className="text-center"><img src={this.props.image} width="100px" height="100px"/></td>
+        <td className="text-center"><img src="" width="100px" height="100px"/></td>
+        <td className="text-center">{this.props.time}</td>
         <td className="text-center"><button className="btn btn-warning">{this.props.status}</button></td>
       </tr>)
     }
@@ -45,13 +46,14 @@ class TableOrder extends React.Component{
             <th className="text-center">STT</th>
             <th className="text-center">Tên sản phẩm</th>
             <th className="text-center">Hình ảnh</th>
+            <th className="text-center">Ngày đặt hàng</th>
             <th className="text-center">Trạng thái</th>
           </tr>
         </thead>
         <tbody>
           {this.state.listorder.map(function(order,index){
               return <RowOrder key={index} name={order.product.name}
-            image ={order.product.image.image1} status={order.status} stt={index+1}/>
+             status={order.status} stt={index+1} time={order.time}/>
           })}
         </tbody>
       </table>)

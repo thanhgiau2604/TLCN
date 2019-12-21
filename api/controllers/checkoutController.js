@@ -1,11 +1,6 @@
 const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({extended:false});
 const User = require("../models/users");
-const ProductCategory = require("../models/ProductCategory");
-const Product = require("../models/Product");
-const ObjectId = require('mongodb').ObjectId;
-const message = require("../models/message");
-const express = require("express");
 const Order = require("../models/order");
 const sendmail = require("./mail");
 const jwt = require("jsonwebtoken");
@@ -53,20 +48,23 @@ module.exports = function(app,apiRouter){
         let txtTo = order.email;
         let txtSubject = "XÁC NHẬN ĐƠN HÀNG TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
         let dssp ="";
+        var count = 0;
         order.listproduct.forEach(e => {
-            var strsp = `Name: ${e.name}; Quanty: ${e.quanty}; color:${e.color}; size: ${e.size}; cost: ${e.cost}`;
-            dssp = dssp + strsp+"\n";
+            count++;
+            var strsp = `<p>${count}. Tên sản phẩm: ${e.name}; Số lượng: ${e.quanty}; Màu sắc:${e.color}; Size: ${e.size}; Giá sản phẩm: ${e.cost}đ</p>`;
+            dssp = dssp + strsp;
         });
         let donhang = 
-        "Don hang cua ban:"+order.address.fullname+"-"+order.address.phonenumber+"\n"+
-        `Tong tien san pham: ${order.sumproductcost}đ;\n`+
-        `Tong phi ship:${order.sumshipcost};\n`+
-        `Danh sach san pham:\n`;
-        let diachi =`DIA CHI NHAN HANG: ${order.address.apartmentnumber}-${order.address.commune}-${order.address.district}-${order.address.province}`
+        "<h3>Đơn hàng của anh/chị:"+order.address.fullname+"- SDT:"+order.address.phonenumber+"</h3>"+
+        `<h3>Tổng tiền sản phẩm: ${order.sumproductcost}đ;</h3>`+
+        `<h3>Phí vận chuyển:${order.sumshipcost}đ;</h3>`+
+        `<h3>Tổng tiền đơn hàng:${order.sumproductcost + order.sumshipcost}đ;</h3>`+
+        `<h3>DANH SÁCH SẢN PHẨM:</h3>`;
+        let diachi =`<h3>Địa chỉ nhận hàng: ${order.address.apartmentnumber}-${order.address.commune}-${order.address.district}-${order.address.province}</h3>`
         let numberRandom = randomInt(100000,999999);
-        let linkXacNhan = "\nlink xác nhận: http://localhost:3000/checkout/"+txtTo+"/"+numberRandom;
+        let linkXacNhan = "<h4>Link xác nhận đơn hàng: http://localhost:3000/checkout/"+txtTo+"/"+numberRandom+"</h4>";
         //Luu vao databse;
-        Order.update({_id:id},{$set:{code:numberRandom}},function(err,data){
+        Order.update({_id:id},{$set:{code:numberRandom, time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
             let txtContent = donhang+dssp+diachi+linkXacNhan;
             sendmail(txtTo,txtSubject,txtContent);
             res.send("Gửi thành công!");
@@ -74,13 +72,13 @@ module.exports = function(app,apiRouter){
     });
 
     app.get("/checkout/:email/:code",(req,res)=>{
-        Order.update({email:req.params.email,code:req.params.code},{$set:{status:"confirmed"}},function(err,data){
+        Order.update({email:req.params.email,code:req.params.code},{$set:{status:"confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
             if (err){
                 throw err;
             } else {
                 let txtTo = req.params.email;
                 let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
-                let txtContent = "Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " +req.params.code;
+                let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " +req.params.code+"</h3>";
                 sendmail(txtTo,txtSubject,txtContent);
                 User.update({email:req.params.email},{$set:{cart:[]}},function(err,data){
                     if (err){

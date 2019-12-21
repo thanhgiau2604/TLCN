@@ -33,6 +33,35 @@ class Product1 extends React.Component{ //product for polular product
 	</div>)
 	}
 }
+class RequireAuthentication extends React.Component{
+	constructor(props){
+		super(props);
+		this.goAuthen = this.goAuthen.bind(this);
+	}
+	goAuthen(){
+		window.location.replace("/login");
+	}
+	render(){
+		return(<div id="modal-authen" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Thông báo</h4>
+			</div>
+			<div class="modal-body text-center">
+			  <p>Bạn chưa đăng nhập?</p>
+			  <p>Hãy click vào nút bên dưới để đi đến trang đăng nhập!</p>
+			  <button class="btn btn-primary" onClick={this.goAuthen}>ĐI ĐẾN TRANG ĐĂNG NHẬP</button>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		  </div>
+		</div>
+	  </div>)
+	}
+}
 class Product2 extends React.Component{
 	constructor(props){
 		super(props);
@@ -45,10 +74,15 @@ class Product2 extends React.Component{
 		window.location.assign("/detailproduct")
 	}
 	addToCart(){
-		$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
-			var {dispatch} = main.props;
-        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
-		})
+		const token = localStorage.getItem('token');
+		if (!token){
+			$("#modal-authen").modal('show');
+		} else {
+			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+				var {dispatch} = main.props;
+				dispatch({type:"UPDATE_PRODUCT",newcart:data});
+			})
+		}
 	}
 	handleFavorite(){
 		$.post("/addToFavorite",{id:this.props.id,email:localStorage.getItem('email')},function(data){
@@ -94,6 +128,7 @@ class Product2 extends React.Component{
 								<span className="older-price">{this.props.costs[this.props.costs.length-2].cost}đ</span>
 							</div>
 						</div>
+						<RequireAuthentication/>
 					</div>
 				</div>
 			</div></div>)}

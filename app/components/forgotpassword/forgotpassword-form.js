@@ -1,0 +1,160 @@
+import React from 'react'
+import $ from 'jquery'
+
+var main;
+class EnterEmail extends React.Component{
+	constructor(props){
+		super(props);
+		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+	handleSubmit(e){
+		const email = this.email.value;	
+		$.post("/sendCodeToEmail",{email:email},function(data){
+			localStorage.setItem("codeInEmail",data);
+			main.setState({step:2});
+		})
+		e.preventDefault();
+	}
+	render(){
+		return(<form onSubmit={this.handleSubmit}>
+			<div class="form-group">
+				<div class="row">
+					<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+						<input type="email" class="form-control" placeholder="Nhập địa chỉ Email" required ref={(data) => { this.email = data;}}/>
+					</div>
+				</div>
+				<div class="row">
+					<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+						<button type="submit" class="btn btn-success">Tiếp tục</button>
+					</div>
+				</div>
+			</div>
+		</form>)
+	}
+}
+class ConfirmCode extends React.Component{
+	constructor(props){
+		super(props);
+		this.state = {
+			err: ""
+		}
+		this.goChangePassword = this.goChangePassword.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.reSendCode = this.reSendCode.bind(this);
+	}
+	goChangePassword(){
+		const code = this.code.value;
+		const reallyCode = localStorage.getItem('codeInEmail');
+		if (code!=reallyCode){
+			this.setState({err:"Bạn nhập mã code không đúng. Vui lòng kiểm tra lại"})
+		} else {
+			main.setState({step:3});
+		}
+	}
+	handleSubmit(e){
+		const newpass = this.newpass.value;
+		const repass = this.repass.value;
+		$.post("/updatePassword",{newpass:newpass,repass:repass},function(data){
+			window.location.replace("/login");
+		})
+		e.preventDefault();
+	}
+	reSendCode(){
+		$.post("/sendCodeToEmail",{email:email},function(data){
+			localStorage.setItem("codeInEmail",data);
+		})
+	}
+	render(){
+		return(<div class="form-group" onSubmit={this.handleSubmit}>
+		<div class="row">
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+				<h3 class="text-center" style={{color:'#f10668'}}>Một mã xác nhận đã được gửi đến email của bạn</h3>
+				<h3><a href="https://mail.google.com/" target="_blank" class="text-center" style={{color:'#414eec'}}>Đi đến Gmail</a></h3>
+				<h3><a href="https://mail.yahoo.com/" target="_blank" class="text-center" style={{color:'#414eec'}}>Đi đến Yahoomail</a></h3>
+				<a style={{cursor:'pointer',color:'#530aca'}} onClick={this.reSendCode} class="text-center">Gửi lại mã</a>
+				<input type="email" class="form-control" placeholder="Nhập mã xác nhận" required ref={(data) => { this.code = data; }}/>
+				<h3 style={{color:'red'}}>{this.state.err}</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+				<button type="submit" class="btn btn-danger" onClick={this.goChangePassword}>Tiếp tục</button>
+			</div>
+		</div>
+	</div>)
+	}
+}
+
+class ChangePassword extends React.Component{
+	constructor(props){
+		super(props);
+	}
+	render(){
+		return(<div class="form-group" >
+		<div class="row">
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+				<input type="email" class="form-control" placeholder="Nhập mật khẩu mới" required ref={(data) => { this.newpass = data; }}/>
+			</div>
+		</div>
+		<div class="row">
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+				<input type="email" class="form-control" placeholder="Xác nhận mật khẩu" required ref={(data) => { this.repass = data; }}/>
+			</div>
+		</div>
+		<div class="row">
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+				<button type="submit" class="btn btn-success">Cập nhật mật khẩu</button>
+			</div>
+		</div>
+	</div>)
+	}
+}
+class ForgotPasswordForm extends React.Component{
+    constructor(props){
+		super(props);
+		this.state = {
+			error : "",
+			step: 1
+		}
+		main = this;
+	}
+
+    render(){
+	    var htmlStep;
+		if (this.state.step==1){
+			htmlStep = <EnterEmail/>
+		} else if (this.state.step==2){
+			htmlStep = <ConfirmCode/>
+		} else {
+			htmlStep = <ChangePassword/>
+		}
+        return(
+			<section className="main-content-section">
+				<div className="container">
+					<div className="row">
+						<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							<div className="bstore-breadcrumb">
+								<a href="/">Trang chủ</a>
+								<span><i className="fa fa-caret-right"></i></span>
+								<span>Quên mật khẩu</span>
+							</div>
+						</div>
+					</div>
+					<div className="login container">
+						{htmlStep}
+						<div className="bottom-container">
+							<div className="row">
+								<div className="col">
+									<a href="/signup" className="btn">Đăng ký</a>
+								</div>
+								<div className="col">
+									<a href="/login" className="btn">Đăng nhập</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>)
+    }
+}
+export default ForgotPasswordForm;

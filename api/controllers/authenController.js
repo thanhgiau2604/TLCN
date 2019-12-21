@@ -5,7 +5,10 @@ const passport = require("passport");
 const passportfb = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const express = require("express");
-
+const sendmail = require("./mail");
+function randomInt(min, max) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
 module.exports = function(app,apiRouter,jwt){
     var username="", email="",token,role="";
     var superSecret = 'iamastudent';
@@ -261,4 +264,20 @@ module.exports = function(app,apiRouter,jwt){
             done(null, user);
         });
     });
+
+
+    //handle Forgotpassword
+    app.get("/forgotpsw",(req,res)=>{
+        res.render("quenmatkhau");
+    });
+
+    app.post("/sendCodeToEmail",parser,(req,res)=>{
+        const email = req.body.email;
+        let numberRandom = randomInt(100000,999999);
+        let txtTo = email;
+        let txtSubject = "XÁC NHẬN ĐỔI MẬT KHẨU - SHOP BÁN GIÀY ONLINE";
+        let txtContent = `<h3>Mã xác nhận để đổi mật khẩu của bạn là: ${numberRandom}</h3>`;
+        sendmail(txtTo,txtSubject,txtContent);
+        res.json(numberRandom);
+    })
 }

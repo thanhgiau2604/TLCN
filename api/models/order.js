@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 
 const OrderSchema = new Schema({
     email: String,
+    time: String,
+    timestamp: Number,
     address : {
         fullname: String,
         phonenumber: String,

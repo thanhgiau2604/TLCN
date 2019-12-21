@@ -23,7 +23,7 @@ class Product extends React.Component{
 		<div className="shipping-item-text">
 			<span>{this.props.quanty}<span className="pro-quan-x">x</span> <a href="#" className="pro-cat">{this.props.name}</a></span>
 			<span className="pro-quality"><a href="#">{this.props.size},{this.props.color}</a></span>
-			<p>{this.props.costs[this.props.costs.length-1].cost}</p>
+			<p>{this.props.costs[this.props.costs.length-1].cost}đ</p>
 		</div>
 	</div>)
 	}
@@ -56,7 +56,7 @@ class Cart extends React.Component{
 		var sum =0,maxShip=0;
 		if (main.props.cart){
 			main.props.cart.forEach(e => {
-				sum+=e.product.costs[e.product.costs.length-1].cost;
+				sum+=e.product.costs[e.product.costs.length-1].cost*e.quanty;
 				if (e.product.shipcost > maxShip){
 					maxShip = e.product.shipcost;
 				}

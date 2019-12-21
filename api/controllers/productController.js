@@ -130,12 +130,37 @@ module.exports = function(app){
     app.post("/addToCart",parser,(req,res)=>{
         const id = req.body.id;
         const email = req.body.email;
-        User.findOneAndUpdate({email:email},{'$push':{cart:{idProduct:id,quanty:1,size:38,color:"",status:"processing"}}},{new:true},function(err,data){
+        User.findOne({email:email},function(err,user){
             if (err){
                 throw err;
             } else {
-                console.log(data);
-                getCart(data,res);
+                var bool = false,quanty;
+                for (var i=0; i<user.cart.length; i++){
+                    if (user.cart[i].idProduct==id){
+                        quanty = user.cart[i].quanty;
+                        bool = true;
+                        break;
+                    }
+                }
+                if (bool==false){
+                    User.findOneAndUpdate({email:email},{'$push':{cart:{idProduct:id,quanty:1,size:38,color:"",status:"processing"}}},{new:true},function(err,data){
+                        if (err){
+                            throw err;
+                        } else {
+                            console.log(data);
+                            getCart(data,res);
+                        }
+                    })
+                } else {
+                    User.findOneAndUpdate({'email':email,"cart.idProduct":id},{'$set':{"cart.$.quanty":quanty+1}},{new:true},function(err,data){
+                        if (err){
+                            throw err;
+                        } else {
+                            console.log(data);
+                            getCart(data,res);
+                        }
+                    })
+                }
             }
         })
     });

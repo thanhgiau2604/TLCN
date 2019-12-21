@@ -4,7 +4,7 @@ const User = require("../models/users");
 const ProductCategory = require("../models/ProductCategory");
 const Product = require("../models/Product");
 const ObjectId = require('mongodb').ObjectId;
-const message = require("../models/message");
+const Order = require("../models/order");
 module.exports = function(app,apiRouter){
     app.get("/getPopular",(req,res)=>{
         Product.find({}).sort({views:"descending"}).exec(function(err,data){
@@ -135,23 +135,23 @@ module.exports = function(app,apiRouter){
 
     app.post("/getOrder",parser,(req,res)=>{
         const email = req.body.email;
-        var arrResult=[];
-        User.findOne({email:email},function(err,data){
-            data.cart.forEach(e => {
-                Product.findOne({_id:e.idProduct},function(err,da){
-                    var cart = {
-                        product: da,
-                        quanty: e.quanty,
-                        size: e.size,
-                        color: e.color,
-                        status: e.status
-                    }
-                    arrResult.push(cart);
-                    if (arrResult.length == data.cart.length){
-                        res.send(arrResult);
-                    }
-                })
-            });
+        Order.find({email:email},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                var arrResult=[];
+                data.forEach(order => {
+                    order.listproduct.forEach(product => {
+                        var pro = {
+                            product: product,
+                            time: order.time,
+                            status: order.status
+                        }
+                        arrResult.push(pro);
+                    });
+                });
+                res.send(arrResult);
+            }
         })
     });
 

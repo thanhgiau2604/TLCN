@@ -61,8 +61,15 @@ class OptionUser extends React.Component {
 	}
 }
 class WelcomeUser extends React.Component{
+	constructor(props){
+		super(props);
+		this.showOption = this.showOption.bind(this);
+	}
+	showOption(){
+		$(".infor-toogle").slideToggle(400);
+	}
 	render(){
-		return(<div className="welcome-info" style={{cursor:'pointer'}}>
+		return(<div className="welcome-info" style={{cursor:'pointer'}} onClick={this.showOption}>
 			Chào, <span>{localStorage.getItem("username")}</span>
 		</div>)
 	}
@@ -110,7 +117,7 @@ class HeaderTop extends React.Component {
 						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 							<div className="header-left-menu">
 								{this.state.Welcome}
-								<ul className="languages-choose infor-toogle">
+								<ul class="languages-choose infor-toogle">
 									<li>
 										<a href="/orderhistory">
 											<span>Lịch sử đơn hàng</span>
