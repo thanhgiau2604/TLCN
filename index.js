@@ -13,6 +13,7 @@ const categoryProductController = require("./api/controllers/categoryProductCont
 const manageProductController = require("./api/controllers/manageProductController");
 const manageCategoryController = require("./api/controllers/manageCategoryController");
 const checkoutController = require("./api/controllers/checkoutController");
+const mangeOrderController = require("./api/controllers/manageOrderController");
 app.set("view engine","ejs");
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
@@ -44,6 +45,7 @@ categoryProductController(app);
 manageProductController(app,adminController);
 manageCategoryController(app,adminController);
 checkoutController(app,apiRouter);
+mangeOrderController(app);
 app.use("/", express.static(__dirname+"/public"));
 app.use(express.static(__dirname+"/public"));
 app.get("/login",(req,res)=> res.render("dangnhap"));

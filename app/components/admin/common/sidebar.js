@@ -8,7 +8,7 @@ class Sidebar extends React.Component{
         var value = this.props.active;
         console.log(value);
         var str = "launcher";
-        var classValue1 = str, classValue2 =str, classValue3 = str, classValue4 = str;
+        var classValue1 = str, classValue2 =str, classValue3 = str, classValue4 = str, classValue5=str;
         if (value==1){
           classValue1 = "active "+str;
         } else if (value==2){
@@ -17,6 +17,8 @@ class Sidebar extends React.Component{
           classValue3 = "active "+str;
         } else if (value==4){
           classValue4 = "active "+str;
+        } else if (value==5){
+          classValue5 = "active "+str;
         }
         return(<section id='sidebar'>
         <i class='icon-align-justify icon-large' id='toggle'></i>
@@ -36,6 +38,10 @@ class Sidebar extends React.Component{
           <li class={classValue4}>
             <i class='icon-archive'></i>
             <a href='/manageproduct'>Products</a>
+          </li>
+          <li class={classValue5}>
+            <i class='icon-archive'></i>
+            <a href='/manageorder'>Order</a>
           </li>
         </ul>
         <div data-toggle='tooltip' id='beaker' title='Made by lab2023'></div>

@@ -18,25 +18,61 @@ class Product extends React.Component{
 		this.getDetail = this.getDetail.bind(this);
 		this.addToCart = this.addToCart.bind(this);
 		this.handleFavorite = this.handleFavorite.bind(this);
+		this.state = {
+			isFavorite:false
+		}
 	}
 	getDetail(){
 		localStorage.setItem("curproduct",this.props.id);
 		window.location.assign("/detailproduct")
 	}
 	addToCart(){
-		$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
-			var {dispatch} = main.props;
-        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
-		})
+		const token = localStorage.getItem('token');
+		if (!token){
+			$("#modal-authen").modal('show');
+		} else {
+			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+				var {dispatch} = main.props;
+				dispatch({type:"UPDATE_PRODUCT",newcart:data});
+			})
+		}
 	}
 	handleFavorite(){
-		$.post("/addToFavorite",{id:this.props.id,email:localStorage.getItem('email')},function(data){
-			if (data.success==1){
-				console.log("Add thành công");
-			}
-		})
+		const token = localStorage.getItem('token');
+		var that = this;
+		if (!token) {
+			$("#modal-authen").modal('show');
+		} else {
+			if (this.state.isFavorite == false)
+			{
+				$.post("/addToFavorite", {id:this.props.id, email: localStorage.getItem('email') }, function (data) {
+					that.setState({isFavorite:true});
+				})
+			} else {
+				$.post("/deleteFav",{idDel:this.props.id,email:localStorage.getItem('email')},function(data){
+					that.setState({isFavorite:false});
+				})
+			}	
+		}
+	}
+	componentDidMount(){
+		const email = localStorage.getItem('email');
+		var that = this;
+		if (email) {
+			$.post("/checkFavorite", { idProduct: this.props.id, email: email }, function (data) {
+				if (data == 1) {
+					that.setState({ isFavorite: true });
+				}
+			})
+		}
 	}
 	render(){
+		var htmlFavorite;
+		if (this.state.isFavorite==true){
+			htmlFavorite=<li><a title="Xóa khỏi favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o" style={{color:'#daf309'}}></i></span></a></li>
+		} else {
+			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
+		}
 		return (<div className="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<div className="item">
 				<div className="single-product-item">
@@ -48,7 +84,7 @@ class Product extends React.Component{
 								<li><a title="Xem sản phẩm" style={{ cursor: 'pointer' }} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
 								<li><a title="Thêm vào giỏ hàng" style={{ cursor: 'pointer' }} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
 								<li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-retweet"></i></a></li>
-								<li><a title="Thêm vào favorite list" style={{ cursor: 'pointer' }} onClick={this.handleFavorite}><i className="fa fa-heart-o"></i></a></li>
+								{htmlFavorite}
 							</ul>
 						</div>
 					</div>

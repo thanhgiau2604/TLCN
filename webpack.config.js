@@ -19,8 +19,9 @@ module.exports = {
         manageproduct:'./app/components/admin/manage/product.js',
         categoryproduct: './app/components/users/categoryproduct.js',
         managecategory: './app/components/admin/manage/category.js',
+        manageorder: './app/components/admin/manage/order.js',
         checkout: './app/components/users/checkout.js',
-        forgotpassword: './app/components/forgotpassword/forgotpassword.js'
+        forgotpassword: './app/components/forgotpassword/forgotpassword.js',
     },
     output: {
       path: __dirname,

@@ -62,16 +62,21 @@ class TableOrder extends React.Component{
 class ItemHistory extends React.Component{
     constructor(props){
         super(props);
+        this.getDetail = this.getDetail.bind(this);
     }
+    getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct")
+	}
     render()
     {
         return (<div className="col-md-3 col-sm-4 col-xs-12">
             <div className="wishlists-single-item">
                 <div className="wishlist-image">
-                    <a href="#"><img src={this.props.image} alt="" /></a>
+                    <a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="" /></a>
                 </div>
                 <div className="wishlist-title">
-                    <p>{this.props.name}<a href="#"><i className="fa fa-close"></i></a></p>
+                <a onClick={this.getDetail} style={{cursor:'pointer'}}><p>{this.props.name}</p></a>
                 </div>
             </div>
         </div>)
@@ -106,7 +111,7 @@ class ListHistory extends React.Component{
             Xóa lịch sử xem sản phẩm</button>
         <div style={{paddingTop:'20px'}}>  
         {this.state.listHis.map(function(pro,index){
-            return <ItemHistory key={index} name={pro.name} image = {pro.image.image1} />
+            return <ItemHistory key={index} name={pro.name} image = {pro.image.image1} id={pro._id}/>
         })}   
         </div>                                           
     </div> )

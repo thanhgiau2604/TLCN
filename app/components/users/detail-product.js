@@ -10,36 +10,97 @@ var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
 var main,chooseColor="",firstColor;
+class RequireAuthentication extends React.Component{
+	constructor(props){
+		super(props);
+		this.goAuthen = this.goAuthen.bind(this);
+	}
+	goAuthen(){
+		window.location.replace("/login");
+	}
+	render(){
+		return(<div id="modal-authen" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Thông báo</h4>
+			</div>
+			<div class="modal-body text-center">
+			  <p>Bạn chưa đăng nhập?</p>
+			  <p>Hãy click vào nút bên dưới để đi đến trang đăng nhập!</p>
+			  <button class="btn btn-primary" onClick={this.goAuthen}>ĐI ĐẾN TRANG ĐĂNG NHẬP</button>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		  </div>
+		</div>
+	  </div>)
+	}
+}
 class DetailProduct extends React.Component{
     constructor(props){
         super(props);
         this.state = {
             product:{image: {image1:"",image2:"",image3:""}},
             curcost:0,
-            cursize:0
+            cursize:0,
+            isFavorite: false
         }
         this.addToCart = this.addToCart.bind(this);
         this.changeSize = this.changeSize.bind(this);
         this.changeColor = this.changeColor.bind(this);
+        this.handleFavorite = this.handleFavorite.bind(this);
+        this.handleRemove = this.handleRemove.bind(this);
+    }
+    handleFavorite(){
+		const token = localStorage.getItem('token');
+		var that = this;
+		if (!token) {
+			$("#modal-authen").modal('show');
+		} else {
+            $.post("/addToFavorite", { id: this.state.product._id, email: localStorage.getItem('email') }, function (data) {
+                that.setState({ isFavorite: true });
+            });
+		}
+    }
+    handleRemove(){
+        var that = this;
+        $.post("/deleteFav", { idDel: this.state.product._id, email: localStorage.getItem('email') }, function (data) {
+            that.setState({isFavorite: false});
+        })
     }
     componentDidMount(){
         var idproduct = localStorage.getItem('curproduct');
         var that = this;
-        $.post("/getDetailProduct",{idproduct:idproduct},function(data){
-            console.log(data);
-            that.setState({product:data,curcost:data.costs[data.costs.length-1].cost,cursize:data.sizes[0].size});
-        })
+        if (idproduct){
+            $.post("/getDetailProduct",{idproduct:idproduct},function(data){
+                console.log(data);
+                that.setState({product:data,curcost:data.costs[data.costs.length-1].cost,cursize:data.sizes[0].size});
+            })
+            $.post("/checkFavorite", { idProduct: idproduct, email: localStorage.getItem('email')}, function (data) {
+				if (data == 1) {
+					that.setState({ isFavorite: true });
+				}
+			})
+        }
     }
     addToCart(){
         const email = localStorage.getItem('email');
         var color = chooseColor;
         if (color=="") color=firstColor;
         const size = this.refs.size.value;
-        $.post("/addToCart",{id:localStorage.getItem('curproduct'),quanty:this.quanty.value,email:email,
-        color:color, size:size},function(data){
-			var {dispatch} = main.props;
-        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
-		})
+        const token = localStorage.getItem('token');
+		if (!token){
+			$("#modal-authen").modal('show');
+		} else {
+			$.post("/addToCart",{id:localStorage.getItem('curproduct'),quanty:this.quanty.value,email:email,
+            color:color, size:size},function(data){
+				var {dispatch} = main.props;
+				dispatch({type:"UPDATE_PRODUCT",newcart:data});
+			})
+		}
     }
     changeSize(e){
         var size = parseInt(e.target.value);
@@ -62,6 +123,12 @@ class DetailProduct extends React.Component{
                     }
                 }
             });
+        }
+        var buttonFavorite;
+        if (this.state.isFavorite==true){
+            buttonFavorite = <button className='text-center btn btn-danger' onClick={this.handleRemove}><i className='fa fa-trash' style={{paddingRight:'5px'}}></i>Xóa khỏi danh sách yêu thích</button>;
+        } else {
+            buttonFavorite = <button className='text-center btn btn-success' onClick={this.handleFavorite}><i className='fa fa-heart' style={{paddingRight:'5px'}}></i>Thêm vào danh sách yêu thích</button>;
         }
         return(<div class="row">
         <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
@@ -133,7 +200,7 @@ class DetailProduct extends React.Component{
                     <p>{this.state.product.description}</p>
                 </div>
                 <div class="single-product-info">
-                    <a href="#"><i class="fa fa-heart"></i></a>
+                    {buttonFavorite}
                 </div>
                 <div class="single-product-quantity">
                     <p class="small-title">Số lượng</p> 
@@ -159,6 +226,7 @@ class DetailProduct extends React.Component{
                     <a class="add-cart-text" title="Add to cart" style={{cursor:'pointer'}}
                     onClick={this.addToCart}>Thêm vào giỏ hàng</a>
                 </div>
+                <RequireAuthentication/>
             </div>
         </div>
     </div>)
@@ -229,7 +297,7 @@ class SingleHistory extends React.Component{
         return(<li>
             <a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} /></a>
             <div class="r-sidebar-pro-content">
-                <h5><a href="#">{this.props.name}</a></h5>
+                <h5><a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a></h5>
                 <p>{this.props.description}</p>
             </div>
         </li>)
@@ -303,7 +371,7 @@ class SingleRelate extends React.Component{
                         <span>1 Review(s)</span>
                     </div>
                 </div>
-                <a href="#">{this.props.name}</a>
+                <a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
                 <div class="price-box">
                     <span class="price">{this.props.costs[this.props.costs.length-1].cost}đ</span>
                 </div>
@@ -355,6 +423,7 @@ class TotalPage extends React.Component{
         main = this;
     }
     render(){
+        
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">

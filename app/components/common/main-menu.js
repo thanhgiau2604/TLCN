@@ -53,16 +53,12 @@ class Cart extends React.Component{
 		window.location.assign("/api/checkout/?token="+token);
 	}
 	render(){
-		var sum =0,maxShip=0;
+		var sum =0;
 		if (main.props.cart){
 			main.props.cart.forEach(e => {
 				sum+=e.product.costs[e.product.costs.length-1].cost*e.quanty;
-				if (e.product.shipcost > maxShip){
-					maxShip = e.product.shipcost;
-				}
 			});
 		}
-		sum+=maxShip;
 		return(<div className="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea ">
 		<div className="shopping-cart-out pull-right">
 			<div className="shopping-cart">
@@ -78,13 +74,9 @@ class Cart extends React.Component{
 						quanty={pro.quanty} costs ={pro.product.costs} id={pro.product._id}/>
 					})}
 					<div className="shipping-total-bill">
-						<div className="cart-prices">
-							<span className="shipping-cost">{maxShip}đ</span>
-							<span>Phí Ship</span>
-						</div>
 						<div className="total-shipping-prices">
 							<span className="shipping-total">{sum}đ</span>
-							<span>Tổng</span>
+							<span>Tổng tiền SP</span>
 						</div>										
 					</div>
 					<div className="shipping-checkout-btn">

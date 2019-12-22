@@ -108,11 +108,13 @@ class Product2 extends React.Component{
 	componentDidMount(){
 		const email = localStorage.getItem('email');
 		var that = this;
-		$.post("/checkFavorite",{idProduct:this.props.id,email:email},function(data){
-			if (data==1){
-				that.setState({isFavorite:true});
-			}
-		})
+		if (email) {
+			$.post("/checkFavorite", { idProduct: this.props.id, email: email }, function (data) {
+				if (data == 1) {
+					that.setState({ isFavorite: true });
+				}
+			})
+		}
 	}
 	render(){
 		var htmlFavorite;
