@@ -131,6 +131,10 @@ module.exports = function(app){
         const id = req.body.id;
         const email = req.body.email;
         var quantyProduct = req.body.quanty;
+        var color = req.body.color;
+        var size = req.body.size;
+        if (!color) color="default"
+        if (!size) size = 0;
         if (!quantyProduct) quantyProduct=1;
         quantyProduct = parseInt(quantyProduct);
         User.findOne({email:email},function(err,user){
@@ -146,7 +150,7 @@ module.exports = function(app){
                     }
                 }
                 if (bool==false){
-                    User.findOneAndUpdate({email:email},{'$push':{cart:{idProduct:id,quanty:quantyProduct,size:38,color:"",status:"processing"}}},{new:true},function(err,data){
+                    User.findOneAndUpdate({email:email},{'$push':{cart:{idProduct:id,quanty:quantyProduct,size:size,color:color,status:"processing"}}},{new:true},function(err,data){
                         if (err){
                             throw err;
                         } else {

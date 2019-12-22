@@ -9,7 +9,7 @@ import CopyRight from '../common/copyright'
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
-var main;
+var main,chooseColor="",firstColor;
 class DetailProduct extends React.Component{
     constructor(props){
         super(props);
@@ -19,6 +19,8 @@ class DetailProduct extends React.Component{
             cursize:0
         }
         this.addToCart = this.addToCart.bind(this);
+        this.changeSize = this.changeSize.bind(this);
+        this.changeColor = this.changeColor.bind(this);
     }
     componentDidMount(){
         var idproduct = localStorage.getItem('curproduct');
@@ -29,10 +31,22 @@ class DetailProduct extends React.Component{
         })
     }
     addToCart(){
-        $.post("/addToCart",{id:localStorage.getItem('curproduct'),quanty:this.quanty.value,email:localStorage.getItem('email')},function(data){
+        const email = localStorage.getItem('email');
+        var color = chooseColor;
+        if (color=="") color=firstColor;
+        const size = this.refs.size.value;
+        $.post("/addToCart",{id:localStorage.getItem('curproduct'),quanty:this.quanty.value,email:email,
+        color:color, size:size},function(data){
 			var {dispatch} = main.props;
         	dispatch({type:"UPDATE_PRODUCT",newcart:data});
 		})
+    }
+    changeSize(e){
+        var size = parseInt(e.target.value);
+        this.setState({cursize:size});
+    }
+    changeColor(e){
+        chooseColor = e.target.value;
     }
     render(){
         var htmlSize=[],htmlColor=[];
@@ -41,10 +55,11 @@ class DetailProduct extends React.Component{
                 var size = <option value={e.size}>{e.size}</option>
                 htmlSize.push(size);
                 if (e.size == this.state.cursize) {
-                    e.colors.forEach(col => {
-                        var color = <label><input type="radio" name="optionColor" value={col.color} />{col.color}</label>
+                    for (var i=0; i<e.colors.length; i++){
+                        if (i==0) firstColor = e.colors[0].color;
+                        var color = <div><label><input type="radio" name="optionColor" value={e.colors[i].color}/>{e.colors[i].color}</label><br/></div>
                         htmlColor.push(color);
-                    });
+                    }
                 }
             });
         }
@@ -130,13 +145,13 @@ class DetailProduct extends React.Component{
                 </div>
                 <div class="single-product-size">
                     <p class="small-title">Size </p> 
-                    <select name="product-size" id="product-size" ref="size">
+                    <select name="product-size" id="product-size" ref="size" onChange={this.changeSize}>
                         {htmlSize}
                     </select>
                 </div>
                 <div class="single-product-color">
                     <p class="small-title">Màu sắc </p> 
-                    <div class="radio" ref='color'>
+                    <div class="radio" ref='color' onChange={this.changeColor}>
                         {htmlColor}
                     </div>
                 </div>

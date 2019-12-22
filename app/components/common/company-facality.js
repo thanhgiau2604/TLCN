@@ -2,8 +2,12 @@ import React from 'react'
 
 class CompanyFacality extends React.Component{
     constructor(props){
-        super(props);
-    }
+		super(props);
+		this.openChat = this.openChat.bind(this);
+	}
+	openChat(){
+		window.open("http://m.me/101083411408294");
+	}
     render(){
         return(
 			<section className="company-facality">
@@ -56,6 +60,9 @@ class CompanyFacality extends React.Component{
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="link-messenger" onClick={this.openChat}>
+					<img src="./img/messenger.png" />
 				</div>
 			</section>)
     }
