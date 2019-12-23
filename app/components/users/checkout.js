@@ -16,8 +16,13 @@ class SingleProduct extends React.Component {
         super(props);
         this.changeQuanty = this.changeQuanty.bind(this);
         this.state = {
-            quanty: this.props.quanty
+            quanty: this.props.quanty,
+            cursize: 0,
+            size: this.props.size,
+            curcolor: this.props.color
         }
+        this.changeColor = this.changeColor.bind(this);
+        this.changeSize = this.changeSize.bind(this);
     }
     changeQuanty(e){   
         this.setState({quanty: e.target.value});
@@ -27,15 +32,50 @@ class SingleProduct extends React.Component {
         arrProduct[this.props.stt-1].quanty = parseInt(e.target.value);
         step1.setState({sumcost:arrCost,listProduct:arrProduct});
     }
+    changeSize(e){
+        var arrProduct = step1.state.listProduct;
+        var sizenow = parseInt(e.target.value);
+        arrProduct[this.props.stt-1].size = sizenow;
+        step1.setState({listProduct:arrProduct});
+        this.setState({size:sizenow,cursize:sizenow});
+    }
+    changeColor(e){
+        var arrProduct = step1.state.listProduct;
+        arrProduct[this.props.stt-1].color = e.target.value;
+        step1.setState({listProduct:arrProduct});
+        this.setState({curcolor:e.target.value});
+    }
     render(){
-        return((<tr>
+        var htmlSize=[],htmlColor=[];
+        htmlSize.push(<option value='0'>Chọn Size</option>)
+        this.props.sizes.forEach(e => {
+            var size = <option value={e.size}>{e.size}</option>
+            htmlSize.push(size);
+            if (e.size == this.state.cursize) {
+                for (var i=0; i<e.colors.length; i++){
+                    var color = <div><label><input type="radio" name={"optionColor"+this.props.stt} value={e.colors[i].color}/>{e.colors[i].color}</label><br/></div>
+                    htmlColor.push(color);
+                }
+            }
+        });        
+        return(<tr>
             <td>{this.props.stt}</td>
             <td class="cart-product">
                 <a href="#"><img alt="Blouse" src={this.props.image}/></a>
             </td>
             <td class="cart-description">
                 <p class="product-name"><a href="#">{this.props.name}</a></p>
-                <small><a href="#">Size : {this.props.size}, Color : {this.props.color}</a></small>
+                <div>
+                    <h4>Chọn Size:</h4>
+                    <select name="product-size" style={{width:'50%'}} ref="size" onChange={this.changeSize}>
+                        {htmlSize}
+                    </select>
+                    <h4>Chọn Màu:</h4>
+                    <div class="radio" ref='color' onChange={this.changeColor}>
+                        {htmlColor}
+                    </div>
+                </div>
+                <small><a href="#">Size : {this.state.size}, Color : {this.state.curcolor}</a></small>
             </td>
             <td class="cart-unit">
                 <ul class="price text-right">
@@ -44,7 +84,8 @@ class SingleProduct extends React.Component {
             </td>
             <td class="cart_quantity text-center">
                 <div class="cart-plus-minus-button">
-                    <input class="cart-plus-minus" type="text" name="qtybutton" value={this.state.quanty} ref="quanty" onChange={(e)=>this.changeQuanty(e)}/>
+                    <input class="cart-plus-minus" type="number" name="qtybutton" min="1" max={this.props.qty}
+                    value={this.state.quanty} ref="quanty" onChange={(e)=>this.changeQuanty(e)} required/>
                 </div>
             </td>
             <td class="cart-delete text-center">
@@ -55,7 +96,7 @@ class SingleProduct extends React.Component {
             <td class="cart-total">
                 <span class="price">{this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty)}</span>
             </td>
-        </tr>))
+        </tr>)
     }
 }
 class Summary extends React.Component {
@@ -177,9 +218,9 @@ class Summary extends React.Component {
                             </thead>
                             <tbody>	
                                 {this.state.listProduct.map(function(pro,index){
-                                    return <SingleProduct key={index} image={pro.product.image.image1} 
-                                    name ={pro.product.name} size={pro.size} color={pro.color}
-                                    quanty={pro.quanty} costs ={pro.product.costs} id={pro.product._id} stt={index+1}/>
+                                    return <SingleProduct key={index} image={pro.product.image.image1} id={pro.product._id}
+                                    name ={pro.product.name} size={pro.size} color={pro.color} sizes={pro.product.sizes}
+                                    quanty={pro.quanty} costs ={pro.product.costs} id={pro.product._id} stt={index+1} qty={pro.product.quanty}/>
                                 })}
                             </tbody>
                             <tfoot>										
@@ -206,7 +247,7 @@ class Summary extends React.Component {
                 </div>              
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="returne-continue-shop">
-                        <a href="/" class="continueshoping"><i class="fa fa-chevron-left"></i>Tiếp tục mua hàng</a>
+                        <a href="/" class="continueshoping"><i class="fa fa-chevron-left" type='submit'></i>Tiếp tục mua hàng</a>
                         <a class="procedtocheckout" onClick={this.goStep2} style={{cursor:'pointer'}}>Tiếp tục thanh toán<i class="fa fa-chevron-right"></i></a>
                     </div>						
                 </div>

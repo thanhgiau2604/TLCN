@@ -159,7 +159,7 @@ module.exports = function(app){
                         }
                     })
                 } else {
-                    User.findOneAndUpdate({'email':email,"cart.idProduct":id},{'$set':{"cart.$.quanty":quanty+quantyProduct}},{new:true},function(err,data){
+                    User.findOneAndUpdate({'email':email,"cart.idProduct":id},{'$set':{"cart.$.quanty":quanty+quantyProduct,"cart.$.size":size,"cart.$.color":color}},{new:true},function(err,data){
                         if (err){
                             throw err;
                         } else {
