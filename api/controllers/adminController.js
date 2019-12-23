@@ -2,7 +2,7 @@ const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({extended:false});
 const Admin = require("../models/admin");
 const User = require("../models/users");
-
+const Message = require("../models/message");
 function getUsers(res) {
     User.find({role:'user'},function (err, data) {
         if (err) {
@@ -132,6 +132,59 @@ module.exports = function(app,adminRouter,jwt){
                 throw err;
             } else {
                 res.send(data);
+            }
+        })
+    });
+
+    //manage message
+    app.get("/manageMessage",(req,res)=>{
+        res.render("quanlytinnhan");
+    });
+    app.get("/getListMessage",(req,res)=>{
+        Message.find({},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.send(data);
+            }
+        })
+    });
+    app.post("/addMessage",parser,(req,res)=>{
+        const content = req.body.content;
+        const email = req.body.email;
+        var message = {
+            index: parseInt(Date.now().toString),
+            content: content,
+            datetime: new Date().toLocaleString(),
+            sender: email
+        }
+        Message.create(message,function(err,data){
+            if (err){
+                throw err;
+            } else {
+                Message.find({},function(err,data){
+                    if (err){
+                        throw err;
+                    } else {
+                        res.send(data);
+                    }
+                })
+            }
+        })
+    });
+    app.post("/deleteMessage",parser,(req,res)=>{
+        const id = req.body.id;
+        Message.remove({_id:id},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                Message.find({},function(err,data){
+                    if (err){
+                        throw err;
+                    } else {
+                        res.send(data);
+                    }
+                })
             }
         })
     })

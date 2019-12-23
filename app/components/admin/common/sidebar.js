@@ -40,7 +40,7 @@ class Sidebar extends React.Component{
             <a href='/manageproduct'>Products</a>
           </li>
           <li class={classValue5}>
-            <i class='icon-archive'></i>
+            <i class='icon-th-list'></i>
             <a href='/manageorder'>Order</a>
           </li>
         </ul>

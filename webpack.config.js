@@ -22,6 +22,7 @@ module.exports = {
         manageorder: './app/components/admin/manage/order.js',
         checkout: './app/components/users/checkout.js',
         forgotpassword: './app/components/forgotpassword/forgotpassword.js',
+        managemessage: './app/components/admin/manage/message.js'
     },
     output: {
       path: __dirname,
