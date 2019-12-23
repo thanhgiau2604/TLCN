@@ -84,6 +84,7 @@ class Summary extends React.Component {
         this.state.listProduct.forEach(pro => {
             var product = {
                 name: pro.product.name,
+                image:pro.product.image.image1,
                 quanty: pro.quanty,
                 color: pro.color,
                 size: pro.size,
@@ -141,7 +142,7 @@ class Summary extends React.Component {
             </div>
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <h2 class="page-title">Tổng kết giỏ hàng <span class="shop-pro-item">Giỏ hàng của bạn gồm 3 sản phẩm</span></h2>
+                    <h2 class="page-title">Tổng kết giỏ hàng <span class="shop-pro-item">Giỏ hàng của bạn gồm {this.state.listProduct.length} sản phẩm</span></h2>
                 </div>	
                 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -256,7 +257,7 @@ class Address extends React.Component {
                     <div class="shoping-cart-menu">
                         <ul class="step">
                             <li class="step-todo first step-done">
-                                <span><a href="/checkout">01. Tổng kết</a></span>
+                                <span>01. Giỏ hàng</span>
                             </li>                   
                             <li class="step-current second">
                                 <span>02. Địa chỉ</span>

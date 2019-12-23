@@ -62,7 +62,7 @@ class CompanyFacality extends React.Component{
 					</div>
 				</div>
 				<div class="link-messenger" onClick={this.openChat}>
-					<img src="./img/messenger.png" />
+					<img src="/img/messenger.png" />
 				</div>
 			</section>)
     }

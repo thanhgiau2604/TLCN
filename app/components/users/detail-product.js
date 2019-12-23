@@ -6,6 +6,8 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+import {FacebookShareButton,GoogleButton} from 'react-social-buttons';
+
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
@@ -110,6 +112,7 @@ class DetailProduct extends React.Component{
         chooseColor = e.target.value;
     }
     render(){
+        var url = window.location.href;
         var htmlSize=[],htmlColor=[];
         if (this.state.product.sizes) {
             this.state.product.sizes.forEach(e => {
@@ -172,10 +175,13 @@ class DetailProduct extends React.Component{
             <div class="single-product-descirption">
                 <h2>{this.state.product.name}</h2>
                 <div class="single-product-social-share">
-                    <ul>
+                    <div id="buttons">
+                    <FacebookShareButton url={url} />
+                    </div>  
+                    {/* <ul>
                         <li><a href="#" class="fb-link"><i class="fa fa-facebook"></i>Facebook</a></li>
                         <li><a href="#" class="g-plus-link"><i class="fa fa-google-plus"></i>Google+</a></li>
-                    </ul>
+                    </ul> */}
                 </div>
                 <div class="single-product-review-box">
                     <div class="rating-box">

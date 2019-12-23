@@ -21,6 +21,7 @@ module.exports = function(app,apiRouter,jwt){
         const password = req.body.password;
         const repass = req.body.repass;
         const dob = req.body.dob;
+        const role='user';
         var err="";
         if (!firstName || !lastName || !email || !password || !repass) {
             err = "Không được bỏ trống các trường bắt buộc (*)";
@@ -37,6 +38,7 @@ module.exports = function(app,apiRouter,jwt){
                 user.numberPhone = phoneNumber;
                 user.password = password;
                 user.dob = dob;
+                user.role=role;
                 console.log(user);
                 user.save(function (err) {
                     if (err) {

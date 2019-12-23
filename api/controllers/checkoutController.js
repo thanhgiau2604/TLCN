@@ -51,6 +51,7 @@ module.exports = function(app,apiRouter){
         var count = 0;
         order.listproduct.forEach(e => {
             count++;
+            if (e.size==0) e.size='default';
             var strsp = `<p>${count}. Tên sản phẩm: ${e.name}; Số lượng: ${e.quanty}; Màu sắc:${e.color}; Size: ${e.size}; Giá sản phẩm: ${e.cost}đ</p>`;
             dssp = dssp + strsp;
         });

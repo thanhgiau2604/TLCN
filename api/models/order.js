@@ -15,7 +15,7 @@ const OrderSchema = new Schema({
     },
     sumproductcost: Number,
     sumshipcost: Number,
-    listproduct: [{name: String, quanty: Number, color: String, size: Number, cost:Number}],
+    listproduct: [{name: String, image:String,quanty: Number, color: String, size: Number, cost:Number}],
     status: String,
     code: Number
 });

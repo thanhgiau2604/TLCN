@@ -19,7 +19,7 @@ class RowOrder extends React.Component{
         return(<tr className="text-center">
         <td className="text-center">{this.props.stt}</td>
         <td className="text-center">{this.props.name}</td>
-        <td className="text-center"><img src="" width="100px" height="100px"/></td>
+        <td className="text-center"><img src={this.props.image} width="100px" height="100px"/></td>
         <td className="text-center">{this.props.time}</td>
         <td className="text-center"><button className="btn btn-warning">{this.props.status}</button></td>
       </tr>)
@@ -29,17 +29,38 @@ class TableOrder extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            listorder : []
-        }    
+            listorder : [],
+            permission:0
+        }   
+        this.goLogin = this.goLogin.bind(this); 
     }
     componentDidMount(){
         var that = this;
-        $.post("/getOrder",{email:localStorage.getItem('email')},function(data){
-            that.setState({listorder:data});
+        var token = localStorage.getItem('token');
+        if (!token) {
+            this.setState({ permission: 0 });
+        }
+        $.get("/api", { token: token }, function (data) {
+            if (data.success == 1) {
+                that.setState({ permission: 1 });
+                $.post("/getOrder",{email:localStorage.getItem('email')},function(data){
+                    that.setState({listorder:data});
+                })
+            }
         })
+    }
+    goLogin(){
+        window.location.replace('/login');
     }
     render()
     {
+        if (this.state.permission == 0){
+            return(<div className="text-center">
+            <br/>
+            <h3>Để thực hiện chức năng này bạn phải đăng nhập!</h3>
+            <button className="btn btn-primary" onClick={this.goLogin} style={{marginTop:'10px'}}>Đi đến trang đăng nhập</button>
+        </div>)
+        } else {
         return(<table className="table table-hover text-center">
         <thead>
           <tr>
@@ -53,10 +74,11 @@ class TableOrder extends React.Component{
         <tbody>
           {this.state.listorder.map(function(order,index){
               return <RowOrder key={index} name={order.product.name}
-             status={order.status} stt={index+1} time={order.time}/>
+             status={order.status} stt={index+1} time={order.time} image={order.product.image}/>
           })}
         </tbody>
       </table>)
+        }
     }
 }
 class ItemHistory extends React.Component{
@@ -92,9 +114,16 @@ class ListHistory extends React.Component{
     }
     componentDidMount(){
         var that = this;
-        $.post("/productHistory",{email:localStorage.getItem('email')},function(data){
-            that.setState({listHis:data});
-        })
+        var token = localStorage.getItem('token');
+        if (token){
+            $.get("/api", { token: token }, function (data) {
+                if (data.success == 1) {
+                    $.post("/productHistory",{email:localStorage.getItem('email')},function(data){
+                        that.setState({listHis:data});
+                    }) 
+                }
+            })
+        }
     }
 
     delHistory(){
@@ -121,6 +150,7 @@ class HistoryOrder extends React.Component{
     constructor(props){
         super(props);
     }
+
     render()
     {
         return(<section className="main-content-section">
