@@ -32,9 +32,12 @@
 	width: 230px;
 }
 .main-menu-area {
-  background: #3a3d42 none repeat scroll 0 0;
+  background: #08b926 none repeat scroll 0 0;
   height: 55px;
   position: relative;
+}
+.thanhmenu {
+    background-color: #7bbd42;
 }
 .menuarea{}
 .shopingcartarea{}

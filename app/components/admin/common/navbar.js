@@ -24,7 +24,7 @@ class Navbar extends React.Component{
     }
     render(){
         return (<div class='navbar navbar-default' id='navbar'>
-            <a class='navbar-brand' href='#'>
+            <a class='navbar-brand' href='/dashboard'>
                 <img src="/assets/images/logo2.png" />
             </a>
             <ul class='nav navbar-nav pull-right'>
