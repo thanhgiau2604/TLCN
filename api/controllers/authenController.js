@@ -77,7 +77,7 @@ module.exports = function(app,apiRouter,jwt){
                             name: user.lastName,
                             email: user.email
                         },superSecret,{
-                            expiresIn: "24h"
+                            expiresIn: "1h"
                         });
                         res.json({err:0,username:user.lastName,email:user.email,token:token,role:user.role});          
                     }
@@ -133,7 +133,7 @@ module.exports = function(app,apiRouter,jwt){
                 name: user.lastName,
                 email: user.email
             },superSecret,{
-                expiresIn: "24h"
+                expiresIn: "1h"
             });
             return res.redirect("/redirect");
         })(req,res,next);
@@ -168,7 +168,7 @@ module.exports = function(app,apiRouter,jwt){
                     name: user.lastName,
                     email: user.email
                 },superSecret,{
-                    expiresIn: "24h"
+                    expiresIn: "1h"
                 });
                 User.create(newUser, (err, user) => {
                     if (err) return done(err);
@@ -224,7 +224,7 @@ module.exports = function(app,apiRouter,jwt){
                                 name: user.lastName,
                                 email: user.email
                             },superSecret,{
-                                expiresIn: "24h"
+                                expiresIn: "1h"
                             });
                             return done(null, user);
                         }
@@ -244,7 +244,7 @@ module.exports = function(app,apiRouter,jwt){
                             name: newUser.lastName,
                             email: newUser.email
                         },superSecret,{
-                            expiresIn: "24h"
+                            expiresIn: "1h"
                         });
                         User.create(newUser, (err, user) => {
                             if (err) return done(err);
@@ -272,6 +272,23 @@ module.exports = function(app,apiRouter,jwt){
     app.get("/forgotpsw",(req,res)=>{
         res.render("quenmatkhau");
     });
+
+    app.post("/checkEmail",parser,(req,res)=>{
+        const email = req.body.email;
+        User.find({email:email},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                if (data.length==0){
+                    console.log(data);
+                    res.json(0);
+                } else {
+                    console.log('là 0');
+                    res.json(1);
+                }
+            }
+        })
+    })
 
     app.post("/sendCodeToEmail",parser,(req,res)=>{
         const email = req.body.email;

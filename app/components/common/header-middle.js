@@ -4,6 +4,7 @@ class HeaderMiddle extends React.Component{
     constructor(props){
 		super(props);
 		this.actionSearch = this.actionSearch.bind(this);
+		this.openFacebook = this.openFacebook.bind(this);
 	}
 
 	actionSearch(e){
@@ -11,6 +12,9 @@ class HeaderMiddle extends React.Component{
 		localStorage.setItem("keysearch",key);
 		window.location.assign("/search");
 		e.preventDefault();
+	}
+	openFacebook(){
+		window.open("https://www.facebook.com/Shoelg-Shop-Gi%C3%A0y-Online-101083411408294")
 	}
     render(){
         return(
@@ -25,7 +29,7 @@ class HeaderMiddle extends React.Component{
 						
 						<div className="header-right-callus">
 							<ul className="flow-us-link link-top">
-								<li><a href="#"><i className="fa fa-facebook"></i></a></li>
+								<li><a  style={{cursor:'pointer'}} onClick={this.openFacebook}><i className="fa fa-facebook"></i></a></li>
 								<li><a href="#"><i className="fa fa-google-plus"></i></a></li>
 							</ul>
 						</div>

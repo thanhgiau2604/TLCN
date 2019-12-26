@@ -23,6 +23,7 @@ class SingleProduct extends React.Component {
         }
         this.changeColor = this.changeColor.bind(this);
         this.changeSize = this.changeSize.bind(this);
+        this.deleteProduct = this.deleteProduct.bind(this);
     }
     changeQuanty(e){   
         this.setState({quanty: e.target.value});
@@ -44,6 +45,18 @@ class SingleProduct extends React.Component {
         arrProduct[this.props.stt-1].color = e.target.value;
         step1.setState({listProduct:arrProduct});
         this.setState({curcolor:e.target.value});
+    }
+    deleteProduct(){
+        $.post("/removeFromCart",{email:localStorage.getItem('email'),id:this.props.id},function(data){
+			var {dispatch} = main.props;
+            dispatch({type:"UPDATE_PRODUCT",newcart:data});
+            var arrayCostProduct=[];
+            data.forEach(pro => {
+                arrayCostProduct.push(pro.product.costs[pro.product.costs.length-1].cost*pro.quanty);
+            });
+            console.log(arrayCostProduct);
+            step1.setState({listProduct:data,sumcost:arrayCostProduct})
+		})
     }
     render(){
         var htmlSize=[],htmlColor=[];
@@ -90,7 +103,8 @@ class SingleProduct extends React.Component {
             </td>
             <td class="cart-delete text-center">
                 <span>
-                    <a href="#" class="cart_quantity_delete" title="Delete"><i class="fa fa-trash-o"></i></a>
+                    <a stye={{cursor:'pointer'}} onClick={this.deleteProduct} class="cart_quantity_delete" title="Delete">
+                        <i class="fa fa-trash-o"></i></a>
                 </span>
             </td>
             <td class="cart-total">
@@ -220,7 +234,7 @@ class Summary extends React.Component {
                                 {this.state.listProduct.map(function(pro,index){
                                     return <SingleProduct key={index} image={pro.product.image.image1} id={pro.product._id}
                                     name ={pro.product.name} size={pro.size} color={pro.color} sizes={pro.product.sizes}
-                                    quanty={pro.quanty} costs ={pro.product.costs} id={pro.product._id} stt={index+1} qty={pro.product.quanty}/>
+                                    quanty={pro.quanty} costs ={pro.product.costs} stt={index+1} qty={pro.product.quanty}/>
                                 })}
                             </tbody>
                             <tfoot>										

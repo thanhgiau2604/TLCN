@@ -87,10 +87,20 @@ module.exports = function(app,adminRouter,jwt){
         const email = req.body.email;
         const phone = req.body.phone;
         const dob = req.body.dob;
-        User.update({_id:id},{$set:{firstName:firstname, lastName:lastname, email:email, 
-            numberPhone:phone, dob:dob}},function(err,data){
-                getUsers(res);
-        })
+        const password = req.body.password;
+        console.log(password);
+        if (password==""){
+            User.update({_id:id},{$set:{firstName:firstname, lastName:lastname, email:email, 
+                numberPhone:phone, dob:dob}},function(err,data){
+                    getUsers(res);
+            })
+        } else {
+            User.update({_id:id},{$set:{firstName:firstname, lastName:lastname, email:email, 
+                numberPhone:phone, dob:dob, password:password}},function(err,data){
+                    getUsers(res);
+            })
+        }
+        
     });
 
     app.post("/addUser",parser,(req,res)=>{

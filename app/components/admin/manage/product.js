@@ -332,7 +332,9 @@ class UpdateProduct extends React.Component{
     this.AddSize = this.AddSize.bind(this);
     this.RemoveSize = this.RemoveSize.bind(this);
     this.submitForm = this.submitForm.bind(this);
-    this.ChangeImage = this.ChangeImage.bind(this);
+    this.ChangeImage1 = this.ChangeImage1.bind(this);
+    this.ChangeImage2 = this.ChangeImage2.bind(this);
+    this.ChangeImage3 = this.ChangeImage3.bind(this);
     this.state = {
       product:"",
       curcost: 0,
@@ -371,16 +373,29 @@ class UpdateProduct extends React.Component{
       size.colors = colors;
       sizes.push(size);
     }
+    var image = {
+      image1: image1,
+      image2: image2,
+      image3: image3
+    }
     var that = this;
     $.post("/updateProduct",{id:that.state.product._id,name:name,cost:cost,oldcost: JSON.stringify(this.state.product.costs),
-      shipcost:shipcost,description:description,sizes:JSON.stringify(sizes)},function(data){
+      shipcost:shipcost,description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
         if (data.success==1){
           main.setState({listProduct:data.lProduct});
           that.setState({updateSuccess:1});
         }
       })
   }
-  ChangeImage(){
+  ChangeImage1(){
+    image1 = e.target.files[0];
+  }
+  ChangeImage2(){
+    image2 = e.target.files[0];
+
+  }
+  ChangeImage3(){
+    image3 = e.target.files[0];
   }
   render(){
     var arrHtmlSizes= new Array();
@@ -479,15 +494,23 @@ class UpdateProduct extends React.Component{
             </div>
           </div>
           <div className="row" style={{ marginTop: "10px" }}>
-            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-              <label>Image:</label>
-              <input type="file" className="form-control" ref="image" onChange={(e) => this.ChangeImage(e)}/>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <label>Image 1:</label>
+                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)}/>
+              </div>
             </div>
-            <br />
-            <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-              <button className="btn btn-success">Add image</button>
+            <div className="row" style={{ marginTop: "10px" }}>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <label>Image 2:</label>
+                <input type="file" className="form-control" ref="image2" onChange={(e) => this.ChangeImage2(e)}/>
+              </div>
             </div>
-          </div>
+            <div className="row" style={{ marginTop: "10px" }}>
+              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                <label>Image 3:</label>
+                <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)}/>
+              </div>
+            </div>
         </div>
         {notifyUpdateSuccess}
         <div className="modal-footer justify-content-center">
@@ -563,17 +586,6 @@ class ManageProducts extends React.Component {
           Manage Products
             <div class='panel-tools'>
             <div class='btn-group'>
-              {/* <a class='btn' href='#'>
-                <i class='icon-wrench'></i>
-                Settings
-                </a>
-              <a class='btn' href='#'>
-                <i class='icon-filter'></i>
-                Filters
-                </a>
-              <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Reload'>
-                <i class='icon-refresh'></i>
-              </a> */}
             </div>
             {/* <div class='badge'>3 record</div> */}
           </div>

@@ -62,7 +62,7 @@ class Cart extends React.Component{
 		return(<div className="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea ">
 		<div className="shopping-cart-out pull-right">
 			<div className="shopping-cart">
-				<a className="shop-link" href="cart.html" title="View my shopping cart">
+				<a className="shop-link" onClick={this.handleCheckout} style={{cursor:'pointer'}} title="View my shopping cart">
 					<i className="fa fa-shopping-cart cart-icon"></i>
 					<b>Giỏ hàng</b>
 					<span className="ajax-cart-quantity">{main.props.cart.length}</span>

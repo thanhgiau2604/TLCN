@@ -51,17 +51,20 @@ class EditForm extends React.Component{
     this.Cancel = this.Cancel.bind(this);
   }
   UpdateInfor(e){
+    e.preventDefault();
     const id = user.props.id;
     const firstname = this.firstName.value;
     const lastname = this.lastName.value;
     const email = this.email.value;
     const phone = this.phone.value;
     const dob = this.dob.value;
+    var password = this.password.value;
+    if (!password) password = "";
+    console.log(password);
     $.post("/updateUser",{id:id,firstname:firstname, lastname:lastname, email:email, 
-      phone:phone, dob:dob},function(data){
+      phone:phone, dob:dob, password:password},function(data){
       main.setState({edit:false,listUsers:data});
     });
-    e.preventDefault();
   }
   Cancel(){
     main.setState({edit:false})
@@ -86,13 +89,17 @@ class EditForm extends React.Component{
               </div>
             </div>
             <div class="row">
-              <div class="col-sm-4 form-group col-sm-push-2">
+              <div class="col-sm-4 form-group">
                 <label>Phone Number</label>
                 <input type="text" placeholder="Enter Phone Number" class="form-control" defaultValue={user.props.phone} ref={(data) => { this.phone = data; }}/>
               </div>
-              <div class="col-sm-4 form-group col-sm-push-2">
+              <div class="col-sm-4 form-group">
                 <label>Date of Birth</label>
                 <input type="text" placeholder="Enter Date Of Birth" class="form-control" defaultValue={user.props.dob} ref={(data) => { this.dob = data; }}/>
+              </div>
+              <div class="col-sm-4 form-group">
+                <label>Password</label>
+                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }}/>
               </div>
             </div>
             <div class="text-center">

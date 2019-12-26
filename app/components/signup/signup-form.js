@@ -45,7 +45,6 @@ class SignUpForm extends React.Component{
 					<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
 						<h2 className="page-title">TẠO TÀI KHOẢN</h2>
 					</div>
-					<h3 className="show-error">{this.state.error}</h3>
 					<form onSubmit={this.handleSubmit}>
 							<div className="container">
 								<div className="row">
@@ -95,7 +94,7 @@ class SignUpForm extends React.Component{
 										<label><b>Ngày sinh</b></label>
 										<br/>
 										<div className="birth-day">
-											<select id="d-b-day" name="day" ref="day" >
+											<select id="d-b-day" name="day" ref="day" required>
 												<option>- &nbsp;&nbsp;</option>
 												<option value="1">1 </option>
 												<option value="2">2 </option>
@@ -131,7 +130,7 @@ class SignUpForm extends React.Component{
 											</select>												
 										</div>
 										<div className="birth-month">
-											<select id="d-b-month" name="month" ref="month">
+											<select id="d-b-month" name="month" ref="month" required>
 												<option value="">- &nbsp;&nbsp;</option>
 												<option value="1">Tháng 1</option>
 												<option value="2">Tháng 2 </option>
@@ -148,7 +147,7 @@ class SignUpForm extends React.Component{
 											</select>												
 										</div>
 										<div className="birth-year">
-											<select id="d-b-year" name="year" ref="year">
+											<select id="d-b-year" name="year" ref="year" required>
 												<option value="">-  &nbsp;&nbsp;</option>
 												<option value="2015">2015</option>
 												<option value="2014">2014</option>
@@ -276,7 +275,8 @@ class SignUpForm extends React.Component{
 									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
 										<button type="submit" className="registerbtn">Đăng ký</button>
 									</div>
-								</div>		
+								</div>	
+								<h3 className="show-error">{this.state.error}</h3>	
 							</div>
 							<div className="container signin text-center">
 								<p>Bạn đã có tài khoản? <a href="/login">Đăng nhập</a>.</p>

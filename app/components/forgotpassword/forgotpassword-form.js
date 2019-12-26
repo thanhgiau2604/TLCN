@@ -6,13 +6,25 @@ class EnterEmail extends React.Component{
 	constructor(props){
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.state ={
+			err:""
+		}
 	}
 	handleSubmit(e){
 		const email = this.email.value;	
+		localStorage.setItem('curemail',email);
 		mail = email;
-		$.post("/sendCodeToEmail",{email:email},function(data){
-			localStorage.setItem("codeInEmail",data);
-			main.setState({step:2});
+		var that = this;
+		$.post("/checkEmail",{email:email},function(data){
+			console.log(data);
+			if (data==1){
+				$.post("/sendCodeToEmail",{email:email},function(data){
+					localStorage.setItem("codeInEmail",data);
+					main.setState({step:2});
+				})
+			} else {
+				that.setState({err:"Không tồn tại tài khoản. Vui lòng kiểm tra lại!"})
+			}
 		})
 		e.preventDefault();
 	}
@@ -24,6 +36,7 @@ class EnterEmail extends React.Component{
 						<input type="email" class="form-control" placeholder="Nhập địa chỉ Email" required ref={(data) => { this.email = data;}}/>
 					</div>
 				</div>
+				<h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
 				<div class="row">
 					<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
 						<button type="submit" class="btn btn-success">Tiếp tục</button>
@@ -52,8 +65,11 @@ class ConfirmCode extends React.Component{
 		}
 	}
 	reSendCode(){
+		var that = this;
+		const email = localStorage.getItem('curemail');
 		$.post("/sendCodeToEmail",{email:email},function(data){
 			localStorage.setItem("codeInEmail",data);
+			that.setState({err:"Hệ thống đã gửi lại mã"})
 		})
 	}
 	render(){
@@ -63,8 +79,8 @@ class ConfirmCode extends React.Component{
 				<h3 class="text-center" style={{color:'#f10668'}}>Một mã xác nhận đã được gửi đến email của bạn</h3>
 				<h3><a href="https://mail.google.com/" target="_blank" class="text-center" style={{color:'#414eec'}}>Đi đến Gmail</a></h3>
 				<h3><a href="https://mail.yahoo.com/" target="_blank" class="text-center" style={{color:'#414eec'}}>Đi đến Yahoomail</a></h3>
-				<a style={{cursor:'pointer',color:'#530aca'}} onClick={this.reSendCode} class="text-center">Gửi lại mã</a>
-				<input type="email" class="form-control" placeholder="Nhập mã xác nhận" required ref={(data) => { this.code = data; }}/>
+				<h3><a style={{cursor:'pointer',color:'#530aca'}} onClick={this.reSendCode} class="text-center">Gửi lại mã</a></h3>
+				<input type="email" class="form-control" placeholder="Nhập mã xác nhận" ref={(data) => { this.code = data; }} required/>
 				<h3 style={{color:'red'}}>{this.state.err}</h3>
 			</div>
 		</div>
