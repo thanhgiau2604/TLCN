@@ -201,20 +201,24 @@ module.exports = function(app){
     app.post("/checkFavorite",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
         const email = req.body.email;
-        User.findOne({email:email},function(err,user){
-            if (err){
-                throw err;
-            } else {
-                var ok = false;
-                for (var i=0; i<user.favoritelist.length; i++){
-                    if (idProduct==user.favoritelist[i].id){
-                        ok=true;
-                        res.json(1);
-                        break;
+        if (email){
+            User.findOne({email:email},function(err,user){
+                if (err){
+                    throw err;
+                } else {
+                    var ok = false;
+                    for (var i=0; i<user.favoritelist.length; i++){
+                        if (idProduct==user.favoritelist[i].id){
+                            ok=true;
+                            res.json(1);
+                            break;
+                        }
                     }
+                    if (ok==false) res.json(0);
                 }
-                if (ok==false) res.json(0);
-            }
-        })
+            })
+        } else {
+            res.json(0);
+        }
     })
 }
