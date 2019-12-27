@@ -27,18 +27,28 @@ class Dashboard extends React.Component{
           </div>
           <div class='panel-body'>
             <div class='page-header'>
-              <h4>System usage</h4>
+              <h4>Access the website</h4>
+            </div>
+            <div className="text-center">
+                <h4>Today:</h4>
+                <button className='btn btn-success'>20 times</button>
+                <h4>This week:</h4>
+                <button className='btn btn-warning'>100 times</button>
+                <h4>Total:</h4>
+                <button className='btn btn-danger'>1262 times</button>
             </div>
             <div class='progress'>
-              <div class='progress-bar progress-bar-success' style={{width: '35%'}}></div>
+              {/* <div class='progress-bar progress-bar-success' style={{width: '35%'}}></div>
               <div class='progress-bar progress-bar-warning' style={{width: '20%'}}></div>
-              <div class='progress-bar progress-bar-danger' style={{width: '10%'}}></div>
+              <div class='progress-bar progress-bar-danger' style={{width: '10%'}}></div> */}
+                
             </div>
             <div class='page-header'>
-              <h4>User statics</h4>
+              <h4>Access the products</h4>
             </div>
             <div class='row text-center'>
-              <div class='col-md-3'>
+              <h3>No information</h3>
+              {/* <div class='col-md-3'>
                 <input class='knob second' data-bgcolor='#d4ecfd' data-fgcolor='#30a1ec' data-height='140' data-inputcolor='#333' data-thickness='.3' data-width='140' type='text' value='50'/>
               </div>
               <div class='col-md-3'>
@@ -49,7 +59,10 @@ class Dashboard extends React.Component{
               </div>
               <div class='col-md-3'>
                 <input class='knob second' data-bgcolor='#f8d2e0' data-fgcolor='#b85e80' data-height='140' data-inputcolor='#333' data-thickness='.3' data-width='140' type='text' value='85'/>
-              </div>
+              </div> */}
+            </div>
+            <div class='page-header'>
+              <h4>Trending Products:</h4>
             </div>
           </div>
         </div>
