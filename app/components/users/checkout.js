@@ -151,19 +151,15 @@ class Summary extends React.Component {
         this.state.sumcost.forEach(e => {
             sumCost+=e;
         });
-        var maxShip=0;
-        this.state.listProduct.forEach(e => {
-            if (e.product.shipcost > maxShip) {
-                maxShip = e.product.shipcost;
-            }
-        });
         var order = {
             email: localStorage.getItem('email'),
             time: new Date().toLocaleString(),
             timestamp: parseInt(Date.now().toString()),
-            address: {},
+            fullname:"",
+            phonenumber:"",
+            address: "",
             sumproductcost: sumCost,
-            sumshipcost: maxShip,
+            sumshipcost: 0,
             listproduct: arrProduct,
             status: "unconfimred",
             code: -1
@@ -245,14 +241,14 @@ class Summary extends React.Component {
                                 </tr>
                                 <tr>
                                     <td class="text-right" colspan="3">Tổng tiền vận chuyển</td>
-                                    <td id="total_shipping" class="price" colspan="1">{maxShip}đ</td>
+                                    <td id="total_shipping" class="price" colspan="1">Chưa xác định</td>
                                 </tr>
                                 <tr>
                                     <td class="total-price-container text-right" colspan="3">
                                         <span>Tổng</span>
                                     </td>
                                     <td id="total-price-container" class="price" colspan="1">
-                                        <span id="total-price">{sumCost+maxShip}đ</span>
+                                        <span id="total-price">{sumCost}đ (tạm tính)</span>
                                     </td>
                                 </tr>
                             </tfoot>									
@@ -275,24 +271,24 @@ class Address extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-
+            err:""
         }
         this.addAddress = this.addAddress.bind(this);
     }
     addAddress(e){
         e.preventDefault();
-        var address = {
-            fullname: this.refs.fullname.value,
-            phonenumber: this.refs.phonenumber.value,
-            province: this.refs.province.value,
-            district: this.refs.district.value,
-            commune: this.refs.commune.value,
-            apartmentnumber: this.refs.apartmentnumber.value
-        }
-        $.post("/updateAddress",{id:localStorage.getItem('curorder'),address:JSON.stringify(address)},function(data){
-            $.post("/sendmail",{order:JSON.stringify(data),id:localStorage.getItem('curorder')},function(data){
-                main.setState({curStep:3});
-            })
+        var address = this.refs.address.value;
+        var fullname = this.refs.fullname.value;
+        var phonenumber = this.refs.phonenumber.value;
+        var that = this;
+        $.post("/updateAddress",{id:localStorage.getItem('curorder'),address:address, fullname:fullname,phonenumber:phonenumber},function(data){
+            if (data.err == 0) {
+                $.post("/sendmail", { order: JSON.stringify(data.data), id: localStorage.getItem('curorder'), ship:data.ship}, function (data) {
+                    main.setState({ curStep: 3 });
+                })
+            } else {
+                that.setState({err:"Vui lòng kiểm tra lại địa chỉ"})
+            }
         })
     }
     render(){
@@ -339,28 +335,13 @@ class Address extends React.Component {
                             <input type="text" placeholder="Số điện thoại" name="numberphone" required ref="phonenumber"/>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
-                            <input type="text" placeholder="Tỉnh/Thành phố" name="province" required ref="province"/>
-                        </div>
-                    </div>
 
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
-                            <input type="text" placeholder="Quận/Huyện" name="district" required ref="district"/>
-                        </div>	
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
-                            <input type="text" placeholder="Phường/Xã" name="phuong" required ref="commune"/>
-                        </div>	
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
-                            <input type="text" placeholder="Tòa nhà, Tên đường" name="location" required ref="apartmentnumber"/>
+                            <input type="text" placeholder="Địa chỉ nhận hàng" name="location" required ref="address"/>
                         </div>
                     </div>	
+                    <h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
                             <button type="submit" class="btn btn-danger">Tiếp tục thanh toán</button>

@@ -5,14 +5,9 @@ const OrderSchema = new Schema({
     email: String,
     time: String,
     timestamp: Number,
-    address : {
-        fullname: String,
-        phonenumber: String,
-        province: String,
-        district: String,
-        commune: String,
-        apartmentnumber: String
-    },
+    fullname: String,
+    phonenumber: String,
+    address : String,
     sumproductcost: Number,
     sumshipcost: Number,
     listproduct: [{name: String, image:String,quanty: Number, color: String, size: Number, cost:Number}],
