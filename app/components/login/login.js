@@ -7,11 +7,15 @@ import LoginForm from '../login/login-form'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+import $ from 'jquery'
 class Login extends React.Component{
     constructor(props){
         super(props);
     }
     render(){
+        $.post("/addNewDay",function(data){
+            console.log(data);
+        })
         localStorage.clear();
         return(
 			<div>

@@ -9,7 +9,7 @@ import CopyRight from '../common/copyright'
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
-var main,step1,step2;
+var main,step1,step2,map;
 
 class SingleProduct extends React.Component {
     constructor(props){
@@ -138,6 +138,7 @@ class Summary extends React.Component {
         var arrProduct = [];
         this.state.listProduct.forEach(pro => {
             var product = {
+                id: pro.product._id,
                 name: pro.product.name,
                 image:pro.product.image.image1,
                 quanty: pro.quanty,
@@ -267,6 +268,27 @@ class Summary extends React.Component {
     }   
 }
 
+class GoogleMap extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            position:""
+        }
+        map = this;
+    }
+    render(){
+        var url = "https://maps.google.com/maps?q="+this.state.position+"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+        return(<div class="mapouter" >
+        <div class="gmap_canvas">
+            <iframe width="350" height="250" id="gmap_canvas"
+                src={url} frameborder="0"
+                scrolling="no" marginheight="0" marginwidth="0">
+            </iframe>
+            <a href="https://www.couponflat.com"></a>
+        </div>
+    </div>)
+    }
+}
 class Address extends React.Component {
     constructor(props){
         super(props);
@@ -274,6 +296,7 @@ class Address extends React.Component {
             err:""
         }
         this.addAddress = this.addAddress.bind(this);
+        this.checkPosition = this.checkPosition.bind(this);
     }
     addAddress(e){
         e.preventDefault();
@@ -290,6 +313,10 @@ class Address extends React.Component {
                 that.setState({err:"Vui lòng kiểm tra lại địa chỉ"})
             }
         })
+    }
+    checkPosition(){
+        var address = this.refs.address.value;
+        map.setState({position:address});
     }
     render(){
         return(<section class="main-content-section">
@@ -340,7 +367,15 @@ class Address extends React.Component {
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
                             <input type="text" placeholder="Địa chỉ nhận hàng" name="location" required ref="address"/>
                         </div>
-                    </div>	
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">               
+                            <button type="button" className="btn btn-warning" onClick={this.checkPosition}>Kiểm tra địa chỉ</button>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        {/* <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3"> */}
+                            <GoogleMap/>
+                        {/* </div> */}
+                    </div>		                        
                     <h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
@@ -408,6 +443,9 @@ class TotalPage extends React.Component{
         }
     }
     render(){
+        $.post("/addNewDay",function(data){
+            console.log(data);
+        })
         var currentStepComponent;
         if (this.state.curStep==1){
             currentStepComponent = <Summary/>

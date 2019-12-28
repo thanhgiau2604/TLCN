@@ -95,6 +95,7 @@ class HeaderTop extends React.Component {
 				if (data.success == 0) {
 					localStorage.removeItem('username');
 					localStorage.removeItem('email');
+					localStorage.removeItem("token");
 					that.setState({ Option: <OptionGuest />, Welcome: "" })
 				} else {
 					that.setState({ Option: <OptionUser />, Welcome: <WelcomeUser /> })

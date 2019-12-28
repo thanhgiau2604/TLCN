@@ -178,10 +178,6 @@ class DetailProduct extends React.Component{
                     <div id="buttons">
                     <FacebookShareButton url={url} />
                     </div>  
-                    {/* <ul>
-                        <li><a href="#" class="fb-link"><i class="fa fa-facebook"></i>Facebook</a></li>
-                        <li><a href="#" class="g-plus-link"><i class="fa fa-google-plus"></i>Google+</a></li>
-                    </ul> */}
                 </div>
                 <div class="single-product-review-box">
                     <div class="rating-box">
@@ -427,6 +423,12 @@ class TotalPage extends React.Component{
     constructor(props){
         super(props);
         main = this;
+    }
+    componentDidMount(){
+        var idProduct = localStorage.getItem('curproduct');
+        $.post("/updateCountView",{idProduct:idProduct},function(data){
+
+        })
     }
     render(){
         

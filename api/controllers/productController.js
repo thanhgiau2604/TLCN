@@ -3,7 +3,7 @@ const parser = bodyParser.urlencoded({extended:false});
 const User = require("../models/users");
 const ProductCategory = require("../models/ProductCategory");
 const Product = require("../models/Product");
-
+const Statistic = require("../models/statistic");
 function getCart(data,res){
     var arr = [];
     if (data.cart.length==0) {
@@ -30,7 +30,14 @@ function getCart(data,res){
         })
     });
 }
-
+function getCurrentDay() {
+    var dateObj = new Date();
+    var month = dateObj.getMonth() + 1; //months from 1-12
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
+    nowday = day.toString()+month.toString()+year.toString();
+    return nowday;
+}
 module.exports = function(app){
     app.get("/detailproduct",(req,res)=>{
         res.render("chitietsanpham");
@@ -141,7 +148,8 @@ module.exports = function(app){
             if (err){
                 throw err;
             } else {
-                var bool = false,quanty;
+                if (user){
+                    var bool = false,quanty;
                 for (var i=0; i<user.cart.length; i++){
                     if (user.cart[i].idProduct==id){
                         quanty = user.cart[i].quanty;
@@ -167,6 +175,7 @@ module.exports = function(app){
                             getCart(data,res);
                         }
                     })
+                }
                 }
             }
         })
@@ -220,5 +229,41 @@ module.exports = function(app){
         } else {
             res.json(0);
         }
+    })
+
+    app.post("/updateCountView",parser,(req,res)=>{
+        const idProduct = req.body.idProduct;
+        var currentDay = getCurrentDay();
+        Statistic.findOne({day:currentDay},function(err,data){
+            if (data){
+                var listViewToday = data.viewproduct;
+                var result=[];
+                var ok=false;
+                for (var i=0; i<listViewToday.length; i++){
+                    if (listViewToday[i].id.equals(idProduct)){
+                        ok=true;
+                        var itemresult = {
+                            id:idProduct,
+                            count: listViewToday[i].count+1
+                        }
+                        result.push(itemresult);
+                    } else {
+                        var itemresult = {
+                            id:listViewToday[i].id,
+                            count: listViewToday[i].count
+                        }
+                        result.push(itemresult);
+                    }
+                }
+                if (ok==false) result.push({id:idProduct,count:1});
+                Statistic.update({day:currentDay},{$set:{viewproduct:result}},function(err,data){
+                    if (err){
+                        throw err;
+                    } else {
+                        res.json(data)
+                    }
+                });
+            }
+        })
     })
 }

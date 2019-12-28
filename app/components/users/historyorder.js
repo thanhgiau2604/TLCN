@@ -153,6 +153,9 @@ class HistoryOrder extends React.Component{
 
     render()
     {
+        $.post("/addNewDay",function(data){
+            
+        })
         return(<section className="main-content-section">
         <div className="container">
             <div className="row">

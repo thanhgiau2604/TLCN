@@ -89,13 +89,16 @@ module.exports = function(app){
         const name = req.body.name;
         const cost = req.body.cost;
         const oldcost = req.body.oldcost;
-        const shipcost = req.body.shipcost;
         const description =req.body.description;
         const sizes = JSON.parse(req.body.sizes);
+        const image = JSON.parse(req.body.image);
         var newcosts = new Array();
         newcosts = JSON.parse(oldcost);
-        newcosts.push({cost:cost});
-        Product.update({_id:id},{$set:{name:name,costs:newcosts,shipcost:shipcost,description:description,
+        if (cost!=newcosts[newcosts.length-1].cost)
+        {
+            newcosts.push({cost:cost});
+        }
+        Product.update({_id:id},{$set:{name:name,costs:newcosts,description:description,image:image,
         sizes:sizes}},function(err,data){
             if (err){
                 throw err;

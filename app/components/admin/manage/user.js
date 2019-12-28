@@ -10,14 +10,17 @@ class Users extends React.Component {
     super(props);
     this.editUser = this.editUser.bind(this);
     this.deleteUser = this.deleteUser.bind(this);
+    this.confirmDelete = this.confirmDelete.bind(this);
   }
   editUser(){
     user = this;
     main.setState({edit:true, add:false});
   }
   deleteUser(){
-    var that = this;
-    $.post("/deleteUser",{id:that.props.id},function(data){
+    localStorage.setItem("curDelete",this.props.id);
+  }
+  confirmDelete(){
+    $.post("/deleteUser",{id:localStorage.getItem("curDelete")},function(data){
       main.setState({listUsers:data});
     })
   }
@@ -37,10 +40,30 @@ class Users extends React.Component {
       <a class='btn btn-info' data-toggle='tooltip' style={{cursor:'pointer'}} title='Edit' onClick={this.editUser}>
         <i class='icon-edit'></i>
       </a>
-      <a class='btn btn-danger' data-toggle='tooltip' style={{cursor:'pointer'}} title='Delete' onClick={this.deleteUser}>
+      <a class='btn btn-danger' data-toggle='tooltip' style={{cursor:'pointer'}} title='Delete' data-toggle="modal" 
+        data-target="#modalDeleteUser" onClick={this.deleteUser}>
         <i class='icon-trash'></i>
       </a>
     </td>
+    <div class="modal fade" id="modalDeleteUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Confirm</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h5>Are you sure to delete this user?</h5>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={this.confirmDelete}>Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
   </tr> )
   }
 }
@@ -77,29 +100,29 @@ class EditForm extends React.Component{
             <div class="row">
               <div class="col-sm-4 form-group">
                 <label>First Name</label>
-                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.firstname} ref={(data) => { this.firstName = data; }}/>
+                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.firstname} ref={(data) => { this.firstName = data; }} required/>
               </div>
               <div class="col-sm-4 form-group">
                 <label>Last Name</label>
-                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.lastname} ref={(data) => { this.lastName = data; }}/>
+                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.lastname} ref={(data) => { this.lastName = data; }} required/>
               </div>
               <div class="col-sm-4 form-group">
                 <label>Email</label>
-                <input type="text" placeholder="Enter Email" class="form-control" defaultValue={user.props.email} ref={(data) => { this.email = data; }}/>
+                <input type="text" placeholder="Enter Email" class="form-control" defaultValue={user.props.email} ref={(data) => { this.email = data; }} required/>
               </div>
             </div>
             <div class="row">
               <div class="col-sm-4 form-group">
                 <label>Phone Number</label>
-                <input type="text" placeholder="Enter Phone Number" class="form-control" defaultValue={user.props.phone} ref={(data) => { this.phone = data; }}/>
+                <input type="text" placeholder="Enter Phone Number" class="form-control" defaultValue={user.props.phone} ref={(data) => { this.phone = data; }} required/>
               </div>
               <div class="col-sm-4 form-group">
                 <label>Date of Birth</label>
-                <input type="text" placeholder="Enter Date Of Birth" class="form-control" defaultValue={user.props.dob} ref={(data) => { this.dob = data; }}/>
+                <input type="text" placeholder="Enter Date Of Birth" class="form-control" defaultValue={user.props.dob} ref={(data) => { this.dob = data; }} required/>
               </div>
               <div class="col-sm-4 form-group">
                 <label>Password</label>
-                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }}/>
+                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }} required/>
               </div>
             </div>
             <div class="text-center">
@@ -143,25 +166,25 @@ class AddForm extends React.Component {
           <div class="row">
             <div class="col-sm-4 form-group">
               <label>First Name</label>
-              <input type="text" placeholder="Enter Firstname" class="form-control"  ref={(data) => { this.firstName = data; }}/>
+              <input type="text" placeholder="Enter Firstname" class="form-control"  ref={(data) => { this.firstName = data; }} required/>
             </div>
             <div class="col-sm-4 form-group">
               <label>Last Name</label>
-              <input type="text" placeholder="Enter Firstname" class="form-control" ref={(data) => { this.lastName = data; }}/>
+              <input type="text" placeholder="Enter Firstname" class="form-control" ref={(data) => { this.lastName = data; }} required/>
             </div>
             <div class="col-sm-4 form-group">
               <label>Email</label>
-              <input type="text" placeholder="Enter Email" class="form-control" ref={(data) => { this.email = data; }}/>
+              <input type="text" placeholder="Enter Email" class="form-control" ref={(data) => { this.email = data; }} required/>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-4 form-group col-sm-push-2">
               <label>Phone Number</label>
-              <input type="text" placeholder="Enter Phone Number" class="form-control" ref={(data) => { this.phone = data; }}/>
+              <input type="text" placeholder="Enter Phone Number" class="form-control" ref={(data) => { this.phone = data; }} required/>
             </div>
             <div class="col-sm-4 form-group col-sm-push-2">
               <label>Date of Birth</label>
-              <input type="text" placeholder="Enter Date Of Birth" class="form-control" ref={(data) => { this.dob = data; }}/>
+              <input type="text" placeholder="Enter Date Of Birth" class="form-control" ref={(data) => { this.dob = data; }} required/>
             </div>
           </div>
           <div class="text-center">

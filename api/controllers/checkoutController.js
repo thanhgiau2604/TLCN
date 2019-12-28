@@ -3,8 +3,8 @@ const parser = bodyParser.urlencoded({extended:false});
 const User = require("../models/users");
 const Order = require("../models/order");
 const sendmail = require("./mail");
-const jwt = require("jsonwebtoken");
 const opencage = require('opencage-api-client');
+var Statistic = require("../models/statistic");
 var _eQuatorialEarthRadius = 6378.1370;
 var _d2r = (Math.PI / 180.0);
 function randomInt(min, max) { // min and max included 
@@ -21,6 +21,14 @@ function HaversineInKM(lat1, long1, lat2, long2)
       return d;
  }
 
+ function getCurrentDay() {
+    var dateObj = new Date();
+    var month = dateObj.getMonth() + 1; //months from 1-12
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
+    nowday = day.toString()+month.toString()+year.toString();
+    return nowday;
+}
 module.exports = function(app,apiRouter){
     apiRouter.get("/checkout",(req,res)=>{
         res.render("checkout");
@@ -112,6 +120,48 @@ module.exports = function(app,apiRouter){
     });
 
     app.get("/checkout/:email/:code",(req,res)=>{
+        var currentDay = getCurrentDay();
+        Statistic.findOne({day:currentDay},function(err,data){
+            if (data){
+                var listOrderToday = data.orderproduct;
+                // console.log(listOrderToday);
+                Order.findOne({email:req.params.email,code:req.params.code},function(err,order){
+                    if (order)
+                        var dataProduct = order.listproduct;       
+                        var ok;
+                        var result=[];
+                        for (var i=0; i<dataProduct.length; i++){
+                            ok=false;
+                            for (var j=0; j<listOrderToday.length; j++){
+                                if (dataProduct[i].id.equals(listOrderToday[j].id)){
+                                    ok=true;
+                                    var itemresult = {
+                                        id:dataProduct[i].id,
+                                        count: dataProduct[i].quanty+listOrderToday[j].count
+                                    }
+                                    result.push(itemresult);
+                                    break;
+                                }
+                            }
+                            if (ok==false){
+                                var itemresult = {
+                                    id:dataProduct[i].id,
+                                    count:dataProduct[i].quanty
+                                }
+                                result.push(itemresult);
+                            }
+                        }
+                        // console.log(result);
+                        Statistic.update({day:currentDay},{$set:{orderproduct:result}},function(err,data){
+                            if (err){
+                                throw err;
+                            } else {
+                                console.log(data);
+                            }
+                        });
+                })
+            }
+        });
         Order.update({email:req.params.email,code:req.params.code},{$set:{status:"confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
             if (err){
                 throw err;
@@ -120,6 +170,7 @@ module.exports = function(app,apiRouter){
                 let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
                 let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " +req.params.code+"</h3>";
                 sendmail(txtTo,txtSubject,txtContent);
+
                 User.update({email:req.params.email},{$set:{cart:[]}},function(err,data){
                     if (err){
                         throw err;
@@ -130,4 +181,24 @@ module.exports = function(app,apiRouter){
             }
         });
     });
+
+    app.post("/addNewDay",(req,res)=>{
+        var day = getCurrentDay();
+        console.log(day);
+        Statistic.findOne({day:day},function(err,data){
+            if (!data){
+                var newDay = {
+                    day: getCurrentDay(),
+                    viewProduct:[],
+                    orderproduct:[],
+                    page:0
+                }
+                Statistic.create(newDay,function(err,data){
+                    res.json('Ok');
+                });
+            } else {
+                res.json("");
+            }
+        })
+    })
 }

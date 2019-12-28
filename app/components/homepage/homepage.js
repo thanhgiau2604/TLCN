@@ -16,6 +16,9 @@ class HomePage extends React.Component{
         super(props);
     }
     render(){
+        $.post("/addNewDay",function(data){
+            
+        })
         return(
             <div>
                 <HeaderTop/>

@@ -10,43 +10,106 @@ var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
 var main,choosePrice,chooseSize,listAllProduct;
-
+class RequireAuthentication extends React.Component{
+	constructor(props){
+		super(props);
+		this.goAuthen = this.goAuthen.bind(this);
+	}
+	goAuthen(){
+		window.location.replace("/login");
+	}
+	render(){
+		return(<div id="modal-authen" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Thông báo</h4>
+			</div>
+			<div class="modal-body text-center">
+			  <p>Bạn chưa đăng nhập?</p>
+			  <p>Hãy click vào nút bên dưới để đi đến trang đăng nhập!</p>
+			  <button class="btn btn-primary" onClick={this.goAuthen}>ĐI ĐẾN TRANG ĐĂNG NHẬP</button>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		  </div>
+		</div>
+	  </div>)
+	}
+}
 class ProductGird extends React.Component{
     constructor(props){
         super(props);
         this.getDetail = this.getDetail.bind(this);
 		this.addToCart = this.addToCart.bind(this);
-		this.handleFavorite = this.handleFavorite.bind(this);
+        this.handleFavorite = this.handleFavorite.bind(this);
+        this.state = {
+            isFavorite:false
+        }
     }
     getDetail(){
 		localStorage.setItem("curproduct",this.props.id);
 		window.location.assign("/detailproduct")
 	}
 	addToCart(){
-		$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
-			var {dispatch} = main.props;
-        	dispatch({type:"UPDATE_PRODUCT",newcart:data});
-		})
+		const token = localStorage.getItem('token');
+		if (!token){
+			$("#modal-authen").modal('show');
+		} else {
+			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+				var {dispatch} = main.props;
+				dispatch({type:"UPDATE_PRODUCT",newcart:data});
+			})
+		}
 	}
 	handleFavorite(){
-		$.post("/addToFavorite",{id:this.props.id,email:localStorage.getItem('email')},function(data){
-			if (data.success==1){
-				console.log("Add thành công");
-			}
-		})
+		const token = localStorage.getItem('token');
+		var that = this;
+		if (!token) {
+			$("#modal-authen").modal('show');
+		} else {
+			if (this.state.isFavorite == false)
+			{
+				$.post("/addToFavorite", {id:this.props.id, email: localStorage.getItem('email') }, function (data) {
+					that.setState({isFavorite:true});
+				})
+			} else {
+				$.post("/deleteFav",{idDel:this.props.id,email:localStorage.getItem('email')},function(data){
+					that.setState({isFavorite:false});
+				})
+			}	
+		}
+	}
+	componentDidMount(){
+		const email = localStorage.getItem('email');
+		var that = this;
+		if (email) {
+			$.post("/checkFavorite", {idProduct: this.props.id, email:email }, function (data) {
+				if (data == 1) {
+					that.setState({ isFavorite: true });
+				}
+			})
+		}
 	}
     render(){
+        var htmlFavorite;
+		if (this.state.isFavorite==true){
+			htmlFavorite=<li><a title="Xóa khỏi favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o" style={{color:'#daf309'}}></i></span></a></li>
+		} else {
+			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
+		}
         return(<li class="gategory-product-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
         <div class="single-product-item">
             <div class="product-image">
             <a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
-                <a href="single-product.html" class="new-mark-box">sale!</a>
                 <div class="overlay-content">
                         <ul>
                             <li><a title="Xem sản phẩm" style={{ cursor: 'pointer' }} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
                             <li><a title="Thêm vào giỏ hàng" style={{ cursor: 'pointer' }} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
                             <li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-retweet"></i></a></li>
-                            <li><a title="Thêm vào favorite list" style={{ cursor: 'pointer' }} onClick={this.handleFavorite}><i className="fa fa-heart-o"></i></a></li>
+                            {htmlFavorite}
                         </ul>
                 </div>
             </div>
@@ -68,6 +131,7 @@ class ProductGird extends React.Component{
                     <span class="price">{this.props.costs[this.props.costs.length-1].cost}</span>
                     <span class="old-price"></span>
                 </div>
+                <RequireAuthentication/>
             </div>
         </div>									
     </li>)
@@ -76,15 +140,70 @@ class ProductGird extends React.Component{
 
 class ProductList extends React.Component{
     constructor(props){
-        super(props);      
+        super(props);   
+        this.getDetail = this.getDetail.bind(this);   
+        this.addToCart = this.addToCart.bind(this);
+        this.handleFavorite = this.handleFavorite.bind(this);
+        this.state = {
+            isFavorite:false
+        }
     }
+    getDetail(){
+		localStorage.setItem("curproduct",this.props.id);
+		window.location.assign("/detailproduct");
+    }
+    addToCart(){
+		const token = localStorage.getItem('token');
+		if (!token){
+			$("#modal-authen").modal('show');
+		} else {
+			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+				var {dispatch} = main.props;
+				dispatch({type:"UPDATE_PRODUCT",newcart:data});
+			})
+		}
+    }
+    handleFavorite(){
+		const token = localStorage.getItem('token');
+		var that = this;
+		if (!token) {
+			$("#modal-authen").modal('show');
+		} else {
+			if (this.state.isFavorite == false)
+			{
+				$.post("/addToFavorite", {id:this.props.id, email: localStorage.getItem('email') }, function (data) {
+					that.setState({isFavorite:true});
+				})
+			} else {
+				$.post("/deleteFav",{idDel:this.props.id,email:localStorage.getItem('email')},function(data){
+					that.setState({isFavorite:false});
+				})
+			}	
+		}
+	}
+	componentDidMount(){
+		const email = localStorage.getItem('email');
+		var that = this;
+		if (email) {
+			$.post("/checkFavorite", { idProduct: this.props.id, email: email }, function (data) {
+				if (data == 1) {
+					that.setState({ isFavorite: true });
+				}
+			})
+		}
+	}
     render(){
+        var htmlFavorite;
+		if (this.state.isFavorite==true){
+			htmlFavorite=<li><a title="Xóa khỏi favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o" style={{color:'#ff5858'}}></i></span></a></li>
+		} else {
+			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
+		}
         return(<li class="cat-product-list">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="single-product-item">
                 <div class="product-image">
                     <a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
-                    <a href="single-product.html" class="new-mark-box">new</a>
                 </div>
             </div>
         </div>
@@ -117,10 +236,11 @@ class ProductList extends React.Component{
                                 <li><a title="Xem sản phẩm" style={{ cursor: 'pointer' }} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
                                 <li><a title="Thêm vào giỏ hàng" style={{ cursor: 'pointer' }} onClick={this.addToCart}><i className="fa fa-shopping-cart"></i></a></li>
                                 <li><a title="Quick view" style={{ cursor: 'pointer' }}><i className="fa fa-retweet"></i></a></li>
-                                <li><a title="Thêm vào favorite list" style={{ cursor: 'pointer' }} onClick={this.handleFavorite}><i className="fa fa-heart-o"></i></a></li>
+                                {htmlFavorite}
                             </ul>
                         </div>												
-                </div>														
+                </div>	
+                <RequireAuthentication/>													
             </div>
         </div>
     </li>)
@@ -187,15 +307,6 @@ class OptionProduct extends React.Component{
             <h2 class="left-title pro-g-page-title">LỌC SẢN PHẨM</h2>
             <div class="product-single-sidebar">
                 <span class="sidebar-title">Điều kiện</span>
-                <ul>
-                    <li>
-                        <label class="cheker">
-                            <input type="checkbox" name="condition"/>
-                            <span></span>
-                        </label>
-                        <a href="#">mới<span> (13)</span></a>
-                    </li>
-                </ul>
             </div>
             <div class="product-single-sidebar">
                 <span class="sidebar-title">LỌC THEO GIÁ</span>        
@@ -370,7 +481,7 @@ class Category extends React.Component{
                     <div class="bstore-breadcrumb">
                         <a href="index.html">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
-                        <span>{this.state.category.name}</span>
+                        <span>{this.state.category.displayName}</span>
                     </div>
                 </div>
             </div>
@@ -382,23 +493,19 @@ class Category extends React.Component{
                             <div class="category-header-image">
                                 <img src={this.state.category.image} alt="category-header" />
                                 <div class="category-header-text">
-                                    <h2>{this.state.category.name}</h2>
+                                    {/* <h2>{this.state.category.name}</h2> */}
                                 </div>									
                             </div>
                         </div>
                         <div class="product-category-title">
                             <h1>
-                                <span class="cat-name">{this.state.category.name}</span>
+                                <span class="cat-name">{this.state.category.displayName}</span>
                                 <span class="count-product">Có {this.state.listProduct.length} sản phẩm</span>
                             </h1>
                         </div>
                         <div class="product-shooting-area">
                             <OptionView/>
-                            <div class="product-shooting-result">
-                                
-                                <div class="showing-item">
-                                    <span>Hiển thị 1 - 12 trong 13 sản phẩm</span>
-                                </div>
+                            {/* <div class="product-shooting-result">
                                 <div class="showing-next-prev">
                                     <ul class="pagination-bar">
                                         <li class="disabled">
@@ -418,7 +525,7 @@ class Category extends React.Component{
                                         <button class="btn showall-button">Hiển thị tất cả</button>
                                     </form>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>                  
                     <div class="all-gategory-product">
@@ -438,9 +545,8 @@ class Category extends React.Component{
                     </div>     
                     <div class="product-shooting-result product-shooting-result-border">
                         <div class="showing-item">
-                            {/* <span>Showing 1 - 12 of 13 items</span> */}
                         </div>
-                        <div class="showing-next-prev">
+                        {/* <div class="showing-next-prev">
                             <ul class="pagination-bar">
                                 <li class="disabled">
                                     <a href="#" ><i class="fa fa-chevron-left"></i>Previous</a>
@@ -458,7 +564,7 @@ class Category extends React.Component{
                             <form action="#">
                                 <button class="btn showall-button">Show all</button>
                             </form>
-                        </div>
+                        </div> */}
                     </div>	
                 </div>
             </div>

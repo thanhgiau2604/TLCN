@@ -130,6 +130,9 @@ class ListFavorite extends React.Component {
         window.location.replace("/login");
     }
     render() {
+        $.post("/addNewDay",function(data){
+            
+        })
         if (this.state.permission == 0) {
             return (<div className="text-center">
                 <br/>

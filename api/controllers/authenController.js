@@ -6,10 +6,18 @@ const passportfb = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const express = require("express");
 const sendmail = require("./mail");
+const time_exprired = "1h";
+const moment = require('moment');
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 module.exports = function(app,apiRouter,jwt){
+
+    // var startOfWeek = moment().startOf('week').toDate();
+    // var endOfWeek = moment().endOf('week').toDate();
+    // console.log(startOfWeek);
+    // console.log(endOfWeek);
+
     var username="", email="",token,role="";
     var superSecret = 'iamastudent';
     app.get("/",(req,res)=> res.render("trangchu",{username:username}))
@@ -42,8 +50,9 @@ module.exports = function(app,apiRouter,jwt){
                 console.log(user);
                 user.save(function (err) {
                     if (err) {
-                        if (err.code == 110000) {
-                            return res.json("Email đã tồn tại!");
+                        console.log("Mã lỗi: "+ err.code);
+                        if (err.code == 11000) {
+                            return res.json("Tài khoản đã tồn tại!");
                         } else {
                             return res.json(err);
                         }
@@ -77,7 +86,7 @@ module.exports = function(app,apiRouter,jwt){
                             name: user.lastName,
                             email: user.email
                         },superSecret,{
-                            expiresIn: "1h"
+                            expiresIn: time_exprired
                         });
                         res.json({err:0,username:user.lastName,email:user.email,token:token,role:user.role});          
                     }
@@ -133,7 +142,7 @@ module.exports = function(app,apiRouter,jwt){
                 name: user.lastName,
                 email: user.email
             },superSecret,{
-                expiresIn: "1h"
+                expiresIn: time_exprired
             });
             return res.redirect("/redirect");
         })(req,res,next);
@@ -168,7 +177,7 @@ module.exports = function(app,apiRouter,jwt){
                     name: user.lastName,
                     email: user.email
                 },superSecret,{
-                    expiresIn: "1h"
+                    expiresIn: time_exprired
                 });
                 User.create(newUser, (err, user) => {
                     if (err) return done(err);
@@ -190,12 +199,12 @@ module.exports = function(app,apiRouter,jwt){
     //authen with google
     app.get("/auth/google/callback",function(req,res,next){
         passport.authenticate('google',function(err,user,info){
-            if (err){
-                return next(err);
-            };
-            if (!user){
+            if (err || (!user)){
                 return res.redirect("/login");
             };
+            // if (!user){
+            //     return res.redirect("/login");
+            // };
             return res.redirect("/redirect");
         })(req,res,next);
     })
@@ -224,7 +233,7 @@ module.exports = function(app,apiRouter,jwt){
                                 name: user.lastName,
                                 email: user.email
                             },superSecret,{
-                                expiresIn: "1h"
+                                expiresIn: time_exprired
                             });
                             return done(null, user);
                         }
@@ -237,14 +246,13 @@ module.exports = function(app,apiRouter,jwt){
                             dateofBirth: "",
                             password:"12345678",
                         }
-                        console.log(newUser);
                         username = newUser.lastName;
                         email = newUser.email;
                         token = jwt.sign({
                             name: newUser.lastName,
                             email: newUser.email
                         },superSecret,{
-                            expiresIn: "1h"
+                            expiresIn: time_exprired
                         });
                         User.create(newUser, (err, user) => {
                             if (err) return done(err);

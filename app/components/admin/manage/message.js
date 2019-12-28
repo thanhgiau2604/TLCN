@@ -52,7 +52,7 @@ class AddForm extends React.Component {
         <div class="col-sm-12">
           <div class="row">
               <label>Nội dung tin nhắn</label>
-                <textarea class="form-control"  ref={(data) => { this.content = data; }} rows='5' cols="auto"></textarea>
+                <textarea class="form-control"  ref={(data) => { this.content = data; }} rows='5' cols="auto" required></textarea>
           </div>
           <div class="text-center">
             <button type="submit" class="btn btn-danger">Save</button>

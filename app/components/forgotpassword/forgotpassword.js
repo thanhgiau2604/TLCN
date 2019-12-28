@@ -12,6 +12,9 @@ class ForgotPassword extends React.Component{
         super(props);
     }
     render(){
+        $.post("/addNewDay",function(data){
+            
+        })
         localStorage.clear();
         return(
 			<div>

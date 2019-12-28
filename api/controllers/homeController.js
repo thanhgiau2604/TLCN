@@ -74,20 +74,22 @@ module.exports = function(app,apiRouter){
         const email = req.body.email;
         var arrResult=[];
         User.findOneAndUpdate({email:email},{'$pull':{favoritelist:{id:new ObjectId(idDel)}}},{new:true},function(err,data){
-            data.favoritelist.forEach(pro => {
-                Product.findOne({_id:pro.id},function(err,da){
-                    if (err){
-                        throw err;
-                    } else {
-                        arrResult.push(da);
-                        if (arrResult.length==data.favoritelist.length){
-                            res.send(arrResult);
+            if (data){
+                data.favoritelist.forEach(pro => {
+                    Product.findOne({_id:pro.id},function(err,da){
+                        if (err){
+                            throw err;
+                        } else {
+                            arrResult.push(da);
+                            if (arrResult.length==data.favoritelist.length){
+                                res.send(arrResult);
+                            }
                         }
-                    }
-                })
-            }); 
-            if (data.favoritelist.length==0){
-                res.send([]);
+                    })
+                }); 
+                if (data.favoritelist.length==0){
+                    res.send([]);
+                }
             }
         })
     });

@@ -15,10 +15,9 @@ function SendMail(receiver,subject,contentMail){
         html: contentMail// plain text body
       };
       transporter.sendMail(mailOptions, function (err, info) {
-        if(err)
-          console.log(err)
-        else
-          console.log(info);
+        if (err){
+            console.log(err);
+        }
      });
 }
 module.exports = SendMail;

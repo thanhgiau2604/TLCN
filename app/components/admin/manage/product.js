@@ -48,14 +48,10 @@ class Products extends React.Component {
       <td><img src={this.props.product.image.image1} style={{ width: '120px' }} />
       </td>
       <td>{this.props.product.costs[this.props.product.costs.length-1].cost}</td>
-      <td>{this.props.product.shipcost}</td>
       <td>{this.props.product.quanty}</td>
       <td>{strSize}</td>
       <td>{this.props.product.description}</td>
       <td class='action'>
-        <a class='btn btn-success' data-toggle='tooltip' style={{cursor:'pointer'}} title='view'>
-          <i class='icon-zoom-in'></i>
-        </a>
         <a class='btn btn-info' data-toggle='tooltip' style={{cursor:'pointer'}} title='edit' data-toggle="modal" 
         data-target="#modalUpdateProduct" onClick={this.updateProduct}>
           <i class='icon-edit'></i>
@@ -89,6 +85,7 @@ class Products extends React.Component {
   }
 }
 var image1={},image2={},image3={};
+var isChange1=false,isChange2=false,isChange3=false;
 var classNewProduct;
 class NewProduct extends React.Component {
   constructor(props) {
@@ -126,7 +123,6 @@ class NewProduct extends React.Component {
         that.setState({addSuccess:1,curSizes:1})
         that.refs.name.value = "";
         that.refs.cost.value="";
-        that.refs.shipcost.value="";
         that.refs.image.value="";
         that.refs.description.value="";
         that.refs.size1.value="";
@@ -160,7 +156,6 @@ class NewProduct extends React.Component {
       name: this.refs.name.value,
       quanty: 0,
       costs: [{cost:this.refs.cost.value}],
-      shipcost: this.refs.shipcost.value,
       image: {image1:"",image2:"",image3:""},
       description: this.refs.description.value,
       sizes: sizes,
@@ -236,11 +231,11 @@ class NewProduct extends React.Component {
       var htmlSize = (<div className="row">
         <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
           <label>Size:</label>
-          <input type="text" className="form-control" id="shipcost" placeholder="Enter size" name="size" ref={"size" + i} />
+          <input type="text" className="form-control"  placeholder="Enter size" name="size" ref={"size" + i} required />
         </div>
         <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
           <label>Color:</label>
-          <input type="text" className="form-control" id="shipcost" placeholder="color1:quanty1,color2:quanty2,..." name="color" ref={"color" + i} />
+          <input type="text" className="form-control" placeholder="color1:quanty1,color2:quanty2,..." name="color" ref={"color" + i} required/>
         </div>
         <br />
       </div>);
@@ -268,19 +263,13 @@ class NewProduct extends React.Component {
               <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                 <div className="form-group">
                   <label>Product Name:</label>
-                  <input type="text" className="form-control" placeholder="Enter name" ref="name" />
+                  <input type="text" className="form-control" placeholder="Enter name" ref="name" required/>
                 </div>
               </div>
               <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                 <div className="form-group">
                   <label>Cost(VND):</label>
-                  <input type="text" className="form-control" placeholder="Enter cost" ref="cost" />
-                </div>
-              </div>
-              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <div className="form-group">
-                  <label>Ship Cost(VND):</label>
-                  <input type="text" className="form-control" placeholder="Enter shipcost" ref="shipcost" />
+                  <input type="text" className="form-control" placeholder="Enter cost" ref="cost" required/>
                 </div>
               </div>
             </div>
@@ -299,7 +288,7 @@ class NewProduct extends React.Component {
             <div className="row" style={{ marginTop: "10px" }}>
               <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                 <label>Image 1:</label>
-                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)}/>
+                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)} required/>
               </div>
             </div>
             <div className="row" style={{ marginTop: "10px" }}>
@@ -352,8 +341,9 @@ class UpdateProduct extends React.Component{
   submitForm(){
     const name = this.refs.name.value;
     const cost = this.refs.cost.value;
-    const shipcost = this.refs.shipcost.value;
     const description = this.refs.description.value;
+    const idProduct = this.state.product._id;
+    console.log("id product: "+idProduct);
     var sizes = [];
     for (var i=1; i<=this.state.curSizes; i++){
       const strSize = this.refs["size"+i].value;
@@ -373,28 +363,109 @@ class UpdateProduct extends React.Component{
       size.colors = colors;
       sizes.push(size);
     }
-    var image = {
-      image1: image1,
-      image2: image2,
-      image3: image3
-    }
+    var image = this.state.product.image;
     var that = this;
-    $.post("/updateProduct",{id:that.state.product._id,name:name,cost:cost,oldcost: JSON.stringify(this.state.product.costs),
-      shipcost:shipcost,description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
-        if (data.success==1){
-          main.setState({listProduct:data.lProduct});
-          that.setState({updateSuccess:1});
+    if (!isChange1&&!isChange2&&!isChange3){
+      $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
+        description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
+          if (data.success==1){
+            main.setState({listProduct:data.lProduct});
+            that.setState({updateSuccess:1});
+          }
+        })
+    }
+    if (isChange1) {
+      isChange1=false;
+      let imageFormObj1 = new FormData();
+      imageFormObj1.append("imageName","multer-image"+Date.now());
+      imageFormObj1.append("imageData",image1);
+      $.ajax({
+        type: "POST",
+        url: "/upload",
+        data: imageFormObj1,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          image.image1 = "/img/product/" + data;
+          console.log(image);
+          $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
+            description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
+              if (data.success==1){
+                main.setState({listProduct:data.lProduct});
+                that.setState({updateSuccess:1});
+              }
+            })
+        },
+        fail: function (err) {
+          alert(err);
         }
       })
+    }
+    if (isChange2){
+      isChange2=false;
+      let imageFormObj2 = new FormData();
+      imageFormObj2.append("imageName","multer-image"+Date.now());
+      imageFormObj2.append("imageData",image2);
+      $.ajax({
+        type: "POST",
+        url: "/upload",
+        data: imageFormObj2,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          image.image2 = "/img/product/" + data;
+          console.log(image);
+          $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
+            description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
+              if (data.success==1){
+                main.setState({listProduct:data.lProduct});
+                curEditProduct.setState({updateSuccess:1});
+              }
+            })
+        },
+        fail: function (err) {
+          alert(err);
+        }
+      })
+    }
+    if (isChange3){
+      isChange3=false;
+      let imageFormObj3 = new FormData();
+      imageFormObj3.append("imageName","multer-image"+Date.now());
+      imageFormObj3.append("imageData",image3);
+      $.ajax({
+        type: "POST",
+        url: "/upload",
+        data: imageFormObj3,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          image.image3 = "/img/product/" + data;
+          console.log(image);
+          $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
+            description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
+              if (data.success==1){
+                main.setState({listProduct:data.lProduct});
+                that.setState({updateSuccess:1});
+              }
+            })
+        },
+        fail: function (err) {
+          alert(err);
+        }
+      })
+    }
   }
-  ChangeImage1(){
+  ChangeImage1(e){
+    isChange1 = true;
     image1 = e.target.files[0];
   }
-  ChangeImage2(){
+  ChangeImage2(e){
+    isChange2=true;
     image2 = e.target.files[0];
-
   }
-  ChangeImage3(){
+  ChangeImage3(e){
+    isChange3=true;
     image3 = e.target.files[0];
   }
   render(){
@@ -412,12 +483,12 @@ class UpdateProduct extends React.Component{
         var htmlSize = (<div className="row">
           <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
             <label>Size:</label>
-            <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} defaultValue={arrSizes[i - 1].size}/>
+            <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} defaultValue={arrSizes[i - 1].size} required/>
           </div>
           <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
             <label>Color:Quanty</label>
             <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." 
-            ref={"color" + i} defaultValue={strColorQuanty}/>
+            ref={"color" + i} defaultValue={strColorQuanty} required/>
           </div>
           <br />
         </div>);
@@ -427,11 +498,11 @@ class UpdateProduct extends React.Component{
         var htmlSize = (<div className="row">
           <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
             <label>Size:</label>
-            <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i}/>
+            <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} required/>
           </div>
           <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
             <label>Color:Quanty</label>
-            <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." ref={"color" + i}/>
+            <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." ref={"color" + i} required/>
           </div>
           <br />
         </div>);
@@ -461,24 +532,18 @@ class UpdateProduct extends React.Component{
             <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
               <div className="form-group" key={this.state.product._id}>
                 <label>Product Name:</label>
-                <input type="text" className="form-control" placeholder="Enter name" ref="name" defaultValue={this.state.product.name}/>
+                <input type="text" className="form-control" placeholder="Enter name" ref="name" defaultValue={this.state.product.name} required/>
               </div>
             </div>
             <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
               <div className="form-group" key={this.state.product._id}>
                 <label>Cost(VND):</label>
-                <input type="text" className="form-control" placeholder="Enter cost" ref="cost" defaultValue={this.state.curcost}/>
-              </div>
-            </div>
-            <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-              <div className="form-group" key={this.state.product._id}>
-                <label>Ship Cost(VND):</label>
-                <input type="text" className="form-control" placeholder="Enter shipcost" ref="shipcost" defaultValue={this.state.product.shipcost} />
+                <input type="text" className="form-control" placeholder="Enter cost" ref="cost" defaultValue={this.state.curcost} required/>
               </div>
             </div>
           </div>
           <div className="row">
-            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"  key={this.state.product._id}>
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12"  key={this.state.product._id} >
               <label>Description:</label> <br />
               <textarea rows="5" style={{ width: "100%" }} ref="description" defaultValue={this.state.product.description}></textarea>
             </div>
@@ -496,7 +561,7 @@ class UpdateProduct extends React.Component{
           <div className="row" style={{ marginTop: "10px" }}>
               <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                 <label>Image 1:</label>
-                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)}/>
+                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)} required/>
               </div>
             </div>
             <div className="row" style={{ marginTop: "10px" }}>
@@ -621,7 +686,6 @@ class ManageProducts extends React.Component {
               <th class="text-center">Name</th>
               <th class="text-center">Image</th>
               <th class="text-center">Cost</th>
-              <th class="text-center">Shipcost</th>
               <th class="text-center">Quanty</th>
               <th class="text-center">Sizes</th>
               <th class="text-center">Description</th>

@@ -331,7 +331,7 @@ class ModalNewCategory extends React.Component{
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
               <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" ref="name"/>
+                <input type="text" class="form-control" id="name" ref="name" required/>
               </div>
             </div>
           </div>
@@ -347,7 +347,7 @@ class ModalNewCategory extends React.Component{
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
               <div class="form-group">
                 <label for="image">Image:</label>
-                <input type="file" ref="image" onChange={(e)=> this.changeImage(e)}/>
+                <input type="file" ref="image" onChange={(e)=> this.changeImage(e)} required/>
               </div>     
             </div>
           </div>
@@ -473,7 +473,7 @@ class ModalUpdateCategory extends React.Component {
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
               <div class="form-group" key={this.state.category._id}>
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" ref="name" defaultValue={this.state.category.name}/>
+                <input type="text" class="form-control" id="name" ref="name" defaultValue={this.state.category.name} required/>
               </div>
             </div>
           </div>
@@ -489,7 +489,7 @@ class ModalUpdateCategory extends React.Component {
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
               <div class="form-group">
                 <label for="image">Image:</label>
-                <input type="file" ref="image" onChange={(e)=> this.changeImage(e)}/>
+                <input type="file" ref="image" onChange={(e)=> this.changeImage(e)} required/>
               </div>     
             </div>
           </div>
