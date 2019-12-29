@@ -3,6 +3,8 @@ const parser = bodyParser.urlencoded({extended:false});
 const Admin = require("../models/admin");
 const User = require("../models/users");
 const Message = require("../models/message");
+var Statistic = require("../models/statistic");
+const Product = require("../models/Product");
 function getUsers(res) {
     User.find({role:'user'},function (err, data) {
         if (err) {
@@ -11,6 +13,14 @@ function getUsers(res) {
             res.json(data);
         }
     })
+}
+function getCurrentDay() {
+    var dateObj = new Date();
+    var month = dateObj.getMonth() + 1; //months from 1-12
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
+    nowday = day.toString()+month.toString()+year.toString();
+    return nowday;
 }
 module.exports = function(app,adminRouter,jwt){
     var superSecret = 'iamastudent';
@@ -195,6 +205,79 @@ module.exports = function(app,adminRouter,jwt){
                         res.send(data);
                     }
                 })
+            }
+        })
+    });
+
+    app.get("/topview",(req,res)=>{
+        var day = getCurrentDay();
+        Statistic.findOne({day:day},function(err,data){
+            if (data){
+                var list = data.viewproduct;
+                // console.log(list);
+                for (var i=0; i<list.length-1; i++){
+                    for(var j=i+1; j<list.length; j++){
+                        if (list[i].count<list[j].count){
+                            var tmp = list[i];
+                            list[i]=list[j];
+                            list[j]=tmp;
+                        }
+                    }
+                }
+                // console.log(list);
+                var arrayResult=[];
+                var forLoop = async _ => {
+                    for (var i=0; i<list.length; i++){
+                        await Product.findOne({_id:list[i].id},function(err,pro){
+                            if (pro){
+                                var item = {
+                                    product:pro,
+                                    view: list[i].count
+                                }
+                                arrayResult.push(item);
+                                if (arrayResult.length==list.length){
+                                    res.send(arrayResult);
+                                }
+                            }         
+                        })
+                    }
+                }
+                forLoop();
+            }
+        })
+    });
+    app.get("/toporder",(req,res)=>{
+        var day = getCurrentDay();
+        Statistic.findOne({day:day},function(err,data){
+            if (data){
+                var list = data.orderproduct;
+                for (var i=0; i<list.length-1; i++){
+                    for(var j=i+1; j<list.length; j++){
+                        if (list[i].count<list[j].count){
+                            var tmp = list[i];
+                            list[i]=list[j];
+                            list[j]=tmp;
+                        }
+                    }
+                }
+                var arrayResult=[];
+                var forLoop = async _ => {
+                    for (var i=0; i<list.length; i++){
+                        await Product.findOne({_id:list[i].id},function(err,pro){
+                            if (pro){
+                                var item = {
+                                    product:pro,
+                                    view: list[i].count
+                                }
+                                arrayResult.push(item);
+                                if (arrayResult.length==list.length){
+                                    res.send(arrayResult);
+                                }
+                            }         
+                        })
+                    }
+                }
+                forLoop();
             }
         })
     })

@@ -3,9 +3,37 @@ import ReactDOM from 'react-dom'
 import Navbar from '../common/navbar'
 import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
+import $ from 'jquery'
+class Products extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (<tr class='active'>
+      <td>{this.props.stt}</td>
+      <td>{this.props.product.name}</td>
+      <td><img src={this.props.product.image.image1} style={{ width: '120px' }} /></td>
+      <td>{this.props.product.description}</td>
+      <td>{this.props.count}</td>
+    </tr>)
+  }
+}
 class Dashboard extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+          topView:[],
+          topOrder:[]
+        }
+    }
+    componentDidMount(){
+      var that = this;
+      $.get("/topview",function(data){
+        $.get("/toporder",function(da){
+          that.setState({topView:data,topOrder:da});
+        })
+      })
+      
     }
     render(){
         return(<div id='content'>
@@ -47,22 +75,45 @@ class Dashboard extends React.Component{
               <h4>Access the products</h4>
             </div>
             <div class='row text-center'>
-              <h3>No information</h3>
-              {/* <div class='col-md-3'>
-                <input class='knob second' data-bgcolor='#d4ecfd' data-fgcolor='#30a1ec' data-height='140' data-inputcolor='#333' data-thickness='.3' data-width='140' type='text' value='50'/>
-              </div>
-              <div class='col-md-3'>
-                <input class='knob second' data-bgcolor='#c4e9aa' data-fgcolor='#8ac368' data-height='140' data-inputcolor='#333' data-thickness='.3' data-width='140' type='text' value='75'/>
-              </div>
-              <div class='col-md-3'>
-                <input class='knob second' data-bgcolor='#cef3f5' data-fgcolor='#5ba0a3' data-height='140' data-inputcolor='#333' data-thickness='.3' data-width='140' type='text' value='35'/>
-              </div>
-              <div class='col-md-3'>
-                <input class='knob second' data-bgcolor='#f8d2e0' data-fgcolor='#b85e80' data-height='140' data-inputcolor='#333' data-thickness='.3' data-width='140' type='text' value='85'/>
-              </div> */}
+              <h3>TOP 10 VIEWED PRODUCTS</h3>
+              <table class='table'>
+          <thead>
+            <tr>
+              <th class="text-center">#</th>
+              <th class="text-center">Name</th>
+              <th class="text-center">Image</th>
+              <th class="text-center">Description</th>
+              <th class="text-center">Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.topView.map(function (view, index) {
+              return <Products key={index} stt={index+1} product={view.product} count={view.view} />
+            })}
+          </tbody>
+        </table>
             </div>
-            <div class='page-header'>
-              <h4>Trending Products:</h4>
+              <div class='page-header'>
+                <h4>Trending Products:</h4>
+                <div className="text-center">
+                  <h3>TOP 10 ORDERED PRODUCTS</h3>
+                  <table class='table'>
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Image</th>
+                        <th class="text-center">Description</th>
+                        <th class="text-center">View</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.topOrder.map(function (order, index) {
+                        return <Products key={index} stt={index + 1} product={order.product} count={order.view} />
+                      })}
+                    </tbody>
+                  </table>
+                </div>
             </div>
           </div>
         </div>
