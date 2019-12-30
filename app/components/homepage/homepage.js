@@ -9,15 +9,21 @@ import MainContentSection2 from '../homepage/main-content-section2'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+import ReactGA from 'react-ga'
 var {Provider} = require("react-redux");
 var store = require("../../store");
+
+function initizeAnalytics(){
+    ReactGA.initialize("UA-155099372-1");
+    ReactGA.pageview(window.location.pathname + window.location.search);
+}
 class HomePage extends React.Component{
     constructor(props){
         super(props);
     }
     render(){
-        $.post("/addNewDay",function(data){
-            
+        initizeAnalytics();
+        $.post("/addNewDay",function(data){     
         })
         return(
             <div>

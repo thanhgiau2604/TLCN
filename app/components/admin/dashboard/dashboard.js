@@ -54,17 +54,17 @@ class Dashboard extends React.Component{
             </div>
           </div>
           <div class='panel-body'>
-            <div class='page-header'>
+            {/* <div class='page-header'>
               <h4>Access the website</h4>
-            </div>
-            <div className="text-center">
+            </div> */}
+            {/* <div className="text-center">
                 <h4>Today:</h4>
                 <button className='btn btn-success'>20 times</button>
                 <h4>This week:</h4>
                 <button className='btn btn-warning'>100 times</button>
                 <h4>Total:</h4>
                 <button className='btn btn-danger'>1262 times</button>
-            </div>
+            </div> */}
             <div class='progress'>
               {/* <div class='progress-bar progress-bar-success' style={{width: '35%'}}></div>
               <div class='progress-bar progress-bar-warning' style={{width: '20%'}}></div>
