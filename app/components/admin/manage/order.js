@@ -35,8 +35,8 @@ class Order extends React.Component {
     return (<tr class='active'>
       <td className='text-center'>{this.props.stt}</td>
       <td className='text-center'>{this.props.order.email}</td>
-      <td className='text-center'>{this.props.order.sumproductcost}</td>
-      <td className='text-center'>{this.props.order.sumshipcost}</td>
+      <td className='text-center'>{this.props.order.sumproductcost}đ</td>
+      <td className='text-center'>{this.props.order.sumshipcost}đ</td>
       <td className='text-center'>{this.props.order.status}</td>
       <td className='text-center'>{this.props.order.time}</td>
       <td class='action'>
@@ -125,14 +125,9 @@ class ViewOrder extends React.Component{
         listproduct: [],
         status: "",
         code:0,
-        address:{
-          fullname:"",
-          phonenumber:"",
-          province:"",
-          district:"",
-          commune:"",
-          apartmentnumber:""
-        }
+        fullname:"",
+        phonenumber:"",
+        address:""
       }
     }
     view = this;
@@ -140,9 +135,8 @@ class ViewOrder extends React.Component{
   render(){
     var address="",infor="";
     if (this.state.order){
-      var adr = this.state.order.address;
-      address=`${adr.apartmentnumber}-${adr.commune}-${adr.district}-${adr.province}`;
-      infor = `Fullname: ${adr.fullname}, Phonenumber: ${adr.phonenumber}`;
+      var address = this.state.order.address;
+      infor = `Fullname: ${this.state.order.fullname}, Phonenumber: ${this.state.order.phonenumber}`;
     }
     return(<div class="container">
     <div class="modal fade" id="modalView" role="dialog">
@@ -171,13 +165,13 @@ class ViewOrder extends React.Component{
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
                   <label for="productcost">Product Cost:</label>
-                  <input type="text" class="form-control"  value={this.state.order.sumproductcost} readonly="true"/>
+                  <input type="text" class="form-control"  value={this.state.order.sumproductcost+"đ"} readonly="true"/>
                 </div>
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
                   <label for="shipcost">Ship Cost:</label>
-                  <input type="text" class="form-control"  value={this.state.order.sumshipcost} readonly="true"/>
+                  <input type="text" class="form-control"  value={this.state.order.sumshipcost+"đ"} readonly="true"/>
                 </div>
               </div>
             </div>

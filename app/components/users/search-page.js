@@ -10,8 +10,36 @@ var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
 
-var items,table;
-
+var items,table,main;
+class RequireAuthentication extends React.Component{
+	constructor(props){
+		super(props);
+		this.goAuthen = this.goAuthen.bind(this);
+	}
+	goAuthen(){
+		window.location.replace("/login");
+	}
+	render(){
+		return(<div id="modal-authen" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Thông báo</h4>
+			</div>
+			<div class="modal-body text-center">
+			  <p>Bạn chưa đăng nhập?</p>
+			  <p>Hãy click vào nút bên dưới để đi đến trang đăng nhập!</p>
+			  <button class="btn btn-primary" onClick={this.goAuthen}>ĐI ĐẾN TRANG ĐĂNG NHẬP</button>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		  </div>
+		</div>
+	  </div>)
+	}
+}
 class Product extends React.Component{ 
 	constructor(props){
 		super(props);
@@ -106,6 +134,7 @@ class Product extends React.Component{
 							<span className="price">{this.props.costs[this.props.costs.length-1].cost}đ</span>
 						</div>
 					</div>
+					<RequireAuthentication/>
 				</div>
 			</div></div>)
 	}
@@ -116,6 +145,7 @@ class SearchProduct extends React.Component {
 		this.state = {
 			listSearch:[]
 		}
+		main = this;
 	}
 	componentDidMount(){
         var that = this;

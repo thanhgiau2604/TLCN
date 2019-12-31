@@ -212,72 +212,86 @@ module.exports = function(app,adminRouter,jwt){
     app.get("/topview",(req,res)=>{
         var day = getCurrentDay();
         Statistic.findOne({day:day},function(err,data){
+            if (err) console.log(err);
             if (data){
-                var list = data.viewproduct;
-                // console.log(list);
-                for (var i=0; i<list.length-1; i++){
-                    for(var j=i+1; j<list.length; j++){
-                        if (list[i].count<list[j].count){
-                            var tmp = list[i];
-                            list[i]=list[j];
-                            list[j]=tmp;
+                if (data.viewproduct.length==0) {
+                    res.send([]);
+                } else {
+                    var list = data.viewproduct;
+                    // console.log(list);
+                    for (var i = 0; i < list.length - 1; i++) {
+                        for (var j = i + 1; j < list.length; j++) {
+                            if (list[i].count < list[j].count) {
+                                var tmp = list[i];
+                                list[i] = list[j];
+                                list[j] = tmp;
+                            }
                         }
                     }
-                }
-                // console.log(list);
-                var arrayResult=[];
-                var forLoop = async _ => {
-                    for (var i=0; i<list.length; i++){
-                        await Product.findOne({_id:list[i].id},function(err,pro){
-                            if (pro){
-                                var item = {
-                                    product:pro,
-                                    view: list[i].count
+                    // console.log(list);
+                    var arrayResult = [];
+                    var forLoop = async _ => {
+                        for (var i = 0; i < list.length; i++) {
+                            await Product.findOne({ _id: list[i].id }, function (err, pro) {
+                                if (pro) {
+                                    var item = {
+                                        product: pro,
+                                        view: list[i].count
+                                    }
+                                    arrayResult.push(item);
+                                    if (arrayResult.length == list.length) {
+                                        res.send(arrayResult);
+                                    }
                                 }
-                                arrayResult.push(item);
-                                if (arrayResult.length==list.length){
-                                    res.send(arrayResult);
-                                }
-                            }         
-                        })
+                            })
+                        }
                     }
+                    forLoop();
                 }
-                forLoop();
+            } else {
+                res.send([]);
             }
         })
     });
     app.get("/toporder",(req,res)=>{
         var day = getCurrentDay();
         Statistic.findOne({day:day},function(err,data){
+            if (err) console.log(err);
             if (data){
-                var list = data.orderproduct;
-                for (var i=0; i<list.length-1; i++){
-                    for(var j=i+1; j<list.length; j++){
-                        if (list[i].count<list[j].count){
-                            var tmp = list[i];
-                            list[i]=list[j];
-                            list[j]=tmp;
+                if (data.orderproduct.length==0){
+                    res.send([]);
+                } else {
+                    var list = data.orderproduct;
+                    for (var i = 0; i < list.length - 1; i++) {
+                        for (var j = i + 1; j < list.length; j++) {
+                            if (list[i].count < list[j].count) {
+                                var tmp = list[i];
+                                list[i] = list[j];
+                                list[j] = tmp;
+                            }
                         }
                     }
-                }
-                var arrayResult=[];
-                var forLoop = async _ => {
-                    for (var i=0; i<list.length; i++){
-                        await Product.findOne({_id:list[i].id},function(err,pro){
-                            if (pro){
-                                var item = {
-                                    product:pro,
-                                    view: list[i].count
+                    var arrayResult = [];
+                    var forLoop = async _ => {
+                        for (var i = 0; i < list.length; i++) {
+                            await Product.findOne({ _id: list[i].id }, function (err, pro) {
+                                if (pro) {
+                                    var item = {
+                                        product: pro,
+                                        view: list[i].count
+                                    }
+                                    arrayResult.push(item);
+                                    if (arrayResult.length == list.length) {
+                                        res.send(arrayResult);
+                                    }
                                 }
-                                arrayResult.push(item);
-                                if (arrayResult.length==list.length){
-                                    res.send(arrayResult);
-                                }
-                            }         
-                        })
+                            })
+                        }
                     }
+                    forLoop();
                 }
-                forLoop();
+            } else {
+                res.send([]);
             }
         })
     })

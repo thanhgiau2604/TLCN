@@ -7,6 +7,7 @@ import ForgotPasswordForm from '../forgotpassword/forgotpassword-form'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+import $ from 'jquery'
 class ForgotPassword extends React.Component{
     constructor(props){
         super(props);

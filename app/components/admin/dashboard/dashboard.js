@@ -29,7 +29,9 @@ class Dashboard extends React.Component{
     componentDidMount(){
       var that = this;
       $.get("/topview",function(data){
+        console.log(data);
         $.get("/toporder",function(da){
+          console.log(da);
           that.setState({topView:data,topOrder:da});
         })
       })
