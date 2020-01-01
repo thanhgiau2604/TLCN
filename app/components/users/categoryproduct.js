@@ -479,7 +479,7 @@ class Category extends React.Component{
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bstore-breadcrumb">
-                        <a href="index.html">Trang chủ</a>
+                        <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
                         <span>{this.state.category.displayName}</span>
                     </div>

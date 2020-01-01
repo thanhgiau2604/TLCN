@@ -30,7 +30,6 @@ class HeaderMiddle extends React.Component{
 						<div className="header-right-callus">
 							<ul className="flow-us-link link-top">
 								<li><a  style={{cursor:'pointer'}} onClick={this.openFacebook}><i className="fa fa-facebook"></i></a></li>
-								<li><a href="#"><i className="fa fa-google-plus"></i></a></li>
 							</ul>
 						</div>
 						

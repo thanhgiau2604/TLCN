@@ -42,8 +42,7 @@ class OptionUser extends React.Component {
 
 	}
 	handleCheckout(){
-		const token = localStorage.getItem('token');
-		window.location.assign("/api/checkout/?token="+token);
+		window.location.assign("/checkout");
 	}
 	handleFL(){
 

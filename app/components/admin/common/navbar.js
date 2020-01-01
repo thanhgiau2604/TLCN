@@ -1,5 +1,4 @@
 import React from 'react'
-import $ from 'jquery'
 class Navbar extends React.Component{
     constructor(props){
         super(props);
@@ -48,9 +47,6 @@ class Navbar extends React.Component{
                         <b class='caret'></b>
                     </a>
                     <ul class='dropdown-menu'>
-                        <li>
-                            <a href='#'>Edit Profile</a>
-                        </li>
                         <li class='divider'></li>
                         <li>
                             <a onClick={this.handleSignOut} style={{cursor:'pointer'}}>Sign out</a>

@@ -145,8 +145,8 @@ class ListFavorite extends React.Component {
                     <div className="row">
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div className="bstore-breadcrumb">
-                                <a href="index.html">Trang chủ<span><i className="fa fa-caret-right"></i> </span> </a>
-                                <a href="my-account.html">QL Tài khoản<span><i className="fa fa-caret-right"></i></span></a>
+                                <a href="/">Trang chủ<span><i className="fa fa-caret-right"></i> </span> </a>
+                                <a href="/manageaccount">QL Tài khoản<span><i className="fa fa-caret-right"></i></span></a>
                                 <span>Danh sách sản phẩm yêu thích</span>
                             </div>
                         </div>
@@ -163,8 +163,7 @@ class ListFavorite extends React.Component {
                                 <div className="wishlists-all-item">
                                     <ListItems />
                                     <div className="wish-back-link">
-                                        <a className="wish-save" href="my-account.html"><i className="fa fa-chevron-left"></i> QL Tài khoản</a>
-                                        <a className="wish-save" href="/"><i className="fa fa-chevron-left"></i> Trang chủ</a>
+                                       
                                     </div>
                                 </div>
                             </div>

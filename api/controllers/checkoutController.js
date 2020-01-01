@@ -30,7 +30,7 @@ function HaversineInKM(lat1, long1, lat2, long2)
     return nowday;
 }
 module.exports = function(app,apiRouter){
-    apiRouter.get("/checkout",(req,res)=>{
+    app.get("/checkout",(req,res)=>{
         res.render("checkout");
     })
 
@@ -44,6 +44,23 @@ module.exports = function(app,apiRouter){
             }
         })
     });
+    app.post("/getPosition",parser,(req,res)=>{
+        const address = req.body.address;
+        opencage.geocode({q: address}).then(data => {
+            if (data.status.code == 200) {
+              if (data.results.length > 0) {
+                var place = data.results[0];
+                res.json({err:"",position:place.geometry});
+              } else {
+                  res.json({err:"Vui lòng kiểm tra lại địa chỉ!"})
+              }
+            } else{
+              console.log('have a problem');
+            } 
+          }).catch(error => {
+            console.log('error', error.message);
+          });
+    })
     app.post("/updateAddress",parser,(req,res)=>{
         const address = req.body.address;
         const fullname = req.body.fullname;
@@ -58,14 +75,12 @@ module.exports = function(app,apiRouter){
                     lng: 106.7716404
                 }
                 var p2 = place.geometry;
-                console.log(p2);
                 var distance = HaversineInKM(p1.lat,p1.lng,p2.lat,p2.lng);
                 var result = Math.round(3000*distance);
-                Order.update({ _id: id }, { $set: { address: address, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
+                Order.update({ _id: id }, { $set: { address: place.formatted, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
                     if (err) {
                         throw err;
                     } else {
-                        console.log("Vao thanh cong");
                         Order.findOne({ _id: id }, function (err, data) {
                             if (err) {
                                 throw err;
@@ -78,10 +93,8 @@ module.exports = function(app,apiRouter){
               } else {
                   res.json({err:1})
               }
-            } else if (data.status.code == 402) {
-              console.log('hit free-trial daily limit');
-            } else {
-              console.log('error', data.status.message);
+            } else  {
+              console.log('have a problem');
             }
           }).catch(error => {
             console.log('error', error.message);
@@ -103,10 +116,10 @@ module.exports = function(app,apiRouter){
             dssp = dssp + strsp;
         });
         let donhang = 
-        "<h3>Đơn hàng của anh/chị:"+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
+        "<h3>Đơn hàng của anh/chị: "+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
         `<h3>Tổng tiền sản phẩm: ${order.sumproductcost}đ;</h3>`+
-        `<h3>Phí vận chuyển:${order.sumshipcost}đ;</h3>`+
-        `<h3>Tổng tiền đơn hàng:${order.sumproductcost + order.sumshipcost}đ;</h3>`+
+        `<h3>Phí vận chuyển: ${order.sumshipcost}đ;</h3>`+
+        `<h3>Tổng tiền đơn hàng: ${order.sumproductcost + order.sumshipcost}đ;</h3>`+
         `<h3>DANH SÁCH SẢN PHẨM:</h3>`;
         let diachi =`<h3>Địa chỉ nhận hàng: ${order.address}</h3>`
         let numberRandom = randomInt(100000,999999);

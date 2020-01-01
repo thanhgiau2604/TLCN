@@ -1,7 +1,36 @@
 import React from 'react'
-import $ from 'jquery'
 import {connect} from 'react-redux'
 var main;
+
+class RequireAuthentication extends React.Component{
+	constructor(props){
+		super(props);
+		this.goAuthen = this.goAuthen.bind(this);
+	}
+	goAuthen(){
+		window.location.replace("/login");
+	}
+	render(){
+		return(<div id="modal-authen" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Thông báo</h4>
+			</div>
+			<div class="modal-body text-center">
+			  <p>Bạn chưa đăng nhập?</p>
+			  <p>Hãy click vào nút bên dưới để đi đến trang đăng nhập!</p>
+			  <button class="btn btn-primary" onClick={this.goAuthen}>ĐI ĐẾN TRANG ĐĂNG NHẬP</button>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			</div>
+		  </div>
+		</div>
+	  </div>)
+	}
+}
 class Product extends React.Component{
 	constructor(props){
 		super(props);
@@ -50,7 +79,11 @@ class Cart extends React.Component{
 	}
 	handleCheckout(){
 		const token = localStorage.getItem('token');
-		window.location.assign("/api/checkout/?token="+token);
+		if (!token){
+			$("#modal-authen").modal('show');
+		} else {
+			window.location.assign("/checkout");
+		}
 	}
 	render(){
 		var sum =0;
@@ -85,6 +118,7 @@ class Cart extends React.Component{
 				</div>
 			</div>
 		</div>
+		<RequireAuthentication/>
 	</div>)
 	}
 }
@@ -129,21 +163,20 @@ class MainMenu extends React.Component{
 									<li>
 										<a style={{cursor:'pointer'}} onClick={this.getKidCategory}>Trẻ em</a>
 									</li>
-									<li><a href="about-us.html">Liên hệ</a></li>
+									<li><a href="/contact">Liên hệ</a></li>
 								</ul>
 							</nav>
 						</div>
 					</div>
 					
 				</div>
-				<div className="row">
-					
+				<div className="row">			
 					<div className="col-sm-12 mobile-menu-area">
 						<div className="mobile-menu hidden-md hidden-lg" id="mob-menu">
 							<span className="mobile-menu-title">MENU</span>
 							<nav>
 								<ul>
-									<li><a href="index-2.html">Trang chủ</a>														
+									<li><a href="/">Trang chủ</a>														
 									</li>								
 									<li><a href="shop-gird.html">Giày nam</a>
 										<ul>

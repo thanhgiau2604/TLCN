@@ -1,9 +1,5 @@
-var day = function () {
-    var dateObj = new Date();
-    var month = dateObj.getUTCMonth() + 1; //months from 1-12
-    var day = dateObj.getUTCDate();
-    var year = dateObj.getUTCFullYear();
-    nowday = day.toString()+month.toString()+year.toString();
-    return nowday;
-}
-console.log(day());
+var str = "       PHẦN MỘT. LỊCH SỬ THẾ GIỚI THỜI NGUYÊN THỦY, CỔ ĐẠI VÀ TRUNG ĐẠI";
+str = str.toLowerCase();
+str = str.trim();
+const newStr = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d");
+console.log(newStr)

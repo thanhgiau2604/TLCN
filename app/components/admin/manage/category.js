@@ -36,7 +36,7 @@ class SingleCategory extends React.Component {
     }
     render(){
         return(
-        <div class="col-xs-12 col-sm-6 col-md-5 col-lg-5 boxthumbnail col-md-push-1">
+        <div class="col-xs-10 col-sm-5 col-md-5 col-lg-5 boxthumbnail col-md-push-1">
             <div class="preview_outer wow fadeIn" data-wow-delay="300ms">
                 <div class="thumbnail">
                     <img src={this.props.category.image} width="100%" alt="" />

@@ -10,6 +10,7 @@ class HeaderBottom extends React.Component{
 		this.getNikeCategory = this.getNikeCategory.bind(this);
 		this.getSneakerCategory = this.getSneakerCategory.bind(this);
 		this.getJordanCategory = this.getJordanCategory.bind(this);
+		this.getPumpCategory = this.getPumpCategory.bind(this);
 	}
 	getMenCategory(){
 		localStorage.setItem("curcategory","Men Product");
@@ -37,6 +38,10 @@ class HeaderBottom extends React.Component{
 	}
 	getJordanCategory(){
 		localStorage.setItem("curcategory","Jordan Product");
+		window.location.assign("/categoryProduct");
+	}
+	getPumpCategory(){
+		localStorage.setItem("curcategory","Pump Product");
 		window.location.assign("/categoryProduct");
 	}
     render(){
@@ -79,17 +84,16 @@ class HeaderBottom extends React.Component{
 												<div className="cat-left-drop-menu-left">
 													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nữ</a>
 													<ul>
-														<li><a href="/getPumpProudct">Giày cao gót</a></li>
-														<li><a href="/getDollProduct">Giày búp bê</a></li>
-														<li><a href="shop-gird.html">Giày thể thao</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getPumpCategory}>Giày cao gót</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày búp bê</a></li>
 													</ul>
 												</div>
 												<div className="cat-left-drop-menu-left">
 													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nữ</a>
 													<ul>
-														<li><a href="shop-gird.html">Giày boot</a></li>
-														<li><a href="/getSandalProduct">Giày sandal</a></li>
-														<li><a href="shop-gird.html">Giày lười</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày boot</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày sandal</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày lười</a></li>
 													</ul>														
 												</div>
 											</div>										
@@ -101,9 +105,9 @@ class HeaderBottom extends React.Component{
 													<div className="cat-left-drop-menu-left text-center">
 														<a className="menu-item-heading" href="shop-gird.html">Các loại giày trẻ em</a>
 														<ul>
-															<li><a href="/getKidProduct">Giày Sandal</a></li>
-															<li><a href="/getKidProduct">Giày Thể thao</a></li>
-															<li><a href="/getKidProduct">Giày Búp bê</a></li>
+															<li><a style={{cursor:"pointer"}} onClick={this.getKidCategory}>Giày Sandal</a></li>
+															<li><a style={{cursor:"pointer"}} onClick={this.getKidCategory}>Giày Thể thao</a></li>
+															<li><a style={{cursor:"pointer"}} onClick={this.getKidCategory}>Giày Búp bê</a></li>
 														</ul>
 													</div>
 												</div>										

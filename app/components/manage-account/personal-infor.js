@@ -401,8 +401,8 @@ class InforForm extends React.Component{
 		 		<div className="row">
 		 			<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 		 				<div className="bstore-breadcrumb">
-		 					<a href="index-2.html">Trang chủ<i className="fa fa-angle-double-right"></i></a>
-		 					<a href="my-account.html">Quản lý tài khoản<i className="fa fa-angle-double-right"></i></a>
+		 					<a href="/">Trang chủ<i className="fa fa-angle-double-right"></i></a>
+		 					<a href="/manageaccount">Quản lý tài khoản<i className="fa fa-angle-double-right"></i></a>
 		 					<span>Thông tin tài khoản</span>
 		 				</div>
 		 			</div>

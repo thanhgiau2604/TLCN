@@ -2,8 +2,23 @@ import React from 'react'
 
 class Footer extends React.Component{
     constructor(props){
-        super(props);
-    }
+		super(props);
+		this.getMenCategory = this.getMenCategory.bind(this);
+		this.getGirlCategory = this.getGirlCategory.bind(this);
+		this.getKidCategory = this.getKidCategory.bind(this);
+	}
+	getMenCategory(){
+		localStorage.setItem("curcategory","Men Product");
+		window.location.assign("/categoryProduct");
+	}
+	getGirlCategory(){
+		localStorage.setItem("curcategory","Girl Product");
+		window.location.assign("/categoryProduct");
+	}
+	getKidCategory(){
+		localStorage.setItem("curcategory","Kid Product");
+		window.location.assign("/categoryProduct");
+	}
     render(){
         return(
 			<section className="footer-top-area">
@@ -26,13 +41,13 @@ class Footer extends React.Component{
 									<div className="about-us-area">
 									</div>
 									<div className="fllow-us-area">
-										<h2>Follow us</h2>
+										{/* <h2>Follow us</h2>
 										<ul className="flow-us-link">
 											<li><a href="#"><i className="fa fa-facebook"></i></a></li>
 											<li><a href="#"><i className="fa fa-twitter"></i></a></li>
 											<li><a href="#"><i className="fa fa-rss"></i></a></li>
 											<li><a href="#"><i className="fa fa-google-plus"></i></a></li>
-										</ul>
+										</ul> */}
 									</div>
 								</div>
 							</div>
@@ -63,7 +78,7 @@ class Footer extends React.Component{
 															<i className="fa fa-phone"></i>
 														</div>
 														<div className="info-text call-lh">
-															<p>Gọi chúng tôi: 0123-456-789</p>
+															<p>Gọi chúng tôi: 035 962 7733</p>
 														</div>
 													</li>
 													<li>
@@ -71,7 +86,7 @@ class Footer extends React.Component{
 															<i className="fa fa-envelope-o"></i>
 														</div>
 														<div className="info-text">
-															<p>Email : <a href="mailto:sales@yourcompany.com"><i className="fa fa-angle-double-right"></i> shoelg@gmail.com</a></p>
+															<p>Email : <a href="#"><i className="fa fa-angle-double-right"></i> nguyengiau.9801@gmail.com</a></p>
 														</div>
 													</li>
 												</ul>
@@ -96,9 +111,9 @@ class Footer extends React.Component{
 												<div className="single-f-widget">
 													<h2>Danh mục</h2>
 													<ul>
-														<li><a href="shop-gird.html"><i className="fa fa-angle-double-right"></i>Giày nam </a></li>
-														<li><a href="shop-gird.html"><i className="fa fa-angle-double-right"></i>Giày nữ</a></li>
-														<li><a href="shop-gird.html"><i className="fa fa-angle-double-right"></i>Trẻ em</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}><i className="fa fa-angle-double-right"></i>Giày nam </a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}><i className="fa fa-angle-double-right"></i>Giày nữ</a></li>
+														<li><a style={{cursor:"pointer"}} onClick={this.getKidCategory}><i className="fa fa-angle-double-right"></i>Trẻ em</a></li>
 													</ul>
 												</div>
 											</div>
@@ -108,11 +123,11 @@ class Footer extends React.Component{
 
 											<div className="fotter-menu-widget">
 												<div className="single-f-widget">
-													<h2>Thông tin</h2>
+													<h2>Quản lý</h2>
 													<ul>
-														<li><a href="#"><i className="fa fa-angle-double-right"></i>Sản phẩm mới</a></li>
-														<li><a href="#"><i className="fa fa-angle-double-right"></i>Sản phẩm TOP</a></li>
-														<li><a href="contact-us.html"><i className="fa fa-angle-double-right"></i>Liên hệ</a></li>
+														<li><a href="/manageaccount"><i className="fa fa-angle-double-right"></i>Tài khoản</a></li>
+														<li><a href="/checkout"><i className="fa fa-angle-double-right"></i>Thanh toán</a></li>
+														<li><a href="/contact"><i className="fa fa-angle-double-right"></i>Liên hệ</a></li>
 													</ul>
 												</div>
 											</div>
@@ -122,11 +137,11 @@ class Footer extends React.Component{
 
 											<div className="fotter-menu-widget">
 												<div className="single-f-widget">
-													<h2>Tài khoản</h2>
+													<h2>Thông tin</h2>
 													<ul>
-														<li><a href="#"><i className="fa fa-angle-double-right"></i>Giỏ hàng</a></li>
-														<li><a href="#"><i className="fa fa-angle-double-right"></i>Thông tin cá nhân</a></li>
-														<li><a href="#"><i className="fa fa-angle-double-right"></i>Đăng xuất</a></li>
+														<li><a href="/listfavorite"><i className="fa fa-angle-double-right"></i>Danh sách yêu thích</a></li>
+														<li><a href="/orderhistory"><i className="fa fa-angle-double-right"></i>Danh sách order</a></li>
+														<li><a href="/message"><i className="fa fa-angle-double-right"></i>Tin nhắn</a></li>
 													</ul>
 												</div>
 											</div>

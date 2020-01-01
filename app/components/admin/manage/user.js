@@ -108,7 +108,7 @@ class EditForm extends React.Component{
               </div>
               <div class="col-sm-4 form-group">
                 <label>Email</label>
-                <input type="text" placeholder="Enter Email" class="form-control" defaultValue={user.props.email} ref={(data) => { this.email = data; }} required/>
+                <input type="email" placeholder="Enter Email" class="form-control" defaultValue={user.props.email} ref={(data) => { this.email = data; }} required/>
               </div>
             </div>
             <div class="row">
@@ -122,7 +122,7 @@ class EditForm extends React.Component{
               </div>
               <div class="col-sm-4 form-group">
                 <label>Password</label>
-                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }} required/>
+                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }}/>
               </div>
             </div>
             <div class="text-center">
@@ -150,8 +150,9 @@ class AddForm extends React.Component {
     const email = this.email.value;
     const phone = this.phone.value;
     const dob = this.dob.value;
+    const password = this.password.value;
     $.post("/addUser",{firstname:firstname, lastname:lastname, email:email, 
-      phone:phone, dob:dob},function(data){
+      phone:phone, dob:dob, password:password},function(data){
       main.setState({add:false,listUsers:data});
     });
   }
@@ -174,18 +175,22 @@ class AddForm extends React.Component {
             </div>
             <div class="col-sm-4 form-group">
               <label>Email</label>
-              <input type="text" placeholder="Enter Email" class="form-control" ref={(data) => { this.email = data; }} required/>
+              <input type="email" placeholder="Enter Email" class="form-control" ref={(data) => { this.email = data; }} required/>
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-4 form-group col-sm-push-2">
+            <div class="col-sm-4 form-group">
               <label>Phone Number</label>
               <input type="text" placeholder="Enter Phone Number" class="form-control" ref={(data) => { this.phone = data; }} required/>
             </div>
-            <div class="col-sm-4 form-group col-sm-push-2">
+            <div class="col-sm-4 form-group">
               <label>Date of Birth</label>
               <input type="text" placeholder="Enter Date Of Birth" class="form-control" ref={(data) => { this.dob = data; }} required/>
             </div>
+            <div class="col-sm-4 form-group">
+                <label>Password</label>
+                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }} required/>
+              </div>
           </div>
           <div class="text-center">
             <button type="submit" class="btn btn-danger">Save</button>

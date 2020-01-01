@@ -4,6 +4,7 @@ import Navbar from '../common/navbar'
 import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
+var main;
 class Products extends React.Component {
   constructor(props) {
     super(props);
@@ -18,13 +19,76 @@ class Products extends React.Component {
     </tr>)
   }
 }
+
+class TopViewProduct extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      topView : []
+    }
+  }
+  componentDidMount(){
+    var that = this;
+    $.get("/topview",function(data){
+        that.setState({topView:data});
+    })
+  }
+  render(){
+    return(<table class='table'>
+    <thead>
+      <tr>
+        <th class="text-center">#</th>
+        <th class="text-center">Name</th>
+        <th class="text-center">Image</th>
+        <th class="text-center">Description</th>
+        <th class="text-center">Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {this.state.topView.map(function (view, index) {
+        return <Products key={index} stt={index + 1} product={view.product} count={view.view} />
+      })}
+    </tbody>
+  </table>)
+  }
+}
+
+class TopOrderProduct extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      topOrder : []
+    }
+  }
+  componentDidMount(){
+    var that = this;
+    $.get("/toporder",function(data){
+        that.setState({topOrder:data});
+    })
+  }
+  render(){
+    return(<table class='table'>
+    <thead>
+      <tr>
+        <th class="text-center">#</th>
+        <th class="text-center">Name</th>
+        <th class="text-center">Image</th>
+        <th class="text-center">Description</th>
+        <th class="text-center">View</th>
+      </tr>
+    </thead>
+    <tbody>
+      {this.state.topOrder.map(function (order, index) {
+        return <Products key={index} stt={index + 1} product={order.product} count={order.view} />
+      })}
+    </tbody>
+  </table>)
+  }
+}
 class Dashboard extends React.Component{
     constructor(props){
         super(props);
-        this.state = {
-          topView:[],
-          topOrder:[]
-        }
+        main=this;
     }
     componentDidMount(){
       var that = this;
@@ -56,65 +120,21 @@ class Dashboard extends React.Component{
             </div>
           </div>
           <div class='panel-body'>
-            {/* <div class='page-header'>
-              <h4>Access the website</h4>
-            </div> */}
-            {/* <div className="text-center">
-                <h4>Today:</h4>
-                <button className='btn btn-success'>20 times</button>
-                <h4>This week:</h4>
-                <button className='btn btn-warning'>100 times</button>
-                <h4>Total:</h4>
-                <button className='btn btn-danger'>1262 times</button>
-            </div> */}
-            <div class='progress'>
-              {/* <div class='progress-bar progress-bar-success' style={{width: '35%'}}></div>
-              <div class='progress-bar progress-bar-warning' style={{width: '20%'}}></div>
-              <div class='progress-bar progress-bar-danger' style={{width: '10%'}}></div> */}
-                
+            
+            <div class='progress'>                
             </div>
             <div class='page-header'>
               <h4>Access the products</h4>
             </div>
             <div class='row text-center'>
               <h3>TOP 10 VIEWED PRODUCTS</h3>
-              <table class='table'>
-          <thead>
-            <tr>
-              <th class="text-center">#</th>
-              <th class="text-center">Name</th>
-              <th class="text-center">Image</th>
-              <th class="text-center">Description</th>
-              <th class="text-center">Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.topView.map(function (view, index) {
-              return <Products key={index} stt={index+1} product={view.product} count={view.view} />
-            })}
-          </tbody>
-        </table>
+                <TopViewProduct/>
             </div>
               <div class='page-header'>
                 <h4>Trending Products:</h4>
                 <div className="text-center">
                   <h3>TOP 10 ORDERED PRODUCTS</h3>
-                  <table class='table'>
-                    <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Name</th>
-                        <th class="text-center">Image</th>
-                        <th class="text-center">Description</th>
-                        <th class="text-center">View</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.topOrder.map(function (order, index) {
-                        return <Products key={index} stt={index + 1} product={order.product} count={order.view} />
-                      })}
-                    </tbody>
-                  </table>
+                  <TopOrderProduct/>
                 </div>
             </div>
           </div>

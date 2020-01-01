@@ -44,7 +44,6 @@ class Sidebar extends React.Component{
             <a href='/manageorder'>Order</a>
           </li>
         </ul>
-        <div data-toggle='tooltip' id='beaker' title='Made by lab2023'></div>
       </section>)
     }
 }

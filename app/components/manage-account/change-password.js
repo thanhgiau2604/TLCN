@@ -63,8 +63,8 @@ class PasswordForm extends React.Component{
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="bstore-breadcrumb">
-                                <a href="index-2.html">Trang chủ<i class="fa fa-angle-double-right"></i></a>
-                                <a href="my-account.html">Quản lý tài khoản<i class="fa fa-angle-double-right"></i></a>
+                                <a href="/">Trang chủ<i class="fa fa-angle-double-right"></i></a>
+                                <a href="/manageaccount">Quản lý tài khoản<i class="fa fa-angle-double-right"></i></a>
                                 <span>ĐỔI MẬT KHẨU</span>
 
                             </div>
@@ -110,7 +110,7 @@ class PasswordForm extends React.Component{
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="home-link-menu">
                                 <ul>
-                                    <li><a href="index-2.html"><i class="fa fa-chevron-left"></i> Trang chủ</a></li>
+                                    <li><a href="/"><i class="fa fa-chevron-left"></i> Trang chủ</a></li>
                                 </ul>
                             </div>
                         </div>

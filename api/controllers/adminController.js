@@ -120,7 +120,7 @@ module.exports = function(app,adminRouter,jwt){
             email:req.body.email,
             numberPhone: req.body.phone,
             dob: req.body.dob,
-            password: "12345678",
+            password: req.body.password,
             role:'user'
         }
         User.create(user,function(err,data){
@@ -234,14 +234,16 @@ module.exports = function(app,adminRouter,jwt){
                         for (var i = 0; i < list.length; i++) {
                             await Product.findOne({ _id: list[i].id }, function (err, pro) {
                                 if (pro) {
-                                    var item = {
-                                        product: pro,
-                                        view: list[i].count
-                                    }
-                                    arrayResult.push(item);
-                                    if (arrayResult.length == list.length) {
-                                        res.send(arrayResult);
-                                    }
+                                    if (list[i]){
+                                        var item = {
+                                            product: pro,
+                                            view: list[i].count
+                                        }
+                                        arrayResult.push(item);
+                                        if (arrayResult.length == list.length) {
+                                            return res.send(arrayResult);
+                                        }
+                                    }    
                                 }
                             })
                         }
@@ -272,23 +274,26 @@ module.exports = function(app,adminRouter,jwt){
                         }
                     }
                     var arrayResult = [];
-                    var forLoop = async _ => {
+                    var forLoop1 = async _ => {
                         for (var i = 0; i < list.length; i++) {
                             await Product.findOne({ _id: list[i].id }, function (err, pro) {
                                 if (pro) {
-                                    var item = {
-                                        product: pro,
-                                        view: list[i].count
-                                    }
-                                    arrayResult.push(item);
-                                    if (arrayResult.length == list.length) {
-                                        res.send(arrayResult);
+                                    if (list[i]) {
+                                        var item = {
+                                            product: pro,
+                                            view: list[i].count
+                                        }
+                                        arrayResult.push(item);
+                                        if (arrayResult.length == list.length) {
+                                            console.log("gui r");
+                                            return res.send(arrayResult);
+                                        }
                                     }
                                 }
                             })
                         }
                     }
-                    forLoop();
+                    forLoop1();
                 }
             } else {
                 res.send([]);

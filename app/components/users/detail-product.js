@@ -79,6 +79,7 @@ class DetailProduct extends React.Component{
         if (idproduct){
             $.post("/getDetailProduct",{idproduct:idproduct},function(data){
                 console.log(data);
+                main.setState({nameproduct:data.name});
                 that.setState({product:data,curcost:data.costs[data.costs.length-1].cost,cursize:data.sizes[0].size});
             })
             $.post("/checkFavorite", { idProduct: idproduct, email: localStorage.getItem('email')}, function (data) {
@@ -179,7 +180,7 @@ class DetailProduct extends React.Component{
                     <FacebookShareButton url={url} />
                     </div>  
                 </div>
-                <div class="single-product-review-box">
+                {/* <div class="single-product-review-box">
                     <div class="rating-box">
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
@@ -193,7 +194,7 @@ class DetailProduct extends React.Component{
                     <div class="write-review">
                         <a href="#">Đánh giá</a>
                     </div>		
-                </div>
+                </div> */}
                 <div class="single-product-price">
                     <h2>{this.state.curcost}đ</h2>
                 </div>
@@ -285,7 +286,6 @@ class InforProduct extends React.Component{
     </div>)
     }
 }
-
 class SingleHistory extends React.Component{
     constructor(props){
         super(props);
@@ -343,7 +343,6 @@ class HistoryProduct extends React.Component{
     </div>)
     }
 }
-
 class SingleRelate extends React.Component{
     constructor(props){
         super(props);
@@ -423,6 +422,9 @@ class TotalPage extends React.Component{
     constructor(props){
         super(props);
         main = this;
+        this.state = {
+            nameproduct:""
+        }
     }
     componentDidMount(){
         var idProduct = localStorage.getItem('curproduct');
@@ -430,17 +432,14 @@ class TotalPage extends React.Component{
 
         })
     }
-    render(){
-        
+    render(){       
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bstore-breadcrumb">
-                        <a href="index-2.html">Trang chủ<span><i class="fa fa-caret-right"></i> </span> </a>
-                        <span> <i class="fa fa-caret-right"> </i> </span>
-                        <a href="shop-gird.html">Giày nữ</a>
-                        <span> Faded Short Sleeves T-shirt </span>
+                        <a href="/">Trang chủ<span><i class="fa fa-caret-right"></i> </span> </a>
+                        <span>{this.state.nameproduct}</span>
                     </div>               
                 </div>
             </div>				

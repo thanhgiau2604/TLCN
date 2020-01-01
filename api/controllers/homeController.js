@@ -236,8 +236,22 @@ module.exports = function(app,apiRouter){
             if (err){
                 throw err;
             } else {
-                res.send(data);
+                if (data.length==0){
+                    Product.find({$text:{$search:keysearch}},function(err,data){
+                        if (err){
+                            throw err;
+                        } else {
+                            res.send(data);
+                        }
+                    })
+                } else {
+                    res.send(data);
+                }
             }
         })
+    });
+
+    app.get("/contact",(req,res)=>{
+        res.render("lienhe");
     })
 }

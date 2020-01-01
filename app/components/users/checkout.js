@@ -54,7 +54,6 @@ class SingleProduct extends React.Component {
             data.forEach(pro => {
                 arrayCostProduct.push(pro.product.costs[pro.product.costs.length-1].cost*pro.quanty);
             });
-            console.log(arrayCostProduct);
             step1.setState({listProduct:data,sumcost:arrayCostProduct})
 		})
     }
@@ -186,7 +185,7 @@ class Summary extends React.Component {
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bstore-breadcrumb">
-                        <a href="index-2.html">Trang chủ</a>
+                        <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right	"></i></span>
                         <span>Giỏ hàng của bạn</span>
                     </div>
@@ -272,12 +271,12 @@ class GoogleMap extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            position:""
+            position:{}
         }
         map = this;
     }
     render(){
-        var url = "https://maps.google.com/maps?q="+this.state.position+"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+        var url = "https://maps.google.com/maps?q="+this.state.position.lat+","+this.state.position.lng+"&t=&z=13&ie=UTF8&iwloc=&output=embed";
         return(<div class="mapouter" >
         <div class="gmap_canvas">
             <iframe width="350" height="250" id="gmap_canvas"
@@ -316,7 +315,14 @@ class Address extends React.Component {
     }
     checkPosition(){
         var address = this.refs.address.value;
-        map.setState({position:address});
+        var that = this;
+        $.post("/getPosition",{address:address},function(data){
+            if (data.err!=""){
+                that.setState({err:data.err})
+            } else {
+                map.setState({position:data.position});
+            }
+        })
     }
     render(){
         return(<section class="main-content-section">
@@ -324,7 +330,7 @@ class Address extends React.Component {
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bstore-breadcrumb">
-                        <a href="index.html">Trang chủ</a>
+                        <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
                         <span>Địa chỉ</span>
                     </div>
@@ -399,7 +405,7 @@ class Confirm extends React.Component {
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bstore-breadcrumb">
-                        <a href="index.html">Trang chủ</a>
+                        <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
                         <span>Địa chỉ</span>
                     </div>
@@ -439,26 +445,49 @@ class TotalPage extends React.Component{
         super(props);
         main = this;
         this.state = {
-            curStep: 1
+            curStep: 1,
+            permission: false
         }
+        this.goLogin = this.goLogin.bind(this);
+    }
+    componentDidMount(){
+        var that = this;
+        const token = localStorage.getItem('token');
+        $.get("/api", { token: token }, function (data) {
+            if (data.success == 1) {
+                that.setState({ permission: 1 });
+            }
+        })
+    }
+    goLogin(){
+        window.location.replace("/login");
     }
     render(){
         $.post("/addNewDay",function(data){
-            console.log(data);
+            
         })
-        var currentStepComponent;
-        if (this.state.curStep==1){
-            currentStepComponent = <Summary/>
-        } else if (this.state.curStep==2){
-            currentStepComponent = <Address/>
-        } else if (this.state.curStep==3){
-            currentStepComponent = <Confirm/>
+        if (this.state.permission==0){
+            return (<div className="text-center">
+                <br/>
+                <h3>Để thực hiện chức năng này bạn phải đăng nhập!</h3>
+                <button className="btn btn-primary" onClick={this.goLogin} style={{marginTop:'10px',width:'auto'}}>Đi đến trang đăng nhập</button>
+            </div>)
+        } else {
+            var currentStepComponent;
+            if (this.state.curStep == 1) {
+                currentStepComponent = <Summary />
+            } else if (this.state.curStep == 2) {
+                currentStepComponent = <Address />
+            } else if (this.state.curStep == 3) {
+                currentStepComponent = <Confirm />
+            }
+            return (
+                <div>
+                    {currentStepComponent}
+                </div>
+            )
         }
-        return(
-            <div>
-                {currentStepComponent}
-            </div>
-        )
+        
     }   
 }
 
