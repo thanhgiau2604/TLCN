@@ -230,9 +230,11 @@ module.exports = function(app,adminRouter,jwt){
                     }
 
                     var arrayResult = [];
+                    var count = 0;
                     var forLoop = async _ => {
                         for (var i = 0; i < list.length; i++) {
                             await Product.findOne({ _id: list[i].id }, function (err, pro) {
+                                count++;
                                 if (pro) {
                                     if (list[i]){
                                         var item = {
@@ -240,7 +242,7 @@ module.exports = function(app,adminRouter,jwt){
                                             view: list[i].count
                                         }
                                         arrayResult.push(item);
-                                        if (arrayResult.length == list.length) {
+                                        if (count == list.length) {
                                             return res.send(arrayResult.slice(0,10));
                                         }
                                     }    
@@ -274,9 +276,11 @@ module.exports = function(app,adminRouter,jwt){
                         }
                     }
                     var arrayResult = [];
+                    var count = 0;
                     var forLoop1 = async _ => {
                         for (var i = 0; i < list.length; i++) {
                             await Product.findOne({ _id: list[i].id }, function (err, pro) {
+                                count++;
                                 if (pro) {
                                     if (list[i]) {
                                         var item = {
@@ -284,8 +288,7 @@ module.exports = function(app,adminRouter,jwt){
                                             view: list[i].count
                                         }
                                         arrayResult.push(item);
-                                        if (arrayResult.length == list.length) {
-                                            console.log("gui r");
+                                        if (count == list.length) {
                                             return res.send(arrayResult.slice(0,10));
                                         }
                                     }

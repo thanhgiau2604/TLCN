@@ -67,14 +67,18 @@ module.exports = function(app){
                             throw err;
                         } else {
                             var arrresult = [];
+                            var count = 0;
                             category.listProduct.forEach(pro => {
                                 Product.findOne({_id:pro._id},function(err,data){
+                                    count++;
                                     if (err) {
                                         throw err;
                                     } else {
-                                        arrresult.push(data);
-                                        if (category.listProduct.length == arrresult.length){
-                                            res.send(arrresult);
+                                        if (data){
+                                            arrresult.push(data);
+                                            if (category.listProduct.length == count) {
+                                                res.send(arrresult);
+                                            }
                                         }
                                     }
                                 })
@@ -103,14 +107,17 @@ module.exports = function(app){
                        
                         // console.log(data);
                         var arrResult=[];
+                        var count  = 0;
                         const forLoop = async _ => {
                             for (var i = 0; i < data.historylist.length; i++) {
                                 console.log(data.historylist[i]);
                                 await Product.findOne({ _id: data.historylist[i].id }, function (err, da) {
-                                    console.log(da);
-                                    arrResult.push(da);
-                                    if (arrResult.length == data.historylist.length) {
-                                        res.send(arrResult);
+                                    count++;
+                                    if (da){
+                                        arrResult.push(da);
+                                        if (count== data.historylist.length) {
+                                            res.send(arrResult);
+                                        }
                                     }
                                 })
                             }

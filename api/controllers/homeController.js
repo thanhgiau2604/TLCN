@@ -52,14 +52,18 @@ module.exports = function(app,apiRouter){
                 throw err;
             } else {
                 var arrProduct=[];
+                var count = 0;
                 data[0].favoritelist.forEach(pro => {
                     Product.findOne({"_id":pro.id},function(err,da){
+                        count++;
                         if (err){
                             throw err;
                         } else {
-                            arrProduct.push(da);
-                            if (arrProduct.length==data[0].favoritelist.length){
-                                res.send(arrProduct);
+                            if (da){
+                                arrProduct.push(da);
+                                if (count==data[0].favoritelist.length){
+                                    res.send(arrProduct);
+                                }
                             }
                         }
                     });
@@ -107,14 +111,18 @@ module.exports = function(app,apiRouter){
                 throw err;
             } else {
                 var arrProduct=[];
+                var count = 0;
                 data[0].historylist.forEach(pro => {
                     Product.findOne({"_id":pro.id},function(err,da){
+                        count++;
                         if (err){
                             throw err;
                         } else {
-                            arrProduct.push(da);
-                            if (arrProduct.length==data[0].historylist.length){
-                                res.send(arrProduct);
+                            if (da){
+                                arrProduct.push(da);
+                                if (count == data[0].historylist.length) {
+                                    res.send(arrProduct);
+                                }
                             }
                         }
                     });
