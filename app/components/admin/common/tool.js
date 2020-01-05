@@ -10,7 +10,7 @@ class Tool extends React.Component{
           <li class='title'>{this.props.curpage}</li>
         </ul>
         <div id='toolbar'>
-          <div class='btn-group'>
+          {/* <div class='btn-group'>
             <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Building'>
               <i class='icon-building'></i>
             </a>
@@ -24,7 +24,7 @@ class Tool extends React.Component{
             <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Lemon'>
               <i class='icon-lemon'></i>
             </a>
-          </div>
+          </div> */}
         </div>
       </section>)
     }

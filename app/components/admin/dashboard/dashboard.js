@@ -127,13 +127,13 @@ class Dashboard extends React.Component{
               <h4>Access the products</h4>
             </div>
             <div class='row text-center'>
-              <h3>TOP 10 VIEWED PRODUCTS</h3>
+              <h3 style={{color:'#0c967a'}}><b>TOP 10 VIEWED PRODUCTS</b></h3>
                 <TopViewProduct/>
             </div>
               <div class='page-header'>
                 <h4>Trending Products:</h4>
                 <div className="text-center">
-                  <h3>TOP 10 ORDERED PRODUCTS</h3>
+                <h3 style={{color:'#0c967a'}}><b>TOP 10 ORDERED PRODUCTS</b></h3>
                   <TopOrderProduct/>
                 </div>
             </div>

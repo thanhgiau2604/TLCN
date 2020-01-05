@@ -97,7 +97,7 @@ class Product1 extends React.Component{
 				<div className="single-product-item">
 					<div className="product-image">
 						<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
-						<a href="#" className="new-mark-box">new</a>
+						<a href="#" className="new-mark-box"></a>
 						<div className="overlay-content">
 							<ul>
 								<li><a title="Xem sản phẩm" style={{ cursor: 'pointer' }} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>

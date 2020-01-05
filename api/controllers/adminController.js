@@ -218,7 +218,7 @@ module.exports = function(app,adminRouter,jwt){
                     res.send([]);
                 } else {
                     var list = data.viewproduct;
-                    // console.log(list);
+ 
                     for (var i = 0; i < list.length - 1; i++) {
                         for (var j = i + 1; j < list.length; j++) {
                             if (list[i].count < list[j].count) {
@@ -228,7 +228,7 @@ module.exports = function(app,adminRouter,jwt){
                             }
                         }
                     }
-                    // console.log(list);
+
                     var arrayResult = [];
                     var forLoop = async _ => {
                         for (var i = 0; i < list.length; i++) {
@@ -241,7 +241,7 @@ module.exports = function(app,adminRouter,jwt){
                                         }
                                         arrayResult.push(item);
                                         if (arrayResult.length == list.length) {
-                                            return res.send(arrayResult);
+                                            return res.send(arrayResult.slice(0,10));
                                         }
                                     }    
                                 }
@@ -286,7 +286,7 @@ module.exports = function(app,adminRouter,jwt){
                                         arrayResult.push(item);
                                         if (arrayResult.length == list.length) {
                                             console.log("gui r");
-                                            return res.send(arrayResult);
+                                            return res.send(arrayResult.slice(0,10));
                                         }
                                     }
                                 }

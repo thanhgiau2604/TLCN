@@ -24,19 +24,13 @@ class Navbar extends React.Component{
     render(){
         return (<div class='navbar navbar-default' id='navbar'>
             <a class='navbar-brand' href='/dashboard'>
-                <img src="/assets/images/logo2.png" />
+                <img src="/assets/images/logo-admin1.png" />
             </a>
             <ul class='nav navbar-nav pull-right'>
                 <li class='dropdown'>
                     <a style={{cursor:'pointer'}} onClick={this.goMessage}>
                         <i class='icon-envelope'></i>
                         Messages
-                    </a>
-                </li>
-                <li>
-                    <a href='#'>
-                        <i class='icon-cog'></i>
-                        Settings
                     </a>
                 </li>
                 <li class='dropdown user'>
