@@ -60,7 +60,7 @@ class LoginForm extends React.Component{
 									<span className="vl-innertext">hoặc</span>
 								</div>
 
-								<div className="col">
+								<div className="col-sm-12 col-lg-5">
 									<a href="/auth/fb" className="fb btn">
 										<i className="fa fa-facebook fa-fw"></i> Đăng nhập với Facebook
 								</a>
@@ -69,7 +69,7 @@ class LoginForm extends React.Component{
 								</a>
 								</div>
 
-								<div className="col">
+								<div className="col-sm-12 col-lg-5 epass">
 									<div className="hide-md-lg">
 										<p>Or sign in manually:</p>
 									</div>

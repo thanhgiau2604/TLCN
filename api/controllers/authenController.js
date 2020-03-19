@@ -69,8 +69,8 @@ module.exports = function(app,apiRouter,jwt){
         const emailorphone = req.body.EmailOrPhone;
         const password = req.body.password;
         User.findOne({$or:[
-            {email:emailorphone},
-            {numberPhone:emailorphone}
+            {email:emailorphone, isDelete:0},
+            {numberPhone:emailorphone, isDelete:0}
         ]}).select("email firstName lastName numberPhone dateofBirth password role").exec(function(err,user){
             if (err){
                 res.send(err);

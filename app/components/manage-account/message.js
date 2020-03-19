@@ -18,7 +18,7 @@ class DetailMessage extends React.Component {
     render(){
         return(<div className="row">
         <h3 className="text-center"><b>Thời gian: </b><span>{this.props.datetime}</span></h3>
-        <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-push-2">
+        <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-md-push-2">
             <div className="form-group">
                 <label for="comment">Nội dung tin nhắn:</label>
                 <textarea className="form-control text-center" rows="5" id="comment" value={this.props.content}

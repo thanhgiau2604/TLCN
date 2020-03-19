@@ -48,49 +48,49 @@ class SignUpForm extends React.Component{
 					<form onSubmit={this.handleSubmit}>
 							<div className="container">
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label for="firstname"><b>Họ</b></label>
 										<input type="text" placeholder="Nhập Họ" name="firstname" required ref={(data) => { this.firstName = data; }}/>
 									</div>
 								</div>
 
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label for="lastname"><b>Tên</b></label>
 										<input type="text" placeholder="Nhập Tên" name="lastname" required ref={(data) => { this.lastName = data; }}/>
 									</div>
 								</div>
 
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label for="email"><b>Email</b></label>
 										<input type="text" placeholder="Nhập Email" name="email" required ref={(data) => { this.email = data; }}/>
 									</div>
 								</div>
 
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label for="phonenumber"><b>Số điện thoại</b></label>
 										<input type="text" placeholder="Nhập số điện thoại" name="phonenumber" ref={(data) => { this.phoneNumber = data; }}/>
 									</div>
 								</div>
 								
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label for="password"><b>Mật khẩu</b></label>
 										<input type="password" placeholder="Nhập mật khẩu" name="password" required ref={(data) => { this.password = data; }}/>
 									</div>
 								</div>
 								
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label for="repass"><b>Xác nhận mật khẩu</b></label>
 										<input type="password" placeholder="Nhập lại mật khẩu" name="repass" required ref={(data) => { this.repass = data; }}/>
 									</div>
 								</div>	
 
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label><b>Ngày sinh</b></label>
 										<br/>
 										<div className="birth-day">
@@ -272,7 +272,7 @@ class SignUpForm extends React.Component{
 
 								<hr/>
 								<div className="row">
-									<div className="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<button type="submit" className="registerbtn">Đăng ký</button>
 									</div>
 								</div>	

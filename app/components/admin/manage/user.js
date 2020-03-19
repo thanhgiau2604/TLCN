@@ -4,13 +4,14 @@ import Navbar from '../common/navbar'
 import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
-var main,user;
+var main,user,arrUser;
 class Users extends React.Component {
   constructor(props){
     super(props);
     this.editUser = this.editUser.bind(this);
     this.deleteUser = this.deleteUser.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
+    this.restoreUser = this.restoreUser.bind(this);
   }
   editUser(){
     user = this;
@@ -21,14 +22,32 @@ class Users extends React.Component {
   }
   confirmDelete(){
     $.post("/deleteUser",{id:localStorage.getItem("curDelete")},function(data){
+      if (Math.ceil(data.length / 3)<main.state.curpage)
+          main.setState({curpage:main.state.curpage-1});
+      arrUser = data;
+      main.setState({listUsers:data});
+    })
+  }
+  restoreUser(){
+    $.post("/restoreUser",{id:this.props.id},function(data){
+      arrUser=data;
       main.setState({listUsers:data});
     })
   }
   render(){
     var sdt = this.props.phone;
     var dob = this.props.dob;
+    var status = this.props.status;
     if (!sdt) sdt="N/A";
     if (!dob) dob="N/A";
+    var sttUser = "active";
+    var htmlRestore = "";
+    if (status == 1) {
+      sttUser = "deleted";
+      htmlRestore = <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer' }} title='Restore' onClick={this.restoreUser}>
+        <i class='icon-undo'></i>
+      </a>
+    }
     return(<tr class='active'>
     <td>{this.props.stt}</td>
     <td>{this.props.firstname}</td>
@@ -36,6 +55,7 @@ class Users extends React.Component {
     <td>{this.props.email}</td>
     <td>{sdt}</td>
     <td>{dob}</td>
+    <td>{sttUser}</td>
     <td class='action'>
       <a class='btn btn-info' data-toggle='tooltip' style={{cursor:'pointer'}} title='Edit' onClick={this.editUser}>
         <i class='icon-edit'></i>
@@ -44,6 +64,7 @@ class Users extends React.Component {
         data-target="#modalDeleteUser" onClick={this.deleteUser}>
         <i class='icon-trash'></i>
       </a>
+      {htmlRestore}
     </td>
     <div class="modal fade" id="modalDeleteUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -86,6 +107,7 @@ class EditForm extends React.Component{
     console.log(password);
     $.post("/updateUser",{id:id,firstname:firstname, lastname:lastname, email:email, 
       phone:phone, dob:dob, password:password},function(data){
+        arrUser = data;
       main.setState({edit:false,listUsers:data});
     });
   }
@@ -210,11 +232,16 @@ class ManageUsers extends React.Component{
           listUsers: [],
           edit:false,
           add:false,
-          curpage: 1
+          curpage: 1,
+          status:"1"
         }
         main = this;
         this.handleAddUser = this.handleAddUser.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.previousPage = this.previousPage.bind(this);
+        this.nextPage = this.nextPage.bind(this);
+        this.changeStatus = this.changeStatus.bind(this);
+      
     }
     componentWillMount(){
       var token = localStorage.getItem('tokenad');
@@ -233,20 +260,58 @@ class ManageUsers extends React.Component{
     componentDidMount(){
       var that = this;
       $.get("/getListUsers",function(data){
+        arrUser = data;
         that.setState({listUsers:data});
       })
     }
     changePage(value,event){
       this.setState({curpage:value});
     }
+    previousPage() {
+      if (this.state.curpage > 1)
+        this.setState({ curpage: this.state.curpage - 1 });
+    }
+    nextPage() {
+      var length = this.state.listUsers.length;
+      var perpage = 3;
+      if (this.state.curpage < Math.ceil(length / perpage))
+        this.setState({ curpage: this.state.curpage + 1 });
+    }
     handleAddUser(){
       this.setState({add:true, edit:false});
     }
     handleChange(event){
       var that = this;
-      $.post("/searchuser",{keysearch:event.target.value},function(data){
+      $.post("/searchuser",{keysearch:event.target.value, status:this.state.status},function(data){
         that.setState({listUsers:data});
       })
+    }
+    changeStatus(event){
+      var choose = parseInt(event.target.value);
+      var arrResponse = [];
+      if (choose==2){
+        arrUser.forEach(user => {
+          if (user.isDelete==0){
+            arrResponse.push(user);
+          }
+        });
+        main.setState({status:"2"})
+        main.setState({listUsers:arrResponse});
+      } else if (choose==3){
+        arrUser.forEach(user => {
+          if (user.isDelete==1){
+            arrResponse.push(user);
+          }
+        });
+        main.setState({status:"3"})
+        main.setState({listUsers:arrResponse});
+      } else{
+        $.get("/getListUsers",function(data){
+          arrUser = data;
+          main.setState({status:"1"})
+          main.setState({listUsers:data});
+        })
+      }
     }
     render(){
       var Edit,Add;
@@ -258,16 +323,17 @@ class ManageUsers extends React.Component{
         page=[];
         var perpage = 3;
         var start = (this.state.curpage - 1) * perpage;
-        lCurUser = this.state.listUsers.slice(start, start + perpage);    
+        var finish = start+perpage;
+        if (finish>this.state.listUsers.length) finish=this.state.listUsers.length;
+        lCurUser = this.state.listUsers.slice(start, finish); 
         var numberpage = Math.ceil(this.state.listUsers.length / perpage);
         for (var i=1; i<=numberpage; i++){
           if (this.state.curpage==i){
-            page.push(<li class='active'><a onClick={this.changePage.bind(this,i)} >{i}</a></li>);
+            page.push(<li class='active'><a onClick={this.changePage.bind(this,i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
           } else {
-            page.push(<li><a onClick={this.changePage.bind(this,i)}>{i}</a></li>)
+            page.push(<li><a onClick={this.changePage.bind(this,i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
           }
         }
-        console.log(page);
       }      
         return(<div id='content'>
         <div class='panel panel-default grid'>
@@ -285,7 +351,7 @@ class ManageUsers extends React.Component{
               <h3 class="text-center"><b>LIST USER ACCOUNTS</b></h3>
             </div>
             <div class='row'>
-              <div class='col-md-9'> 
+              <div class='col-md-3'> 
               </div>
               <div class='col-md-3'>
                 <div class='input-group'>
@@ -296,6 +362,13 @@ class ManageUsers extends React.Component{
                     </button>
                   </span>
                 </div>
+              </div>
+              <div className="col-md-5">
+                  <div class="radio" onChange={this.changeStatus}>
+                    <label><input type="radio" name="optionStatus" value="1" checked={this.state.status=="1"}/>All</label>
+                    <label><input type="radio" name="optionStatus" value="2" />Active</label>
+                    <label><input type="radio" name="optionStatus" value="3" />Deleted</label>
+                  </div>
               </div>
               <div class="text-right" style={{ marginTop: '50px', paddingRight: '10%' }}>
               <button class="btn btn-warning" onClick={this.handleAddUser}>
@@ -315,6 +388,7 @@ class ManageUsers extends React.Component{
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Date Of Birth</th>
+                <th>Status</th>
                 <th class='actions'>
                   Actions
                 </th>
@@ -323,22 +397,22 @@ class ManageUsers extends React.Component{
             <tbody>         
               {lCurUser.map(function(user,index){
                 return <Users key={index} id={user._id} firstname = {user.firstName} lastname={user.lastName}
-                phone={user.numberPhone} email={user.email} dob={user.dob} stt={start+(index+1)}/>
+                phone={user.numberPhone} email={user.email} dob={user.dob} stt={start+(index+1)} status={user.isDelete}/>
               })}
             </tbody>
           </table>
           <div class='panel-footer'>
             <ul class='pagination pagination-sm'>
-              <li>
-                <a href='#'>«</a>
-              </li>
-              {page}
-              <li>
-                <a href='#'>»</a>
-              </li>
+                <li>
+                  <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
+                </li>
+                {page}
+                <li>
+                  <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
+                </li>
             </ul>
             <div class='pull-right'>
-              {/* Showing 1 to 10 of 32 entries */}
+              Showing {start + 1} to {finish} of {this.state.listUsers.length} entries
             </div>
           </div>
         </div>

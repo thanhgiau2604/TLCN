@@ -25,6 +25,8 @@ class Products extends React.Component {
   }
   confirmDelete(){
     $.post("/deleteProduct",{id:localStorage.getItem("curDelete")},function(data){
+      if (Math.ceil(data.lProduct.length / 5)<main.state.curpage)
+          main.setState({curpage:main.state.curpage-1});
       main.setState({listProduct:data.lProduct});
     })
   }
@@ -595,6 +597,8 @@ class ManageProducts extends React.Component {
       curpage: 1
     }
     this.handleChange = this.handleChange.bind(this);
+    this.previousPage = this.previousPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
     main = this;
   }
   componentWillMount(){
@@ -620,6 +624,16 @@ class ManageProducts extends React.Component {
   changePage(value, event) {
     this.setState({ curpage: value });
   }
+  previousPage() {
+    if (this.state.curpage > 1)
+      this.setState({ curpage: this.state.curpage - 1 });
+  }
+  nextPage() {
+    var length = this.state.listProduct.length;
+    var perpage = 5;
+    if (this.state.curpage < Math.ceil(length / perpage))
+      this.setState({ curpage: this.state.curpage + 1 });
+  }
   handleChange(event){
     var that = this;
       $.post("/searchproduct",{keysearch:event.target.value},function(data){
@@ -633,13 +647,15 @@ class ManageProducts extends React.Component {
       page = [];
       var perpage = 5;
       var start = (this.state.curpage - 1) * perpage;
-      lCurProduct = this.state.listProduct.slice(start, start + perpage);
+      var finish = start+perpage;
+      if (finish>this.state.listProduct.length) finish=this.state.listProduct.length;
+      lCurProduct = this.state.listProduct.slice(start, finish);
       var numberpage = Math.ceil(this.state.listProduct.length / perpage);
       for (var i = 1; i <= numberpage; i++) {
         if (this.state.curpage == i) {
-          page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} >{i}</a></li>);
+          page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }} >{i}</a></li>);
         } else {
-          page.push(<li><a onClick={this.changePage.bind(this, i)}>{i}</a></li>)
+          page.push(<li><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
         }
       }
     }
@@ -703,15 +719,15 @@ class ManageProducts extends React.Component {
         <div class='panel-footer'>
           <ul class='pagination pagination-sm'>
             <li>
-              <a href='#'>«</a>
+              <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
             </li>
             {page}
             <li>
-              <a href='#'>»</a>
+              <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
             </li>
           </ul>
           <div class='pull-right'>
-            Showing {start + 1} to {start + perpage} of {this.state.listProduct.length} entries
+            Showing {start + 1} to {finish} of {this.state.listProduct.length} entries
             </div>
         </div>
       </div>

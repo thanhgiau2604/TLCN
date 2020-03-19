@@ -359,22 +359,22 @@ class Address extends React.Component {
             <div class="row address">
                 <form method="POST" onSubmit={this.addAddress}>
                     <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+                        <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
                             <input type="text" placeholder="Tên" name="name" required ref="fullname"/>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+                        <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
                             <input type="text" placeholder="Số điện thoại" name="numberphone" required ref="phonenumber"/>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+                        <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
                             <input type="text" placeholder="Địa chỉ nhận hàng" name="location" required ref="address"/>
                         </div>
-                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">               
-                            <button type="button" className="btn btn-warning" onClick={this.checkPosition}>Kiểm tra địa chỉ</button>
+                        <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">               
+                            <button type="button" className="btn btn-warning" onClick={this.checkPosition}>Kiểm tra</button>
                         </div>
                     </div>
                     <div class="row text-center">
@@ -384,7 +384,7 @@ class Address extends React.Component {
                     </div>		                        
                     <h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
                     <div class="row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3">
+                        <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
                             <button type="submit" class="btn btn-danger">Tiếp tục thanh toán</button>
                         </div>
                     </div>

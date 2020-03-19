@@ -113,8 +113,8 @@ class HeaderTop extends React.Component {
 		return (
 			<div className="header-top">
 				<div className="container">
-					<div className="row">
-						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div className="row text-center">
+						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-7">
 							<div className="header-left-menu">
 								{this.state.Welcome}
 								<ul class="languages-choose infor-toogle">
@@ -153,7 +153,7 @@ class HeaderTop extends React.Component {
 								</div>
 							</div>
 						</div>
-						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-5">
 							<div className="header-right-menu">
 								{this.state.Option}
 							</div>

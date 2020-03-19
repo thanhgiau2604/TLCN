@@ -73,6 +73,10 @@ Version: 1.0
     margin: 0;
     padding: 0
 }
+
+.col-sm-12.col-lg-5.epass {
+    float: right;
+}
 body{
 	font-family: "arial",serif;
 	color:#6d6d6d;
@@ -3349,7 +3353,6 @@ div.wishlists-chart table tr th{
 div.wishlists-chart table tr th.wish-name{}
 div.wishlists-chart table tr td{
 	line-height: 30px;
-	padding: 9px 45px 11px 18px;
 }
 .wishlists-chart table tr td span{
 	font-size: 13px;

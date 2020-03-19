@@ -74,7 +74,7 @@ class TopOrderProduct extends React.Component {
         <th class="text-center">Name</th>
         <th class="text-center">Image</th>
         <th class="text-center">Description</th>
-        <th class="text-center">View</th>
+        <th class="text-center">Count</th>
       </tr>
     </thead>
     <tbody>

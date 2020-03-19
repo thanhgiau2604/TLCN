@@ -85,8 +85,15 @@ module.exports = function(app,adminRouter,jwt){
     });
     app.post("/deleteUser",parser,(req,res)=>{
         const id = req.body.id;
-        User.remove({_id:id},function(err,data){
-            getUsers(res);
+        // User.remove({_id:id},function(err,data){
+        //     getUsers(res);
+        // })
+        User.update({_id:id},{$set:{isDelete:1}},function(err,data){
+            if (err){
+                throw err;
+            } else {
+                getUsers(res);
+            }
         })
     });
 
@@ -132,6 +139,17 @@ module.exports = function(app,adminRouter,jwt){
         })
     })
 
+    app.post("/restoreUser",parser,(req,res)=>{
+        var id = req.body.id;
+        console.log(id);
+        User.update({_id:id},{$set:{isDelete:0}},function(err,data){
+            if (err) {
+                throw err;
+            } else {
+                getUsers(res);
+            }
+        })
+    })
     app.get("/changepswad",(req,res)=>{
         res.render("doimatkhauAdmin");
     });
@@ -142,18 +160,40 @@ module.exports = function(app,adminRouter,jwt){
     //search user
     app.post("/searchuser",parser,(req,res)=>{
         const keysearch = req.body.keysearch;
-        User.find({$or:[
-            {firstName:{$regex : ".*"+keysearch+".*",'$options' : 'i' }},
-            {lastName: {$regex : ".*"+keysearch+".*",'$options' : 'i' }},
-            {email:{$regex : ".*"+keysearch+".*",'$options' : 'i' }},
-            {numberPhone:{$regex : ".*"+keysearch+".*",'$options' : 'i' }}
-        ]},function(err,data){
-            if (err){
-                throw err;
-            } else {
-                res.send(data);
-            }
-        })
+        var status =req.body.status;
+        var deleted = -1;
+        if (status=="2") {
+            deleted = 0;
+        } else if (status=="3") {
+            deleted=1;
+        }
+        if (deleted==-1) {
+            User.find({$or:[
+                {firstName:{$regex : ".*"+keysearch+".*",'$options' : 'i' }},
+                {lastName: {$regex : ".*"+keysearch+".*",'$options' : 'i' }},
+                {email:{$regex : ".*"+keysearch+".*",'$options' : 'i' }},
+                {numberPhone:{$regex : ".*"+keysearch+".*",'$options' : 'i' }}
+            ]},function(err,data){
+                if (err){
+                    throw err;
+                } else {
+                    res.send(data);
+                }
+            })
+        } else {
+            User.find({$or:[
+                {firstName:{$regex : ".*"+keysearch+".*",'$options' : 'i' },isDelete:deleted},
+                {lastName: {$regex : ".*"+keysearch+".*",'$options' : 'i' },isDelete:deleted},
+                {email:{$regex : ".*"+keysearch+".*",'$options' : 'i' },isDelete:deleted},
+                {numberPhone:{$regex : ".*"+keysearch+".*",'$options' : 'i' },isDelete:deleted}
+            ]},function(err,data){
+                if (err){
+                    throw err;
+                } else {
+                    res.send(data);
+                }
+            })
+        }    
     });
 
     //manage message

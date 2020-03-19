@@ -17,6 +17,12 @@ class RowFavorite extends React.Component{
     }
     handleDelete(){
         $.post("/deleteFav",{idDel:this.props.id,email:localStorage.getItem('email')},function(data){
+            if (Math.ceil(data.length / 3)<table.state.curpage){
+                table.setState({curpage:table.state.curpage-1});
+            }
+            if (Math.ceil(data.length / 8)<items.state.curpage){
+                items.setState({curpage:items.state.curpage-1});
+            }
             table.setState({listFav:data});
             items.setState({listFav:data});
         })
@@ -35,9 +41,26 @@ class TableFavorite extends React.Component{
     constructor(props){
         super(props);
         this.state= {
-            listFav:[]
+            listFav:[],
+            curpage: 1
         }
+        this.changePage = this.changePage.bind(this);
+        this.previousPage = this.previousPage.bind(this);
+        this.nextPage = this.nextPage.bind(this);
         table=this;
+    }
+    changePage(value, event) {
+        this.setState({ curpage: value });
+    }
+    previousPage(){
+        if (this.state.curpage>1)
+              this.setState({curpage:this.state.curpage-1});
+    }
+    nextPage(){
+        var length = this.state.listFav.length;
+        var perpage = 3;
+        if (this.state.curpage<Math.ceil(length / perpage))
+              this.setState({curpage:this.state.curpage+1});
     }
     componentDidMount(){
         var that = this;
@@ -47,22 +70,56 @@ class TableFavorite extends React.Component{
         })
     }
     render(){
-        return (
-        <table className="table table-hover text-center">
-        <thead>
-          <tr>
-            <th className="text-center">STT</th>
-            <th className="text-center">Tên sản phẩm</th>
-            <th className="text-center">Xóa khỏi FavoriteList</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.listFav.map(function(product,index){
-              return <RowFavorite key={index} pos={index+1} name={product.name}
-              id={product._id}/>
-          })}
-        </tbody>
-      </table>)
+        var page = "";
+        var lCurFav = [];
+        var length = this.state.listFav.length;
+        if (length!=0){
+            page = [];
+            var perpage = 3;
+            var start = (this.state.curpage - 1) * perpage;
+            var finish = (start+perpage);
+            if (finish>length) finish=length;
+            lCurFav = this.state.listFav.slice(start, start + perpage);
+            var numberpage = Math.ceil(length / perpage);
+            for (var i = 1; i <= numberpage; i++) {
+                if (this.state.curpage == i) {
+                    page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
+                } else {
+                    page.push(<li><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
+                }
+            }
+        }
+        return (<div>
+            <table className="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th className="text-center">STT</th>
+                        <th className="text-center">Tên sản phẩm</th>
+                        <th className="text-center">Xóa khỏi FavoriteList</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {lCurFav.map(function (product, index) {
+                        return <RowFavorite key={index} pos={start+(index + 1)} name={product.name}
+                            id={product._id} />
+                    })}
+                </tbody>
+            </table>
+            <div class='panel-footer'>
+                <ul class='pagination pagination-sm'>
+                    <li>
+                        <a style={{cursor:'pointer'}} onClick={this.previousPage}>«</a>
+                    </li>
+                    {page}
+                    <li>
+                        <a style={{cursor:'pointer'}} onClick={this.nextPage}>»</a>
+                    </li>
+                </ul>
+                <div class='pull-right'>
+                    Hiển thị từ {start + 1} đến {finish} trên {this.state.listFav.length} sản phẩm
+            </div>
+            </div>
+        </div>)
     }
 }
 
@@ -73,6 +130,12 @@ class Item extends React.Component{
     }
     handleClose(){
         $.post("/deleteFav",{idDel:this.props.id,email:localStorage.getItem('email')},function(data){
+            if (Math.ceil(data.length / 8)<items.state.curpage){
+                items.setState({curpage:items.state.curpage-1});
+            }
+            if (Math.ceil(data.length / 3)<table.state.curpage){
+                table.setState({curpage:table.state.curpage-1});
+            }
             table.setState({listFav:data});
             items.setState({listFav:data});
         })
@@ -95,14 +158,66 @@ class ListItems extends React.Component{
         super(props);
         items = this;
         this.state = {
-            listFav:[]
+            listFav:[],
+            curpage:1
         }
+        this.changePage = this.changePage.bind(this);
+        this.previousPage = this.previousPage.bind(this);
+        this.nextPage = this.nextPage.bind(this);
+    }
+    changePage(value, event) {
+        this.setState({ curpage: value });
+    }
+    previousPage(){
+        if (this.state.curpage>1)
+              this.setState({curpage:this.state.curpage-1});
+    }
+    nextPage(){
+        var length = this.state.listFav.length;
+        var perpage = 8;
+        if (this.state.curpage<Math.ceil(length / perpage))
+              this.setState({curpage:this.state.curpage+1});
     }
     render(){
-        return( <div className="row">
-        	{this.state.listFav.map(function(item,index){
-                return <Item id={item._id} name={item.name} image={item.image.image1}/>
-            })}						
+        var page = "";
+        var lCurFav = [];
+        var length = this.state.listFav.length;
+        if (length!=0){
+            page = [];
+            var perpage = 8;
+            var start = (this.state.curpage - 1) * perpage;
+            var finish = (start+perpage);
+            if (finish>length) finish=length;
+            lCurFav = this.state.listFav.slice(start, start + perpage);
+            var numberpage = Math.ceil(length / perpage);
+            for (var i = 1; i <= numberpage; i++) {
+                if (this.state.curpage == i) {
+                    page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
+                } else {
+                    page.push(<li><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
+                }
+            }
+        }
+        return (<div>
+            <div className="row">
+                {lCurFav.map(function (item, index) {
+                    return <Item id={item._id} name={item.name} image={item.image.image1} />
+                })}
+            </div>
+            <div class='panel-footer'>
+                <ul class='pagination pagination-sm'>
+                    <li>
+                        <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
+                    </li>
+                    {page}
+                    <li>
+                        <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
+                    </li>
+                </ul>
+                <div class='pull-right'>
+                    Hiển thị từ {start + 1} đến {finish} trên {this.state.listFav.length} sản phẩm
+                </div>
+            </div>
         </div>)
     }
 }
@@ -155,7 +270,7 @@ class ListFavorite extends React.Component {
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <h1 className="page-title text-center" style={{ color: 'blue', fontWeight: '700', paddingBottom: '20px' }}>DANH SÁCH SẢN PHẨM YÊU THÍCH</h1>
                             <div className="wishlists-chart table-responsive">
-                                <div className="col-lg-8 col-md-8 col-sm-8 col-xs-8 col-md-push-2">
+                                <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12 col-md-push-2">
                                     <TableFavorite />
                                 </div>
                             </div>
