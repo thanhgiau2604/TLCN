@@ -16,9 +16,13 @@ class Products extends React.Component {
     this.confirmDelete = this.confirmDelete.bind(this);
   }
   updateProduct(){
-    console.log(this.props.product);
+    var constImage = "/img/product/default.png";
+    var image1=constImage, image2=constImage, image3=constImage;
+    if (this.props.product.image.image1!="") image1 = this.props.product.image.image1;
+    if (this.props.product.image.image2!="") image2 = this.props.product.image.image2;
+    if (this.props.product.image.image3!="") image3 = this.props.product.image.image3;
     curEditProduct.setState({product:this.props.product,updateSuccess:0, curcost:this.props.product.costs[this.props.product.costs.length-1].cost,
-      curSizes:this.props.product.sizes.length});
+      curSizes:this.props.product.sizes.length, image1:image1, image2:image2, image3:image3});
   }
   deleteProduct(){
     localStorage.setItem("curDelete",this.props.product._id);
@@ -86,35 +90,82 @@ class Products extends React.Component {
     </tr>)
   }
 }
-var image1={},image2={},image3={};
 var isChange1=false,isChange2=false,isChange3=false;
 var classNewProduct;
+var constImage = "/img/product/default.png";
+var image1, image2, image3;
 class NewProduct extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       curSizes: 1,
       addSuccess:0,
+      image1: constImage,
+      image2: constImage,
+      image3: constImage
     }
     this.AddSize = this.AddSize.bind(this);
     this.submitForm = this.submitForm.bind(this);
     this.ChangeImage1 = this.ChangeImage1.bind(this);
     this.ChangeImage2 = this.ChangeImage2.bind(this);
     this.ChangeImage3 = this.ChangeImage3.bind(this);
+    this.handleImage = this.handleImage.bind(this);
     this.AddToDatabase = this.AddToDatabase.bind(this);
   }
   AddSize() {
     this.setState({ curSizes: this.state.curSizes + 1 });
   }
   ChangeImage1(e){
+    var that = this;
     image1 = e.target.files[0];
+    $.post("/deleteImage", { path: that.state.image1 }, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image1).then(res => that.setState({ image1: res }), err => console.log(err));
+      }
+    })  
   }
   ChangeImage2(e){
+    var that = this;
     image2 = e.target.files[0];
+    $.post("/deleteImage", { path: that.state.image2 }, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image2).then(res => that.setState({ image2: res }), err => console.log(err));
+      }
+    })  
   }
   ChangeImage3(e){
+    var that = this;
     image3 = e.target.files[0];
+    $.post("/deleteImage", { path: that.state.image3 }, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image3).then(res => that.setState({ image3: res }), err => console.log(err));
+      }
+    })  
   }
+  handleImage(image){
+    var that = this;
+    let imageFormObj = new FormData();
+    imageFormObj.append("imageName","multer-image"+Date.now());
+    imageFormObj.append("imageData",image);
+    return new Promise((resolve,reject)=>{
+        $.ajax({
+            type: "POST",
+            url: "/upload",
+            data: imageFormObj,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                return (resolve("/img/product/"+data));
+            },
+            fail: function(err) {
+                return (reject(new Error(err)));
+            }
+        })
+    })
+}
   AddToDatabase(product){
     var that = this;
     console.log(product);
@@ -158,7 +209,7 @@ class NewProduct extends React.Component {
       name: this.refs.name.value,
       quanty: 0,
       costs: [{cost:this.refs.cost.value}],
-      image: {image1:"",image2:"",image3:""},
+      image: {image1:this.state.image1,image2:this.state.image2,image3:this.state.image3},
       description: this.refs.description.value,
       sizes: sizes,
       votes: {
@@ -171,57 +222,7 @@ class NewProduct extends React.Component {
       createat: parseInt(Date.now().toString()),
       views:0
     }
-    classNewProduct = this;
-    //upload image
-    let imageFormObj = new FormData();
-    imageFormObj.append("imageName","multer-image"+Date.now());
-    imageFormObj.append("imageData",image1);
-    $.ajax({
-      type: "POST",
-      url: "/upload",
-      data: imageFormObj,
-      processData: false,
-      contentType: false,
-      success: function (data) {
-        newP.image.image1 = "/img/product/" + data;
-        let imageFormObj = new FormData();
-        imageFormObj.append("imageName", "multer-image" + Date.now());
-        imageFormObj.append("imageData", image2);
-        $.ajax({
-          type: "POST",
-          url: "/upload",
-          data: imageFormObj,
-          processData: false,
-          contentType: false,
-          success: function (data) {
-            newP.image.image2 = "/img/product/" + data;
-            let imageFormObj = new FormData();
-            imageFormObj.append("imageName", "multer-image" + Date.now());
-            imageFormObj.append("imageData", image3);
-            $.ajax({
-              type: "POST",
-              url: "/upload",
-              data: imageFormObj,
-              processData: false,
-              contentType: false,
-              success: function (data) {
-                newP.image.image3 = "/img/product/" + data;
-                classNewProduct.AddToDatabase(newP);
-              },
-              fail: function (err) {
-                alert(err);
-              }
-            })
-          },
-          fail: function (err) {
-            alert(err);
-          }
-        })
-      },
-      fail: function (err) {
-        alert(err);
-      }
-    })
+    this.AddToDatabase(newP);
     e.preventDefault();
   }
   componentDidMount(){
@@ -287,23 +288,28 @@ class NewProduct extends React.Component {
                 <button className="btn btn-success" onClick={this.AddSize}>Add size</button>
               </div>
             </div>
-            <div className="row" style={{ marginTop: "10px" }}>
-              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <label>Image 1:</label>
-                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)} required/>
-              </div>
-            </div>
-            <div className="row" style={{ marginTop: "10px" }}>
-              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <label>Image 2:</label>
-                <input type="file" className="form-control" ref="image2" onChange={(e) => this.ChangeImage2(e)}/>
-              </div>
-            </div>
-            <div className="row" style={{ marginTop: "10px" }}>
-              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <label>Image 3:</label>
-                <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)}/>
-              </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+              {/* <div className="row" style={{ marginTop: "10px" }}> */}
+                <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <img src={this.state.image1} width="100%"/>
+                  <label>Image 1:</label>
+                  <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)} required />
+                </div>
+              {/* </div> */}
+              {/* <div className="row" style={{ marginTop: "10px" }}> */}
+                <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <img src={this.state.image2} width="100%"/>
+                  <label>Image 2:</label>
+                  <input type="file" className="form-control" ref="image2" onChange={(e) => this.ChangeImage2(e)} />
+                </div>
+              {/* </div> */}
+              {/* <div className="row" style={{ marginTop: "10px" }}> */}
+                <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <img src={this.state.image3} width="100%"/>
+                  <label>Image 3:</label>
+                  <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)} />
+                </div>
+              {/* </div> */}
             </div>
           </div>
           {notifyAddSuccess}
@@ -326,11 +332,15 @@ class UpdateProduct extends React.Component{
     this.ChangeImage1 = this.ChangeImage1.bind(this);
     this.ChangeImage2 = this.ChangeImage2.bind(this);
     this.ChangeImage3 = this.ChangeImage3.bind(this);
+    this.handleImage = this.handleImage.bind(this);
     this.state = {
       product:"",
       curcost: 0,
       updateSuccess:0,
-      curSizes: 0
+      curSizes: 0,
+      image1: "",
+      image2: "",
+      image3: ""
     }
     curEditProduct = this;
   }
@@ -365,110 +375,72 @@ class UpdateProduct extends React.Component{
       size.colors = colors;
       sizes.push(size);
     }
-    var image = this.state.product.image;
+    var image = {
+      image1: this.state.image1,
+      image2: this.state.image2,
+      image3: this.state.image3
+    }
     var that = this;
-    if (!isChange1&&!isChange2&&!isChange3){
-      $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
-        description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
-          if (data.success==1){
-            main.setState({listProduct:data.lProduct});
-            that.setState({updateSuccess:1});
-          }
+
+    $.post("/updateProduct", {
+      id: idProduct, name: name, cost: cost, oldcost: JSON.stringify(that.state.product.costs),
+      description: description, sizes: JSON.stringify(sizes), image: JSON.stringify(image)
+    }, function (data) {
+      if (data.success == 1) {
+        main.setState({ listProduct: data.lProduct });
+        that.setState({ updateSuccess: 1 });
+      }
+    })
+  }
+  handleImage(image){
+    let imageFormObj = new FormData();
+    imageFormObj.append("imageName","multer-image"+Date.now());
+    imageFormObj.append("imageData",image);
+    return new Promise((resolve,reject)=>{
+        $.ajax({
+            type: "POST",
+            url: "/upload",
+            data: imageFormObj,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                return (resolve("/img/product/"+data));
+            },
+            fail: function(err) {
+                return (reject(new Error(err)));
+            }
         })
-    }
-    if (isChange1) {
-      isChange1=false;
-      let imageFormObj1 = new FormData();
-      imageFormObj1.append("imageName","multer-image"+Date.now());
-      imageFormObj1.append("imageData",image1);
-      $.ajax({
-        type: "POST",
-        url: "/upload",
-        data: imageFormObj1,
-        processData: false,
-        contentType: false,
-        success: function (data) {
-          image.image1 = "/img/product/" + data;
-          console.log(image);
-          $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
-            description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
-              if (data.success==1){
-                main.setState({listProduct:data.lProduct});
-                that.setState({updateSuccess:1});
-              }
-            })
-        },
-        fail: function (err) {
-          alert(err);
-        }
-      })
-    }
-    if (isChange2){
-      isChange2=false;
-      let imageFormObj2 = new FormData();
-      imageFormObj2.append("imageName","multer-image"+Date.now());
-      imageFormObj2.append("imageData",image2);
-      $.ajax({
-        type: "POST",
-        url: "/upload",
-        data: imageFormObj2,
-        processData: false,
-        contentType: false,
-        success: function (data) {
-          image.image2 = "/img/product/" + data;
-          console.log(image);
-          $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
-            description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
-              if (data.success==1){
-                main.setState({listProduct:data.lProduct});
-                curEditProduct.setState({updateSuccess:1});
-              }
-            })
-        },
-        fail: function (err) {
-          alert(err);
-        }
-      })
-    }
-    if (isChange3){
-      isChange3=false;
-      let imageFormObj3 = new FormData();
-      imageFormObj3.append("imageName","multer-image"+Date.now());
-      imageFormObj3.append("imageData",image3);
-      $.ajax({
-        type: "POST",
-        url: "/upload",
-        data: imageFormObj3,
-        processData: false,
-        contentType: false,
-        success: function (data) {
-          image.image3 = "/img/product/" + data;
-          console.log(image);
-          $.post("/updateProduct",{id:idProduct,name:name,cost:cost,oldcost: JSON.stringify(that.state.product.costs),
-            description:description,sizes:JSON.stringify(sizes), image:JSON.stringify(image)},function(data){
-              if (data.success==1){
-                main.setState({listProduct:data.lProduct});
-                that.setState({updateSuccess:1});
-              }
-            })
-        },
-        fail: function (err) {
-          alert(err);
-        }
-      })
-    }
-  }
-  ChangeImage1(e){
-    isChange1 = true;
+    })
+}
+  ChangeImage1(e) {
+    var that = this;
     image1 = e.target.files[0];
+    $.post("/deleteImage", { path: that.state.image1 }, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image1).then(res => that.setState({ image1: res }), err => console.log(err));
+      }
+    })
   }
-  ChangeImage2(e){
-    isChange2=true;
+  ChangeImage2(e) {
+    var that = this;
     image2 = e.target.files[0];
+    $.post("/deleteImage", { path: that.state.image2 }, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image2).then(res => that.setState({ image2: res }), err => console.log(err));
+      }
+    })
   }
-  ChangeImage3(e){
-    isChange3=true;
+  ChangeImage3(e) {
+    var that = this;
     image3 = e.target.files[0];
+    $.post("/deleteImage", { path: that.state.image3 }, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image3).then(res => that.setState({ image3: res }), err => console.log(err));
+      }
+    })
   }
   render(){
     var arrHtmlSizes= new Array();
@@ -552,34 +524,36 @@ class UpdateProduct extends React.Component{
           </div>
           <div key={this.state.product._id}>
           {arrHtmlSizes}
-          </div>
-          
+          </div>     
           <div className="row" style={{ marginTop: "10px" }}>
-            <div className="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-              <button className="btn btn-success" onClick={this.AddSize}>Add size</button>
-              <button className="btn btn-danger" onClick={this.RemoveSize}>Remove size</button>
+            <div className="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+              <button className="btn btn-success addsize" onClick={this.AddSize}>Add size</button>
+              <button className="btn btn-danger removesize" onClick={this.RemoveSize}>Remove size</button>
             </div>
           </div>
           <div className="row" style={{ marginTop: "10px" }}>
-              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <label>Image 1:</label>
-                <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)} required/>
-              </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <img src={this.state.image1} width="100%"/>
+                  <label>Image 1:</label>
+                  <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)} required />
+                </div>
+                <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <img src={this.state.image2} width="100%"/>
+                  <label>Image 2:</label>
+                  <input type="file" className="form-control" ref="image2" onChange={(e) => this.ChangeImage2(e)} />
+                </div>
+                <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                  <img src={this.state.image3} width="100%"/>
+                  <label>Image 3:</label>
+                  <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)} />
+                </div>
             </div>
+          </div>
             <div className="row" style={{ marginTop: "10px" }}>
-              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <label>Image 2:</label>
-                <input type="file" className="form-control" ref="image2" onChange={(e) => this.ChangeImage2(e)}/>
-              </div>
-            </div>
-            <div className="row" style={{ marginTop: "10px" }}>
-              <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <label>Image 3:</label>
-                <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)}/>
-              </div>
+              {notifyUpdateSuccess}
             </div>
         </div>
-        {notifyUpdateSuccess}
         <div className="modal-footer justify-content-center">
           <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
           <button type="button" className="btn btn-danger" type="submit" onClick={this.submitForm}>Save</button>
@@ -659,7 +633,6 @@ class ManageProducts extends React.Component {
         }
       }
     }
-    console.log(lCurProduct);
     return (<div id='content'>
       <div class='panel panel-default grid'>
         <div class='panel-heading'>

@@ -3,7 +3,7 @@ const parser = bodyParser.urlencoded({extended:false});
 const Product = require("../models/Product");
 const ObjectId = require('mongodb').ObjectId;
 const multer = require("multer");
-
+const fs = require("fs");
 function getProducts(res) {
     Product.find(function (err, data) {
         if (err) {
@@ -83,6 +83,23 @@ module.exports = function(app){
             }
         })
     });
+
+    app.post("/deleteImage",parser,(req,res)=>{
+        const path = req.body.path;
+        const deletePath = "./public/"+path;
+        if (path!="/img/product/default.png"){
+            fs.unlink(deletePath,(err)=>{
+                if (err){
+                    console.log(err);
+                    res.json(0); 
+                } else {
+                    res.json(1);
+                }
+            })
+        } else {
+            res.json(1);
+        }
+    })
 
     app.post("/updateProduct",parser,(req,res)=>{
         const id = req.body.id;

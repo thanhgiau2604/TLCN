@@ -44,7 +44,7 @@ class Users extends React.Component {
     var htmlRestore = "";
     if (status == 1) {
       sttUser = "deleted";
-      htmlRestore = <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer' }} title='Restore' onClick={this.restoreUser}>
+      htmlRestore = <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer',marginLeft:'3px'}} title='Restore' onClick={this.restoreUser}>
         <i class='icon-undo'></i>
       </a>
     }
@@ -60,7 +60,7 @@ class Users extends React.Component {
       <a class='btn btn-info' data-toggle='tooltip' style={{cursor:'pointer'}} title='Edit' onClick={this.editUser}>
         <i class='icon-edit'></i>
       </a>
-      <a class='btn btn-danger' data-toggle='tooltip' style={{cursor:'pointer'}} title='Delete' data-toggle="modal" 
+      <a class='btn btn-danger' data-toggle='tooltip' style={{cursor:'pointer', marginLeft:'3px'}} title='Delete' data-toggle="modal" 
         data-target="#modalDeleteUser" onClick={this.deleteUser}>
         <i class='icon-trash'></i>
       </a>

@@ -82,12 +82,45 @@ class ModalViewCategory extends React.Component{
       quanty: "",
       description: "",
       image:"",
-      listProduct:[]
+      listProduct:[],
+      curpage: 1
     }
+    this.previousPage = this.previousPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
     viewCat = this;
   }
+  previousPage() {
+    if (this.state.curpage > 1)
+      this.setState({ curpage: this.state.curpage - 1 });
+  }
+  nextPage() {
+    var length = this.state.listProduct.length;
+    var perpage = 5;
+    if (this.state.curpage < Math.ceil(length / perpage))
+      this.setState({ curpage: this.state.curpage + 1 });
+  }
+  changePage(value,event){
+    this.setState({curpage:value});
+  }
   render(){
-    console.log(this.state.name);
+    var lCurProduct = [];
+      var page = "";
+      if (this.state.listProduct.length != 0) {
+        page=[];
+        var perpage = 5;
+        var start = (this.state.curpage - 1) * perpage;
+        var finish = start+perpage;
+        if (finish>this.state.listProduct.length) finish=this.state.listProduct.length;
+        lCurProduct = this.state.listProduct.slice(start, finish);    
+        var numberpage = Math.ceil(this.state.listProduct.length / perpage);
+        for (var i=1; i<=numberpage; i++){
+          if (this.state.curpage==i){
+            page.push(<li class='active'><a onClick={this.changePage.bind(this,i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
+          } else {
+            page.push(<li><a onClick={this.changePage.bind(this,i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
+          }
+        }
+      }      
     return(<div class="container">
     <div class="modal fade" id="modalViewCategory" role="dialog">
       <div class="modal-dialog modal-lg">
@@ -143,10 +176,10 @@ class ModalViewCategory extends React.Component{
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.listProduct.map(function(product,index){
+                      {lCurProduct.map(function(product,index){
                         return(
                           <tr class='active' key={index}>
-                            <td>{index+1}</td>
+                            <td>{start+index+1}</td>
                             <td>{product.name}</td>
                             <td><img src={product.image.image1} width="120px" /></td>
                             <td>{product.cost}</td>
@@ -159,6 +192,24 @@ class ModalViewCategory extends React.Component{
                 </div>  
               </div>
             </div>
+              <div className="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  <div class='panel-footer'>
+                    <ul class='pagination pagination-sm'>
+                      <li>
+                        <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
+                      </li>
+                      {page}
+                      <li>
+                        <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
+                      </li>
+                    </ul>
+                    <div class='pull-right'>
+                      Showing {start + 1} to {finish} of {this.state.listProduct.length} entries
+                    </div>
+                  </div>
+                </div>
+              </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -257,9 +308,12 @@ class ModalNewCategory extends React.Component{
     this.changeImage = this.changeImage.bind(this);
     this.saveCategory = this.saveCategory.bind(this);
     this.addToDatabase = this.addToDatabase.bind(this);
+    this.previousPage = this.previousPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
     this.state = {
       AllProduct: [],
-      addSuccess:0
+      addSuccess:0,
+      curpage: 1
     }
     newCategory = this;
   }
@@ -311,6 +365,19 @@ class ModalNewCategory extends React.Component{
         arrProduct = [];
     })
   }
+  previousPage() {
+    if (this.state.curpage > 1)
+      this.setState({ curpage: this.state.curpage - 1 });
+  }
+  nextPage() {
+    var length = this.state.AllProduct.length;
+    var perpage = 5;
+    if (this.state.curpage < Math.ceil(length / perpage))
+      this.setState({ curpage: this.state.curpage + 1 });
+  }
+  changePage(value,event){
+    this.setState({curpage:value});
+  }
   render(){
     var notifyAddSuccess = <div></div>
     if (this.state.addSuccess ==1 ){
@@ -319,6 +386,24 @@ class ModalNewCategory extends React.Component{
         <strong>Add Category Successfully!</strong>
       </div>
     }
+    var lCurProduct = [];
+    var page = "";
+    if (this.state.AllProduct.length != 0) {
+      page = [];
+      var perpage = 5;
+      var start = (this.state.curpage - 1) * perpage;
+      var finish = start + perpage;
+      if (finish > this.state.AllProduct.length) finish = this.state.AllProduct.length;
+      lCurProduct = this.state.AllProduct.slice(start, finish);
+      var numberpage = Math.ceil(this.state.AllProduct.length / perpage);
+      for (var i = 1; i <= numberpage; i++) {
+        if (this.state.curpage == i) {
+          page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
+        } else {
+          page.push(<li><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
+        }
+      }
+    }    
     return(<div class="modal fade" id="modal-new-category" role="dialog">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -368,7 +453,7 @@ class ModalNewCategory extends React.Component{
                       </tr>
                   </thead>
                   <tbody>
-                    {this.state.AllProduct.map(function(product,index){
+                    {lCurProduct.map(function(product,index){
                       return <SingleProduct key={index} product={product}/>
                     })}
                   </tbody>
@@ -376,6 +461,22 @@ class ModalNewCategory extends React.Component{
               </div>  
             </div>
           </div>
+            <div className="row">
+              <div class='panel-footer'>
+                <ul class='pagination pagination-sm'>
+                  <li>
+                    <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
+                  </li>
+                  {page}
+                  <li>
+                    <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
+                  </li>
+                </ul>
+                <div class='pull-right'>
+                  Showing {start + 1} to {finish} of {this.state.AllProduct.length} entries
+                </div>
+              </div>
+            </div>
         </div>
         {notifyAddSuccess}
         <div class="modal-footer">
@@ -394,12 +495,28 @@ class ModalUpdateCategory extends React.Component {
     this.state = {
       AllProduct: [],
       category: "",
-      updateSuccess: 0
+      updateSuccess: 0,
+      curpage:1
     }
     UpdateCategory = this;
     this.changeImage = this.changeImage.bind(this);
     this.updateCategory = this.updateCategory.bind(this);
     this.updateToDatabase = this.updateToDatabase.bind(this);
+    this.previousPage = this.previousPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
+  }
+  previousPage() {
+    if (this.state.curpage > 1)
+      this.setState({ curpage: this.state.curpage - 1 });
+  }
+  nextPage() {
+    var length = this.state.AllProduct.length;
+    var perpage = 5;
+    if (this.state.curpage < Math.ceil(length / perpage))
+      this.setState({ curpage: this.state.curpage + 1 });
+  }
+  changePage(value,event){
+    this.setState({curpage:value});
   }
   componentDidMount(){
     var that = this;
@@ -461,6 +578,24 @@ class ModalUpdateCategory extends React.Component {
       </div>
     }
     arrProduct = this.state.category.listProduct;
+    var lCurProduct = [];
+    var page = "";
+    if (this.state.AllProduct.length != 0) {
+      page = [];
+      var perpage = 5;
+      var start = (this.state.curpage - 1) * perpage;
+      var finish = start + perpage;
+      if (finish > this.state.AllProduct.length) finish = this.state.AllProduct.length;
+      lCurProduct = this.state.AllProduct.slice(start, finish);
+      var numberpage = Math.ceil(this.state.AllProduct.length / perpage);
+      for (var i = 1; i <= numberpage; i++) {
+        if (this.state.curpage == i) {
+          page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
+        } else {
+          page.push(<li><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
+        }
+      }
+    }    
     return(<div class="modal fade" id="modalEditCategory" role="dialog">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -468,37 +603,37 @@ class ModalUpdateCategory extends React.Component {
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Update Category</h4>
         </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-              <div class="form-group" key={this.state.category._id}>
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" ref="name" defaultValue={this.state.category.name} required/>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <div class="form-group" key={this.state.category._id}>
+                  <label for="name">Name:</label>
+                  <input type="text" class="form-control" id="name" ref="name" defaultValue={this.state.category.name} required />
+                </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-              <div class="form-group" key={this.state.category._id}>
-                <label for="description">Description:</label> <br/>
-                <textarea cols="100" rows="4" ref="description" defaultValue={this.state.category.description}></textarea>
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group" key={this.state.category._id}>
+                  <label for="description">Description:</label> <br />
+                  <textarea cols="100" rows="4" ref="description" defaultValue={this.state.category.description}></textarea>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-              <div class="form-group">
-                <label for="image">Image:</label>
-                <input type="file" ref="image" onChange={(e)=> this.changeImage(e)} required/>
-              </div>     
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                  <label for="image">Image:</label>
+                  <input type="file" ref="image" onChange={(e) => this.changeImage(e)} required />
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-              <div class="form-group" key={this.state.category._id}>
-                <label>Update product into category:</label>
-                <table class='table'>
-                  <thead>
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group" key={this.state.category._id}>
+                  <label>Update product into category:</label>
+                  <table class='table'>
+                    <thead>
                       <tr>
                         <th class="text-center">#</th>
                         <th class="text-center">Name</th>
@@ -508,17 +643,35 @@ class ModalUpdateCategory extends React.Component {
                         <th class="text-center">Description</th>
                         <th class="text-center">Action</th>
                       </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.AllProduct.map(function(product,index){
-                      return <SingleProductUpdate key={index} product={product}/>
-                    })}
-                  </tbody>
-                </table>
-              </div>  
+                    </thead>
+                    <tbody>
+                      {lCurProduct.map(function (product, index) {
+                        return <SingleProductUpdate key={index} product={product} />
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class='panel-footer'>
+                  <ul class='pagination pagination-sm'>
+                    <li>
+                      <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
+                    </li>
+                    {page}
+                    <li>
+                      <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
+                    </li>
+                  </ul>
+                  <div class='pull-right'>
+                    Showing {start + 1} to {finish} of {this.state.AllProduct.length} entries
+                </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
         {notifyUpdateSuccess}
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

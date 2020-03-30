@@ -99,6 +99,13 @@ class ProductGird extends React.Component{
 			htmlFavorite=<li><a title="Xóa khỏi favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o" style={{color:'#daf309'}}></i></span></a></li>
 		} else {
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
+        }
+        var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
+		var cost ="", count=0;
+		for (var i=strCost.length-1; i>=0; i--){
+			count++;
+			cost=strCost[i]+cost;
+			if (count%3==0) cost=" "+cost;
 		}
         return(<li class="gategory-product-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
         <div class="single-product-item">
@@ -128,7 +135,7 @@ class ProductGird extends React.Component{
                 </div>
                 <a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
                 <div class="price-box">
-                    <span class="price">{this.props.costs[this.props.costs.length-1].cost}</span>
+                    <span class="price">{cost}</span>
                     <span class="old-price"></span>
                 </div>
                 <RequireAuthentication/>
@@ -198,6 +205,13 @@ class ProductList extends React.Component{
 			htmlFavorite=<li><a title="Xóa khỏi favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o" style={{color:'#ff5858'}}></i></span></a></li>
 		} else {
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
+        }
+        var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
+		var cost ="", count=0;
+		for (var i=strCost.length-1; i>=0; i--){
+			count++;
+			cost=strCost[i]+cost;
+			if (count%3==0) cost=" "+cost;
 		}
         return(<li class="cat-product-list">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -228,7 +242,7 @@ class ProductList extends React.Component{
                             <p>{this.props.desc}</p>
                         </div>
                         <div class="price-box">
-                            <span class="price">{this.props.costs[this.props.costs.length-1].cost}</span>
+                            <span class="price">{cost}</span>
                         </div>
                     </div>
                         <div class="overlay-content-list">

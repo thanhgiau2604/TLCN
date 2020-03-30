@@ -16,3 +16,6 @@
   a {
       cursor: pointer;
   }
+  .removesize {
+      margin-left: 10px;
+  }

@@ -69,7 +69,21 @@ class SingleProduct extends React.Component {
                     htmlColor.push(color);
                 }
             }
-        });        
+        });  
+        var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
+		var cost ="", count=0;
+		for (var i=strCost.length-1; i>=0; i--){
+			count++;
+			cost=strCost[i]+cost;
+			if (count%3==0) cost=" "+cost;
+        }     
+        var strTotal = this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty);
+        var tcost ="" , count1=0;
+        for (var i=strTotal.length-1; i>=0; i--){
+			count1++;
+			tcost=strTotal[i]+tcost;
+			if (count1%3==0) tcost=" "+tcost;
+        }   
         return(<tr>
             <td>{this.props.stt}</td>
             <td class="cart-product">
@@ -91,7 +105,7 @@ class SingleProduct extends React.Component {
             </td>
             <td class="cart-unit">
                 <ul class="price text-right">
-                    <li class="price">{this.props.costs[this.props.costs.length-1].cost}đ</li>
+                    <li class="price">{cost}đ</li>
                 </ul>
             </td>
             <td class="cart_quantity text-center">
@@ -107,7 +121,7 @@ class SingleProduct extends React.Component {
                 </span>
             </td>
             <td class="cart-total">
-                <span class="price">{this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty)}</span>
+                <span class="price">{tcost}</span>
             </td>
         </tr>)
     }

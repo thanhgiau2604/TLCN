@@ -101,6 +101,13 @@ class Product extends React.Component{
 		} else {
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
 		}
+		var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
+		var cost ="", count=0;
+		for (var i=strCost.length-1; i>=0; i--){
+			count++;
+			cost=strCost[i]+cost;
+			if (count%3==0) cost=" "+cost;
+		}
 		return (<div className="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<div className="item">
 				<div className="single-product-item">
@@ -131,7 +138,7 @@ class Product extends React.Component{
 						</div>
 						<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 						<div className="price-box">
-							<span className="price">{this.props.costs[this.props.costs.length-1].cost}đ</span>
+							<span className="price">{cost}đ</span>
 						</div>
 					</div>
 					<RequireAuthentication/>

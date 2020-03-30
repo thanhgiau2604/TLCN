@@ -13,6 +13,8 @@ class Message extends React.Component {
   deleteMessage(){
     var that = this;
     $.post("/deleteMessage",{id:that.props.id},function(data){
+      if (Math.ceil(data.length / 5)<main.state.curpage)
+          main.setState({curpage:main.state.curpage-1});
       main.setState({listMessage:data});
     })
   }
@@ -75,6 +77,19 @@ class ManageMessage extends React.Component{
         }
         main = this;
         this.handleAddMessage = this.handleAddMessage.bind(this);
+        this.previousPage = this.previousPage.bind(this);
+        this.nextPage = this.nextPage.bind(this);
+    }
+    previousPage() {
+      if (this.state.curpage > 1)
+        this.setState({ curpage: this.state.curpage - 1 });
+    }
+    nextPage() {
+      console.log("vo");
+      var length = this.state.listMessage.length;
+      var perpage = 3;
+      if (this.state.curpage < Math.ceil(length / perpage))
+        this.setState({ curpage: this.state.curpage + 1 });
     }
     componentWillMount(){
       var token = localStorage.getItem('tokenad');
@@ -111,13 +126,15 @@ class ManageMessage extends React.Component{
         page=[];
         var perpage = 3;
         var start = (this.state.curpage - 1) * perpage;
-        lCurMessage = this.state.listMessage.slice(start, start + perpage);    
+        var finish = start+perpage;
+        if (finish>this.state.listMessage.length) finish=this.state.listMessage.length;
+        lCurMessage = this.state.listMessage.slice(start, finish);    
         var numberpage = Math.ceil(this.state.listMessage.length / perpage);
         for (var i=1; i<=numberpage; i++){
           if (this.state.curpage==i){
-            page.push(<li class='active'><a onClick={this.changePage.bind(this,i)} >{i}</a></li>);
+            page.push(<li class='active'><a onClick={this.changePage.bind(this,i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
           } else {
-            page.push(<li><a onClick={this.changePage.bind(this,i)}>{i}</a></li>)
+            page.push(<li><a onClick={this.changePage.bind(this,i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
           }
         }
       }      
@@ -172,15 +189,16 @@ class ManageMessage extends React.Component{
           </table>
           <div class='panel-footer'>
             <ul class='pagination pagination-sm'>
-              <li>
-                <a href='#'>«</a>
-              </li>
-              {page}
-              <li>
-                <a href='#'>»</a>
-              </li>
+                <li>
+                  <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
+                </li>
+                {page}
+                <li>
+                  <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
+                </li>
             </ul>
-            <div class='pull-right'>
+              <div class='pull-right'>
+                Showing {start + 1} to {finish} of {this.state.listMessage.length} entries
             </div>
           </div>
         </div>

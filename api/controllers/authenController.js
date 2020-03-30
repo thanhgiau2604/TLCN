@@ -112,7 +112,7 @@ module.exports = function(app,apiRouter,jwt){
                 success:0
             })
         }
-    });
+    }); 
 
     apiRouter.get("/",(req,res)=>{
         res.send({success:1});
@@ -170,6 +170,7 @@ module.exports = function(app,apiRouter,jwt){
                     numberPhone: "",
                     dob: "",
                     password:"12345678",
+                    role:"user"
                 }
                 username = newUser.lastName;
                 email = newUser.email;
@@ -245,6 +246,7 @@ module.exports = function(app,apiRouter,jwt){
                             numberPhone: "",
                             dateofBirth: "",
                             password:"12345678",
+                            role:"user"
                         }
                         username = newUser.lastName;
                         email = newUser.email;
