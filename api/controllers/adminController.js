@@ -283,6 +283,7 @@ module.exports = function(app,adminRouter,jwt){
                                         }
                                         arrayResult.push(item);
                                         if (count == list.length) {
+                                            console.log(arrayResult.slice(0,10));
                                             return res.send(arrayResult.slice(0,10));
                                         }
                                     }    
