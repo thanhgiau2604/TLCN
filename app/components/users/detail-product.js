@@ -12,6 +12,11 @@ var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
 var main,chooseColor="",firstColor;
+import ReactGA from 'react-ga'
+function initizeAnalytics(){
+    ReactGA.initialize("UA-155099372-1");
+    ReactGA.pageview(window.location.pathname + window.location.search);
+}
 class RequireAuthentication extends React.Component{
 	constructor(props){
 		super(props);
@@ -446,7 +451,8 @@ class TotalPage extends React.Component{
 
         })
     }
-    render(){       
+    render(){     
+        initizeAnalytics();  
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">

@@ -5,7 +5,7 @@ import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
 import { Bar } from "react-chartjs-2";
-import { connect } from 'mongoose'
+import { Line } from "react-chartjs-2";
 var main;
 class Products extends React.Component {
   constructor(props) {
@@ -155,9 +155,21 @@ class TopOrderProduct extends React.Component {
 class Dashboard extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+          arrMetrics: [0,0,0,0],
+          arrUsers: [],
+          arrUsersBefore: [],
+          activeUsers:0
+        }
         main=this;
     }
     componentDidMount(){
+      var that = this;
+      $.get("/getMetrics",function(data){
+        console.log(data);
+        that.setState({arrMetrics:data.metrics, arrUsers:data.users, arrUsersBefore: data.usersBefore,
+        activeUsers: data.countUser});
+      })
     }
     render(){
         return(<div id='content'>
@@ -180,96 +192,151 @@ class Dashboard extends React.Component{
           <div class='panel-body'>      
             <div class='progress'>                
             </div>
-            <div>
-              <div class="row">
-                  <div class="col-xl-3 col-md-3">
-                    <div class="card card-stats">
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col">
-                            <h5 class="card-title text-uppercase text-muted mb-0">Total traffic</h5>
-                            <span class="h2 font-weight-bold mb-0">350,897</span>
-                          </div>
-                          <div class="col-auto">
-                            <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                              <i class="ni ni-active-40"></i>
-                            </div>
+            <div>         
+                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                  <div class="card card-stats">
+                    <div class="card-body">
+                      <div class="row rowb">
+                        <div class="col">
+                          <h5 class="card-title text-uppercase text-muted mb-0">Users</h5>
+                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[0]}</span>
+                        </div>
+                        <div class="col-auto">
+                          <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                            <i class="ni ni-user-run"></i>
                           </div>
                         </div>
-                        <p class="mt-3 mb-0 text-sm">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                        </p>
                       </div>
-                    </div>
-                  </div>
-                  <div class="col-xl-3 col-md-3">
-                    <div class="card card-stats">
-
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col">
-                            <h5 class="card-title text-uppercase text-muted mb-0">New users</h5>
-                            <span class="h2 font-weight-bold mb-0">2,356</span>
-                          </div>
-                          <div class="col-auto">
-                            <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                              <i class="ni ni-chart-pie-35"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <p class="mt-3 mb-0 text-sm">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-xl-3 col-md-3">
-                    <div class="card card-stats">
-
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col">
-                            <h5 class="card-title text-uppercase text-muted mb-0">Sales</h5>
-                            <span class="h2 font-weight-bold mb-0">924</span>
-                          </div>
-                          <div class="col-auto">
-                            <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                              <i class="ni ni-money-coins"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <p class="mt-3 mb-0 text-sm">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-xl-3 col-md-3">
-                    <div class="card card-stats">
-
-                      <div class="card-body">
-                        <div class="row">
-                          <div class="col">
-                            <h5 class="card-title text-uppercase text-muted mb-0">Performance</h5>
-                            <span class="h2 font-weight-bold mb-0">49,65%</span>
-                          </div>
-                          <div class="col-auto">
-                            <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                              <i class="ni ni-chart-bar-32"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <p class="mt-3 mb-0 text-sm">
-                          <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                          <span class="text-nowrap">Since last month</span>
-                        </p>
-                      </div>
+                      <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p>
                     </div>
                   </div>
                 </div>
+                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                  <div class="card card-stats">
+                    <div class="card-body">
+                      <div class="row rowb">
+                        <div class="col">
+                          <h5 class="card-title text-uppercase text-muted mb-0">Sessions</h5>
+                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[1]}</span>
+                        </div>
+                        <div class="col-auto">
+                          <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                            <i class="ni ni-time-alarm"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                  <div class="card card-stats">
+                    <div class="card-body">
+                      <div class="row rowb">
+                        <div class="col">
+                          <h5 class="card-title text-uppercase text-muted mb-0">Bounce Rate</h5>
+                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[2]}%</span>
+                        </div>
+                        <div class="col-auto">
+                          <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                            <i class="ni ni-chart-pie-35"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                  <div class="card card-stats">
+                    <div class="card-body">
+                      <div class="row rowb">
+                        <div class="col">
+                          <h5 class="card-title text-uppercase text-muted mb-0">Session Duration</h5>
+                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[3]}s</span>
+                        </div>
+                        <div class="col-auto">
+                          <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                            <i class="ni ni-watch-time"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row metrics">
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <Line
+                      data={{
+                        labels: this.state.arrUsers.map(element => element[0]),
+                        datasets: [
+                          {
+                            data: this.state.arrUsers.map(element=>element[1]),
+                            label: "Last 7 days",
+                            borderColor: "#3e95cd",
+                            fill: false
+                           },
+                          {
+                            data: this.state.arrUsersBefore.map(element => element[1]),
+                            label: "A week ago ",
+                            borderColor: "#8e5ea2",
+                            fill: false,
+                            borderDash: [5, 15]
+                           }
+                          // {
+                          //   data: [168, 170, 178, 190, 203, 276, 408, 547, 675, 734],
+                          //   label: "Europe",
+                          //   borderColor: "#3cba9f",
+                          //   fill: false
+                          // },
+                          // {
+                          //   data: [40, 20, 10, 16, 24, 38, 74, 167, 508, 784],
+                          //   label: "Latin America",
+                          //   borderColor: "#e8c3b9",
+                          //   fill: false
+                          // },
+                          // {
+                          //   data: [6, 3, 2, 2, 7, 26, 82, 172, 312, 433],
+                          //   label: "North America",
+                          //   borderColor: "#c45850",
+                          //   fill: false
+                          // }
+                        ]
+                      }}
+                      options={{
+                        title: {
+                          display: true,
+                          text: "The number of users from 7 days ago to today"
+                        },
+                        legend: {
+                          display: true,
+                          position: "bottom"
+                        }
+                      }}
+                    />
+                  </div>               
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 activeUser">
+                    <div>
+                      <h3>Active Users right now</h3>
+                    </div>
+                    <div>
+                    <h1>{this.state.activeUsers}</h1>
+                    </div>
+                  </div>              
+                </div>          
             </div>
             <div class='page-header'>
               <h4>Access the products</h4>

@@ -5,6 +5,8 @@ const Order = require("../models/order");
 const sendmail = require("./mail");
 const opencage = require('opencage-api-client');
 var Statistic = require("../models/statistic");
+const NodeGeocoder = require('node-geocoder');
+const distance = require('google-distance');
 var _eQuatorialEarthRadius = 6378.1370;
 var _d2r = (Math.PI / 180.0);
 function randomInt(min, max) { // min and max included 
@@ -46,38 +48,52 @@ module.exports = function(app,apiRouter){
     });
     app.post("/getPosition",parser,(req,res)=>{
         const address = req.body.address;
-        opencage.geocode({q: address}).then(data => {
-            if (data.status.code == 200) {
-              if (data.results.length > 0) {
-                var place = data.results[0];
-                res.json({err:"",position:place.geometry});
-              } else {
-                  res.json({err:"Vui lòng kiểm tra lại địa chỉ!"})
-              }
-            } else{
-              console.log('have a problem');
-            } 
-          }).catch(error => {
-            console.log('error', error.message);
-          });
+        const options = {
+            provider: 'google',
+            apiKey: 'AIzaSyAAe03FCWqKI0XJjwuuZQT41KpU9KOgBU4', 
+            formatter: null 
+          };
+        const geocoder = NodeGeocoder(options);
+        geocoder.geocode(address)
+        .then(result => {
+            console.log(result);
+            if (result.length>0) res.json({err:"",position:{lat:result[0].latitude,lng: result[0].longitude}})
+            else res.json({err:"Vui lòng kiểm tra lại địa chỉ!"});
+        }, 
+        err=> res.json({err:"Vui lòng kiểm tra lại địa chỉ!"}));
+        
+        // opencage.geocode({q: address}).then(data => {
+        //     if (data.status.code == 200) {
+        //       if (data.results.length > 0) {
+        //         var place = data.results[0];
+        //         res.json({err:"",position:place.geometry});
+        //       } else {
+        //           res.json({err:"Vui lòng kiểm tra lại địa chỉ!"})
+        //       }
+        //     } else{
+        //       console.log('have a problem');
+        //     } 
+        //   }).catch(error => {
+        //     console.log('error', error.message);
+        //   });
     })
     app.post("/updateAddress",parser,(req,res)=>{
         const address = req.body.address;
         const fullname = req.body.fullname;
         const phonenumber = req.body.phonenumber;
         const id = req.body.id;
-        opencage.geocode({q: address}).then(data => {
-            if (data.status.code == 200) {
-              if (data.results.length > 0) {
-                var place = data.results[0];
-                var p1 = {
-                    lat: 10.8496468,
-                    lng: 106.7716404
-                }
-                var p2 = place.geometry;
-                var distance = HaversineInKM(p1.lat,p1.lng,p2.lat,p2.lng);
-                var result = Math.round(3000*distance);
-                Order.update({ _id: id }, { $set: { address: place.formatted, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
+        distance.apiKey = 'AIzaSyAAe03FCWqKI0XJjwuuZQT41KpU9KOgBU4';
+        distance.get(
+            {
+              origin: 'Đại học Sư phạm kỹ thuật TPHCM',
+              destination: address
+            },
+            function(err, data) {
+              if (err){
+                res.json({err:1})
+              } else {
+                var result = 3*data.distanceValue;
+                Order.update({ _id: id }, { $set: { address: data.destination, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
                     if (err) {
                         throw err;
                     } else {
@@ -90,15 +106,42 @@ module.exports = function(app,apiRouter){
                         })
                     }
                 });
-              } else {
-                  res.json({err:1})
               }
-            } else  {
-              console.log('have a problem');
-            }
-          }).catch(error => {
-            console.log('error', error.message);
           });
+        
+        // opencage.geocode({q: address}).then(data => {
+        //     if (data.status.code == 200) {
+        //       if (data.results.length > 0) {
+        //         var place = data.results[0];
+        //         var p1 = {
+        //             lat: 10.8496468,
+        //             lng: 106.7716404
+        //         }
+        //         var p2 = place.geometry;
+        //         var distance = HaversineInKM(p1.lat,p1.lng,p2.lat,p2.lng);
+        //         var result = Math.round(3000*distance);
+        //         Order.update({ _id: id }, { $set: { address: place.formatted, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
+        //             if (err) {
+        //                 throw err;
+        //             } else {
+        //                 Order.findOne({ _id: id }, function (err, data) {
+        //                     if (err) {
+        //                         throw err;
+        //                     } else {
+        //                         res.json({err:0,data:data,ship:result});
+        //                     }
+        //                 })
+        //             }
+        //         });
+        //       } else {
+        //           res.json({err:1})
+        //       }
+        //     } else  {
+        //       console.log('have a problem');
+        //     }
+        //   }).catch(error => {
+        //     console.log('error', error.message);
+        //   });
     });
 
     app.post("/sendmail",parser,(req,res) => {

@@ -24,7 +24,7 @@ class SingleCategory extends React.Component {
         })
     }
     updateCategory(){
-      UpdateCategory.setState({category:this.props.category,updateSuccess:0});
+      UpdateCategory.setState({category:this.props.category,updateSuccess:0, image:this.props.category.image});
     }
     deleteCategory(){
       localStorage.setItem("curDelete",this.props.category._id);
@@ -220,7 +220,8 @@ class ModalViewCategory extends React.Component{
   </div>)
   }
 }
-var arrProduct=[];
+var arrAddProduct = new Array();
+var arrProduct = new Array();
 class SingleProduct extends React.Component {
   constructor(props) {
     super(props);
@@ -231,12 +232,13 @@ class SingleProduct extends React.Component {
     }
   }
   addProduct(){
-    arrProduct.push({_id:this.props.product._id});
+    console.log(this.props.product._id);
+    arrAddProduct.push({_id:this.props.product._id});
     this.setState({add:false});
   }
   removeProduct(){
     var value = this.props.product._id;
-    arrProduct = arrProduct.filter(function(item){
+    arrAddProduct = arrAddProduct.filter(function(item){
       return item._id!==value;
     })
     this.setState({add:true});
@@ -265,11 +267,12 @@ class SingleProductUpdate extends React.Component {
     }
   }
   componentDidMount(){
-    var arr = [];
-    arr = UpdateCategory.state.category.listProduct;
+    var arr = UpdateCategory.state.category.listProduct;
     if (arr){
       for (var i=0; i<arr.length; i++){
+        console.log(this.props.product._id+"===="+arr[i]._id);
       if (this.props.product._id == arr[i]._id){
+        console.log("có disable");
         this.setState({add:false});
         break;
       }
@@ -302,6 +305,7 @@ class SingleProductUpdate extends React.Component {
   }
 }
 var image={},newCategory;
+var constImage = "/img/banner/defaultCategory.jpg";
 class ModalNewCategory extends React.Component{
   constructor(props) {
     super(props);
@@ -310,10 +314,12 @@ class ModalNewCategory extends React.Component{
     this.addToDatabase = this.addToDatabase.bind(this);
     this.previousPage = this.previousPage.bind(this);
     this.nextPage = this.nextPage.bind(this);
+    this.handleImage = this.handleImage.bind(this);
     this.state = {
       AllProduct: [],
       addSuccess:0,
-      curpage: 1
+      curpage: 1,
+      image: constImage
     }
     newCategory = this;
   }
@@ -323,20 +329,11 @@ class ModalNewCategory extends React.Component{
       that.setState({AllProduct:data});
     })
   }
-  changeImage(e){
-    image = e.target.files[0];
-  }
-  saveCategory(){
-    var category = {
-      name: this.refs.name.value,
-      quanty: arrProduct.length,
-      description: this.refs.description.value,
-      image: "",
-      listProduct: arrProduct
-    }
+  handleImage(image){
     let imageFormObj = new FormData();
     imageFormObj.append("imageName","multer-image"+Date.now());
     imageFormObj.append("imageData",image);
+    return new Promise((resolve,reject)=>{
     $.ajax({
       type: "POST",
       url: "/uploadImageCategory",
@@ -344,13 +341,36 @@ class ModalNewCategory extends React.Component{
       processData: false,
       contentType: false,
       success: function (data) {
-        category.image = "img/banner/" + data;
-        newCategory.addToDatabase(category);
+        return (resolve("/img/banner/"+data));
+        // category.image = "img/banner/" + data;
+        // newCategory.addToDatabase(category);
       },
       fail: function (err) {
-        alert(err);
+        return (reject(new Error(err)));
       }
     })
+   })
+  }
+  changeImage(e){
+    var that = this;
+    image = e.target.files[0];
+    $.post("/deleteImageCategory", {path: that.state.image}, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image).then(res => that.setState({ image: res }), err => console.log(err));
+      }
+    })  
+  }
+  saveCategory(){
+    var category = {
+      name: this.refs.name.value,
+      quanty: arrAddProduct.length,
+      description: this.refs.description.value,
+      image: this.state.image,
+      listProduct: arrAddProduct
+    }
+    console.log(category);
+    this.addToDatabase(category);
   }
 
   addToDatabase(category){
@@ -362,7 +382,7 @@ class ModalNewCategory extends React.Component{
         that.refs.name.value = "";
         that.refs.description.value="";
         that.refs.image.value="";
-        arrProduct = [];
+        arrAddProduct = [];
     })
   }
   previousPage() {
@@ -430,8 +450,9 @@ class ModalNewCategory extends React.Component{
           </div>
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-              <div class="form-group">
+              <div class="form-group formImageCategory">
                 <label for="image">Image:</label>
+                <img src={this.state.image} width="80%"/>
                 <input type="file" ref="image" onChange={(e)=> this.changeImage(e)} required/>
               </div>     
             </div>
@@ -496,7 +517,8 @@ class ModalUpdateCategory extends React.Component {
       AllProduct: [],
       category: "",
       updateSuccess: 0,
-      curpage:1
+      curpage:1,
+      image: ""
     }
     UpdateCategory = this;
     this.changeImage = this.changeImage.bind(this);
@@ -504,6 +526,29 @@ class ModalUpdateCategory extends React.Component {
     this.updateToDatabase = this.updateToDatabase.bind(this);
     this.previousPage = this.previousPage.bind(this);
     this.nextPage = this.nextPage.bind(this);
+    this.handleImage = this.handleImage.bind(this);
+  }
+  handleImage(image){
+    let imageFormObj = new FormData();
+    imageFormObj.append("imageName","multer-image"+Date.now());
+    imageFormObj.append("imageData",image);
+    return new Promise((resolve,reject)=>{
+    $.ajax({
+      type: "POST",
+      url: "/uploadImageCategory",
+      data: imageFormObj,
+      processData: false,
+      contentType: false,
+      success: function (data) {
+        return (resolve("/img/banner/"+data));
+        // category.image = "img/banner/" + data;
+        // newCategory.addToDatabase(category);
+      },
+      fail: function (err) {
+        return (reject(new Error(err)));
+      }
+    })
+   })
   }
   previousPage() {
     if (this.state.curpage > 1)
@@ -525,8 +570,14 @@ class ModalUpdateCategory extends React.Component {
     })
   }
   changeImage(e){
+    var that = this;
     image = e.target.files[0];
-    isChangeImage = 1;
+    $.post("/deleteImageCategory", {path: that.state.image}, function (data) {
+      console.log(data);
+      if (data == 1) {
+        that.handleImage(image).then(res => that.setState({image: res}), err => console.log(err));
+      }
+    })  
   }
   updateToDatabase(category){
     var that = this;
@@ -536,37 +587,15 @@ class ModalUpdateCategory extends React.Component {
     })
   }
   updateCategory(){
-    console.log(this.refs.description.value);
     var category = {
       id: this.state.category._id,
       name: this.refs.name.value,
       quanty: arrProduct.length,
       description: this.refs.description.value,
-      image: this.state.category.image,
+      image: this.state.image,
       listProduct: arrProduct
     }
-
-    if (isChangeImage == 1) {
-      let imageFormObj = new FormData();
-      imageFormObj.append("imageName", "multer-image" + Date.now());
-      imageFormObj.append("imageData", image);
-      $.ajax({
-        type: "POST",
-        url: "/uploadImageCategory",
-        data: imageFormObj,
-        processData: false,
-        contentType: false,
-        success: function (data) {
-          category.image = "img/banner/" + data;
-          UpdateCategory.updateToDatabase(category);
-        },
-        fail: function (err) {
-          alert(err);
-        }
-      })
-    } else {
-      this.updateToDatabase(category);
-    }
+    this.updateToDatabase(category);
     
   }
   render(){
@@ -622,10 +651,11 @@ class ModalUpdateCategory extends React.Component {
             </div>
             <div class="row">
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="form-group">
+                <div class="form-group formImageCategory">
                   <label for="image">Image:</label>
+                  <img src={this.state.image} width="80%" />
                   <input type="file" ref="image" onChange={(e) => this.changeImage(e)} required />
-                </div>
+                </div>   
               </div>
             </div>
             <div class="row">
@@ -646,7 +676,7 @@ class ModalUpdateCategory extends React.Component {
                     </thead>
                     <tbody>
                       {lCurProduct.map(function (product, index) {
-                        return <SingleProductUpdate key={index} product={product} />
+                        return <SingleProductUpdate key={index+start} product={product} />
                       })}
                     </tbody>
                   </table>
@@ -690,7 +720,11 @@ class ManageCategory extends React.Component {
         listCategory:[]
       }
       this.handleChange = this.handleChange.bind(this);
+      this.clickNewCateogry = this.clickNewCateogry.bind(this);
       main = this;
+    }
+    clickNewCateogry(){
+      newCategory.setState({addSuccess:0})
     }
     componentDidMount(){
       var that = this;
@@ -760,7 +794,7 @@ class ManageCategory extends React.Component {
                 </div>
               </div>
               <div class="text-right" style={{marginTop: "50px", paddingRight: "10%"}}>
-                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-new-category">
+                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-new-category" onClick={this.clickNewCateogry}>
                   <i class="icon-plus-sign"></i>New Category
                 </button>
               </div>

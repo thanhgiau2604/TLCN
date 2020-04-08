@@ -4,7 +4,7 @@ const Product = require("../models/Product");
 const Category = require("../models/ProductCategory");
 const ObjectId = require('mongodb').ObjectId;
 const multer = require("multer");
-
+const fs = require("fs");
 function getProducts(res) {
     Product.find(function (err, data) {
         if (err) {
@@ -73,6 +73,23 @@ module.exports = function(app){
         })
     });
 
+    app.post("/deleteImageCategory",parser,(req,res)=>{
+        const path = req.body.path;
+        const deletePath = "./public/"+path;
+        if (path!="/img/banner/defaultCategory.jpg"){
+            fs.unlink(deletePath,(err)=>{
+                if (err){
+                    console.log(err);
+                    res.json(0); 
+                } else {
+                    res.json(1);
+                }
+            })
+        } else {
+            res.json(1);
+        }
+    })
+
     app.post("/addNewCategory",parser,(req,res)=>{
         var category = new Category(JSON.parse(req.body.category));
         category.save(function(err,data){
@@ -91,12 +108,6 @@ module.exports = function(app){
         const description = cat.description;
         const listProduct = cat.listProduct;
         const image = cat.image;
-        console.log(id);
-        console.log(name)
-        console.log(quanty)
-        console.log(description)
-        console.log(listProduct)
-        console.log(image)
         Category.update({_id:id},{$set:{name:name,quanty:quanty,description:description,
         listProduct:listProduct, image:image}},function(err,data){
             if (err){

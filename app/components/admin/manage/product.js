@@ -146,7 +146,6 @@ class NewProduct extends React.Component {
     })  
   }
   handleImage(image){
-    var that = this;
     let imageFormObj = new FormData();
     imageFormObj.append("imageName","multer-image"+Date.now());
     imageFormObj.append("imageData",image);
@@ -289,27 +288,21 @@ class NewProduct extends React.Component {
               </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-              {/* <div className="row" style={{ marginTop: "10px" }}> */}
                 <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                   <img src={this.state.image1} width="100%"/>
                   <label>Image 1:</label>
                   <input type="file" className="form-control" ref="image1" onChange={(e) => this.ChangeImage1(e)} required />
                 </div>
-              {/* </div> */}
-              {/* <div className="row" style={{ marginTop: "10px" }}> */}
                 <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                   <img src={this.state.image2} width="100%"/>
                   <label>Image 2:</label>
                   <input type="file" className="form-control" ref="image2" onChange={(e) => this.ChangeImage2(e)} />
                 </div>
-              {/* </div> */}
-              {/* <div className="row" style={{ marginTop: "10px" }}> */}
                 <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                   <img src={this.state.image3} width="100%"/>
                   <label>Image 3:</label>
                   <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)} />
                 </div>
-              {/* </div> */}
             </div>
           </div>
           {notifyAddSuccess}

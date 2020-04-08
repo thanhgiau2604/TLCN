@@ -9,10 +9,9 @@ import MainContentSection2 from '../homepage/main-content-section2'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
-import ReactGA from 'react-ga'
 var {Provider} = require("react-redux");
 var store = require("../../store");
-
+import ReactGA from 'react-ga'
 function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);

@@ -9,7 +9,11 @@ import CopyRight from '../common/copyright'
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
-
+import ReactGA from 'react-ga'
+function initizeAnalytics(){
+    ReactGA.initialize("UA-155099372-1");
+    ReactGA.pageview(window.location.pathname + window.location.search);
+}
 class RowFavorite extends React.Component{
     constructor(props){
         super(props);
@@ -245,6 +249,7 @@ class ListFavorite extends React.Component {
         window.location.replace("/login");
     }
     render() {
+        initizeAnalytics();
         $.post("/addNewDay",function(data){
             
         })
