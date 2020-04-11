@@ -66,6 +66,25 @@ module.exports = function(app){
         fileFilter: fileFilter
     })
 
+    const storageImageComment = multer.diskStorage({
+        destination: (req, file, cb) => cb(null, "./public/img/comments"),
+        filename: (req, file, cb) => {
+            nameImage = Date.now() + file.originalname;
+            cb(null, nameImage);
+        }
+    });
+
+    const uploadImageComment = multer({
+        storage: storageImageComment,
+        limits: {
+            fileSize: 1024 * 1024 * 5
+        },
+        fileFilter: fileFilter
+    })
+
+    app.post("/uploadImageComment",uploadImageComment.single("imageData"),(req, res, next) => {
+        res.send(nameImage);
+    });
     app.post("/upload", upload.single("imageData"), (req, res, next) => {
         res.send(nameImage);
     });

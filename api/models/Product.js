@@ -22,10 +22,11 @@ const ProductSchema = new Schema({
         vote5: Number
     },
     comments: [{
-        id: String,
-        idUser: Schema.Types.ObjectId,
+        id: Number,
+        username: String,
         content: String,
-        date: Date
+        date: String,
+        images: [{image:String}]
     }],
     category: Schema.Types.ObjectId,
     createat: Number,

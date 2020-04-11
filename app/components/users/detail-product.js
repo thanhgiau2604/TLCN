@@ -247,11 +247,133 @@ class DetailProduct extends React.Component{
     </div>)
     }
 }
+var infor;
+var constImage = "/img/product/default.png";
+var image1, image2, image3;
+class CommentBox extends React.Component {
+    constructor(props){
+        super(props);
+        this.handleComment = this.handleComment.bind(this);
+        this.state = {
+            image1: constImage,
+            image2: constImage,
+            image3: constImage,
+            addImage: false
+        }
+        this.changeStatus = this.changeStatus.bind(this);
+        this.ChangeImage1 = this.ChangeImage1.bind(this);
+        this.ChangeImage2 = this.ChangeImage2.bind(this);
+        this.ChangeImage3 = this.ChangeImage3.bind(this);
+        this.handleImage = this.handleImage.bind(this);
+    }
+    handleComment(){
+        var comment = this.refs.yourComment.value;
+        var that = this;
+        $.post("/addComment",{idProduct: localStorage.getItem('curproduct'),content:comment,
+        image1: this.state.image1, image2: this.state.image2, image3: this.state.image3,
+        username: localStorage.getItem("username")},function(data){
+            document.getElementById("taComment").value = "";
+            infor.setState({listComment:data});
+            that.setState({image1:constImage, image2: constImage, image3: constImage, addImage:false});
+
+        })
+    }
+    handleImage(image){
+        let imageFormObj = new FormData();
+        imageFormObj.append("imageName","multer-image"+Date.now());
+        imageFormObj.append("imageData",image);
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+                type: "POST",
+                url: "/uploadImageComment",
+                data: imageFormObj,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    return (resolve("/img/comments/"+data));
+                },
+                fail: function(err) {
+                    return (reject(new Error(err)));
+                }
+            })
+        })
+    }
+    ChangeImage1(e){
+        var that = this;
+        image1 = e.target.files[0];
+        $.post("/deleteImage", {path: that.state.image1}, function (data) {
+            if (data == 1) {
+                that.handleImage(image1).then(res => that.setState({image1:res}), err => console.log(err));
+            }
+        })  
+    }
+    ChangeImage2(e){
+        var that = this;
+        image2 = e.target.files[0];
+        $.post("/deleteImage", {path: that.state.image2}, function (data) {
+            if (data == 1) {
+                that.handleImage(image2).then(res => that.setState({image2:res}), err => console.log(err));
+            }
+        })  
+    }
+    ChangeImage3(e){
+        var that = this;
+        image3 = e.target.files[0];
+        $.post("/deleteImage", {path: that.state.image3}, function (data) {
+            if (data == 1) {
+                that.handleImage(image3).then(res => that.setState({image3:res}), err => console.log(err));
+            }
+        })  
+    }
+    changeStatus(){
+        this.setState({addImage:!this.state.addImage});
+}
+    render(){
+        return (<div class="yourComment">
+            <textarea placeholder="Bạn đánh giá thế nào về sản phẩm?" class="urTextComment" rows="3" ref="yourComment" id="taComment">
+            </textarea>
+            { this.state.addImage==false ? <button class="btn btn-default btnImage" onClick={this.changeStatus}>Thêm hình ảnh</button> :
+                <div><button class="btn btn-default btnImage" onClick={this.changeStatus}>Ẩn hình ảnh</button>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 imageDivComment">
+                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <img src={this.state.image1} ref="image1" width="80%" />
+                        <label>Image 1:</label>
+                        <input type="file" className="form-control" onChange={(e) => this.ChangeImage1(e)} required />
+                    </div>
+                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <img src={this.state.image2} ref="image2" width="80%" />
+                        <label>Image 2:</label>
+                        <input type="file" className="form-control" onChange={(e) => this.ChangeImage2(e)} />
+                    </div>
+                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <img src={this.state.image3} ref="image3" width="80%" />
+                        <label>Image 3:</label>
+                        <input type="file" className="form-control" onChange={(e) => this.ChangeImage3(e)} />
+                    </div>
+                </div></div>}
+            <button class="postComment btn btn-primary" onClick={this.handleComment}>Bình luận</button>
+        </div>)
+    }
+}
 class InforProduct extends React.Component{
     constructor(props){
         super(props);
+        this.state = {
+            listComment: []
+        }
+        infor = this;
+    }
+    componentDidMount(){
+        var that = this;
+        $.post("/showComment",{idProduct: localStorage.getItem('curproduct')},function(data){
+            that.setState({listComment:data});
+        })
     }
     render(){
+        var htmlComment = "";
+        if (localStorage.getItem("token")){
+            htmlComment = <CommentBox/>
+        }
         return(<div class="row">
         <div class="col-sm-12">
             <div class="product-more-info-tab">
@@ -290,6 +412,29 @@ class InforProduct extends React.Component{
                                 </div>
                             </div>
                             <a href="#" class="write-review-btn">Đánh giá của bạn!</a>
+                                <div class="comment">
+                                    <h3>BÌNH LUẬN</h3>
+                                    {htmlComment}
+                                    <h3>Tất cả bình luận <span style={{ color: 'red', fontWeight: '700' }}>({this.state.listComment.length})</span></h3>
+                                    {this.state.listComment.map(function(comment,index){
+                                        return(<div class="singleComment">
+                                            <h4 style={{ fontWeight: "700", color: "blue" }}>{comment.username} 
+                                               <span style={{color:"black"}}> : {comment.date}</span>
+                                            </h4>
+                                            <div class="contentComment">
+                                                <p class="textComment">{comment.content}</p>
+                                            </div>
+                                            <div class="row displayImage">
+                                                {comment.images.map(function(image,index){
+                                                    return (
+                                                    <div className="col-xs-3 col-sm-3 col-md-4 col-lg-3">
+                                                    <img src={image.image} width="50%" />
+                                                </div>)
+                                                })}
+                                            </div>
+                                        </div>)
+                                    })}
+                                </div>
                         </div>
                     </div>
                 </div>									

@@ -38,6 +38,15 @@ function getCurrentDay() {
     nowday = day.toString()+month.toString()+year.toString();
     return nowday;
 }
+function getCurrentDayTime() {
+    offset = "+7";
+    var d = new Date();
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    var day = new Date(utc + (3600000*offset));
+    var nowday = day.getDate().toString()+"-"+(day.getMonth()+1).toString()+"-"+day.getFullYear().toString()+" "
+    +day.getHours().toString()+":"+day.getMinutes().toString();
+    return nowday;
+  }
 module.exports = function(app){
     app.get("/detailproduct",(req,res)=>{
         res.render("chitietsanpham");
@@ -271,6 +280,41 @@ module.exports = function(app){
                     }
                 });
             }
+        })
+    })
+
+    app.post("/showComment",parser,(req,res)=>{
+        const idProduct= req.body.idProduct;
+        Product.findOne({_id:idProduct},(err,data)=>{
+            if (err){
+                throw err;
+            } else {
+                var arr = data.comments;
+                arr.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0)); 
+                res.json(arr);
+            }
+        })
+
+    })
+    app.post("/addComment",parser,(req,res)=>{
+        const idProduct = req.body.idProduct;
+        const content = req.body.content;
+        const id = parseInt(Date.now().toString());
+        const userName = req.body.username;
+        const arrImage = [];
+        var constImage = "/img/product/default.png";
+        if (req.body.image1!=constImage) arrImage.push({image: req.body.image1});
+        if (req.body.image2!=constImage) arrImage.push({image: req.body.image2});
+        if (req.body.image3!=constImage)arrImage.push({image: req.body.image3});
+        const singleComment = {
+            id:id,
+            username:userName,
+            content:content,
+            date: getCurrentDayTime(),
+            images: arrImage
+        }
+        Product.findOneAndUpdate({_id:idProduct},{"$push":{comments:singleComment}},{new:true},(err,data)=>{
+            res.json(data.comments.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0)));
         })
     })
 }

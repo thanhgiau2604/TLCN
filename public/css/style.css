@@ -74,6 +74,10 @@ Version: 1.0
     padding: 0
 }
 
+p.textComment {
+    margin: 3px;
+}
+
 .col-sm-12.col-lg-5.epass {
     float: right;
 }
@@ -4790,4 +4794,45 @@ td {
   transform: translate(-50%, -50%);
   width: 100%;
   
+}
+
+.comment {
+	padding-top:15px;
+	padding-left: 15px;
+}
+
+.singleComment {
+	margin-top: 10px;
+	padding: 10px 10px;
+	background: #efecec;
+}
+
+.singleComment .contentComment {
+	padding-left: 20px;
+	margin: 0px 0px;
+}
+
+ .urTextComment {
+	width: 100%;
+	display: block;
+	resize: none;
+	} 
+
+.yourComment {
+	margin-top:10px;
+}
+
+.postComment {
+	margin-top:10px;
+	margin-left: auto;
+	display: block;
+}
+.imageDivComment {
+	padding-top: 15px;
+}
+.btnImage {
+	margin-top:10px
+}
+.displayImage {
+	margin-top:15px
 }
