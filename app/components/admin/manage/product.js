@@ -14,6 +14,7 @@ class Products extends React.Component {
     this.updateProduct = this.updateProduct.bind(this);
     this.deleteProduct = this.deleteProduct.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
+    this.restoreProduct = this.restoreProduct.bind(this);
   }
   updateProduct(){
     var constImage = "/img/product/default.png";
@@ -29,8 +30,13 @@ class Products extends React.Component {
   }
   confirmDelete(){
     $.post("/deleteProduct",{id:localStorage.getItem("curDelete")},function(data){
-      if (Math.ceil(data.lProduct.length / 5)<main.state.curpage)
-          main.setState({curpage:main.state.curpage-1});
+      // if (Math.ceil(data.lProduct.length / 5)<main.state.curpage)
+      //     main.setState({curpage:main.state.curpage-1});
+      main.setState({listProduct:data.lProduct});
+    })
+  }
+  restoreProduct(){
+    $.post("/restoreProduct",{id:this.props.product._id},function(data){
       main.setState({listProduct:data.lProduct});
     })
   }
@@ -48,7 +54,13 @@ class Products extends React.Component {
         if (i + 1 < that.props.product.sizes.length) strSize += ", "
       });
     }
-    return (<tr class='active'>
+    var isDeleted=0, classDeleted ="";
+    console.log(this.props.product.isDeleted);
+    if (this.props.product.isDeleted) { 
+      isDeleted=this.props.product.isDeleted;
+      classDeleted = 'deleted';
+    }
+    return (<tr class={'active '+classDeleted}>
       <td>{this.props.stt}</td>
       <td>{this.props.product.name}</td>
       <td><img src={this.props.product.image.image1} style={{ width: '120px' }} />
@@ -66,6 +78,8 @@ class Products extends React.Component {
         data-target="#modalDeleteProduct" onClick={this.deleteProduct}>
           <i class='icon-trash'></i>
         </a>
+        {isDeleted==1 ? <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer',marginLeft:'3px'}} title='Restore' onClick={this.restoreProduct}>
+        <i class='icon-undo'></i></a> : ""}
       </td>
       {/* modal xoa product */}
       <div class="modal fade" id="modalDeleteProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -219,7 +233,8 @@ class NewProduct extends React.Component {
         "vote5": 0
       },
       createat: parseInt(Date.now().toString()),
-      views:0
+      views:0,
+      isDeleted: 0
     }
     this.AddToDatabase(newP);
     e.preventDefault();

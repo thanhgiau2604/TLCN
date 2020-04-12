@@ -45,8 +45,7 @@ class Users extends React.Component {
     if (status == 1) {
       sttUser = "deleted";
       htmlRestore = <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer',marginLeft:'3px'}} title='Restore' onClick={this.restoreUser}>
-        <i class='icon-undo'></i>
-      </a>
+        <i class='icon-undo'></i></a>
     }
     return(<tr class='active'>
     <td>{this.props.stt}</td>

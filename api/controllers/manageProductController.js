@@ -145,7 +145,15 @@ module.exports = function(app){
     })
     app.post("/deleteProduct",parser,(req,res)=>{
         const id = req.body.id;
-        Product.remove({_id:id},function(err,data){
+        // Product.remove({_id:id},function(err,data){
+        //     if (err){
+        //         throw err;
+        //     } else 
+        //     {
+        //         getProducts(res);
+        //     }
+        // });
+        Product.update({_id:id},{$set:{isDeleted:1}},function(err,data){
             if (err){
                 throw err;
             } else 
@@ -155,6 +163,18 @@ module.exports = function(app){
         })
     });
 
+    //restore the product deleted by admin
+    app.post("/restoreProduct",parser,(req,res)=>{
+        const id = req.body.id;
+        Product.update({_id:id},{$set:{isDeleted:0}},function(err,data){
+            if (err){
+                throw err;
+            } else 
+            {
+                getProducts(res);
+            }
+        })
+    });
     //search product
     app.post("/searchproduct",parser,(req,res)=>{
         const keysearch = req.body.keysearch;

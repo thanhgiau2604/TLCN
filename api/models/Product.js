@@ -30,7 +30,8 @@ const ProductSchema = new Schema({
     }],
     category: Schema.Types.ObjectId,
     createat: Number,
-    views: Number
+    views: Number,
+    isDeleted: Number
 });
 
 module.exports = mongoose.model('products',ProductSchema);

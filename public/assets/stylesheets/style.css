@@ -19,3 +19,9 @@
   .removesize {
       margin-left: 10px;
   }
+  .table>tbody>tr.deleted>td {
+    background-color: #f5c4be;
+   } 
+   .table>tbody>tr.deleted:hover>td {
+    background-color: #f5c4be;
+   } 

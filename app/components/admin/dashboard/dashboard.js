@@ -6,7 +6,12 @@ import Tool from '../common/tool'
 import $ from 'jquery'
 import { Bar } from "react-chartjs-2";
 import { Line } from "react-chartjs-2";
+import Dropdown from 'react-dropdown';
 var main;
+const options = [
+  'today', 'yesterday', '7lastdays', 'last28days'
+];
+const defaultOption = options[2];
 class Products extends React.Component {
   constructor(props) {
     super(props);
@@ -162,10 +167,19 @@ class Dashboard extends React.Component{
           activeUsers:0
         }
         main=this;
+        this._onSelect = this._onSelect.bind(this);
     }
     componentDidMount(){
       var that = this;
-      $.get("/getMetrics",function(data){
+      $.post("/getMetrics",{option:"last7days"},function(data){
+        console.log(data);
+        that.setState({arrMetrics:data.metrics, arrUsers:data.users, arrUsersBefore: data.usersBefore,
+        activeUsers: data.countUser});
+      })
+    }
+    _onSelect(selectedOption){
+      var that = this;
+      $.post("/getMetrics",{option:selectedOption.value},function(data){
         console.log(data);
         that.setState({arrMetrics:data.metrics, arrUsers:data.users, arrUsersBefore: data.usersBefore,
         activeUsers: data.countUser});
@@ -190,9 +204,15 @@ class Dashboard extends React.Component{
             </div>
           </div>
           <div class='panel-body'>      
-            <div class='progress'>                
+            <div class='progress'> 
+                                 
             </div>
-            <div>         
+            <div>
+            <Dropdown options={options} onChange={this._onSelect} value={defaultOption} 
+                    placeholder="Select an option" />;  
+            </div>
+            <div class="row">
+              <div class="fourMetrics">         
                 <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
                   <div class="card card-stats">
                     <div class="card-body">
@@ -277,67 +297,68 @@ class Dashboard extends React.Component{
                     </div>
                   </div>
                 </div>
-                <div class="row metrics">
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <Line
-                      data={{
-                        labels: this.state.arrUsers.map(element => element[0]),
-                        datasets: [
-                          {
-                            data: this.state.arrUsers.map(element=>element[1]),
-                            label: "Last 7 days",
-                            borderColor: "#3e95cd",
-                            fill: false
-                           },
-                          {
-                            data: this.state.arrUsersBefore.map(element => element[1]),
-                            label: "A week ago ",
-                            borderColor: "#8e5ea2",
-                            fill: false,
-                            borderDash: [5, 15]
-                           }
-                          // {
-                          //   data: [168, 170, 178, 190, 203, 276, 408, 547, 675, 734],
-                          //   label: "Europe",
-                          //   borderColor: "#3cba9f",
-                          //   fill: false
-                          // },
-                          // {
-                          //   data: [40, 20, 10, 16, 24, 38, 74, 167, 508, 784],
-                          //   label: "Latin America",
-                          //   borderColor: "#e8c3b9",
-                          //   fill: false
-                          // },
-                          // {
-                          //   data: [6, 3, 2, 2, 7, 26, 82, 172, 312, 433],
-                          //   label: "North America",
-                          //   borderColor: "#c45850",
-                          //   fill: false
-                          // }
-                        ]
-                      }}
-                      options={{
-                        title: {
-                          display: true,
-                          text: "The number of users from 7 days ago to today"
-                        },
-                        legend: {
-                          display: true,
-                          position: "bottom"
-                        }
-                      }}
-                    />
-                  </div>               
-                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 activeUser">
-                    <div>
-                      <h3>Active Users right now</h3>
-                    </div>
-                    <div>
-                    <h1>{this.state.activeUsers}</h1>
-                    </div>
-                  </div>              
-                </div>          
+              </div>
             </div>
+              <div class=" row metrics">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                  <Line
+                    data={{
+                      labels: this.state.arrUsers.map(element => element[0]),
+                      datasets: [
+                        {
+                          data: this.state.arrUsers.map(element => element[1]),
+                          label: "Last 7 days",
+                          borderColor: "#3e95cd",
+                          fill: false
+                        },
+                        {
+                          data: this.state.arrUsersBefore.map(element => element[1]),
+                          label: "A week ago ",
+                          borderColor: "#8e5ea2",
+                          fill: false,
+                          borderDash: [5, 15]
+                        }
+                        // {
+                        //   data: [168, 170, 178, 190, 203, 276, 408, 547, 675, 734],
+                        //   label: "Europe",
+                        //   borderColor: "#3cba9f",
+                        //   fill: false
+                        // },
+                        // {
+                        //   data: [40, 20, 10, 16, 24, 38, 74, 167, 508, 784],
+                        //   label: "Latin America",
+                        //   borderColor: "#e8c3b9",
+                        //   fill: false
+                        // },
+                        // {
+                        //   data: [6, 3, 2, 2, 7, 26, 82, 172, 312, 433],
+                        //   label: "North America",
+                        //   borderColor: "#c45850",
+                        //   fill: false
+                        // }
+                      ]
+                    }}
+                    options={{
+                      title: {
+                        display: true,
+                        text: "The number of users from 7 days ago to today"
+                      },
+                      legend: {
+                        display: true,
+                        position: "bottom"
+                      }
+                    }}
+                  />
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 activeUser">
+                  <div>
+                    <h3>Active Users right now</h3>
+                  </div>
+                  <div>
+                    <h1>{this.state.activeUsers}</h1>
+                  </div>
+                </div>
+              </div>          
             <div class='page-header'>
               <h4>Access the products</h4>
             </div>

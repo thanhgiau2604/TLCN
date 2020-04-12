@@ -94,3 +94,6 @@
 .formImageCategory input {
     margin-top: 10px;
 }
+.deleted {
+    background-color: salmon;
+}  

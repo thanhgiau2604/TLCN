@@ -344,30 +344,53 @@ module.exports = function(app,adminRouter,jwt){
             }
         })
     });
-    app.get("/getMetrics",(req,res)=>{
+    app.post("/getMetrics",parser,(req,res)=>{
         async function getData() {
             const defaults = {
               'auth': jwtoken,
               'ids': 'ga:' + process.env.VIEW_ID,
             }
+            const op = req.body.option;
+            var startDate, endDate;
+            var startDate1, endDate1;
+            console.log(op);
+            switch (op) {
+                case "today":
+                    startDate= "today"; endDate= "today";
+                    startDate1= "yesterday"; endDate1= "yesterday";
+                    break;
+                case "yesterday":
+                    startDate= "yesterday"; endDate= "yesterday";
+                    startDate1= "2daysAgo"; endDate1= "2daysAgo";
+                    break;
+                case "last7days":
+                    startDate= "7daysAgo"; endDate= "yesterday";
+                    startDate1= "14daysAgo"; endDate1= "8daysAgo";
+                    break;
+                case "last28days":
+                    startDate= "28daysAgo"; endDate= "yesterday";
+                    startDate1= "56daysAgo"; endDate1= "28daysAgo";
+                    break;
+            }
+            console.log(startDate+" "+endDate);
             const response = await jwtoken.authorize()
             const result = await google.analytics('v3').data.ga.get({
                 ...defaults,
-                'start-date': '7daysAgo',
-                'end-date': 'yesterday',
+                'start-date': startDate,
+                'end-date': endDate,
                 "metrics": "ga:users, ga:sessions, ga:bounceRate, ga:avgSessionDuration"
             });
             const result1 = await google.analytics('v3').data.ga.get({
                 ...defaults,
-                'start-date': '7daysAgo',
-                'end-date': 'yesterday',
+                'start-date': startDate,
+                'end-date': endDate,
                 "metrics": "ga:users",
                 "dimensions": "ga:date"
             })
             const result2 = await google.analytics('v3').data.ga.get({
                 ...defaults,
-                'start-date': '14daysAgo',
-                'end-date': '8daysAgo',
+                'start-date': startDate1,
+                'end-date': endDate1,
                 "metrics": "ga:users",
                 "dimensions": "ga:date"
             })
