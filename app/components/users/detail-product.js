@@ -127,7 +127,11 @@ class DetailProduct extends React.Component{
                 if (e.size == this.state.cursize) {
                     for (var i=0; i<e.colors.length; i++){
                         if (i==0) firstColor = e.colors[0].color;
-                        var color = <div><label><input type="radio" name="optionColor" value={e.colors[i].color}/>{e.colors[i].color}</label><br/></div>
+                        var status=false;
+                        if (e.colors[i].quanty==0)  status=true;
+                        var color = <div><label>
+                            <input type="radio" name="optionColor" value={e.colors[i].color} disabled={status}/>{e.colors[i].color}</label>
+                            <br/></div>
                         htmlColor.push(color);
                     }
                 }
@@ -275,7 +279,6 @@ class CommentBox extends React.Component {
             document.getElementById("taComment").value = "";
             infor.setState({listComment:data});
             that.setState({image1:constImage, image2: constImage, image3: constImage, addImage:false});
-
         })
     }
     handleImage(image){

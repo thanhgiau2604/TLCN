@@ -177,12 +177,19 @@ class ModalViewCategory extends React.Component{
                     </thead>
                     <tbody>
                       {lCurProduct.map(function(product,index){
+                        var strCost = product.costs[product.costs.length - 1].cost.toString();
+                        var cost = "", count = 0;
+                        for (var i = strCost.length - 1; i >= 0; i--) {
+                          count++;
+                          cost = strCost[i] + cost;
+                          if (count % 3 == 0) cost = " " + cost;
+                        }
                         return(
                           <tr class='active' key={index}>
                             <td>{start+index+1}</td>
                             <td>{product.name}</td>
                             <td><img src={product.image.image1} width="120px" /></td>
-                            <td>{product.cost}</td>
+                            <td>{cost}</td>
                             <td>{product.quanty}</td>
                             <td>{product.description}</td>
                           </tr>)
@@ -244,11 +251,18 @@ class SingleProduct extends React.Component {
     this.setState({add:true});
   }
   render(){
+    var strCost = this.props.product.costs[this.props.product.costs.length-1].cost.toString();
+		var cost ="", count=0;
+		for (var i=strCost.length-1; i>=0; i--){
+			count++;
+			cost=strCost[i]+cost;
+			if (count%3==0) cost=" "+cost;
+		}
     return(<tr class='active'>
     <td>{this.props.product.stt}</td>
     <td>{this.props.product.name}</td>
     <td><img src={this.props.product.image.image1} width="120px" /></td>
-    <td>{this.props.product.cost}</td>
+    <td>{cost}</td>
     <td>{this.props.product.quanty}</td>
     <td>{this.props.product.description}</td>
     <td><button class="btn btn-success" id="btnAddProduct" onClick={this.addProduct} disabled={!this.state.add}>Add</button>

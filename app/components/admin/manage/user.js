@@ -40,21 +40,18 @@ class Users extends React.Component {
     var status = this.props.status;
     if (!sdt) sdt="N/A";
     if (!dob) dob="N/A";
-    var sttUser = "active";
-    var htmlRestore = "";
-    if (status == 1) {
-      sttUser = "deleted";
-      htmlRestore = <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer',marginLeft:'3px'}} title='Restore' onClick={this.restoreUser}>
-        <i class='icon-undo'></i></a>
+    var isDeleted=0, classDeleted ="";
+    if (status) { 
+      isDeleted=status;
+      classDeleted = 'deleted';
     }
-    return(<tr class='active'>
+    return(<tr class={'active '+classDeleted}>
     <td>{this.props.stt}</td>
     <td>{this.props.firstname}</td>
     <td>{this.props.lastname}</td>
     <td>{this.props.email}</td>
     <td>{sdt}</td>
     <td>{dob}</td>
-    <td>{sttUser}</td>
     <td class='action'>
       <a class='btn btn-info' data-toggle='tooltip' style={{cursor:'pointer'}} title='Edit' onClick={this.editUser}>
         <i class='icon-edit'></i>
@@ -63,7 +60,8 @@ class Users extends React.Component {
         data-target="#modalDeleteUser" onClick={this.deleteUser}>
         <i class='icon-trash'></i>
       </a>
-      {htmlRestore}
+      {isDeleted==1 ? <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer',marginLeft:'3px'}} title='Restore' onClick={this.restoreUser}>
+        <i class='icon-undo'></i></a> : ""}
     </td>
     <div class="modal fade" id="modalDeleteUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -387,7 +385,6 @@ class ManageUsers extends React.Component{
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Date Of Birth</th>
-                <th>Status</th>
                 <th class='actions'>
                   Actions
                 </th>

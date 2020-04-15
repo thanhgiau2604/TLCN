@@ -128,13 +128,15 @@ module.exports = function(app){
         const description =req.body.description;
         const sizes = JSON.parse(req.body.sizes);
         const image = JSON.parse(req.body.image);
+        const quanty = parseInt(req.body.quanty);
+        console.log("quanty="+quanty)
         var newcosts = new Array();
         newcosts = JSON.parse(oldcost);
         if (cost!=newcosts[newcosts.length-1].cost)
         {
             newcosts.push({cost:cost});
         }
-        Product.update({_id:id},{$set:{name:name,costs:newcosts,description:description,image:image,
+        Product.update({_id:id},{$set:{name:name, quanty:quanty,costs:newcosts,description:description,image:image,
         sizes:sizes}},function(err,data){
             if (err){
                 throw err;

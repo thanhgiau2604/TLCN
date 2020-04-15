@@ -2,8 +2,8 @@ const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({extended:false});
 const User = require("../models/users");
 const Order = require("../models/order");
+const Product = require("../models/Product");
 const sendmail = require("./mail");
-const opencage = require('opencage-api-client');
 var Statistic = require("../models/statistic");
 const NodeGeocoder = require('node-geocoder');
 const distance = require('google-distance');
@@ -35,7 +35,6 @@ module.exports = function(app,apiRouter){
     app.get("/checkout",(req,res)=>{
         res.render("checkout");
     })
-
     app.post("/saveOrder",parser,(req,res)=>{
         const order = JSON.parse(req.body.order);
         Order.create(order,function(err,data){
@@ -108,42 +107,7 @@ module.exports = function(app,apiRouter){
                 });
               }
           });
-        
-        // opencage.geocode({q: address}).then(data => {
-        //     if (data.status.code == 200) {
-        //       if (data.results.length > 0) {
-        //         var place = data.results[0];
-        //         var p1 = {
-        //             lat: 10.8496468,
-        //             lng: 106.7716404
-        //         }
-        //         var p2 = place.geometry;
-        //         var distance = HaversineInKM(p1.lat,p1.lng,p2.lat,p2.lng);
-        //         var result = Math.round(3000*distance);
-        //         Order.update({ _id: id }, { $set: { address: place.formatted, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
-        //             if (err) {
-        //                 throw err;
-        //             } else {
-        //                 Order.findOne({ _id: id }, function (err, data) {
-        //                     if (err) {
-        //                         throw err;
-        //                     } else {
-        //                         res.json({err:0,data:data,ship:result});
-        //                     }
-        //                 })
-        //             }
-        //         });
-        //       } else {
-        //           res.json({err:1})
-        //       }
-        //     } else  {
-        //       console.log('have a problem');
-        //     }
-        //   }).catch(error => {
-        //     console.log('error', error.message);
-        //   });
     });
-
     app.post("/sendmail",parser,(req,res) => {
         const order = JSON.parse(req.body.order);
         const ship = req.body.ship;
@@ -177,65 +141,78 @@ module.exports = function(app,apiRouter){
 
     app.get("/checkout/:email/:code",(req,res)=>{
         var currentDay = getCurrentDay();
-        Statistic.findOne({day:currentDay},function(err,data){
-            if (data){
-                var listOrderToday = data.orderproduct;
-                // console.log(listOrderToday);
-                Order.findOne({email:req.params.email,code:req.params.code},function(err,order){
-                    if (order)
-                        var dataProduct = order.listproduct;       
+        var dataProduct=[];
+        Statistic.findOne({ day: currentDay }, function (err, data) {
+            if (data) {
+                var listOrderToday = data.orderproduct; //Tất cả order trong ngày
+                Order.findOne({ email: req.params.email, code: req.params.code }, function (err, order) {
+                    console.log(order);
+                    if (order && order.status == "unconfirmed") { //nếu trạng thái unconfirmed mới thực hiện cập nhật
+                        console.log("vào dc")
+                        dataProduct = order.listproduct;
                         var ok;
-                        var result=[];
-                        for (var i=0; i<dataProduct.length; i++){
-                            ok=false;
-                            for (var j=0; j<listOrderToday.length; j++){
-                                if (dataProduct[i].id.equals(listOrderToday[j].id)){
-                                    ok=true;
+                        var result = [];
+                        for (var i = 0; i < dataProduct.length; i++) {
+                            ok = false;
+                            for (var j = 0; j < listOrderToday.length; j++) {
+                                if (dataProduct[i].id.equals(listOrderToday[j].id)) {
+                                    ok = true;
                                     var itemresult = {
-                                        id:dataProduct[i].id,
-                                        count: dataProduct[i].quanty+listOrderToday[j].count
+                                        id: dataProduct[i].id,
+                                        count: dataProduct[i].quanty + listOrderToday[j].count
                                     }
                                     result.push(itemresult);
                                     break;
                                 }
                             }
-                            if (ok==false){
+                            if (ok == false) {
                                 var itemresult = {
-                                    id:dataProduct[i].id,
-                                    count:dataProduct[i].quanty
+                                    id: dataProduct[i].id,
+                                    count: dataProduct[i].quanty
                                 }
                                 result.push(itemresult);
                             }
                         }
-                        // console.log(result);
-                        Statistic.update({day:currentDay},{$set:{orderproduct:result}},function(err,data){
-                            if (err){
+
+                        for (var i = 0; i < dataProduct.length; ++i) {
+                            Product.findOneAndUpdate(
+                                { _id: dataProduct[i].id },
+                                { $inc: { "sizes.$[filter1].colors.$[filter2].quanty": -dataProduct[i].quanty } },
+                                { arrayFilters: [{ 'filter2.color': dataProduct[i].color }, { 'filter1.size': dataProduct[i].size }] },
+                                function (err, data) {
+                                })
+                        }
+                        for (var i = 0; i < dataProduct.length; ++i) {
+                            Product.findOneAndUpdate({ _id: dataProduct[i].id }, { $inc: { quanty: -dataProduct[i].quanty } }, function (err, data) {
+
+                            })
+                        }
+                        //cập nhật vào thống kê
+                        Statistic.update({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
+                            if (err) console.log(err);
+                        });
+                        //Cập nhật trạng thái confirmed
+                        Order.update({ email: req.params.email, code: req.params.code }, { $set: { status: "confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
+                            if (err) {
                                 throw err;
                             } else {
-                                console.log(data);
+                                let txtTo = req.params.email;
+                                let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
+                                let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
+                                sendmail(txtTo, txtSubject, txtContent);
+                                User.update({ email: req.params.email }, { $set: { cart: [] } }, function (err, data) {
+                                    if (err) {
+                                        throw err;
+                                    } else {
+                                        res.redirect("/");
+                                    }
+                                })
                             }
                         });
-                })
-            }
-        });
-        Order.update({email:req.params.email,code:req.params.code},{$set:{status:"confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
-            if (err){
-                throw err;
-            } else {
-                let txtTo = req.params.email;
-                let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
-                let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " +req.params.code+"</h3>";
-                sendmail(txtTo,txtSubject,txtContent);
-
-                User.update({email:req.params.email},{$set:{cart:[]}},function(err,data){
-                    if (err){
-                        throw err;
-                    } else {
-                        res.redirect("/");
                     }
                 })
             }
-        });
+        });    
     });
 
     app.post("/addNewDay",(req,res)=>{

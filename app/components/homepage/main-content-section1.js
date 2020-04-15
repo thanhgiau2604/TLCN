@@ -248,9 +248,11 @@ class NewProduct extends React.Component{
 						<div className="row">
 							<div className="home2-sale-carousel">
 								{this.state.listNew.map(function(product,index){
+									var status = "NEW";
+									if (product.quanty==0) status="Hết hàng";
 									return <Product2 key={index} id={product._id}
 									name={product.name} image={product.image.image1} 
-									costs={product.costs} desc="NEW"/>
+									costs={product.costs} desc={status}/>
 								})}
 							</div>
 						</div>
@@ -281,9 +283,11 @@ class SaleProduct extends React.Component {
 			<div className="row">				
 				<div className="home2-sale-carousel">					
 						{this.state.listSale.map(function (product, index) {
+							var status = "SALE";
+							if (product.quanty==0) status="Hết hàng";
 							return <Product2 key={index} id={product._id}
 								name={product.name} image={product.image.image1} 
-								costs={product.costs} desc="SALE"/>
+								costs={product.costs} desc={status}/>
 						})}											
 				</div>										
 			</div>

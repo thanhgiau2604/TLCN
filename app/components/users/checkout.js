@@ -180,7 +180,7 @@ class Summary extends React.Component {
             sumproductcost: sumCost,
             sumshipcost: 0,
             listproduct: arrProduct,
-            status: "unconfimred",
+            status: "unconfirmed",
             code: -1
         }
         $.post("/saveOrder",{order:JSON.stringify(order)},function(data){

@@ -365,6 +365,7 @@ class UpdateProduct extends React.Component{
     const idProduct = this.state.product._id;
     console.log("id product: "+idProduct);
     var sizes = [];
+    var countProduct=0;
     for (var i=1; i<=this.state.curSizes; i++){
       const strSize = this.refs["size"+i].value;
       const strColor = this.refs["color"+i].value;
@@ -378,6 +379,7 @@ class UpdateProduct extends React.Component{
              color:ColorQuanty[0],
              quanty:parseInt(ColorQuanty[1])
            }
+           countProduct += color.quanty;
            colors.push(color);
       });
       size.colors = colors;
@@ -389,10 +391,10 @@ class UpdateProduct extends React.Component{
       image3: this.state.image3
     }
     var that = this;
-
+    console.log(countProduct);
     $.post("/updateProduct", {
       id: idProduct, name: name, cost: cost, oldcost: JSON.stringify(that.state.product.costs),
-      description: description, sizes: JSON.stringify(sizes), image: JSON.stringify(image)
+      description: description, sizes: JSON.stringify(sizes), image: JSON.stringify(image), quanty:countProduct
     }, function (data) {
       if (data.success == 1) {
         main.setState({ listProduct: data.lProduct });

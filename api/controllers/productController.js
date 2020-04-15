@@ -102,7 +102,7 @@ module.exports = function(app){
     app.post("/updateProductHistory",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
         const email = req.body.email;
-        console.log(idproduct+" "+email);
+        // console.log(idproduct+" "+email);
         User.findOneAndUpdate({email:email},{'$pull':{historylist:{id:idproduct}}},{new:true},function(err,data){
             if (err){
                 throw err;
@@ -119,7 +119,7 @@ module.exports = function(app){
                         var count  = 0;
                         const forLoop = async _ => {
                             for (var i = 0; i < data.historylist.length; i++) {
-                                console.log(data.historylist[i]);
+                                // console.log(data.historylist[i]);
                                 await Product.findOne({ _id: data.historylist[i].id }, function (err, da) {
                                     count++;
                                     if (da){
@@ -178,7 +178,7 @@ module.exports = function(app){
                         if (err){
                             throw err;
                         } else {
-                            console.log(data);
+                            // console.log(data);
                             getCart(data,res);
                         }
                     })
@@ -187,7 +187,7 @@ module.exports = function(app){
                         if (err){
                             throw err;
                         } else {
-                            console.log(data);
+                            // console.log(data);
                             getCart(data,res);
                         }
                     })
@@ -199,7 +199,7 @@ module.exports = function(app){
     app.post("/removeFromCart",parser,(req,res)=>{
         const id = req.body.id;
         const email = req.body.email;
-        console.log(id);
+        // console.log(id);
         User.findOneAndUpdate({email:email},{'$pull':{cart:{idProduct:id}}},{new:true},function(err,data){
             if (err){
                 throw err;

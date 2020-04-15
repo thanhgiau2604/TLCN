@@ -107,7 +107,7 @@ class Product1 extends React.Component{
 				<div className="single-product-item">
 					<div className="product-image">
 						<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
-						<a href="#" className="new-mark-box"></a>
+						<a href="#" className="new-mark-box">{this.props.status}</a>
 						<div className="overlay-content">
 							<ul>
 								<li><a title="Xem sản phẩm" style={{ cursor: 'pointer' }} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
@@ -164,8 +164,10 @@ class Sneaker extends React.Component {
 				<div className="row">				
 					<div className="feartured-carousel">
 						{this.state.listSneaker.map(function(sneaker,index){
+							var status ="";
+							if (sneaker.quanty==0) status = "Hết hàng"
 							return <Product1 key={index} name={sneaker.name} costs={sneaker.costs}
-							image={sneaker.image.image1} id={sneaker._id}/>
+							image={sneaker.image.image1} id={sneaker._id} status={status}/>
 						})}												
 					</div>
 				</div>
@@ -198,8 +200,10 @@ class Sports extends React.Component {
 				<div className="row">									
 					<div className="feartured-carousel">									
 				       {this.state.listSport.map(function(sport,index){
+						   var status ="";
+						   if (sport.quanty==0) status = "Hết hàng"
 						   return <Product1 key={index} name={sport.name} costs={sport.costs}
-						   image={sport.image.image1} id={sport._id}/>
+						   image={sport.image.image1} id={sport._id} status={status}/>
 					   })}			
 					</div>					
 				</div>
@@ -232,8 +236,10 @@ class Pumps extends React.Component {
 				<div className="row">							
 					<div className="feartured-carousel">
 						{this.state.listPumps.map(function(pumps,index){
+							var status="";
+							if (pumps.quanty==0) status="Hết hàng";
 							return <Product1 key={index} name={pumps.name} costs={pumps.costs}
-							image={pumps.image.image1} id={pumps._id}/>
+							image={pumps.image.image1} id={pumps._id} status={status}/>
 						})}																								
 					</div>		
 				</div>
@@ -265,8 +271,10 @@ class Kids extends React.Component{
 				<div className="row">
 					<div className="feartured-carousel">	
 					{this.state.listKids.map(function(kid,index){
+						var status="";
+						if (kid.quanty==0) status="Hết hàng";
 						return <Product1 key={index} name={kid.name} costs={kid.costs}
-						image={kid.image.image1} id={kid._id}/>
+						image={kid.image.image1} id={kid._id} status={status}/>
 					})}												
 					</div>							
 				</div>
