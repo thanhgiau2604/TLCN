@@ -38,13 +38,14 @@ module.exports = function(app){
     app.post("/updateStatus",parser,(req,res)=>{
         const status = req.body.status;
         const id = req.body.id;
-        console.log(status);
-        console.log(id);
         Order.update({_id:id},{$set:{status:status}},function(err,data){
             if (err){
                 throw err;
             } else {
-                getOrder(res);
+                Order.updateMany({_id:id},{$set:{"listproduct.$[].status":status}},function(err,data){
+                    if (err) console.log(err);
+                    getOrder(res);
+                })
             }
         })
     })

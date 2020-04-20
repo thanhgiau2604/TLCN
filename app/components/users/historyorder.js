@@ -14,18 +14,33 @@ function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
 }
+var tableOrder;
 class RowOrder extends React.Component{
     constructor(props){
         super(props);
+        this.cancelOrder = this.cancelOrder.bind(this);
+    }
+    cancelOrder(){
+        $.post("/cancelOrder",{idProduct:this.props.idProduct, idOrder:this.props.idOrder,
+            email:localStorage.getItem('email')},function(data){
+                console.log(data);
+            tableOrder.setState({listorder:data});
+        });
     }
     render()
     {
+        var disable = true;
+        if (this.props.statusProduct=="confirmed" || this.props.statusProduct=="unconfirmed"){
+            disable=false;
+        }
         return(<tr className="text-center">
         <td className="text-center">{this.props.stt}</td>
         <td className="text-center">{this.props.name}</td>
         <td className="text-center"><img src={this.props.image} width="100px" height="100px"/></td>
         <td className="text-center">{this.props.time}</td>
-        <td className="text-center"><button className="btn btn-warning">{this.props.status}</button></td>
+        <td className="text-center"><button className={"btn btn-warning "+this.props.statusProduct}>{this.props.statusProduct}</button></td>
+        {this.props.statusProduct!="canceled" ? <td className="text-center"><button className="btn btn-primary" disabled={disable}
+        onClick={this.cancelOrder}>Hủy đơn hàng</button></td>:""}
       </tr>)
     }
 }
@@ -41,6 +56,7 @@ class TableOrder extends React.Component{
         this.changePage = this.changePage.bind(this);
         this.previousPage = this.previousPage.bind(this);
         this.nextPage = this.nextPage.bind(this);
+        tableOrder=this;
     }
     componentDidMount(){
         var that = this;
@@ -109,12 +125,13 @@ class TableOrder extends React.Component{
                         <th className="text-center">Hình ảnh</th>
                         <th className="text-center">Ngày đặt hàng</th>
                         <th className="text-center">Trạng thái</th>
+                        <th className="text-center">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     {lCurOrder.map(function (order, index) {
-                        return <RowOrder key={index} name={order.product.name}
-                            status={order.status} stt={start+index + 1} time={order.time} image={order.product.image} />
+                        return <RowOrder key={index} name={order.product.name} idProduct={order.product._id} statusProduct = {order.product.status}
+                            status={order.status} stt={start+index + 1} time={order.time} image={order.product.image} idOrder={order.idOrder}/>
                     })}
                 </tbody>
             </table>
@@ -279,7 +296,7 @@ class HistoryOrder extends React.Component{
                 </div>
             </div>
             <div className="row">					
-                <div className="col-lg-8 col-md-8 col-sm-10 col-xs-12 col-md-push-2">
+                <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12 col-md-push-1">
                     <h2 className="page-title text-center">DANH SÁCH ĐƠN HÀNG</h2>
                     <div className="wishlists-chart table-responsive">
                         <TableOrder/>

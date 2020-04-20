@@ -50,7 +50,10 @@ class Product1 extends React.Component{
 		if (!token){
 			$("#modal-authen").modal('show');
 		} else {
-			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			const thisSize = this.props.size[0].size;
+			const thisColor= this.props.size[0].colors[0].color;
+			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email'),
+			color: thisColor, size:thisSize},function(data){
 				var {dispatch} = main.props;
 				dispatch({type:"UPDATE_PRODUCT",newcart:data});
 			})
@@ -167,7 +170,7 @@ class Sneaker extends React.Component {
 							var status ="";
 							if (sneaker.quanty==0) status = "Hết hàng"
 							return <Product1 key={index} name={sneaker.name} costs={sneaker.costs}
-							image={sneaker.image.image1} id={sneaker._id} status={status}/>
+							image={sneaker.image.image1} id={sneaker._id} status={status} size={sneaker.sizes}/>
 						})}												
 					</div>
 				</div>
@@ -203,7 +206,7 @@ class Sports extends React.Component {
 						   var status ="";
 						   if (sport.quanty==0) status = "Hết hàng"
 						   return <Product1 key={index} name={sport.name} costs={sport.costs}
-						   image={sport.image.image1} id={sport._id} status={status}/>
+						   image={sport.image.image1} id={sport._id} status={status} size={sport.sizes}/>
 					   })}			
 					</div>					
 				</div>
@@ -239,7 +242,7 @@ class Pumps extends React.Component {
 							var status="";
 							if (pumps.quanty==0) status="Hết hàng";
 							return <Product1 key={index} name={pumps.name} costs={pumps.costs}
-							image={pumps.image.image1} id={pumps._id} status={status}/>
+							image={pumps.image.image1} id={pumps._id} status={status} size={pumps.sizes}/>
 						})}																								
 					</div>		
 				</div>
@@ -274,7 +277,7 @@ class Kids extends React.Component{
 						var status="";
 						if (kid.quanty==0) status="Hết hàng";
 						return <Product1 key={index} name={kid.name} costs={kid.costs}
-						image={kid.image.image1} id={kid._id} status={status}/>
+						image={kid.image.image1} id={kid._id} status={status} size={kid.sizes}/>
 					})}												
 					</div>							
 				</div>

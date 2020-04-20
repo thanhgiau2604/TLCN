@@ -3690,7 +3690,7 @@ ul.step li.step-done span a{
 	width: 130px;
 }
 #cart-summary tbody td.cart-description {
-
+    padding-left: 10%;
 }
 #cart-summary tbody td.cart-unit {
 	width:12.2%;
@@ -3705,7 +3705,7 @@ ul.step li.step-done span a{
 	width: 8%;
 }
 .text-right, #cart-summary tbody td.cart-unit, #cart-summary tbody td.cart-total {
-	text-align: right;
+	text-align: center;
 }
 .table tbody > tr > td.cart_quantity {
 	width: 70px;
@@ -4835,4 +4835,69 @@ td {
 }
 .displayImage {
 	margin-top:15px
+}
+.singleAdReponse {
+    margin-left: 5%;
+    background: #d5fbd8;
+	border-radius: 10px;
+	margin-top: 7px;
+}
+.divComment {
+    padding: 2px 10px;
+} 
+.unconfirmed {
+	   background-color: #e8b568;
+	   border-color:#e8b568;
+   }
+   .confirmed {
+	   background-color: #f3ab26;
+	   border-color: #f3ab26;
+   }
+   .processing {
+	background-color: #ef9f0d;
+	border-color: #ef9f0d;
+   }
+   .processed {
+	   background-color: #ef8a0d;
+	   border-color: #ef8a0d;
+   }
+   .waitship {
+	background-color: #f36500;
+	border-color: #f36500;
+   }
+   .shipping {
+	background-color: #f3512d;
+	border-color: #f3512d;
+   }
+   .canceled {
+	background-color: #747584;
+	border-color: #747584;
+   }
+   .canceled:hover {
+	background-color: #747584;
+	border-color: #747584;
+   }
+   .fail {
+	background-color: #4652ea;
+	border-color: #4652ea;
+   }
+   .success {
+	background-color: #1b9805; 
+	border-color: #1b9805;
+   }
+   .response {
+	cursor: pointer;
+	color: orangered;
+    padding-top:5px;
+    margin-left: 20px;
+   }
+   #total_product {
+	   font-weight: 800;
+	   color: blue;
+   }
+   .table > thead > tr > th {
+	   text-align: center;
+   }
+   .table > thead > tr > td {
+	text-align: center;
 }

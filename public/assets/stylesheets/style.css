@@ -25,3 +25,48 @@
    .table>tbody>tr.deleted:hover>td {
     background-color: #f5c4be;
    } 
+   .comment {
+	padding-top:15px;
+	padding-left: 15px;
+}
+
+.singleComment {
+	margin-top: 10px;
+	padding: 10px 10px;
+	background: #efecec;
+}
+
+.singleComment .contentComment {
+	padding-left: 20px;
+	margin: 0px 0px;
+}
+
+ .urTextComment {
+	width: 100%;
+	display: block;
+	resize: none;
+	} 
+
+.yourComment {
+	margin-top:10px;
+}
+
+.postComment {
+	margin-top:10px;
+	margin-left: auto;
+	display: block;
+}
+.imageDivComment {
+	padding-top: 15px;
+}
+.btnImage {
+	margin-top:10px
+}
+.displayImage {
+	margin-top:15px
+}
+.response {
+    color: blue;
+    padding-top:5px;
+    margin-left: 20px;
+}

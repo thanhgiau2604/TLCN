@@ -59,7 +59,10 @@ class Product extends React.Component{
 		if (!token){
 			$("#modal-authen").modal('show');
 		} else {
-			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			const thisSize = this.props.size[0].size;
+			const thisColor= this.props.size[0].colors[0].color;
+			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email'),
+			color: thisColor, size:thisSize},function(data){
 				var {dispatch} = main.props;
 				dispatch({type:"UPDATE_PRODUCT",newcart:data});
 			})

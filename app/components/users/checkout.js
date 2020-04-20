@@ -82,7 +82,7 @@ class SingleProduct extends React.Component {
 			cost=strCost[i]+cost;
 			if (count%3==0) cost=" "+cost;
         }     
-        var strTotal = this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty);
+        var strTotal = (this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty)).toString();
         var tcost ="" , count1=0;
         for (var i=strTotal.length-1; i>=0; i--){
 			count1++;
@@ -125,8 +125,8 @@ class SingleProduct extends React.Component {
                         <i class="fa fa-trash-o"></i></a>
                 </span>
             </td>
-            <td class="cart-total">
-                <span class="price">{tcost}</span>
+            <td class="cart-total text-center">
+                <span class="price"><b>{tcost}đ</b></span>
             </td>
         </tr>)
     }
@@ -148,7 +148,6 @@ class Summary extends React.Component {
             data.forEach(pro => {
                 arrayCostProduct.push(pro.product.costs[pro.product.costs.length-1].cost*pro.quanty);
             });
-            console.log(arrayCostProduct);
             that.setState({listProduct:data,sumcost:arrayCostProduct})
         })
     }
@@ -162,7 +161,8 @@ class Summary extends React.Component {
                 quanty: pro.quanty,
                 color: pro.color,
                 size: pro.size,
-                cost: pro.product.costs[pro.product.costs.length-1].cost
+                cost: pro.product.costs[pro.product.costs.length-1].cost,
+                status:"unconfirmed"
             }
             arrProduct.push(product);
         });

@@ -26,7 +26,8 @@ const ProductSchema = new Schema({
         username: String,
         content: String,
         date: String,
-        images: [{image:String}]
+        images: [{image:String}],
+        responses: [{id:Number,content: String, date:String, images:[{image:String}]}]
     }],
     category: Schema.Types.ObjectId,
     createat: Number,

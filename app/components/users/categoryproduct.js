@@ -63,7 +63,10 @@ class ProductGird extends React.Component{
 		if (!token){
 			$("#modal-authen").modal('show');
 		} else {
-			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+            const thisSize = this.props.size[0].size;
+			const thisColor= this.props.size[0].colors[0].color;
+            $.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email'),
+            color: thisColor, size:thisSize},function(data){
 				var {dispatch} = main.props;
 				dispatch({type:"UPDATE_PRODUCT",newcart:data});
 			})
@@ -169,7 +172,10 @@ class ProductList extends React.Component{
 		if (!token){
 			$("#modal-authen").modal('show');
 		} else {
-			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+            const thisSize = this.props.size[0].size;
+			const thisColor= this.props.size[0].colors[0].color;
+            $.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email'),
+            color: thisColor, size:thisSize},function(data){
 				var {dispatch} = main.props;
 				dispatch({type:"UPDATE_PRODUCT",newcart:data});
 			})
@@ -283,10 +289,10 @@ class OptionProduct extends React.Component{
         var min = 100000*(choosePrice-1);
         listAllProduct.forEach(product => {
             var cost = product.costs[product.costs.length-1].cost;
-            if (cost>min && cost<max){
+            if ((cost>min && cost<max) || (choosePrice==0)){
                 if (chooseSize!=""){
                     for (var i=0; i<product.sizes.length; i++){
-                        if (product.sizes[i].size==chooseSize){
+                        if (product.sizes[i].size==chooseSize || chooseSize==0){
                             curProduct.push(product);
                             break;
                         }
@@ -303,12 +309,12 @@ class OptionProduct extends React.Component{
         var curProduct = [];
         listAllProduct.forEach(product => {
             for (var i=0; i<product.sizes.length; i++){
-                if (product.sizes[i].size==chooseSize){
+                if (chooseSize==0 || product.sizes[i].size==chooseSize){
                     if (choosePrice!=""){
                         var max = 100000 * choosePrice;
                         var min = 100000 * (choosePrice - 1);
                         var cost = product.costs[product.costs.length-1].cost;
-                        if (cost>min && cost<max){
+                        if ((cost>min && cost<max) || (choosePrice==0)){
                             curProduct.push(product);
                         }
                     } else {
@@ -330,6 +336,7 @@ class OptionProduct extends React.Component{
             <div class="product-single-sidebar">
                 <span class="sidebar-title">LỌC THEO GIÁ</span>        
                     <div class="radio" onChange={this.changePrice}>
+                        <label><input type="radio" name="optionPrice" value="0"/>Tất cả</label> <br/>
                         <label><input type="radio" name="optionPrice" value="1"/> &lt; 100 000 VND</label>
                         <label><input type="radio" name="optionPrice" value="2"/>100 000 - 200 000 VND</label>
                         <label><input type="radio" name="optionPrice" value="3"/>200 000 - 300 000 VND</label>
@@ -341,6 +348,7 @@ class OptionProduct extends React.Component{
             <div class="product-single-sidebar">
                 <span class="sidebar-title">LỌC THEO SIZE</span>
                     <div class="radio" onChange={this.changeSize}>
+                        <label><input type="radio" name="optionSize" value="0"/>Tất cả</label> <br/>
                         <label><input type="radio" name="optionSize" value="35" />Size 35</label> <br/>
                         <label><input type="radio" name="optionSize" value="36" />Size 36</label> <br/>
                         <label><input type="radio" name="optionSize" value="37" />Size 37</label> <br/>

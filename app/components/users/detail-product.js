@@ -7,6 +7,7 @@ import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
 import {FacebookShareButton,GoogleButton} from 'react-social-buttons';
+import Viewer from 'react-viewer';
 
 var {Provider} = require("react-redux");
 var store = require("../../store");
@@ -353,8 +354,99 @@ class CommentBox extends React.Component {
                         <label>Image 3:</label>
                         <input type="file" className="form-control" onChange={(e) => this.ChangeImage3(e)} />
                     </div>
-                </div></div>}
+                </div>
+                </div>}
             <button class="postComment btn btn-primary" onClick={this.handleComment}>Bình luận</button>
+        </div>)
+    }
+}
+var display;
+class DisplayImage extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            visible: false,
+            pos:0
+        }
+        this.setVisible = this.setVisible.bind(this);
+        this.setDisable = this.setDisable.bind(this);
+        display=this;
+    }
+    setVisible(index){
+        console.log(this.props.listImage);
+        this.setState({visible:true, pos:index});
+    }
+    setDisable(){
+        this.setState({visible:false})
+    }
+    render(){
+        var that = this;
+        return (
+            <div>
+                {this.props.listImage.map(function (image, index) {
+                    return (<img src={image.src} width="20%" onClick={() => that.setVisible(index)}/>)
+                })}
+              <Viewer
+              visible={this.state.visible}
+              onClose={this.setDisable }
+              images={this.props.listImage}
+              activeIndex={this.state.pos}
+              zIndex="100000"
+              />
+            </div>
+          );
+    }
+}
+class SingleComment extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            showResponse: false
+        }
+        this.displayResponse = this.displayResponse.bind(this);
+    }
+    displayResponse(){
+        this.setState({showResponse:!this.state.showResponse});
+    }
+    render(){
+        var list=[];
+        if (this.props.comment.images)
+        list = this.props.comment.images.map(image => ({src:image.image,alt:''}));
+        return(<div>
+            <div class="singleComment">
+                <h4 style={{ fontWeight: "700", color: "blue" }}>{this.props.comment.username}
+                    <span style={{ color: "black" }}> : {this.props.comment.date}</span>
+                </h4>
+                <div class="contentComment">
+                    <p class="textComment">{this.props.comment.content}</p>
+                </div>
+                {this.props.comment.images.length > 0 ?
+                    <div class="row displayImage">
+                        <DisplayImage listImage={list}/>
+                    </div> : <div></div>
+                }
+                <a class="response" onClick={this.displayResponse}>{this.props.comment.responses.length>0?"Đã phản hồi"
+                :""}
+                </a>
+            </div>
+            {this.state.showResponse==true ? 
+            this.props.comment.responses.length > 0 ?
+                this.props.comment.responses.map(function (response, index) {
+                    return (<div class="singleAdReponse">
+                        <div class="divComment">
+                            <h4 style={{ fontWeight: "700", color: "red" }}>ADMIN
+                            <span style={{ color: "black" }}> : {response.date}</span>
+                            </h4>
+                            <div class="contentComment">
+                                <p class="textComment">{response.content}</p>
+                            </div>
+                            {response.images.length > 0 ?
+                                <div class="row displayImage">
+                                    <DisplayImage listImage={response.images.map(image => ({src:image.image,alt:''}))}/>
+                                </div> : <div></div>
+                            }
+                        </div></div>)
+                }) : <div></div> : <div></div>}
         </div>)
     }
 }
@@ -420,22 +512,7 @@ class InforProduct extends React.Component{
                                     {htmlComment}
                                     <h3>Tất cả bình luận <span style={{ color: 'red', fontWeight: '700' }}>({this.state.listComment.length})</span></h3>
                                     {this.state.listComment.map(function(comment,index){
-                                        return(<div class="singleComment">
-                                            <h4 style={{ fontWeight: "700", color: "blue" }}>{comment.username} 
-                                               <span style={{color:"black"}}> : {comment.date}</span>
-                                            </h4>
-                                            <div class="contentComment">
-                                                <p class="textComment">{comment.content}</p>
-                                            </div>
-                                            <div class="row displayImage">
-                                                {comment.images.map(function(image,index){
-                                                    return (
-                                                    <div className="col-xs-3 col-sm-3 col-md-4 col-lg-3">
-                                                    <img src={image.image} width="50%" />
-                                                </div>)
-                                                })}
-                                            </div>
-                                        </div>)
+                                        return (<SingleComment key={index} comment={comment}/>)
                                     })}
                                 </div>
                         </div>

@@ -99,4 +99,12 @@
    } 
    .table>tbody>tr.deleted:hover>td {
     background-color: #f5c4be;
-   }  
+   } 
+   .singleAdReponse {
+    margin-left: 5%;
+    background: #d5fbd8;
+    border-radius: 10px;
+}
+.divComment {
+    padding: 2px 10px;
+} 

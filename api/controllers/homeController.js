@@ -155,7 +155,8 @@ module.exports = function(app,apiRouter){
                         var pro = {
                             product: product,
                             time: order.time,
-                            status: order.status
+                            status: order.status,
+                            idOrder: order._id
                         }
                         arrResult.push(pro);
                     });
@@ -164,6 +165,36 @@ module.exports = function(app,apiRouter){
             }
         })
     });
+
+
+    app.post("/cancelOrder",parser,(req,res)=>{
+        const idProduct = req.body.idProduct;
+        const idOrder = req.body.idOrder;
+        const email = req.body.email;
+        Order.findOneAndUpdate({_id:idOrder,"listproduct._id":idProduct},
+        {$set:{"listproduct.$.status":"canceled"}},{new:true},function(err,data){
+            Order.find({email:email},function(err,data){
+                if (err){
+                    throw err;
+                } else {
+                    var arrResult=[];
+                    data.forEach(order => {
+                        order.listproduct.forEach(product => {
+                            var pro = {
+                                product: product,
+                                time: order.time,
+                                status: order.status,
+                                idOrder: order._id
+                            }
+                            arrResult.push(pro);
+                        });
+                    });
+                    console.log(arrResult);
+                    res.send(arrResult);
+                }
+            })
+        })
+    })
 
     app.get("/getSneaker",(req,res)=>{
         ProductCategory.find({name:"Sneaker Product"},function(err,data){

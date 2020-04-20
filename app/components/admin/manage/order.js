@@ -97,7 +97,7 @@ class UpdateOrder extends React.Component{
     return(<div className='text-center'>
       <h4 style={{color:'blue'}}>Update status of order</h4>
       <select ref='status'>
-        <option value="unconfirm">Unconfirm</option>
+        <option value="unconfirmed">Unconfirmed</option>
         <option value="confirmed">Confirmed</option>
         <option value="processing">Processing</option>
         <option value="processed">Processed</option>

@@ -13,6 +13,15 @@ function getProducts(res) {
         }
     })
 }
+function getCurrentDayTime() {
+    offset = "+7";
+    var d = new Date();
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    var day = new Date(utc + (3600000*offset));
+    var nowday = day.getDate().toString()+"-"+(day.getMonth()+1).toString()+"-"+day.getFullYear().toString()+" "
+    +day.getHours().toString()+":"+day.getMinutes().toString();
+    return nowday;
+  }
 module.exports = function(app){
     app.get("/getAllProducts",(req,res)=>{
         Product.find({},function(err,data){
@@ -147,14 +156,6 @@ module.exports = function(app){
     })
     app.post("/deleteProduct",parser,(req,res)=>{
         const id = req.body.id;
-        // Product.remove({_id:id},function(err,data){
-        //     if (err){
-        //         throw err;
-        //     } else 
-        //     {
-        //         getProducts(res);
-        //     }
-        // });
         Product.update({_id:id},{$set:{isDeleted:1}},function(err,data){
             if (err){
                 throw err;
@@ -186,6 +187,29 @@ module.exports = function(app){
             } else {
                 res.send(data);
             }
+        })
+    });
+
+    //reponse comment
+    app.post("/addResponse",parser,(req,res)=>{
+        const idProduct = req.body.idProduct;
+        const idComment = req.body.idComment;
+        const content = req.body.content;
+        const id = parseInt(Date.now().toString());
+        const arrImage = [];
+        var constImage = "/img/product/default.png";
+        if (req.body.image1!=constImage) arrImage.push({image: req.body.image1});
+        if (req.body.image2!=constImage) arrImage.push({image: req.body.image2});
+        if (req.body.image3!=constImage)arrImage.push({image: req.body.image3});
+        const singleComment = {
+            id:id,
+            content:content,
+            date: getCurrentDayTime(),
+            images: arrImage
+        }
+        Product.findOneAndUpdate({_id:idProduct,"comments._id":idComment},
+            {"$push":{"comments.$.responses":singleComment}},{new:true},(err,data)=>{
+            res.json(data.comments.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0)));
         })
     })
 }

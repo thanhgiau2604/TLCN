@@ -85,10 +85,14 @@ class Product2 extends React.Component{
 	}
 	addToCart(){
 		const token = localStorage.getItem('token');
+
 		if (!token){
 			$("#modal-authen").modal('show');
 		} else {
-			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email')},function(data){
+			const thisSize = this.props.size[0].size;
+			const thisColor= this.props.size[0].colors[0].color;
+			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email'), 
+		color: thisColor, size:thisSize},function(data){
 				var {dispatch} = main.props;
 				dispatch({type:"UPDATE_PRODUCT",newcart:data});
 			})
@@ -252,7 +256,7 @@ class NewProduct extends React.Component{
 									if (product.quanty==0) status="Hết hàng";
 									return <Product2 key={index} id={product._id}
 									name={product.name} image={product.image.image1} 
-									costs={product.costs} desc={status}/>
+									costs={product.costs} desc={status} size={product.sizes}/>
 								})}
 							</div>
 						</div>
@@ -287,7 +291,7 @@ class SaleProduct extends React.Component {
 							if (product.quanty==0) status="Hết hàng";
 							return <Product2 key={index} id={product._id}
 								name={product.name} image={product.image.image1} 
-								costs={product.costs} desc={status}/>
+								costs={product.costs} desc={status} size={product.sizes}/>
 						})}											
 				</div>										
 			</div>

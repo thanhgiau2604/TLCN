@@ -4,10 +4,10 @@ import Navbar from '../common/navbar'
 import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
-
+import Viewer from 'react-viewer';
 
 var main;
-var curEditProduct;
+var curEditProduct, commentClass, singleCommentClass;
 class Products extends React.Component {
   constructor(props) {
     super(props);
@@ -15,6 +15,15 @@ class Products extends React.Component {
     this.deleteProduct = this.deleteProduct.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
     this.restoreProduct = this.restoreProduct.bind(this);
+    this.showComment = this.showComment.bind(this);
+  }
+  showComment(){
+    var that = this;
+    localStorage.setItem("idProduct",this.props.product._id);
+    $.post("/showComment",{idProduct:this.props.product._id},function(data){
+      console.log(data);
+      commentClass.setState({listComments:data, idProduct:that.props.product._id});
+    })
   }
   updateProduct(){
     var constImage = "/img/product/default.png";
@@ -30,8 +39,6 @@ class Products extends React.Component {
   }
   confirmDelete(){
     $.post("/deleteProduct",{id:localStorage.getItem("curDelete")},function(data){
-      // if (Math.ceil(data.lProduct.length / 5)<main.state.curpage)
-      //     main.setState({curpage:main.state.curpage-1});
       main.setState({listProduct:data.lProduct});
     })
   }
@@ -80,6 +87,10 @@ class Products extends React.Component {
         </a>
         {isDeleted==1 ? <a class='btn btn-primary' data-toggle='tooltip' style={{ cursor: 'pointer',marginLeft:'3px'}} title='Restore' onClick={this.restoreProduct}>
         <i class='icon-undo'></i></a> : ""}
+        <a class='btn btn-primary' data-toggle='tooltip' style={{cursor:'pointer'}} title='comments' data-toggle="modal" 
+        data-target="#modalDisplayComment" onClick={this.showComment}>
+          <i class='icon-comments'></i>
+        </a>
       </td>
       {/* modal xoa product */}
       <div class="modal fade" id="modalDeleteProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -104,7 +115,6 @@ class Products extends React.Component {
     </tr>)
   }
 }
-var isChange1=false,isChange2=false,isChange3=false;
 var classNewProduct;
 var constImage = "/img/product/default.png";
 var image1, image2, image3;
@@ -330,7 +340,235 @@ class NewProduct extends React.Component {
     </div>)
   }
 }
-
+var constImage = "/img/product/default.png";
+var image1, image2, image3;
+class CommentBox extends React.Component {
+    constructor(props){
+        super(props);
+        this.handleComment = this.handleComment.bind(this);
+        this.state = {
+            image1: constImage,
+            image2: constImage,
+            image3: constImage,
+            addImage: false
+        }
+        this.changeStatus = this.changeStatus.bind(this);
+        this.ChangeImage1 = this.ChangeImage1.bind(this);
+        this.ChangeImage2 = this.ChangeImage2.bind(this);
+        this.ChangeImage3 = this.ChangeImage3.bind(this);
+        this.handleImage = this.handleImage.bind(this);
+    }
+    handleComment(){
+        var comment = this.refs.yourComment.value;
+        var that = this;
+        console.log("idProduct="+localStorage.getItem("idProduct"));
+        $.post("/addResponse",{idProduct:localStorage.getItem("idProduct"),content:comment,
+        image1: this.state.image1, image2: this.state.image2, image3: this.state.image3,
+        idComment:this.props.id},function(data){
+            document.getElementById("taComment").value = "";
+            commentClass.setState({listComments:data});
+            that.setState({image1:constImage, image2: constImage, image3: constImage, addImage:false});
+        })
+    }
+    handleImage(image){
+        let imageFormObj = new FormData();
+        imageFormObj.append("imageName","multer-image"+Date.now());
+        imageFormObj.append("imageData",image);
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+                type: "POST",
+                url: "/uploadImageComment",
+                data: imageFormObj,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    return (resolve("/img/comments/"+data));
+                },
+                fail: function(err) {
+                    return (reject(new Error(err)));
+                }
+            })
+        })
+    }
+    ChangeImage1(e){
+        var that = this;
+        image1 = e.target.files[0];
+        $.post("/deleteImage", {path: that.state.image1}, function (data) {
+            if (data == 1) {
+                that.handleImage(image1).then(res => that.setState({image1:res}), err => console.log(err));
+            }
+        })  
+    }
+    ChangeImage2(e){
+        var that = this;
+        image2 = e.target.files[0];
+        $.post("/deleteImage", {path: that.state.image2}, function (data) {
+            if (data == 1) {
+                that.handleImage(image2).then(res => that.setState({image2:res}), err => console.log(err));
+            }
+        })  
+    }
+    ChangeImage3(e){
+        var that = this;
+        image3 = e.target.files[0];
+        $.post("/deleteImage", {path: that.state.image3}, function (data) {
+            if (data == 1) {
+                that.handleImage(image3).then(res => that.setState({image3:res}), err => console.log(err));
+            }
+        })  
+    }
+    changeStatus(){
+        this.setState({addImage:!this.state.addImage});
+}
+    render(){
+        return (<div class="yourComment">
+            <textarea placeholder="Your response?" class="urTextComment" rows="3" ref="yourComment" id="taComment">
+            </textarea>
+            { this.state.addImage==false ? <button class="btn btn-default btnImage" onClick={this.changeStatus}>Add images</button> :
+                <div><button class="btn btn-default btnImage" onClick={this.changeStatus}>Hide images</button>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 imageDivComment">
+                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <img src={this.state.image1} ref="image1" width="80%" />
+                        <label>Image 1:</label>
+                        <input type="file" className="form-control" onChange={(e) => this.ChangeImage1(e)} required />
+                    </div>
+                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <img src={this.state.image2} ref="image2" width="80%" />
+                        <label>Image 2:</label>
+                        <input type="file" className="form-control" onChange={(e) => this.ChangeImage2(e)} />
+                    </div>
+                    <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                        <img src={this.state.image3} ref="image3" width="80%" />
+                        <label>Image 3:</label>
+                        <input type="file" className="form-control" onChange={(e) => this.ChangeImage3(e)} />
+                    </div>
+                </div>
+                </div>}
+            <button class="postComment btn btn-primary" onClick={this.handleComment}>Post</button>
+        </div>)
+    }
+}
+var display;
+class DisplayImage extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            visible: false,
+            pos:0
+        }
+        this.setVisible = this.setVisible.bind(this);
+        this.setDisable = this.setDisable.bind(this);
+        display=this;
+    }
+    setVisible(index){
+        this.setState({visible:true, pos:index});
+    }
+    setDisable(){
+        this.setState({visible:false})
+    }
+    render(){
+      var that = this;
+        return (
+            <div>
+                {this.props.listImage.map(function (image, index) {
+                    return (<img src={image.src} width="20%" key={index} onClick={() => that.setVisible(index)}/>)
+                })}
+              <Viewer
+              visible={this.state.visible}
+              onClose={this.setDisable }
+              images={this.props.listImage}
+              activeIndex={this.state.pos}
+              zIndex="100000"
+              />
+            </div>
+          );
+    }
+}
+class SingleComment extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      responsing: false
+    }
+    this.isReply = this.isReply.bind(this);
+  }
+  isReply(){
+    this.setState({responsing:!this.state.responsing})
+  }
+  render(){
+    return(<div className="col-xs-10 col-sm-10 col-md-10 col-lg-10 col-md-push-1">
+    <div class="singleComment">
+      <h4 style={{ fontWeight: "700", color: "blue" }}>{this.props.comment.username}
+        <span style={{ color: "black" }}> : {this.props.comment.date}</span>
+      </h4>
+      <div class="contentComment">
+        <p class="textComment">{this.props.comment.content}</p>
+      </div>
+      {this.props.comment.images.length > 0 ?
+         
+        <div class="row displayImage">
+          <DisplayImage listImage={this.props.comment.images.map(image => ({src:image.image,alt:''}))}/>
+        </div> : <div></div>
+      }
+      <a class="response" onClick={this.isReply}>Reply</a>
+    </div>
+    {this.props.comment.responses.length>0 ?
+       this.props.comment.responses.map(function(response,index){
+        return (<div class="singleAdReponse">
+          <div class="divComment">
+          <h4 style={{ fontWeight: "700", color: "red" }}>ADMIN
+          <span style={{ color: "black" }}> : {response.date}</span>
+          </h4>
+          <div class="contentComment">
+            <p class="textComment">{response.content}</p>
+          </div>
+            {response.images.length > 0 ?
+              <div class="row displayImage">
+                <DisplayImage listImage={response.images.map(image => ({src:image.image,alt:''}))}/>
+              </div> : <div></div>
+            }
+        </div></div>)
+      }) :<div></div>}
+    {this.state.responsing==true ? <CommentBox id={this.props.comment._id}/> : ""}
+  </div>)
+  }
+}
+class Comments extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      listComments: [],
+      idProduct:""
+    }
+    commentClass=this;
+  }
+  render(){
+    return(<div className="modal fade right " id="modalDisplayComment" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div className="modal-dialog modal-full-height modal-right modal-lg" role="document">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h4 className="modal-title w-100 text-center" id="myModalLabel">List comments</h4>
+        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div className="modal-body">
+          <div className="row">
+            {this.state.listComments.map(function (comment, index) {
+              return(<SingleComment comment={comment} key={index}/>)})}
+            
+          </div>
+        </div>
+      <div className="modal-footer justify-content-center">
+        <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" className="btn btn-danger" type="submit">Add product</button>
+      </div>
+    </div>
+  </div>
+   </div>)
+  }
+}
 class UpdateProduct extends React.Component{
   constructor(props) {
     super(props);
@@ -716,6 +954,7 @@ class ManageProducts extends React.Component {
       </div>
       <NewProduct />
       <UpdateProduct/>
+      <Comments/>
     </div>)
   }
 }
