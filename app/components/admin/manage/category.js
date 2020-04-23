@@ -333,7 +333,8 @@ class ModalNewCategory extends React.Component{
       AllProduct: [],
       addSuccess:0,
       curpage: 1,
-      image: constImage
+      image: constImage,
+      processing: false
     }
     newCategory = this;
   }
@@ -389,10 +390,11 @@ class ModalNewCategory extends React.Component{
 
   addToDatabase(category){
     var that = this;
+    this.setState({processing:true});
     //send request to server to save category
     $.post("/addNewCategory",{category: JSON.stringify(category)},function(data){
         main.setState({listCategory:data});
-        that.setState({addSuccess:1})
+        that.setState({addSuccess:1,processing:false})
         that.refs.name.value = "";
         that.refs.description.value="";
         that.refs.image.value="";
@@ -518,6 +520,7 @@ class ModalNewCategory extends React.Component{
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-danger" onClick={this.saveCategory}>Save</button>
         </div>
+        {this.state.processing==true ? <div class="loader text-center"></div> : ""}
       </div>
     </div>
   </div>)
@@ -532,7 +535,8 @@ class ModalUpdateCategory extends React.Component {
       category: "",
       updateSuccess: 0,
       curpage:1,
-      image: ""
+      image: "",
+      processing: false
     }
     UpdateCategory = this;
     this.changeImage = this.changeImage.bind(this);
@@ -595,9 +599,10 @@ class ModalUpdateCategory extends React.Component {
   }
   updateToDatabase(category){
     var that = this;
+    this.setState({processing:true});
     $.post("/updateCategory",{category: JSON.stringify(category)},function(data){
       main.setState({listCategory:data});
-      that.setState({updateSuccess:1})
+      that.setState({updateSuccess:1,processing:false})
     })
   }
   updateCategory(){
@@ -721,6 +726,7 @@ class ModalUpdateCategory extends React.Component {
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-danger" onClick={this.updateCategory}>Save</button>
         </div>
+        {this.state.processing==true ? <div class="loader text-center"></div> : ""}
       </div>
     </div>
   </div>)

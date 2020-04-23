@@ -90,9 +90,13 @@ class EditForm extends React.Component{
     super(props);
     this.UpdateInfor = this.UpdateInfor.bind(this);
     this.Cancel = this.Cancel.bind(this);
+    this.state = {
+      processing: false
+    }
   }
   UpdateInfor(e){
     e.preventDefault();
+    this.setState({processing:true})
     const id = user.props.id;
     const firstname = this.firstName.value;
     const lastname = this.lastName.value;
@@ -101,11 +105,12 @@ class EditForm extends React.Component{
     const dob = this.dob.value;
     var password = this.password.value;
     if (!password) password = "";
-    console.log(password);
+    var that = this;
     $.post("/updateUser",{id:id,firstname:firstname, lastname:lastname, email:email, 
       phone:phone, dob:dob, password:password},function(data){
         arrUser = data;
       main.setState({edit:false,listUsers:data});
+      that.setState({processing:false})
     });
   }
   Cancel(){
@@ -149,6 +154,7 @@ class EditForm extends React.Component{
               <button type="button" class="btn btn-default" onClick={this.Cancel}
               style={{marginLeft:'10px'}}>Cancel</button>
             </div>  
+            {this.state.processing==true ? <div class="loader text-center"></div> : ""}
           </div>
         </form>
       </div>
@@ -161,8 +167,12 @@ class AddForm extends React.Component {
     super(props);
     this.AddUser = this.AddUser.bind(this);
     this.Cancel = this.Cancel.bind(this);
+    this.state = {
+      processing: false
+    }
   }
   AddUser(e){
+    this.setState({processing:true})
     e.preventDefault();
     const firstname = this.firstName.value;
     const lastname = this.lastName.value;
@@ -170,9 +180,11 @@ class AddForm extends React.Component {
     const phone = this.phone.value;
     const dob = this.dob.value;
     const password = this.password.value;
+    var that = this;
     $.post("/addUser",{firstname:firstname, lastname:lastname, email:email, 
       phone:phone, dob:dob, password:password},function(data){
       main.setState({add:false,listUsers:data});
+      that.setState({processing:false})
     });
   }
   Cancel(){
@@ -216,6 +228,7 @@ class AddForm extends React.Component {
             <button type="button" class="btn btn-default" onClick={this.Cancel}
             style={{marginLeft:'10px'}}>Cancel</button>
           </div>  
+          {this.state.processing==true ? <div class="loader text-center"></div> : ""}
         </div>
       </form>
     </div>

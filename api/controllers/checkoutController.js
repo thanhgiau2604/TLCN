@@ -28,7 +28,9 @@ function HaversineInKM(lat1, long1, lat2, long2)
     var month = dateObj.getMonth() + 1; //months from 1-12
     var day = dateObj.getDate();
     var year = dateObj.getFullYear();
-    nowday = day.toString()+month.toString()+year.toString();
+    if (month%10==month) month = '0'+month;
+    if (day%10==day) day='0'+day;
+    nowday = year.toString()+month.toString()+day.toString();
     return nowday;
 }
 module.exports = function(app,apiRouter){
@@ -196,6 +198,10 @@ module.exports = function(app,apiRouter){
                             if (err) {
                                 throw err;
                             } else {
+                                Order.update({ email: req.params.email, code: req.params.code},
+                                    {$set:{"listproduct.$[].status":"confirmed"}},function(err,data){
+                                        
+                                    })
                                 let txtTo = req.params.email;
                                 let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
                                 let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";

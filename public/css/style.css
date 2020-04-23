@@ -4901,3 +4901,6 @@ td {
    .table > thead > tr > td {
 	text-align: center;
 }
+.location-search-input {
+    width: 100%;
+  }

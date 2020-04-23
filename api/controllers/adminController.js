@@ -25,7 +25,9 @@ function getCurrentDay() {
     var month = dateObj.getMonth() + 1; //months from 1-12
     var day = dateObj.getDate();
     var year = dateObj.getFullYear();
-    nowday = day.toString()+month.toString()+year.toString();
+    if (month%10==month) month = '0'+month;
+    if (day%10==day) day='0'+day;
+    nowday = year.toString()+month.toString()+day.toString();
     return nowday;
 }
 module.exports = function(app,adminRouter,jwt){
@@ -419,5 +421,78 @@ module.exports = function(app,adminRouter,jwt){
             res.json({metrics:arrMetrics, users: arrUsers, usersBefore: arrUserBefore, countUser:user});
         }
         getData();
+    });
+
+    app.post("/getMetricProduct",parser, (req,res)=>{
+        var option = req.body.option;
+        var d = new Date();
+        var count;
+        switch (option) {
+            case "today":
+                d.setDate(d.getDate());
+                count = 0;
+                break;
+            case "yesterday":
+                d.setDate(d.getDate()-1);
+                count=1;
+                break;
+            case "last7days":
+                count=7;
+                d.setDate(d.getDate()-7);
+                break;
+            case "last28days":
+                count=28;
+                d.setDate(d.getDate()-28);
+                break;
+        }
+        var yesterday = new Date();
+        yesterday.setDate(yesterday.getDate()-1);
+        var dayYesterday = yesterday.getDate(), monthYesterday = parseInt(yesterday.getMonth()+1);
+        if (dayYesterday%10==dayYesterday) dayYesterday='0'+dayYesterday;
+        if (monthYesterday%10==monthYesterday) monthYesterday='0'+monthYesterday;
+        var dayThatDay = d.getDate(), monthThatDay = parseInt(d.getMonth()+1);
+        if (dayThatDay%10==dayThatDay) dayThatDay='0'+dayThatDay;
+        if (monthThatDay%10==monthThatDay) monthThatDay='0'+monthThatDay;
+        var strYesterday = yesterday.getFullYear().toString()+monthYesterday.toString()+dayYesterday.toString();
+        var strThatDay = d.getFullYear().toString()+monthThatDay.toString()+dayThatDay.toString();
+        Statistic.find({ day: { $gte: strThatDay, $lte: strYesterday } }, function (err, data) {
+            if (err) console.log(err); else {
+                var resultOrder = [], resultView = [];
+                var arrIdOrder = [], arrIdView = [];
+                (async () => {
+                    for (var k = 0; k < data.length; k++) {
+                        var dt = data[k];
+                        for (var i = 0; i < dt.viewproduct.length; i++) {
+                            var index = arrIdView.indexOf(dt.viewproduct[i].id.toString());
+                            if (index != -1) {
+                                resultView[index].view += dt.viewproduct[i].count;
+                            } else {
+                                arrIdView.push(dt.viewproduct[i].id.toString());
+                                var result = await Product.findOne({ _id: dt.viewproduct[i].id });
+                                resultView.push({
+                                    product: result,
+                                    view: dt.viewproduct[i].count
+                                })
+                            }
+                        }
+                        for (var i = 0; i < dt.orderproduct.length; i++) {
+                            var index = arrIdOrder.indexOf(dt.orderproduct[i].id.toString());
+                            if (index != -1) {
+                                resultOrder[index].view += dt.orderproduct[i].count;
+                            } else {
+                                arrIdOrder.push(dt.orderproduct[i].id.toString());
+                                var result = await Product.findOne({ _id: dt.orderproduct[i].id });
+                                resultOrder.push({
+                                    product: result,
+                                    view: dt.orderproduct[i].count
+                                })
+                            }
+                        }
+                    }
+                    res.json({view:resultView, order:resultOrder});
+                })();
+            }
+        })
     })
+
 }

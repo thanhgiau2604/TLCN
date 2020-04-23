@@ -9,6 +9,10 @@ import CopyRight from '../common/copyright'
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
+import PlacesAutocomplete, {
+    geocodeByAddress,
+    getLatLng,
+  } from 'react-places-autocomplete';
 var main,step1,step2,map;
 import ReactGA from 'react-ga'
 function initizeAnalytics(){
@@ -307,6 +311,77 @@ class GoogleMap extends React.Component {
     </div>)
     }
 }
+var classLocation, classAddress;
+class LocationSearchInput extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { address: '' };
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSelect = this.handleSelect.bind(this);
+      classLocation = this;
+    }
+    handleChange(address){
+        this.setState({address:address});
+    }
+    handleSelect(address){
+        var that = this;
+        geocodeByAddress(address)
+        .then(results => getLatLng(results[0]))
+        .then(latLng => {
+            that.setState({address:address});
+            $.post("/getPosition",{address:address},function(data){
+                if (data.err!=""){
+                    classAddress.setState({err:data.err})
+                } else {
+                    map.setState({position:data.position});
+                }
+            })
+        })
+        .catch(error => console.error('Error', error));
+    }
+    render() {
+      return (
+        <PlacesAutocomplete
+          value={this.state.address}
+          onChange={this.handleChange}
+          onSelect={this.handleSelect}
+        >
+          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+            <div>
+              <input
+                {...getInputProps({
+                  placeholder: 'Search Places ...',
+                  className: 'location-search-input',
+                })}
+              />
+              <div className="autocomplete-dropdown-container">
+                {loading && <div>Loading...</div>}
+                {suggestions.map(suggestion => {
+                  const className = suggestion.active
+                    ? 'suggestion-item--active'
+                    : 'suggestion-item';
+                  // inline style for demonstration purpose
+                  const style = suggestion.active
+                    ? { backgroundColor: '#9c9b98', cursor: 'pointer', border: "solid #9c9b98 1px"}
+                    : { backgroundColor: '#ffffff', cursor: 'pointer',border: "solid #9c9b98 1px"};
+                  return (
+                    <div
+                      {...getSuggestionItemProps(suggestion, {
+                        className,
+                        style,
+                      })}
+                    >
+                      <span>{suggestion.description}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </PlacesAutocomplete>
+      );
+    }
+  }
 class Address extends React.Component {
     constructor(props){
         super(props);
@@ -314,11 +389,12 @@ class Address extends React.Component {
             err:""
         }
         this.addAddress = this.addAddress.bind(this);
-        this.checkPosition = this.checkPosition.bind(this);
+        // this.checkPosition = this.checkPosition.bind(this);
+        classAddress = this;
     }
     addAddress(e){
         e.preventDefault();
-        var address = this.refs.address.value;
+        var address = classLocation.state.address;
         var fullname = this.refs.fullname.value;
         var phonenumber = this.refs.phonenumber.value;
         var that = this;
@@ -332,17 +408,17 @@ class Address extends React.Component {
             }
         })
     }
-    checkPosition(){
-        var address = this.refs.address.value;
-        var that = this;
-        $.post("/getPosition",{address:address},function(data){
-            if (data.err!=""){
-                that.setState({err:data.err})
-            } else {
-                map.setState({position:data.position});
-            }
-        })
-    }
+    // checkPosition(){
+    //     var address = this.refs.address.value;
+    //     var that = this;
+    //     $.post("/getPosition",{address:address},function(data){
+    //         if (data.err!=""){
+    //             that.setState({err:data.err})
+    //         } else {
+    //             map.setState({position:data.position});
+    //         }
+    //     })
+    // }
     render(){
         return(<section class="main-content-section">
         <div class="container">
@@ -390,11 +466,12 @@ class Address extends React.Component {
 
                     <div class="row">
                         <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <input type="text" placeholder="Địa chỉ nhận hàng" name="location" required ref="address"/>
+                            {/* <input type="text" placeholder="Địa chỉ nhận hàng" name="location" required ref="address"/> */}
+                            <LocationSearchInput/>
                         </div>
-                        <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">               
+                        {/* <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">               
                             <button type="button" className="btn btn-warning" onClick={this.checkPosition}>Kiểm tra</button>
-                        </div>
+                        </div> */}
                     </div>
                     <div class="row text-center">
                         {/* <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3"> */}

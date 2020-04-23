@@ -83,11 +83,17 @@ class UpdateOrder extends React.Component{
     super(props);
     this.updateStatus=this.updateStatus.bind(this);
     this.cancel=this.cancel.bind(this);
+    this.state = {
+      processing:false
+    }
   }
   updateStatus(){
+    var that = this;
+    this.setState({processing:true});
     var value = this.refs.status.value;
     $.post("/updateStatus",{id:curEditOrder._id, status:value},function(data){
       main.setState({isUpdate:false,listOrder:data.lOrder});
+      that.setState({processing:false})
     })
   }
   cancel(){
@@ -111,6 +117,7 @@ class UpdateOrder extends React.Component{
         <button className="btn btn-danger" onClick={this.updateStatus}>Update</button>
         <button className="btn btn-primary" onClick={this.cancel} style={{marginLeft:'10px'}}>Cancel</button>
       </div>
+      {this.state.processing==true ? <div class="loader text-center"></div> : ""}
     </div>)
     }
 }

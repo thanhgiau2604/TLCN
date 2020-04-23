@@ -36,12 +36,18 @@ class AddForm extends React.Component {
     super(props);
     this.AddMessage = this.AddMessage.bind(this);
     this.Cancel = this.Cancel.bind(this);
+    this.state  ={
+      processing: false
+    }
   }
   AddMessage(e){
+    this.setState({processing:true});
+    var that = this;
     e.preventDefault();
     const content = this.content.value;
     $.post("/addMessage",{content:content,email:localStorage.getItem("emailad")},function(data){
       main.setState({add:false,listMessage:data});
+      that.setState({processing:false});
     });
   }
   Cancel(){
@@ -61,6 +67,7 @@ class AddForm extends React.Component {
             <button type="button" class="btn btn-default" onClick={this.Cancel}
             style={{marginLeft:'10px'}}>Cancel</button>
           </div>  
+          {this.state.processing==true ? <div class="loader text-center"></div> : ""}
         </div>
       </form>
     </div>

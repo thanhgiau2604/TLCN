@@ -9,7 +9,7 @@ import { Line } from "react-chartjs-2";
 import Dropdown from 'react-dropdown';
 var main;
 const options = [
-  'today', 'yesterday', '7lastdays', 'last28days'
+  'today', 'yesterday', 'last7days', 'last28days'
 ];
 const defaultOption = options[2];
 class Products extends React.Component {
@@ -26,18 +26,18 @@ class Products extends React.Component {
     </tr>)
   }
 }
-
+var viewClass, orderClass;
 class TopViewProduct extends React.Component {
   constructor(props){
     super(props);
     this.state = {
       topView : []
     }
+    viewClass = this;
   }
   componentDidMount(){
     var that = this;
     $.get("/topview",function(data){
-       console.log(data.map(pro => pro.product.name));
         that.setState({topView:data});
     })
   }
@@ -99,6 +99,7 @@ class TopOrderProduct extends React.Component {
     this.state = {
       topOrder : []
     }
+    orderClass = this;
   }
   componentDidMount(){
     var that = this;
@@ -164,15 +165,17 @@ class Dashboard extends React.Component{
           arrMetrics: [0,0,0,0],
           arrUsers: [],
           arrUsersBefore: [],
-          activeUsers:0
+          activeUsers:0,
+          timeOption: options[2],
+          timeOption1: options[0]
         }
         main=this;
         this._onSelect = this._onSelect.bind(this);
+        this._onSelect1 = this._onSelect1.bind(this);
     }
     componentDidMount(){
       var that = this;
       $.post("/getMetrics",{option:"last7days"},function(data){
-        console.log(data);
         that.setState({arrMetrics:data.metrics, arrUsers:data.users, arrUsersBefore: data.usersBefore,
         activeUsers: data.countUser});
       })
@@ -180,9 +183,17 @@ class Dashboard extends React.Component{
     _onSelect(selectedOption){
       var that = this;
       $.post("/getMetrics",{option:selectedOption.value},function(data){
-        console.log(data);
         that.setState({arrMetrics:data.metrics, arrUsers:data.users, arrUsersBefore: data.usersBefore,
-        activeUsers: data.countUser});
+        activeUsers: data.countUser, timeOption: selectedOption.value});
+      })
+    }
+    _onSelect1(selectedOption){
+      var that = this;
+      console.log(selectedOption.value);
+      $.post("/getMetricProduct",{option:selectedOption.value},function(data){
+        viewClass.setState({topView: data.view});
+        orderClass.setState({topOrder:data.order});
+        that.setState({timeOption1: selectedOption.value});
       })
     }
     render(){
@@ -208,7 +219,7 @@ class Dashboard extends React.Component{
                                  
             </div>
             <div>
-            <Dropdown options={options} onChange={this._onSelect} value={defaultOption} 
+            <Dropdown options={options} onChange={this._onSelect} value={this.state.timeOption} 
                     placeholder="Select an option" />;  
             </div>
             <div class="row">
@@ -307,35 +318,17 @@ class Dashboard extends React.Component{
                       datasets: [
                         {
                           data: this.state.arrUsers.map(element => element[1]),
-                          label: "Last 7 days",
+                          label: this.state.timeOption,
                           borderColor: "#3e95cd",
                           fill: false
                         },
                         {
                           data: this.state.arrUsersBefore.map(element => element[1]),
-                          label: "A week ago ",
+                          label: "Previous period",
                           borderColor: "#8e5ea2",
                           fill: false,
                           borderDash: [5, 15]
                         }
-                        // {
-                        //   data: [168, 170, 178, 190, 203, 276, 408, 547, 675, 734],
-                        //   label: "Europe",
-                        //   borderColor: "#3cba9f",
-                        //   fill: false
-                        // },
-                        // {
-                        //   data: [40, 20, 10, 16, 24, 38, 74, 167, 508, 784],
-                        //   label: "Latin America",
-                        //   borderColor: "#e8c3b9",
-                        //   fill: false
-                        // },
-                        // {
-                        //   data: [6, 3, 2, 2, 7, 26, 82, 172, 312, 433],
-                        //   label: "North America",
-                        //   borderColor: "#c45850",
-                        //   fill: false
-                        // }
                       ]
                     }}
                     options={{
@@ -361,6 +354,10 @@ class Dashboard extends React.Component{
               </div>          
             <div class='page-header'>
               <h4>Access the products</h4>
+            </div>
+            <div>
+            <Dropdown options={options} onChange={this._onSelect1} value={this.state.timeOption1} 
+                    placeholder="Select an option" />;  
             </div>
             <div class='row text-center'>
               <h3 style={{color:'#0c967a'}}><b>TOP VIEWED PRODUCTS</b></h3>

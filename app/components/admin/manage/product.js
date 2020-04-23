@@ -350,7 +350,8 @@ class CommentBox extends React.Component {
             image1: constImage,
             image2: constImage,
             image3: constImage,
-            addImage: false
+            addImage: false,
+            processing: false
         }
         this.changeStatus = this.changeStatus.bind(this);
         this.ChangeImage1 = this.ChangeImage1.bind(this);
@@ -359,6 +360,7 @@ class CommentBox extends React.Component {
         this.handleImage = this.handleImage.bind(this);
     }
     handleComment(){
+        this.setState({processing:true});
         var comment = this.refs.yourComment.value;
         var that = this;
         console.log("idProduct="+localStorage.getItem("idProduct"));
@@ -367,7 +369,7 @@ class CommentBox extends React.Component {
         idComment:this.props.id},function(data){
             document.getElementById("taComment").value = "";
             commentClass.setState({listComments:data});
-            that.setState({image1:constImage, image2: constImage, image3: constImage, addImage:false});
+            that.setState({image1:constImage, image2: constImage, image3: constImage, addImage:false, processing:false});
         })
     }
     handleImage(image){
@@ -445,6 +447,7 @@ class CommentBox extends React.Component {
                 </div>
                 </div>}
             <button class="postComment btn btn-primary" onClick={this.handleComment}>Post</button>
+            {this.state.processing==true ? <div class="loader text-center"></div> : ""}
         </div>)
     }
 }
@@ -506,7 +509,7 @@ class SingleComment extends React.Component{
       </div>
       {this.props.comment.images.length > 0 ?
          
-        <div class="row displayImage">
+        <div class="displayImage">
           <DisplayImage listImage={this.props.comment.images.map(image => ({src:image.image,alt:''}))}/>
         </div> : <div></div>
       }
@@ -523,7 +526,7 @@ class SingleComment extends React.Component{
             <p class="textComment">{response.content}</p>
           </div>
             {response.images.length > 0 ?
-              <div class="row displayImage">
+              <div class="displayImage">
                 <DisplayImage listImage={response.images.map(image => ({src:image.image,alt:''}))}/>
               </div> : <div></div>
             }
@@ -561,8 +564,7 @@ class Comments extends React.Component{
           </div>
         </div>
       <div className="modal-footer justify-content-center">
-        <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" className="btn btn-danger" type="submit">Add product</button>
+        <button type="button" className="btn btn-secondary" data-dismiss="modal">close</button>
       </div>
     </div>
   </div>
@@ -586,7 +588,8 @@ class UpdateProduct extends React.Component{
       curSizes: 0,
       image1: "",
       image2: "",
-      image3: ""
+      image3: "",
+      processing:false
     }
     curEditProduct = this;
   }
@@ -597,11 +600,11 @@ class UpdateProduct extends React.Component{
     this.setState({curSizes:this.state.curSizes-1})
   }
   submitForm(){
+    this.setState({processing:true});
     const name = this.refs.name.value;
     const cost = this.refs.cost.value;
     const description = this.refs.description.value;
     const idProduct = this.state.product._id;
-    console.log("id product: "+idProduct);
     var sizes = [];
     var countProduct=0;
     for (var i=1; i<=this.state.curSizes; i++){
@@ -629,11 +632,11 @@ class UpdateProduct extends React.Component{
       image3: this.state.image3
     }
     var that = this;
-    console.log(countProduct);
     $.post("/updateProduct", {
       id: idProduct, name: name, cost: cost, oldcost: JSON.stringify(that.state.product.costs),
       description: description, sizes: JSON.stringify(sizes), image: JSON.stringify(image), quanty:countProduct
     }, function (data) {
+      that.setState({processing:false});
       if (data.success == 1) {
         main.setState({ listProduct: data.lProduct });
         that.setState({ updateSuccess: 1 });
@@ -806,6 +809,7 @@ class UpdateProduct extends React.Component{
           <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
           <button type="button" className="btn btn-danger" type="submit" onClick={this.submitForm}>Save</button>
         </div>
+        {this.state.processing==true ? <div class="loader text-center"></div> : ""}
       </div>
     </div>
   </div>)
