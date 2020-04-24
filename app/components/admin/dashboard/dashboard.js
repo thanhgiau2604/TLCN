@@ -167,7 +167,9 @@ class Dashboard extends React.Component{
           arrUsersBefore: [],
           activeUsers:0,
           timeOption: options[2],
-          timeOption1: options[0]
+          timeOption1: options[0],
+          processing: false,
+          processing1:false
         }
         main=this;
         this._onSelect = this._onSelect.bind(this);
@@ -182,18 +184,19 @@ class Dashboard extends React.Component{
     }
     _onSelect(selectedOption){
       var that = this;
+      this.setState({processing:true});
       $.post("/getMetrics",{option:selectedOption.value},function(data){
         that.setState({arrMetrics:data.metrics, arrUsers:data.users, arrUsersBefore: data.usersBefore,
-        activeUsers: data.countUser, timeOption: selectedOption.value});
+        activeUsers: data.countUser, timeOption: selectedOption.value,processing:false});
       })
     }
     _onSelect1(selectedOption){
       var that = this;
-      console.log(selectedOption.value);
+      this.setState({processing1:true});
       $.post("/getMetricProduct",{option:selectedOption.value},function(data){
         viewClass.setState({topView: data.view});
         orderClass.setState({topOrder:data.order});
-        that.setState({timeOption1: selectedOption.value});
+        that.setState({timeOption1: selectedOption.value, processing1:false});
       })
     }
     render(){
@@ -222,6 +225,7 @@ class Dashboard extends React.Component{
             <Dropdown options={options} onChange={this._onSelect} value={this.state.timeOption} 
                     placeholder="Select an option" />;  
             </div>
+            {this.state.processing==true ? <div class="loader text-center"></div> : ""}
             <div class="row">
               <div class="fourMetrics">         
                 <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
@@ -359,6 +363,7 @@ class Dashboard extends React.Component{
             <Dropdown options={options} onChange={this._onSelect1} value={this.state.timeOption1} 
                     placeholder="Select an option" />;  
             </div>
+            {this.state.processing1==true ? <div class="loader text-center"></div> : ""}
             <div class='row text-center'>
               <h3 style={{color:'#0c967a'}}><b>TOP VIEWED PRODUCTS</b></h3>
                 <TopViewProduct/>
