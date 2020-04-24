@@ -169,7 +169,8 @@ class Dashboard extends React.Component{
           timeOption: options[2],
           timeOption1: options[0],
           processing: false,
-          processing1:false
+          processing1:false,
+          permission: false
         }
         main=this;
         this._onSelect = this._onSelect.bind(this);
@@ -199,8 +200,25 @@ class Dashboard extends React.Component{
         that.setState({timeOption1: selectedOption.value, processing1:false});
       })
     }
+    componentWillMount(){
+      var that = this;
+        const token = localStorage.getItem('tokenad');
+        if (!token){
+          this.setState({permission:false})
+        }
+        $.get("/admin",{token:token},function(data){
+          if (data.success==0){
+            localStorage.removeItem('emailad');
+            localStorage.removeItem('usernamead');
+            that.setState({permission:false})
+          } else {
+            that.setState({permission:true})
+          }
+        })
+    }
     render(){
-        return(<div id='content'>
+        return(
+        <div id='content'>
         <div class='panel panel-default'>
           <div class='panel-heading'>
             <i class='icon-beer icon-large'></i>
@@ -217,9 +235,14 @@ class Dashboard extends React.Component{
               </div>
             </div>
           </div>
+          {this.state.permission==false ? 
+                <div className="text-center notification">
+                  <br />
+                  <h3>Not permitted. Please access the following link to login!</h3>
+                  <button className="btn btn-primary" onClick={() => window.location.replace("/login")} style={{ marginTop: '10px', width: 'auto' }}>Đi đến trang đăng nhập</button>
+                </div> :
           <div class='panel-body'>      
-            <div class='progress'> 
-                                 
+            <div class='progress'>                   
             </div>
             <div>
             <Dropdown options={options} onChange={this._onSelect} value={this.state.timeOption} 
@@ -375,7 +398,7 @@ class Dashboard extends React.Component{
                   <TopOrderProduct/>
                 </div>
             </div>
-          </div>
+          </div>}
         </div>
       </div>)
     }

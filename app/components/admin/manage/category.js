@@ -737,7 +737,8 @@ class ManageCategory extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        listCategory:[]
+        listCategory:[],
+        processing: false
       }
       this.handleChange = this.handleChange.bind(this);
       this.clickNewCateogry = this.clickNewCateogry.bind(this);
@@ -753,18 +754,20 @@ class ManageCategory extends React.Component {
       })
     }
     componentWillMount(){
-      var token = localStorage.getItem('tokenad');
-      if (!token){
-        window.location.assign('/login');
-      } else {
+      var that = this;
+        const token = localStorage.getItem('tokenad');
+        if (!token){
+          this.setState({permission:false})
+        }
         $.get("/admin",{token:token},function(data){
           if (data.success==0){
             localStorage.removeItem('emailad');
             localStorage.removeItem('usernamead');
-            window.location.assign("/login");
+            that.setState({permission:false})
+          } else {
+            that.setState({permission:true})
           }
         })
-      }
     }
     handleChange(event){
       var that = this;
@@ -795,6 +798,12 @@ class ManageCategory extends React.Component {
               {/* <div class='badge'>3 record</div>  */}
             </div>
           </div>
+          {this.state.permission==false ? 
+                <div className="text-center notification">
+                  <br />
+                  <h3>Not permitted. Please access the following link to login!</h3>
+                  <button className="btn btn-primary" onClick={() => window.location.replace("/login")} style={{ marginTop: '10px', width: 'auto' }}>Đi đến trang đăng nhập</button>
+                </div> :
           <div class='panel-body filters'>
             <div class="row">
               <h3 class="text-center"><b>PRODUCT CATEGORY LIST</b></h3>
@@ -827,7 +836,7 @@ class ManageCategory extends React.Component {
                 <ModalNewCategory/>
                 <ModalUpdateCategory/>
             </div>
-          </div>
+          </div>}
       </div>
       </div>)
     }

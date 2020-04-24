@@ -6,11 +6,11 @@ class Navbar extends React.Component{
         this.goMessage = this.goMessage.bind(this);
     }
     componentDidMount(){
-        var token = localStorage.getItem('tokenad');
-        if (!token)
-        {
-            window.location.assign('/login');
-        }
+        // var token = localStorage.getItem('tokenad');
+        // if (!token)
+        // {
+        //     window.location.assign('/login');
+        // }
     }
     handleSignOut(){
         localStorage.removeItem('usernamead');

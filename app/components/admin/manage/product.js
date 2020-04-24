@@ -820,7 +820,8 @@ class ManageProducts extends React.Component {
     super(props);
     this.state = {
       listProduct: [],
-      curpage: 1
+      curpage: 1,
+      permission: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.previousPage = this.previousPage.bind(this);
@@ -828,18 +829,20 @@ class ManageProducts extends React.Component {
     main = this;
   }
   componentWillMount(){
-    var token = localStorage.getItem('tokenad');
-    if (!token){
-      window.location.assign('/login');
-    } else {
-      $.get("/admin",{token:token},function(data){
-        if (data.success==0){
-          localStorage.removeItem('emailad');
-          localStorage.removeItem('usernamead');
-          window.location.assign("/login");
-        }
-      })
+    var that = this;
+    const token = localStorage.getItem('tokenad');
+    if (!token) {
+      this.setState({ permission: false })
     }
+    $.get("/admin", { token: token }, function (data) {
+      if (data.success == 0) {
+        localStorage.removeItem('emailad');
+        localStorage.removeItem('usernamead');
+        that.setState({ permission: false })
+      } else {
+        that.setState({ permission: true })
+      }
+    })
   }
   componentDidMount() {
     var that = this;
@@ -896,6 +899,13 @@ class ManageProducts extends React.Component {
             {/* <div class='badge'>3 record</div> */}
           </div>
         </div>
+        {this.state.permission==false ? 
+                <div className="text-center notification">
+                  <br />
+                  <h3>Not permitted. Please access the following link to login!</h3>
+                  <button className="btn btn-primary" onClick={() => window.location.replace("/login")} style={{ marginTop: '10px', width: 'auto' }}>Đi đến trang đăng nhập</button>
+                </div> :
+        <div>
         <div class='panel-body filters'>
           <div class="row">
             <h3 class="text-center"><b>LIST PRODUCTS</b></h3>
@@ -955,6 +965,7 @@ class ManageProducts extends React.Component {
             Showing {start + 1} to {finish} of {this.state.listProduct.length} entries
             </div>
         </div>
+      </div>}
       </div>
       <NewProduct />
       <UpdateProduct/>

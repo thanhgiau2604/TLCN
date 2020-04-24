@@ -35,7 +35,6 @@ module.exports = function(app,adminRouter,jwt){
     adminRouter.use(function(req,res,next){
         var token = req.query.token || req.params.token;
         if (token){
-            console.log(token);
             jwt.verify(token,superSecret,function(err,decoded){
                 if (err){
                     return res.json({success:0,message:'Failed to authenticate token'});

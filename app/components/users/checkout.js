@@ -281,7 +281,10 @@ class Summary extends React.Component {
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="returne-continue-shop">
                         <a href="/" class="continueshoping"><i class="fa fa-chevron-left" type='submit'></i>Tiếp tục mua hàng</a>
-                        <a class="procedtocheckout" onClick={this.goStep2} style={{cursor:'pointer'}}>Tiếp tục thanh toán<i class="fa fa-chevron-right"></i></a>
+                        {
+                        this.state.listProduct.length>0?<a class="procedtocheckout" onClick={this.goStep2} style={{cursor:'pointer'}}>Tiếp tục thanh toán<i class="fa fa-chevron-right"></i></a>:
+                        <a class="procedtocheckout" style={{cursor:'pointer', color:"gray"}}>Tiếp tục thanh toán<i class="fa fa-chevron-right"></i></a>}
+
                     </div>						
                 </div>
             </div>

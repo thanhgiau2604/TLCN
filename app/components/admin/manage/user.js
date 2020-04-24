@@ -243,7 +243,8 @@ class ManageUsers extends React.Component{
           edit:false,
           add:false,
           curpage: 1,
-          status:"1"
+          status:"1",
+          permission: false
         }
         main = this;
         this.handleAddUser = this.handleAddUser.bind(this);
@@ -254,18 +255,20 @@ class ManageUsers extends React.Component{
       
     }
     componentWillMount(){
-      var token = localStorage.getItem('tokenad');
-      if (!token){
-        window.location.assign('/login');
-      } else {
+      var that = this;
+        const token = localStorage.getItem('tokenad');
+        if (!token){
+          this.setState({permission:false})
+        }
         $.get("/admin",{token:token},function(data){
           if (data.success==0){
             localStorage.removeItem('emailad');
             localStorage.removeItem('usernamead');
-            window.location.assign("/login");
+            that.setState({permission:false})
+          } else {
+            that.setState({permission:true})
           }
         })
-      }
     }
     componentDidMount(){
       var that = this;
@@ -356,6 +359,13 @@ class ManageUsers extends React.Component{
               {/* <div class='badge'>3 record</div> */}
             </div>
           </div>
+          {this.state.permission==false ? 
+                <div className="text-center notification">
+                  <br />
+                  <h3>Not permitted. Please access the following link to login!</h3>
+                  <button className="btn btn-primary" onClick={() => window.location.replace("/login")} style={{ marginTop: '10px', width: 'auto' }}>Đi đến trang đăng nhập</button>
+                </div> :
+          <div>
           <div class='panel-body filters'>
             <div class="row">
               <h3 class="text-center"><b>LIST USER ACCOUNTS</b></h3>
@@ -424,6 +434,7 @@ class ManageUsers extends React.Component{
               Showing {start + 1} to {finish} of {this.state.listUsers.length} entries
             </div>
           </div>
+          </div>}
         </div>
       </div>)
     }
