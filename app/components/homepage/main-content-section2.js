@@ -148,13 +148,15 @@ class Sneaker extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			listSneaker:[]
+			listSneaker:[],
+			processing: false
 		}
 	}
 	componentDidMount(){
 		var that = this;
+		this.setState({processing:true});
 		$.get("/getSneaker",function(data){
-			that.setState({listSneaker:data})
+			that.setState({listSneaker:data, processing:false})
 		})
 	}
 	render(){
@@ -164,7 +166,8 @@ class Sneaker extends React.Component {
 				<div className="left-title-area">
 					<h2 className="left-title">SNEAKER</h2>
 				</div>	
-				<div className="row">				
+				<div className="row">
+				{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}				
 					<div className="feartured-carousel">
 						{this.state.listSneaker.map(function(sneaker,index){
 							var status ="";
@@ -184,13 +187,15 @@ class Sports extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			listSport:[]
+			listSport:[],
+			processing: false
 		}
 	}
 	componentDidMount(){
+		this.setState({processing:true});
 		var that = this;
 		$.get("/getSport",function(data){
-			that.setState({listSport:data})
+			that.setState({listSport:data, processing:false})
 		})
 	}
 	render(){
@@ -200,7 +205,8 @@ class Sports extends React.Component {
 				<div className="left-title-area">
 					<h2 className="left-title">Giày thể thao</h2>
 				</div>	
-				<div className="row">									
+				<div className="row">	
+				{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}								
 					<div className="feartured-carousel">									
 				       {this.state.listSport.map(function(sport,index){
 						   var status ="";
@@ -220,13 +226,15 @@ class Pumps extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			listPumps:[]
+			listPumps:[],
+			processing: false
 		}
 	}
 	componentDidMount(){
 		var that = this;
+		this.setState({processing:true});
 		$.get("/getPump",function(data){
-			that.setState({listPumps:data})
+			that.setState({listPumps:data, processing:false})
 		})
 	}
 	render(){
@@ -236,7 +244,8 @@ class Pumps extends React.Component {
 				<div className="left-title-area">
 					<h2 className="left-title">Giày cao gót</h2>
 				</div>	
-				<div className="row">							
+				<div className="row">			
+					{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}				
 					<div className="feartured-carousel">
 						{this.state.listPumps.map(function(pumps,index){
 							var status="";
@@ -255,13 +264,15 @@ class Kids extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			listKids : []
+			listKids : [],
+			processing: false
 		}
 	}
 	componentDidMount(){
 		var that = this;
+		this.setState({processing:true});
 		$.get("/getKid",function(data){
-			that.setState({listKids:data})
+			that.setState({listKids:data, processing:false})
 		})
 	}
 	render(){
@@ -272,6 +283,7 @@ class Kids extends React.Component{
 					<h2 className="left-title">Giày trẻ em</h2>
 				</div>	
 				<div className="row">
+				{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}
 					<div className="feartured-carousel">	
 					{this.state.listKids.map(function(kid,index){
 						var status="";

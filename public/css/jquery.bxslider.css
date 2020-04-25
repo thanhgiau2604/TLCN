@@ -55,8 +55,8 @@
 /* LOADER */
 
 .bx-wrapper .bx-loading {
-	min-height: 50px;
-	background: url(../img/ajax-loader.gif) center center no-repeat #fff;
+	/* min-height: 50px; */
+	/* background: url(../img/ajax-loader.gif) center center no-repeat #fff; */
 	height: 100%;
 	width: 100%;
 	position: absolute;

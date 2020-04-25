@@ -100,7 +100,7 @@ class ProductGird extends React.Component{
 				}
 			})
 		}
-	}
+    }
     render(){
         var htmlFavorite;
 		if (this.state.isFavorite==true){
@@ -168,6 +168,7 @@ class ProductList extends React.Component{
 		window.location.assign("/detailproduct");
     }
     addToCart(){
+        console.log("vô");
 		const token = localStorage.getItem('token');
 		if (!token){
 			$("#modal-authen").modal('show');
@@ -283,6 +284,7 @@ class OptionProduct extends React.Component{
 
     }
     changePrice(event){
+        main.setState({processing: true});
         choosePrice = parseInt(event.target.value);
         var curProduct = [];
         var max = 100000*choosePrice;
@@ -302,9 +304,10 @@ class OptionProduct extends React.Component{
                 }
             }
         });
-        main.setState({listProduct:curProduct});
+        main.setState({listProduct:curProduct, processing:false});
     }
     changeSize(event){
+        main.setState({processing: true});
         chooseSize = parseInt(event.target.value);
         var curProduct = [];
         listAllProduct.forEach(product => {
@@ -324,7 +327,7 @@ class OptionProduct extends React.Component{
                 }
             }
         });
-        main.setState({listProduct:curProduct});
+        main.setState({listProduct:curProduct, processing:false});
     }
     render(){
         return(<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">      
@@ -390,6 +393,7 @@ class OptionView extends React.Component{
         }
     }
     changeSort(event){
+        main.setState({processing: true});
         const optionSort = parseInt(this.refs.sort.value);
         console.log(optionSort);
         var dataSort = main.state.listProduct;
@@ -441,9 +445,9 @@ class OptionView extends React.Component{
                 break;
         }
         if (optionSort==0){
-            main.setState({listProduct:listAllProduct});
+            main.setState({listProduct:listAllProduct,processing:false});
         } else {
-            main.setState({listProduct:dataSort});
+            main.setState({listProduct:dataSort,processing:false});
         }
     }
     render(){
@@ -486,11 +490,16 @@ class Category extends React.Component{
         this.state = {
             listProduct: [],
             category:{},
-            display: 1
+            display: 1,
+            processing:false,
+            curpage:1
         }
         choosePrice = "";
         chooseSize = "";
         main = this;
+        this.changePage = this.changePage.bind(this);
+        this.previousPage = this.previousPage.bind(this);
+        this.nextPage = this.nextPage.bind(this);
     }
     componentDidMount(){
         var name = localStorage.getItem("curcategory");
@@ -500,8 +509,40 @@ class Category extends React.Component{
             that.setState({listProduct:data.lProduct,category:data.category})
         })
     }
+    changePage(value, event) {
+        this.setState({ curpage: value });
+    }
+    previousPage(){
+        if (this.state.curpage>1)
+              this.setState({curpage:this.state.curpage-1});
+    }
+    nextPage(){
+        var length = this.state.listProduct.length;
+        var perpage = 8;
+        if (this.state.curpage<Math.ceil(length / perpage))
+              this.setState({curpage:this.state.curpage+1});
+    }
     render(){
         initizeAnalytics();
+        var page = "";
+        var lCurProduct = [];
+        var length = this.state.listProduct.length;
+        if (length!=0){
+            page = [];
+            var perpage = 8;
+            var start = (this.state.curpage - 1) * perpage;
+            var finish = (start+perpage);
+            if (finish>length) finish=length;
+            lCurProduct = this.state.listProduct.slice(start, start + perpage);
+            var numberpage = Math.ceil(length / perpage);
+            for (var i = 1; i <= numberpage; i++) {
+                if (this.state.curpage == i) {
+                    page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
+                } else {
+                    page.push(<li><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
+                }
+            }
+        }
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
@@ -558,23 +599,39 @@ class Category extends React.Component{
                     </div>                  
                     <div class="all-gategory-product">
                         <div class="row">
+                        {this.state.processing==true ? <div class="loader text-center"></div> : ""}
                             <ul class="gategory-product">											
-                                {this.state.listProduct.map(function(pro,index){
+                                {lCurProduct.map(function(pro,index){
                                     if (main.state.display==1){
                                         return <ProductGird key={index} name={pro.name} costs={pro.costs}
-                                            image={pro.image.image1} id={pro._id}/>
+                                            image={pro.image.image1} id={pro._id} size={pro.sizes}/>
                                     } else {
                                         return <ProductList key={index} name={pro.name} costs={pro.costs}
-                                            image={pro.image.image1} id={pro._id} desc={pro.description}/>
+                                            image={pro.image.image1} id={pro._id} desc={pro.description} size={pro.sizes}/>
                                     }
                                 })}
                             </ul>
                         </div>
-                    </div>     
-                    <div class="product-shooting-result product-shooting-result-border">
-                        <div class="showing-item">
-                        </div>
-                        {/* <div class="showing-next-prev">
+                    </div>    
+                        <div class='panel-footer'>
+                            <ul class='pagination pagination-sm'>
+                                <li>
+                                    <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
+                                </li>
+                                {page}
+                                <li>
+                                    <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
+                                </li>
+                            </ul>
+                            <div class='pull-right'>
+                                Hiển thị từ {start + 1} đến {finish} trên {this.state.listProduct.length} sản phẩm
+                                </div>
+                        </div> 
+                    {/* <div class="product-shooting-result product-shooting-result-border">
+                            <div class="showing-item">
+                                
+                            </div>
+                         <div class="showing-next-prev">
                             <ul class="pagination-bar">
                                 <li class="disabled">
                                     <a href="#" ><i class="fa fa-chevron-left"></i>Previous</a>
@@ -592,8 +649,8 @@ class Category extends React.Component{
                             <form action="#">
                                 <button class="btn showall-button">Show all</button>
                             </form>
-                        </div> */}
-                    </div>	
+                        </div> 
+                    </div>	 */}
                 </div>
             </div>
         </div>

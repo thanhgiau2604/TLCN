@@ -191,14 +191,15 @@ class PopularProduct extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			listPoplular:[]
+			listPoplular:[],
+			processing: false
 		}
 	}
 	componentDidMount(){
 		var that = this;
-		$.get("/getPopular",function(data){
-			console.log(data);			
-			 that.setState({listPoplular:data});			 		
+		this.setState({processing:true});
+		$.get("/getPopular",function(data){		
+			 that.setState({listPoplular:data, processing:false});			 		
 		})
 	}
 	render(){
@@ -214,7 +215,9 @@ class PopularProduct extends React.Component{
 				</div>
 				<div className="row">
 					<div className="sidebar-best-seller-carousel">
+						{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}
 						<div className="item">
+							
 							{this.state.listPoplular.map(function (product, index) {
 								return <Product1 key={index} id={product._id}
 									name={product.name} image={product.image.image1} costs={product.costs}/>
@@ -230,14 +233,15 @@ class NewProduct extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			listNew:[]
-		}
-		
+			listNew:[],
+			processing: false
+		}	
 	}
 	componentDidMount(){
+		this.setState({processing:true});
 		var that = this;
 		$.get("/getNew", function (data) {
-			that.setState({listNew:data});
+			that.setState({listNew:data, processing:false});
 		});
 	}
 	render() {	
@@ -250,7 +254,9 @@ class NewProduct extends React.Component{
 				<div className="row">
 					<div className="col-xs-12">
 						<div className="row">
+						{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}
 							<div className="home2-sale-carousel">
+								
 								{this.state.listNew.map(function(product,index){
 									var status = "NEW";
 									if (product.quanty==0) status="Hết hàng";
@@ -269,13 +275,15 @@ class SaleProduct extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			listSale: []
+			listSale: [],
+			processing: false
 		}
 	}
 	componentDidMount(){
 		var that = this;
+		this.setState({processing:true});
 		$.get("/getSale",function(data){		
-		     that.setState({listSale:data})		
+		     that.setState({listSale:data, processing:false})		
 		})
 	}
 	render(){
@@ -284,8 +292,10 @@ class SaleProduct extends React.Component {
 			<div className="left-title-area">
 				<h2 className="left-title">KHUYẾN MÃI</h2>
 			</div>
-			<div className="row">				
-				<div className="home2-sale-carousel">					
+			<div className="row">		
+			{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}			
+				<div className="home2-sale-carousel">		
+								
 						{this.state.listSale.map(function (product, index) {
 							var status = "SALE";
 							if (product.quanty==0) status="Hết hàng";
@@ -303,9 +313,6 @@ class MainContentSection1 extends React.Component{
     constructor(props){
 		super(props);
 		main = this;
-		this.state = {
-			listNew:[]
-		}
 	}
     render(){
         return(

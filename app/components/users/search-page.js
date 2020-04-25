@@ -161,7 +161,6 @@ class SearchProduct extends React.Component {
         var that = this;
         var keysearch = localStorage.getItem('keysearch');
 		$.post("/itemSearch",{keysearch:keysearch},function(data){
-            console.log(data);
 			that.setState({listSearch:data});
 		})
 	}
@@ -177,7 +176,7 @@ class SearchProduct extends React.Component {
                             <div className="feartured-carousel">
                                 {this.state.listSearch.map(function (item, index) {
                                     return <Product key={index} name={item.name} costs={item.costs}
-                                        image={item.image.image1} id={item._id} />
+                                        image={item.image.image1} id={item._id} size={item.sizes} />
                                 })}
                             </div>
                         </div>

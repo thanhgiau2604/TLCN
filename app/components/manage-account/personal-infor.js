@@ -16,8 +16,13 @@ class InforEdit extends React.Component {
 		super(props);
 		this.save = this.save.bind(this);
 		this.cancel = this.cancel.bind(this);
+		this.state = {
+			processing: false
+		}
 	}
 	save(e){
+		this.setState({processing:true});
+		var that = this;
 		$.post("/editinfor",{firstname: this.firstname.value, lastname:this.lastname.value,
 			phone:this.phonenumber.value,email:this.email.value, day:this.refs.day.value,
 			month:this.refs.month.value,year:this.refs.year.value},function(data){
@@ -25,6 +30,7 @@ class InforEdit extends React.Component {
 			localStorage.setItem('email',data.email);
 			inforuser.setState({isEdit:false});
 			inforuser.setState({user:data});
+			that.setState({processing:false})
 		});
 		e.preventDefault();
 	}
@@ -177,6 +183,7 @@ class InforEdit extends React.Component {
 							</div>
 
 						</div>
+						{this.state.processing==true ? <div class="loader text-center"></div> : ""}
 						<div>
 							<button className="btnHandle btn btn-success" onClick={this.save}>Lưu</button>
 						</div>

@@ -17,21 +17,23 @@ class PasswordForm extends React.Component{
         this.state = {
             err:"",
             message:"",
-            permission: 0
+            permission: 0,
+            processing: false
         }
         this.goLogin = this.goLogin.bind(this);
     }
     handleSubmit(e){
+        this.setState({processing:true});
         var that=this;
         var email= localStorage.getItem('email');
         $.post("/changepassword",{oldpass:this.oldpass.value,newpass:this.newpass.value,
             repass:this.repass.value, email:email},function(data){
-                console.log(data);
                 if (data.err!=""){
                     that.setState({err:data.err})
                 } else {
-                    that.setState({message:"Đổi mật khẩu thành công!"})
+                    that.setState({message:"Đổi mật khẩu thành công!"});
                 }
+                that.setState({processing:false});
         })
         e.preventDefault();
     }
@@ -99,6 +101,7 @@ class PasswordForm extends React.Component{
                                                 <input type="password" class="form-control" name="re-password" id="re_password" ref={(data) => { this.repass = data; }} />
                                             </div>
                                         </div>
+                                        {this.state.processing==true ? <div class="loader text-center"></div> : ""}
                                         <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 text-center">
                                             <input type="submit" class="btn btn-success text-center" value="Lưu" />
                                         </div>
@@ -106,7 +109,6 @@ class PasswordForm extends React.Component{
                                 </div>
                             </form>
                         </div>
-
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div class="home-link-menu">
                                 <ul>

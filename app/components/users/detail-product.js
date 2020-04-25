@@ -164,13 +164,13 @@ class DetailProduct extends React.Component{
                     <div class="tab-pane" id="thumbnail_2">
                         <div class="single-product-image">
                             <img src={this.state.product.image.image2} alt="single-product-image" />
-                            <a class="fancybox" href={this.state.product.image.image2} data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
+                            <a class="fancybox" href={this.state.product.image.image2} data-fancybox-group="gallery"><span class="btn large-btn">Phóng to <i class="fa fa-search-plus"></i></span></a>
                         </div>	
                     </div>
                     <div class="tab-pane" id="thumbnail_3">
                         <div class="single-product-image">
                             <img src={this.state.product.image.image3} alt="single-product-image" />
-                            <a class="fancybox" href={this.state.product.image.image3} data-fancybox-group="gallery"><span class="btn large-btn">View larger <i class="fa fa-search-plus"></i></span></a>
+                            <a class="fancybox" href={this.state.product.image.image3} data-fancybox-group="gallery"><span class="btn large-btn">Phóng to <i class="fa fa-search-plus"></i></span></a>
                         </div>	
                     </div>
                 </div>										
