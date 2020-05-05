@@ -37,7 +37,7 @@ class Navbar extends React.Component{
                     <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
                         <i class='icon-user'></i>
                         <strong>{localStorage.getItem('usernamead')}</strong>
-                        <img class="img-rounded" src="http://placehold.it/20x20/ccc/777" />
+                        {/* <img class="img-rounded" src="http://placehold.it/20x20/ccc/777" /> */}
                         <b class='caret'></b>
                     </a>
                     <ul class='dropdown-menu'>

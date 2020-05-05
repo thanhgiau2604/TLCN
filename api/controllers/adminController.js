@@ -14,9 +14,9 @@ const jwtoken = new google.auth.JWT(process.env.CLIENT_EMAIL, null, process.env.
 function getUsers(res) {
     User.find({role:'user'},function (err, data) {
         if (err) {
-            res.status(500).json(err);
+            console.log(err);
         } else {
-            res.json(data);
+            res.send(data);
         }
     })
 }
@@ -133,11 +133,40 @@ module.exports = function(app,adminRouter,jwt){
             numberPhone: req.body.phone,
             dob: req.body.dob,
             password: req.body.password,
-            role:'user'
+            role:'user',
+            isDelete:0
+
         }
         User.create(user,function(err,data){
             if (err){
                 throw err;
+            } else {
+                getUsers(res);
+            }
+        })
+    })
+    app.post("/importUser",parser,(req,res)=>{
+        var users = JSON.parse(req.body.data);
+        var arr=[];
+        for(var i=0; i<users.length; i++){
+            var user = users[i];
+            if (user[0]=="firstName") continue;
+            var obj = {
+                firstName : user[0],
+                lastName : user[1],
+                email : user[2],
+                numberPhone : user[3],
+                dob : user[4],
+                password : user[5],
+                role : user[6],
+                isDelete : user[7]
+            }
+            arr.push(obj);
+        }
+        console.log(arr);
+        User.insertMany(arr,function(err,data){
+            if (err){
+                res.json(0);
             } else {
                 getUsers(res);
             }

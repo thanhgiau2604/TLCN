@@ -505,8 +505,10 @@ class Category extends React.Component{
         var name = localStorage.getItem("curcategory");
         var that = this;
         $.get("/getCategoryProduct/"+name,function(data){
-            listAllProduct = data.lProduct;
-            that.setState({listProduct:data.lProduct,category:data.category})
+            if (data!=""){
+                listAllProduct = data.lProduct;
+                that.setState({listProduct:data.lProduct,category:data.category})
+            }
         })
     }
     changePage(value, event) {

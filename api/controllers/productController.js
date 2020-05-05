@@ -53,89 +53,96 @@ module.exports = function(app){
     });
     app.post("/getDetailProduct",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
-        const email = req.body.email;
-        Product.findOne({_id:idproduct},function(err,data){
-            if (err) {
-                throw err;
-            } else {
-                res.send(data);
-            }
-        })
+        console.log(idproduct);
+        if (!idproduct) {
+            res.send("");
+        } else {
+            Product.findOne({ _id: idproduct }, function (err, data) {
+                if (err) {
+                    throw err;
+                } else {
+                    res.send(data);
+                }
+            })
+        }
     });
     app.post("/getProductRelate",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
-        Product.findOne({_id:idproduct},function(err,product){
-            if (err) {
-                throw err;
-            } else {
-                if (!product.category){
-                    res.send([]);
+        if (idproduct){
+            Product.findOne({_id:idproduct},function(err,product){
+                if (err) {
+                    throw err;
                 } else {
-                    ProductCategory.findOne({_id:product.category},function(err,category){
-                        if (err){
-                            throw err;
-                        } else {
-                            var arrresult = [];
-                            var count = 0;
-                            category.listProduct.forEach(pro => {
-                                Product.findOne({_id:pro._id},function(err,data){
-                                    count++;
-                                    if (err) {
-                                        throw err;
-                                    } else {
-                                        if (data){
-                                            arrresult.push(data);
-                                            if (category.listProduct.length == count) {
-                                                res.send(arrresult);
+                    if (!product.category){
+                        res.send([]);
+                    } else {
+                        ProductCategory.findOne({_id:product.category},function(err,category){
+                            if (err){
+                                throw err;
+                            } else {
+                                var arrresult = [];
+                                var count = 0;
+                                category.listProduct.forEach(pro => {
+                                    Product.findOne({_id:pro._id},function(err,data){
+                                        count++;
+                                        if (err) {
+                                            throw err;
+                                        } else {
+                                            if (data){
+                                                arrresult.push(data);
+                                                if (category.listProduct.length == count) {
+                                                    res.send(arrresult);
+                                                }
                                             }
                                         }
-                                    }
-                                })
-                            });
-                        }
-                    })
+                                    })
+                                });
+                            }
+                        })
+                    }
                 }
-            }
-        })
+            })
+        }
     });
 
     app.post("/updateProductHistory",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
         const email = req.body.email;
-        // console.log(idproduct+" "+email);
-        User.findOneAndUpdate({email:email},{'$pull':{historylist:{id:idproduct}}},{new:true},function(err,data){
-            if (err){
-                throw err;
-            } else {
-                var time = parseInt(Date.now().toString());
-                User.findOneAndUpdate({email:email},{'$push':{historylist:{$each:[{id:idproduct,time:time}],
-            $sort:{time:-1}}}},{new:true},function(err,data){
-                    if (err){
-                        throw err;
-                    } else {
-                       
-                        // console.log(data);
-                        var arrResult=[];
-                        var count  = 0;
-                        const forLoop = async _ => {
-                            for (var i = 0; i < data.historylist.length; i++) {
-                                // console.log(data.historylist[i]);
-                                await Product.findOne({ _id: data.historylist[i].id }, function (err, da) {
-                                    count++;
-                                    if (da){
-                                        arrResult.push(da);
-                                        if (count== data.historylist.length) {
-                                            res.send(arrResult);
+        if (idproduct){
+            User.findOneAndUpdate({email:email},{'$pull':{historylist:{id:idproduct}}},{new:true},function(err,data){
+                if (err){
+                    throw err;
+                } else {
+                    var time = parseInt(Date.now().toString());
+                    User.findOneAndUpdate({email:email},{'$push':{historylist:{$each:[{id:idproduct,time:time}],
+                $sort:{time:-1}}}},{new:true},function(err,data){
+                        if (err){
+                            throw err;
+                        } else {
+                           
+                            // console.log(data);
+                            var arrResult=[];
+                            var count  = 0;
+                            const forLoop = async _ => {
+                                for (var i = 0; i < data.historylist.length; i++) {
+                                    // console.log(data.historylist[i]);
+                                    await Product.findOne({ _id: data.historylist[i].id }, function (err, da) {
+                                        count++;
+                                        if (da){
+                                            arrResult.push(da);
+                                            if (count== data.historylist.length) {
+                                                res.send(arrResult);
+                                            }
                                         }
-                                    }
-                                })
+                                    })
+                                }
                             }
+                            forLoop();
                         }
-                        forLoop();
-                    }
-                })
-            }
-        })
+                    })
+                }
+            })
+        }
     })
 
     
@@ -226,7 +233,7 @@ module.exports = function(app){
     app.post("/checkFavorite",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
         const email = req.body.email;
-        if (email){
+        if (email&&idProduct){
             User.findOne({email:email},function(err,user){
                 if (err){
                     throw err;
@@ -249,56 +256,60 @@ module.exports = function(app){
 
     app.post("/updateCountView",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
-        var currentDay = getCurrentDay();
-        Statistic.findOne({day:currentDay},function(err,data){
-            if (data){
-                var listViewToday = data.viewproduct;
-                var result=[];
-                var ok=false;
-                for (var i=0; i<listViewToday.length; i++){
-                    if (listViewToday[i].id.equals(idProduct)){
-                        ok=true;
-                        var itemresult = {
-                            id:idProduct,
-                            count: listViewToday[i].count+1
+        if (idProduct) {
+            var currentDay = getCurrentDay();
+            Statistic.findOne({ day: currentDay }, function (err, data) {
+                if (data) {
+                    var listViewToday = data.viewproduct;
+                    var result = [];
+                    var ok = false;
+                    for (var i = 0; i < listViewToday.length; i++) {
+                        if (listViewToday[i].id.equals(idProduct)) {
+                            ok = true;
+                            var itemresult = {
+                                id: idProduct,
+                                count: listViewToday[i].count + 1
+                            }
+                            result.push(itemresult);
+                        } else {
+                            var itemresult = {
+                                id: listViewToday[i].id,
+                                count: listViewToday[i].count
+                            }
+                            result.push(itemresult);
                         }
-                        result.push(itemresult);
-                    } else {
-                        var itemresult = {
-                            id:listViewToday[i].id,
-                            count: listViewToday[i].count
-                        }
-                        result.push(itemresult);
                     }
+                    if (ok == false) result.push({ id: idProduct, count: 1 });
+                    Statistic.update({ day: currentDay }, { $set: { viewproduct: result } }, function (err, data) {
+                        if (err) {
+                            throw err;
+                        } else {
+                            res.json(data)
+                        }
+                    });
                 }
-                if (ok==false) result.push({id:idProduct,count:1});
-                Statistic.update({day:currentDay},{$set:{viewproduct:result}},function(err,data){
-                    if (err){
-                        throw err;
-                    } else {
-                        res.json(data)
-                    }
-                });
-            }
-        })
+            })
+        }  
     })
 
     app.post("/showComment",parser,(req,res)=>{
         const idProduct= req.body.idProduct;
-        Product.findOne({_id:idProduct},(err,data)=>{
-            if (err){
-                throw err;
-            } else {
-                var arr = data.comments;
-                arr.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0)); 
-                res.json(arr);
-            }
-        })
-
+        if (idProduct){
+            Product.findOne({_id:idProduct},(err,data)=>{
+                if (err){
+                    throw err;
+                } else {
+                    var arr = data.comments;
+                    arr.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0)); 
+                    res.json(arr);
+                }
+            })
+        }
     })
     app.post("/addComment",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
-        const content = req.body.content;
+        if (idProduct){
+            const content = req.body.content;
         const id = parseInt(Date.now().toString());
         const userName = req.body.username;
         const arrImage = [];
@@ -316,5 +327,70 @@ module.exports = function(app){
         Product.findOneAndUpdate({_id:idProduct},{"$push":{comments:singleComment}},{new:true},(err,data)=>{
             res.json(data.comments.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0)));
         })
+        }    
+    });
+    app.post("/getRating",parser,(req,res)=>{
+        const id = req.body.id;
+        const email = req.body.email;
+        if (id){
+            Product.findOne({_id:id},function(err,data){
+                if (err){
+                    console.log(err);
+                } else {
+                    if (data){
+                        var done = false;
+                        var ratings = data.ratings;
+                        var star1=0,star2=0,star3=0,star4=0,star5=0;
+                        for(var i=0; i<ratings.length; i++) {
+                            var rate = ratings[i];
+                            if (rate.value==1) star1++; else
+                            if (rate.value==2) star2++; else
+                            if (rate.value==3) star3++; else
+                            if (rate.value==4) star4++; else
+                            if (rate.value==5) star5++;
+                            if (rate.user==email) done=true;
+                        };
+                        var sum = star1+star2+star3+star4+star5;
+                        var percent1,percent2,percent3,percent4,percent5;
+                        if (sum==0) {
+                            percent1=percent2=percent3=percent4=percent5=0;
+                        } else {
+                            percent1 = (star1*100)/sum;
+                            percent2 = (star2*100)/sum;
+                            percent3 = (star3*100)/sum;
+                            percent4 = (star4*100)/sum;
+                            percent5 = (star5*100)/sum;
+                        }
+                        var arrResult = [];
+                        arrResult.push({value:star1,percent:percent1});
+                        arrResult.push({value:star2,percent:percent2});
+                        arrResult.push({value:star3,percent:percent3});
+                        arrResult.push({value:star4,percent:percent4});
+                        arrResult.push({value:star5,percent:percent5});
+                        console.log(arrResult);
+                        res.json({data: arrResult, done:done});
+                    }
+                }
+            })
+        }
+    })
+    app.post("/ratingStar",parser,(req,res)=>{
+        const value = req.body.value;
+        const id = req.body.id;
+        const email = req.body.email;
+        if (id&&email){
+            singleRating = {
+                user: email,
+                value: value,
+                date: getCurrentDayTime()
+            }
+            Product.findOneAndUpdate({_id:id},{"$push":{ratings:singleRating}},{new:true},(err,data) => {
+                if (err){
+                    res.send(data);
+                } else {
+                    res.send(data);
+                }
+            })
+        }
     })
 }

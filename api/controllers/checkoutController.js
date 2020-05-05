@@ -93,6 +93,7 @@ module.exports = function(app,apiRouter){
               if (err){
                 res.json({err:1})
               } else {
+                  console.log(data);
                 var result = 3*data.distanceValue;
                 Order.update({ _id: id }, { $set: { address: data.destination, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
                     if (err) {

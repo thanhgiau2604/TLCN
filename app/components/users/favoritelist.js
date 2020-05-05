@@ -93,7 +93,10 @@ class TableFavorite extends React.Component{
                 }
             }
         }
-        return (<div>
+        return (
+        <div>
+        {this.state.listFav.length>0 ?
+        <div>
             <table className="table table-hover text-center">
                 <thead>
                     <tr>
@@ -123,6 +126,7 @@ class TableFavorite extends React.Component{
                     Hiển thị từ {start + 1} đến {finish} trên {this.state.listFav.length} sản phẩm
             </div>
             </div>
+        </div> : <div className="text-center">Chưa có sản phẩm yêu thích</div>}
         </div>)
     }
 }
@@ -203,6 +207,8 @@ class ListItems extends React.Component{
             }
         }
         return (<div>
+        {this.state.listFav.length>0 ?
+        <div>
             <div className="row">
                 {lCurFav.map(function (item, index) {
                     return <Item id={item._id} name={item.name} image={item.image.image1} />
@@ -222,6 +228,7 @@ class ListItems extends React.Component{
                     Hiển thị từ {start + 1} đến {finish} trên {this.state.listFav.length} sản phẩm
                 </div>
             </div>
+        </div> : <div></div>}
         </div>)
     }
 }

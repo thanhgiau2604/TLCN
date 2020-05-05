@@ -165,15 +165,19 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 .activeUser {
+    position: absolute;
     color: white;
     font-weight: 700;
     background-color: royalblue;
+    right: 0;
+    top: 25%;
 }
 
 .activeUser h3, .activeUser h1 {
     color: white;
 }
 .metrics {
+    position: relative;
     background-color: #c0d8fd;
 }
 .fourMetrics {

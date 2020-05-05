@@ -4,6 +4,7 @@ import Navbar from '../common/navbar'
 import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
+import readXlsxFile from 'read-excel-file'
 var main,user,arrUser;
 class Users extends React.Component {
   constructor(props){
@@ -244,7 +245,8 @@ class ManageUsers extends React.Component{
           add:false,
           curpage: 1,
           status:"1",
-          permission: false
+          permission: false,
+          addExcel:-1
         }
         main = this;
         this.handleAddUser = this.handleAddUser.bind(this);
@@ -252,7 +254,7 @@ class ManageUsers extends React.Component{
         this.previousPage = this.previousPage.bind(this);
         this.nextPage = this.nextPage.bind(this);
         this.changeStatus = this.changeStatus.bind(this);
-      
+        this.readFile = this.readFile.bind(this);
     }
     componentWillMount(){
       var that = this;
@@ -326,6 +328,20 @@ class ManageUsers extends React.Component{
         })
       }
     }
+  readFile(file) {
+    var that = this;
+    const input = document.getElementById('input');
+    this.setState({ addExcel: -1 });
+    readXlsxFile(input.files[0]).then((rows) => {
+      $.post("/importUser", { data: JSON.stringify(rows) }, function (data) {
+        if (data == 0) {
+          that.setState({ addExcel: 0 })
+        } else {
+          that.setState({ listUsers: data, addExcel: 1 })
+        }
+      })
+    })
+  }
     render(){
       var Edit,Add;
       if (this.state.edit == true) { Edit = <EditForm /> } else { Edit = "" }
@@ -347,7 +363,16 @@ class ManageUsers extends React.Component{
             page.push(<li><a onClick={this.changePage.bind(this,i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
           }
         }
-      }      
+      }   
+      var notify = "";
+      if (this.state.addExcel == 1)   {
+        notify = <div class="alert alert-success" style={{marginTop:'10px'}}>
+        <strong>Import Users Successfully!</strong>
+      </div> 
+      } else if (this.state.addExcel==0){
+        notify = <div class="alert alert-danger" style={{marginTop:'10px'}}>
+        <strong>An error has occurred!</strong></div>
+      }
         return(<div id='content'>
         <div class='panel panel-default grid'>
           <div class='panel-heading'>
@@ -366,37 +391,45 @@ class ManageUsers extends React.Component{
                   <button className="btn btn-primary" onClick={() => window.location.replace("/login")} style={{ marginTop: '10px', width: 'auto' }}>Đi đến trang đăng nhập</button>
                 </div> :
           <div>
-          <div class='panel-body filters'>
-            <div class="row">
-              <h3 class="text-center"><b>LIST USER ACCOUNTS</b></h3>
-            </div>
-            <div class='row'>
-              <div class='col-md-3'> 
-              </div>
-              <div class='col-md-3'>
-                <div class='input-group'>
-                  <input class='form-control' placeholder='Search user' type='text' onChange={this.handleChange}/>
-                  <span class='input-group-btn'>
-                    <button class='btn' type='button'>
-                      <i class='icon-search'></i>
-                    </button>
-                  </span>
-                </div>
-              </div>
-              <div className="col-md-5">
-                  <div class="radio" onChange={this.changeStatus}>
-                    <label><input type="radio" name="optionStatus" value="1" checked={this.state.status=="1"}/>All</label>
-                    <label><input type="radio" name="optionStatus" value="2" />Active</label>
-                    <label><input type="radio" name="optionStatus" value="3" />Deleted</label>
+                <div class='panel-body filters'>
+                  <div class="row">
+                    <h3 class="text-center"><b>LIST USER ACCOUNTS</b></h3>
                   </div>
-              </div>
-              <div class="text-right" style={{ marginTop: '50px', paddingRight: '10%' }}>
-              <button class="btn btn-warning" onClick={this.handleAddUser}>
-                <i class="icon-plus-sign"></i>Add New User
-                </button>
-            </div>
-            </div>
-          </div>
+                  <div class='row'>
+                    <div class='col-md-3'>
+                    </div>
+                    <div class='col-md-3'>
+                      <div class='input-group'>
+                        <input class='form-control' placeholder='Search user' type='text' onChange={this.handleChange} />
+                        <span class='input-group-btn'>
+                          <button class='btn' type='button'>
+                            <i class='icon-search'></i>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-md-5">
+                      <div class="radio" onChange={this.changeStatus}>
+                        <label><input type="radio" name="optionStatus" value="1" checked={this.state.status == "1"} />All</label>
+                        <label><input type="radio" name="optionStatus" value="2" />Active</label>
+                        <label><input type="radio" name="optionStatus" value="3" />Deleted</label>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnAddUser text-right">
+                      <button class="btn btn-warning" onClick={this.handleAddUser}>
+                        <i class="icon-plus-sign"></i> Add New User
+                      </button>
+                      <div class="upload-btn-wrapper">
+                        <button class="btnUpload" >Import an Excel File</button>
+                        <input type="file" name="myfile" onChange={this.readFile} id="input" />
+                      </div>
+                    </div>
+                  </div>
+                  {notify}
+                </div>
           {Edit}
           {Add}
           <table class='table'>

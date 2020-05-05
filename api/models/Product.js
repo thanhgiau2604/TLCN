@@ -14,13 +14,9 @@ const ProductSchema = new Schema({
             quanty: Number
         }]
     }],
-    votes: {
-        vote1: Number,
-        vote2: Number,
-        vote3: Number,
-        vote4:Number,
-        vote5: Number
-    },
+    ratings: [
+        {user: String,value:Number,date:String}
+    ],
     comments: [{
         id: Number,
         username: String,

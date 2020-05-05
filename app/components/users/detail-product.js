@@ -14,6 +14,7 @@ var store = require("../../store");
 import {connect} from 'react-redux'
 var main,chooseColor="",firstColor;
 import ReactGA from 'react-ga'
+import ReactStars from 'react-rating-stars-component'
 function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
@@ -84,9 +85,12 @@ class DetailProduct extends React.Component{
         var that = this;
         if (idproduct){
             $.post("/getDetailProduct",{idproduct:idproduct},function(data){
-                console.log(data);
-                main.setState({nameproduct:data.name});
-                that.setState({product:data,curcost:data.costs[data.costs.length-1].cost,cursize:data.sizes[0].size});
+                if (data==""){
+                    window.location.replace("/");
+                } else {
+                    main.setState({nameproduct:data.name});
+                    that.setState({product:data,curcost:data.costs[data.costs.length-1].cost,cursize:data.sizes[0].size});
+                }
             })
             $.post("/checkFavorite", { idProduct: idproduct, email: localStorage.getItem('email')}, function (data) {
 				if (data == 1) {
@@ -421,7 +425,7 @@ class SingleComment extends React.Component {
                     <p class="textComment">{this.props.comment.content}</p>
                 </div>
                 {this.props.comment.images.length > 0 ?
-                    <div class="row displayImage">
+                    <div class="displayImage">
                         <DisplayImage listImage={list}/>
                     </div> : <div></div>
                 }
@@ -441,7 +445,7 @@ class SingleComment extends React.Component {
                                 <p class="textComment">{response.content}</p>
                             </div>
                             {response.images.length > 0 ?
-                                <div class="row displayImage">
+                                <div class="displayImage">
                                     <DisplayImage listImage={response.images.map(image => ({src:image.image,alt:''}))}/>
                                 </div> : <div></div>
                             }
@@ -450,18 +454,44 @@ class SingleComment extends React.Component {
         </div>)
     }
 }
+var valueStar = 0;
 class InforProduct extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            listComment: []
+            listComment: [],
+            ratingSuccess: false,
+            dataRating: [{value:0,percent:0},{value:0,percent:0},{value:0,percent:0},
+                {value:0,percent:0},{value:0,percent:0}],
+            done:true
         }
         infor = this;
+        this.evaluate = this.evaluate.bind(this);
+        this.ratingChanged = this.ratingChanged.bind(this);
     }
     componentDidMount(){
         var that = this;
         $.post("/showComment",{idProduct: localStorage.getItem('curproduct')},function(data){
             that.setState({listComment:data});
+        });
+        var id = localStorage.getItem("curproduct");
+        var email = localStorage.getItem('email');
+        $.post("/getRating",{id:id, email:email}, function(data){
+            that.setState({dataRating:data.data, done:data.done});
+        })
+    }
+    ratingChanged(value){
+        valueStar = value;
+    }
+    evaluate(){
+        var that = this;
+        var email = localStorage.getItem("email");
+        var id = localStorage.getItem("curproduct");
+        $.post("/ratingStar",{value: valueStar, id: id, email:email},function(data){
+            that.setState({ratingSuccess:true});
+            $.post("/getRating",{id:id}, function(data){
+                that.setState({dataRating:data.data,done:true});
+            })
         })
     }
     render(){
@@ -478,44 +508,97 @@ class InforProduct extends React.Component{
                 </ul>             
                 <div class="tab-content">
                     <div class="tab-pane active" id="moreinfo">
-                        <div class="tab-description">
-                            
+                        <div class="tab-description">                         
                         </div>
                     </div>            
                     <div class="tab-pane" id="review">
                         <div class="row tab-review-row">
-                            <div class="col-xs-5 col-sm-4 col-md-4 col-lg-3 padding-5">
-                                <div class="tab-rating-box">
-                                    <span>Sao</span>
-                                    <div class="rating-box">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-empty"></i>
-                                    </div>	
-                                    <div class="review-author-info">
-                                        <span>06/22/2015</span>
-                                    </div>															
-                                </div>
+                            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 padding-5 col-md-push-1">
+                                    <div>
+                                        <div class="side">
+                                            <div>5 sao</div>
+                                        </div>
+                                        <div class="middle">
+                                            <div class="bar-container">
+                                                <div class="bar-5" style={{width: this.state.dataRating[4].percent+"%"}}></div>
+                                            </div>
+                                        </div>
+                                        <div class="side right">
+                                            <div>{this.state.dataRating[4].value}</div>
+                                        </div>
+                                        <div class="side">
+                                            <div>4 sao</div>
+                                        </div>
+                                        <div class="middle">
+                                            <div class="bar-container">
+                                                <div class="bar-4" style={{width: this.state.dataRating[3].percent+"%"}}></div>
+                                            </div>
+                                        </div>
+                                        <div class="side right">
+                                            <div>{this.state.dataRating[3].value}</div>
+                                        </div>
+                                        <div class="side">
+                                            <div>3 sao</div>
+                                        </div>
+                                        <div class="middle">
+                                            <div class="bar-container">
+                                                <div class="bar-3" style={{width: this.state.dataRating[2].percent+"%"}}></div>
+                                            </div>
+                                        </div>
+                                        <div class="side right">
+                                            <div>{this.state.dataRating[2].value}</div>
+                                        </div>
+                                        <div class="side">
+                                            <div>2 sao</div>
+                                        </div>
+                                        <div class="middle">
+                                            <div class="bar-container">
+                                                <div class="bar-2" style={{width: this.state.dataRating[1].percent+"%"}}></div>
+                                            </div>
+                                        </div>
+                                        <div class="side right">
+                                            <div>{this.state.dataRating[1].value}</div>
+                                        </div>
+                                        <div class="side">
+                                            <div>1 sao</div>
+                                        </div>
+                                        <div class="middle">
+                                            <div class="bar-container">
+                                                <div class="bar-1" style={{width: this.state.dataRating[0].percent+"%"}}></div>
+                                            </div>
+                                        </div>
+                                        <div class="side right">
+                                            <div>{this.state.dataRating[0].value}</div>
+                                        </div>
+                                    </div>
+                                    {(localStorage.getItem("token")&&this.state.done==false) ? 
+                                    <div class="tab-rating-box">
+                                        <span>Bạn chưa đánh giá?</span>
+                                        <ReactStars
+                                            count={5}
+                                            onChange={this.ratingChanged}
+                                            size={30}
+                                            half={false}
+                                            color2={'#ffd700'} />
+                                        <a class="write-review-btn" style={{ cursor: "pointer" }} onClick={this.evaluate}>Đánh giá</a>
+                                    </div> : <div></div>}
+                                {this.state.ratingSuccess==true ? <div class="alert alert-success thanhcong">
+                                            <strong>Đánh giá thành công!</strong>
+                                        </div>	: <div></div>}		
                             </div>
-                            <div class="col-xs-7 col-sm-8 col-md-8 col-lg-9 padding-5">
-                                <div class="write-your-review">
-                                    <p><strong>Viết đánh giá</strong></p>
-                                    <p>write A REVIEW</p>
-                                    <a href="#">Report abuse </a>
-                                </div>
-                            </div>
-                            <a href="#" class="write-review-btn">Đánh giá của bạn!</a>
+                        </div>
+                        
+                        <div class="row">
                                 <div class="comment">
                                     <h3>BÌNH LUẬN</h3>
                                     {htmlComment}
                                     <h3>Tất cả bình luận <span style={{ color: 'red', fontWeight: '700' }}>({this.state.listComment.length})</span></h3>
-                                    {this.state.listComment.map(function(comment,index){
-                                        return (<SingleComment key={index} comment={comment}/>)
+                                    {this.state.listComment.map(function (comment, index) {
+                                        return (<SingleComment key={index} comment={comment} />)
                                     })}
                                 </div>
                         </div>
+                        
                     </div>
                 </div>									
             </div>
@@ -635,7 +718,6 @@ class RelatedProduct extends React.Component{
     componentDidMount(){
         var that = this;
         $.post("/getProductRelate",{idproduct:localStorage.getItem('curproduct')},function(data){
-            console.log(data);
             that.setState({listRelate:data});
         })
     } 

@@ -361,7 +361,7 @@ class Dashboard extends React.Component{
                     options={{
                       title: {
                         display: true,
-                        text: "The number of users from 7 days ago to today"
+                        text: "The numbers of users"
                       },
                       legend: {
                         display: true,
@@ -380,24 +380,27 @@ class Dashboard extends React.Component{
                 </div>
               </div>          
             <div class='page-header'>
-              <h4>Access the products</h4>
+              <h4>Trending products</h4>
             </div>
             <div>
             <Dropdown options={options} onChange={this._onSelect1} value={this.state.timeOption1} 
                     placeholder="Select an option" />;  
             </div>
             {this.state.processing1==true ? <div class="loader text-center"></div> : ""}
-            <div class='row text-center'>
+            <div class='row text-center'>  
+              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
               <h3 style={{color:'#0c967a'}}><b>TOP VIEWED PRODUCTS</b></h3>
                 <TopViewProduct/>
-            </div>
-              <div class='page-header'>
-                <h4>Trending Products:</h4>
-                <div className="text-center">
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                 <h3 style={{color:'#0c967a'}}><b>TOP ORDERED PRODUCTS</b></h3>
                   <TopOrderProduct/>
-                </div>
+              </div>      
             </div>
+              {/* <div class='page-header'>
+                <h4>Trending Products:</h4>
+                
+            </div> */}
           </div>}
         </div>
       </div>)

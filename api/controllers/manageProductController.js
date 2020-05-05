@@ -33,7 +33,6 @@ module.exports = function(app){
         })
     });
 
-
     var nameImage;
     const storage = multer.diskStorage({
         destination: (req, file, cb) => cb(null, "./public/img/product"),
@@ -111,7 +110,35 @@ module.exports = function(app){
             }
         })
     });
-
+    app.post("/importProduct",parser,(req,res)=>{
+        var products = JSON.parse(req.body.data);
+        var arr=[];
+        for(var i=0; i<products.length; i++){
+            var product = products[i];
+            if (product[0]=="name") continue;
+            var obj = {
+                name: product[0],
+                quanty: product[1],
+                costs: [{cost:product[2]}],
+                description: product[3],
+                sizes:[],
+                isDeleted:0,
+                votes: {vote1:0,vote2:0,vote3:0,vote4:0,vote5:0},
+                createAt: Date.now().toString(),
+                views:0,
+                comments: []
+            }
+            arr.push(obj);
+        }
+        console.log(arr);
+        Product.insertMany(arr,function(err,data){
+            if (err){
+                res.json(0);
+            } else {
+                getProducts(res);
+            }
+        })
+    })
     app.post("/deleteImage",parser,(req,res)=>{
         const path = req.body.path;
         const deletePath = "./public/"+path;

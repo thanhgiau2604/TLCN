@@ -5,7 +5,7 @@ import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
 import Viewer from 'react-viewer';
-
+import readXlsxFile from 'read-excel-file'
 var main;
 var curEditProduct, commentClass, singleCommentClass;
 class Products extends React.Component {
@@ -28,9 +28,9 @@ class Products extends React.Component {
   updateProduct(){
     var constImage = "/img/product/default.png";
     var image1=constImage, image2=constImage, image3=constImage;
-    if (this.props.product.image.image1!="") image1 = this.props.product.image.image1;
-    if (this.props.product.image.image2!="") image2 = this.props.product.image.image2;
-    if (this.props.product.image.image3!="") image3 = this.props.product.image.image3;
+    if (this.props.product.image&&this.props.product.image.image1!="") image1 = this.props.product.image.image1;
+    if (this.props.product.image&&this.props.product.image.image2!="") image2 = this.props.product.image.image2;
+    if (this.props.product.image&&this.props.product.image.image3!="") image3 = this.props.product.image.image3;
     curEditProduct.setState({product:this.props.product,updateSuccess:0, curcost:this.props.product.costs[this.props.product.costs.length-1].cost,
       curSizes:this.props.product.sizes.length, image1:image1, image2:image2, image3:image3});
   }
@@ -67,10 +67,12 @@ class Products extends React.Component {
       isDeleted=this.props.product.isDeleted;
       classDeleted = 'deleted';
     }
+    var image = "/img/product/default.png"
+    if (this.props.product.image) image = this.props.product.image.image1;
     return (<tr class={'active '+classDeleted}>
       <td>{this.props.stt}</td>
       <td>{this.props.product.name}</td>
-      <td><img src={this.props.product.image.image1} style={{ width: '120px' }} />
+      <td><img src={image} style={{ width: '120px' }} />
       </td>
       <td>{this.props.product.costs[this.props.product.costs.length-1].cost}</td>
       <td>{this.props.product.quanty}</td>
@@ -821,11 +823,13 @@ class ManageProducts extends React.Component {
     this.state = {
       listProduct: [],
       curpage: 1,
-      permission: false
+      permission: false,
+      addExcel:-1
     }
     this.handleChange = this.handleChange.bind(this);
     this.previousPage = this.previousPage.bind(this);
     this.nextPage = this.nextPage.bind(this);
+    this.readFile = this.readFile.bind(this);
     main = this;
   }
   componentWillMount(){
@@ -869,6 +873,20 @@ class ManageProducts extends React.Component {
         that.setState({listProduct:data});
       })
   }
+  readFile(file) {
+    var that = this;
+    const input = document.getElementById('input');
+    this.setState({ addExcel: -1 });
+    readXlsxFile(input.files[0]).then((rows) => {
+      $.post("/importProduct", { data: JSON.stringify(rows) }, function (data) {
+        if (data == 0) {
+          that.setState({ addExcel: 0 })
+        } else {
+          that.setState({ listProduct: data.lProduct, addExcel: 1 })
+        }
+      })
+    })
+  }
   render() {
     var lCurProduct = [];
     var page = "";
@@ -888,6 +906,15 @@ class ManageProducts extends React.Component {
         }
       }
     }
+    var notify = "";
+      if (this.state.addExcel == 1)   {
+        notify = <div class="alert alert-success" style={{marginTop:'10px'}}>
+        <strong>Import Users Successfully!</strong>
+      </div> 
+      } else if (this.state.addExcel==0){
+        notify = <div class="alert alert-danger" style={{marginTop:'10px'}}>
+        <strong>An error has occurred!</strong></div>
+      }
     return (<div id='content'>
       <div class='panel panel-default grid'>
         <div class='panel-heading'>
@@ -923,12 +950,24 @@ class ManageProducts extends React.Component {
                 </span>
               </div>
             </div>
-            <div class="text-right" style={{ marginTop: '50px', paddingRight: '10%' }}>
+            {/* <div class="text-right" style={{ marginTop: '50px', paddingRight: '10%' }}>
               <button class="btn btn-warning" data-toggle="modal" data-target="#modalNewProduct">
                 <i class="icon-plus-sign"></i>Add New Product
                 </button>
-            </div>
+            </div> */}
           </div>
+              <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnAddUser text-right">
+                  <button class="btn btn-warning" data-toggle="modal" data-target="#modalNewProduct">
+                    <i class="icon-plus-sign"></i> Add New Product
+                      </button>
+                  <div class="upload-btn-wrapper">
+                    <button class="btnUpload" >Import an Excel File</button>
+                    <input type="file" name="myfile" onChange={this.readFile} id="input" />
+                  </div>
+                </div>
+              </div>
+              {notify}
         </div>
         <table class='table'>
           <thead>
