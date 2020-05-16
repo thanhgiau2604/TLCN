@@ -9,7 +9,7 @@ import CopyRight from '../common/copyright'
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
-var main,choosePrice,chooseSize,listAllProduct;
+var main,choosePrice=0,chooseSize=0,chooseColor="all",listAllProduct;
 import ReactGA from 'react-ga'
 function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
@@ -272,16 +272,75 @@ class ProductList extends React.Component{
     </li>)
     }
 }
-
+var filterColor;
+class FilterColor extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            listColor: [],
+            listProduct: []
+        }
+        filterColor = this;
+        this.changeColor = this.changeColor.bind(this);
+    }
+    changeColor(e){
+        main.setState({processing: true});
+        chooseColor = e.target.value;
+        var ok=false;
+        var arrProduct = [];
+        for (var i = 0; i < listAllProduct.length; i++) {
+            ok = false;
+            var sizes = listAllProduct[i].sizes;
+            var price = listAllProduct[i].costs[listAllProduct[i].costs.length-1].cost;
+            var max = 100000 * choosePrice;
+            var min = 100000 * (choosePrice - 1);
+            if (choosePrice!=0)
+               if (price<min || price >max) continue;
+                for (var j = 0; j < sizes.length; j++) {
+                    if (ok) break;
+                    if (chooseSize != 0 && sizes[j].size != chooseSize) continue;
+                    var colors = sizes[j].colors;
+                    for (var k = 0; k < colors.length; k++) {
+                        if ((chooseColor=="all")||(colors[k].quanty > 0 && colors[k].color == chooseColor)) {
+                            ok = true;
+                            arrProduct.push(listAllProduct[i]);
+                            break;
+                        }
+                    }
+                }
+        }
+        console.log(arrProduct);
+        main.setState({listProduct:arrProduct, processing:false});
+    }
+    render(){
+        var arrColor = [];
+        for (var i=0; i<this.state.listProduct.length; i++){
+            var product = this.state.listProduct[i];
+            for (var j=0; j<product.sizes.length; j++){
+                var size = product.sizes[j];
+                for (var k=0; k<size.colors.length; k++){
+                    var color = size.colors[k];
+                    if (color.quanty>0){
+                        if (!arrColor.includes(color.color)){
+                            arrColor.push(color.color);
+                        }
+                    }
+                }
+            }
+        }
+        return(<div class="radio" onChange={this.changeColor}>
+            <label class="filterColor"><input type="radio" name="optionColor" value="all"/>All</label>
+            {arrColor.map(function(color,index){
+                return(<label class="filterColor"><input type="radio" name="optionColor" value={color}/>{color}</label>)
+            })}
+        </div>)
+    }
+}
 class OptionProduct extends React.Component{
     constructor(props){
         super(props);
         this.changePrice = this.changePrice.bind(this);
         this.changeSize = this.changeSize.bind(this);
-        this.checkPrice = this.checkPrice.bind(this);
-    }
-    checkPrice(price){
-
     }
     changePrice(event){
         main.setState({processing: true});
@@ -289,14 +348,23 @@ class OptionProduct extends React.Component{
         var curProduct = [];
         var max = 100000*choosePrice;
         var min = 100000*(choosePrice-1);
+        var ok = false;
         listAllProduct.forEach(product => {
+            ok=false;
             var cost = product.costs[product.costs.length-1].cost;
             if ((cost>min && cost<max) || (choosePrice==0)){
                 if (chooseSize!=""){
                     for (var i=0; i<product.sizes.length; i++){
+                        if (ok) break;
                         if (product.sizes[i].size==chooseSize || chooseSize==0){
-                            curProduct.push(product);
-                            break;
+                            var colors = product.sizes[i].colors;
+                            for (var j=0; j<colors.length; j++){
+                                if (chooseColor=="all" || (colors[j].quanty>0&&colors[j].color==chooseColor)){
+                                    curProduct.push(product);
+                                    ok=true;
+                                     break;
+                                }
+                            }
                         }
                     }
                 } else {
@@ -310,15 +378,25 @@ class OptionProduct extends React.Component{
         main.setState({processing: true});
         chooseSize = parseInt(event.target.value);
         var curProduct = [];
+        var ok = false;
         listAllProduct.forEach(product => {
+            ok=false;
             for (var i=0; i<product.sizes.length; i++){
+                if (ok) break;
                 if (chooseSize==0 || product.sizes[i].size==chooseSize){
                     if (choosePrice!=""){
                         var max = 100000 * choosePrice;
                         var min = 100000 * (choosePrice - 1);
                         var cost = product.costs[product.costs.length-1].cost;
                         if ((cost>min && cost<max) || (choosePrice==0)){
-                            curProduct.push(product);
+                            var colors = product.sizes[i].colors;
+                            for (var j=0; j<colors.length; j++){
+                                if (chooseColor=="all" || (colors[j].quanty>0&&colors[j].color==chooseColor)){
+                                    curProduct.push(product);
+                                    ok=true;
+                                     break;
+                                }
+                            }
                         }
                     } else {
                         curProduct.push(product);
@@ -364,7 +442,10 @@ class OptionProduct extends React.Component{
                         <label><input type="radio" name="optionSize" value="44" />Size 44</label> <br/>
                     </div>
             </div>
-            
+            <div class="product-single-sidebar">
+                <span class="sidebar-title">LỌC THEO MÀU SẮC</span>
+                    <FilterColor/>
+            </div>
         </div>
     </div>)
     }
@@ -483,7 +564,6 @@ class OptionView extends React.Component{
     </div>)
     }
 }
-
 class Category extends React.Component{
     constructor(props){
         super(props);
@@ -507,7 +587,8 @@ class Category extends React.Component{
         $.get("/getCategoryProduct/"+name,function(data){
             if (data!=""){
                 listAllProduct = data.lProduct;
-                that.setState({listProduct:data.lProduct,category:data.category})
+                that.setState({listProduct:data.lProduct,category:data.category});
+                filterColor.setState({listProduct:data.lProduct});
             }
         })
     }

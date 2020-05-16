@@ -4967,3 +4967,19 @@ td {
   .bar-3 {height: 18px; background-color: #00bcd4;}
   .bar-2 {height: 18px; background-color: #ff9800;}
   .bar-1 {height: 18px; background-color: #f44336;}
+
+  .btnSend {
+	  margin-top:15px
+  }
+  .responseInfor {
+	  margin-top:15px
+  }
+  .list-unstyled {
+	  padding-top:10px;
+  }
+  .filterColor {
+  	display :block;
+  }
+  .autocomplete-dropdown-container {
+	  margin-bottom: 15px;
+  }

@@ -5,6 +5,15 @@ const ProductCategory = require("../models/ProductCategory");
 const Product = require("../models/Product");
 const ObjectId = require('mongodb').ObjectId;
 const Order = require("../models/order");
+const Contact = require("../models/contact");
+function getCurrentDay() {
+    var dateObj = new Date();
+    var month = dateObj.getMonth() + 1; //months from 1-12
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
+    nowday = day.toString()+month.toString()+year.toString();
+    return nowday;
+}
 module.exports = function(app,apiRouter){
     app.get("/getPopular",(req,res)=>{
         Product.find({}).sort({views:"descending"}).exec(function(err,data){
@@ -43,8 +52,7 @@ module.exports = function(app,apiRouter){
     app.get("/listfavorite",(req,res)=>{
         res.render("sanphamyeuthich");
     });
-
-    //get favorite list
+   //get favorite list
     app.post("/productFavorite",parser,(req,res)=>{
         const email = req.body.email;
         User.find({email:email},function(err,data){
@@ -71,7 +79,6 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-
     //handle delete product
     app.post("/deleteFav",parser,(req,res)=>{
         const idDel = req.body.idDel;
@@ -97,13 +104,10 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-
     ///order - history
     app.get("/orderhistory",(req,res)=>{
         res.render("lichsudonhang");
     });
-
-
     app.post("/productHistory",parser,(req,res)=>{
         const email = req.body.email;
         User.find({email:email},function(err,data){
@@ -130,7 +134,6 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-
     app.post("/delHistory",parser,(req,res)=>{
         const email = req.body.email;
         var arrResult=[];
@@ -142,7 +145,6 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-
     app.post("/getOrder",parser,(req,res)=>{
         const email = req.body.email;
         Order.find({email:email},function(err,data){
@@ -165,8 +167,6 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-
-
     app.post("/cancelOrder",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
         const idOrder = req.body.idOrder;
@@ -195,7 +195,6 @@ module.exports = function(app,apiRouter){
             })
         })
     })
-
     app.get("/getSneaker",(req,res)=>{
         ProductCategory.find({name:"Sneaker Product"},function(err,data){
             // res.json(data[0]);
@@ -212,7 +211,6 @@ module.exports = function(app,apiRouter){
              });
          })
     });
-
     app.get("/getSport",(req,res)=>{
         ProductCategory.find({name:"Sport Product"},function(err,data){
             // res.json(data[0]);
@@ -229,7 +227,6 @@ module.exports = function(app,apiRouter){
              });
          })
     });
-
     app.get("/getPump",(req,res)=>{
         ProductCategory.find({name:"Pump Product"},function(err,data){
             // res.json(data[0]);
@@ -246,7 +243,6 @@ module.exports = function(app,apiRouter){
              });
          })
     });
-
     app.get("/getKid",(req,res)=>{
         ProductCategory.find({name:"Kid Product"},function(err,data){
             // res.json(data[0]);
@@ -263,12 +259,10 @@ module.exports = function(app,apiRouter){
              });
          })
     });
-
     //handle Search
     app.get("/search",(req,res)=>{
         res.render("timkiemsanpham");
     });
-
     app.post("/itemSearch",parser,(req,res)=>{
         const keysearch = req.body.keysearch;
         Product.find({name: {$regex : ".*"+keysearch+".*",'$options' : 'i' }},function(err,data){
@@ -289,8 +283,24 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-
     app.get("/contact",(req,res)=>{
         res.render("lienhe");
+    })
+    app.post("/sendInfor",parser,(req,res)=>{
+        var infor = {
+            day:getCurrentDay(),
+            name:  req.body.name,
+            email: req.body.email,
+            title: req.body.title,
+            content: req.body.content
+        }
+        var singleContact = new Contact(infor);
+        singleContact.save(function(err,data){
+            if (err){
+                res.json({success:0,err:err})
+            } else {
+                res.json({success:1})
+            }
+        })
     })
 }

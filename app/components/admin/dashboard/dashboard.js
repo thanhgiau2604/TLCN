@@ -7,6 +7,7 @@ import $ from 'jquery'
 import { Bar } from "react-chartjs-2";
 import { Line } from "react-chartjs-2";
 import Dropdown from 'react-dropdown';
+import { CSVLink} from "react-csv";
 var main;
 const options = [
   'today', 'yesterday', 'last7days', 'last28days'
@@ -71,7 +72,7 @@ class TopViewProduct extends React.Component {
           legend: { display: false },
           title: {
             display: true,
-            text: "TOP 10 VIEWED PRODUCTS"
+            text: "TOP VIEWED PRODUCTS"
           },
           scales: {
             yAxes: [{
@@ -158,6 +159,16 @@ class TopOrderProduct extends React.Component {
       </div>)}
   }
 }
+const headersView = [
+  { label: "Mã sản phẩm", key: "idproduct" },
+  { label: "Tên sản phẩm", key: "nameproduct" },
+  { label: "Số lượt xem", key: "view" }
+];
+const headersOrder = [
+  { label: "Mã sản phẩm", key: "idproduct" },
+  { label: "Tên sản phẩm", key: "nameproduct" },
+  { label: "Số lượt đặt hàng", key: "order" }
+];
 class Dashboard extends React.Component{
     constructor(props){
         super(props);
@@ -170,7 +181,9 @@ class Dashboard extends React.Component{
           timeOption1: options[0],
           processing: false,
           processing1:false,
-          permission: false
+          permission: false,
+          dataView: [],
+          dataOrder: []
         }
         main=this;
         this._onSelect = this._onSelect.bind(this);
@@ -198,6 +211,17 @@ class Dashboard extends React.Component{
         viewClass.setState({topView: data.view});
         orderClass.setState({topOrder:data.order});
         that.setState({timeOption1: selectedOption.value, processing1:false});
+        var dataView = [];
+        for (var i=0; i<data.view.length; i++){
+          var product= data.view[i].product;
+          dataView.push({idproduct:product._id,nameproduct:product.name,view:data.view[i].view})
+        }
+        var dataOrder=[];
+        for (var i=0; i<data.order.length; i++){
+          var product= data.order[i].product;
+          dataOrder.push({idproduct:product._id,nameproduct:product.name,order:data.order[i].view})
+        }
+        that.setState({dataView:dataView,dataOrder:dataOrder})
       })
     }
     componentWillMount(){
@@ -265,10 +289,10 @@ class Dashboard extends React.Component{
                           </div>
                         </div>
                       </div>
-                      <p class="mt-3 mb-0 text-sm">
+                      {/* <p class="mt-3 mb-0 text-sm">
                         <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
                         <span class="text-nowrap">Since last month</span>
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </div>
@@ -286,10 +310,10 @@ class Dashboard extends React.Component{
                           </div>
                         </div>
                       </div>
-                      <p class="mt-3 mb-0 text-sm">
+                      {/* <p class="mt-3 mb-0 text-sm">
                         <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
                         <span class="text-nowrap">Since last month</span>
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </div>
@@ -307,10 +331,10 @@ class Dashboard extends React.Component{
                           </div>
                         </div>
                       </div>
-                      <p class="mt-3 mb-0 text-sm">
+                      {/* <p class="mt-3 mb-0 text-sm">
                         <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
                         <span class="text-nowrap">Since last month</span>
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </div>
@@ -328,10 +352,10 @@ class Dashboard extends React.Component{
                           </div>
                         </div>
                       </div>
-                      <p class="mt-3 mb-0 text-sm">
+                      {/* <p class="mt-3 mb-0 text-sm">
                         <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
                         <span class="text-nowrap">Since last month</span>
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 </div>
@@ -391,16 +415,16 @@ class Dashboard extends React.Component{
               <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
               <h3 style={{color:'#0c967a'}}><b>TOP VIEWED PRODUCTS</b></h3>
                 <TopViewProduct/>
+                <CSVLink data={this.state.dataView} headers={headersView} filename={"TopView-"+Date.now().toString()+".csv"}>
+                <i class="icon-download-alt"></i> Download CSV File</CSVLink>
               </div>
               <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                 <h3 style={{color:'#0c967a'}}><b>TOP ORDERED PRODUCTS</b></h3>
                   <TopOrderProduct/>
+                  <CSVLink data={this.state.dataOrder} headers={headersOrder} filename={"TopOrder-"+Date.now().toString()+".csv"}>
+                  <i class="icon-download-alt"></i> Download CSV File</CSVLink>
               </div>      
             </div>
-              {/* <div class='page-header'>
-                <h4>Trending Products:</h4>
-                
-            </div> */}
           </div>}
         </div>
       </div>)

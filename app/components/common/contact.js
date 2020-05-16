@@ -13,9 +13,40 @@ var store = require("../../store");
 
 class ContactForm extends React.Component{
     constructor(props){
-		super(props);
+        super(props);
+        this.state = {
+            statusSend: -1
+        }
+        this.sendInfor = this.sendInfor.bind(this);
+    }
+    sendInfor(){
+        this.setState({statusSend:-1});
+        const name = this.refs.name.value;
+        const email = this.refs.email.value;
+        const title = this.refs.title.value;
+        const content = this.refs.content.value;
+        if (!name || !email || !title || !content){
+            this.setState({statusSend:0})
+        } else {
+            var that = this;
+            $.post("/sendInfor",{name:name,email:email,title:title,content:content},function(data){
+                if (data.success==1){
+                    that.setState({statusSend:1})
+                }
+            })
+        }
     }
     render(){
+        var htmlStatus = <div></div>;
+        if (this.state.statusSend==1){
+            htmlStatus = <div class="alert alert-success responseInfor">
+            <strong>Gửi thành công! Chúng tôi sẽ phản hồi sớm qua email của bạn. Cảm ơn</strong>
+          </div>
+        } else if (this.state.statusSend==0){
+            htmlStatus = <div class="alert alert-danger responseInfor">
+            <strong>Bạn chưa điền đầy đủ thông tin!</strong>
+          </div>
+        }
         return (<section class="main-content-section">
             <div class="container">
                 <div class="row">
@@ -33,7 +64,6 @@ class ContactForm extends React.Component{
                     </div>
                     <div class="mb-4" style={{paddingTop:'120px'}}>
                         <h2 class="h1-responsive font-weight-bold text-center my-4">LIÊN HỆ CHÚNG TÔI</h2>
-                        <p class="text-center w-responsive mx-auto mb-5">Bạn có câu hỏi nào không?</p>
                         <div class="row">
                             <div class="col-md-9 mb-md-0 mb-5">
                                 <form id="contact-form" name="contact-form" action="mail.php" method="POST">
@@ -41,13 +71,13 @@ class ContactForm extends React.Component{
                                         <div class="col-md-6">
                                             <div class="md-form mb-0">
                                                 <label for="name" class="">Họ tên</label>
-                                                <input type="text" id="name" name="name" class="form-control" />
+                                                <input type="text" id="name" name="name" class="form-control" ref="name" required/>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="md-form mb-0">
                                                 <label for="email" class="">Địa chỉ email</label>
-                                                <input type="text" id="email" name="email" class="form-control" />
+                                                <input type="text" id="email" name="email" class="form-control" ref="email" required/>
                                             </div>
                                         </div>
                                     </div>
@@ -55,7 +85,7 @@ class ContactForm extends React.Component{
                                         <div class="col-md-12">
                                             <div class="md-form mb-0">
                                                 <label for="subject" class="">Tiêu đề</label>
-                                                <input type="text" id="subject" name="subject" class="form-control" />
+                                                <input type="text" id="subject" name="subject" class="form-control" ref="title"/>
                                             </div>
                                         </div>
                                     </div>
@@ -63,17 +93,18 @@ class ContactForm extends React.Component{
                                         <div class="col-md-12">
                                             <div class="md-form">
                                                 <label for="message">Nội dung</label>
-                                                <textarea type="text" id="message" name="message" rows="5" class="form-control md-textarea"></textarea>
+                                                <textarea type="text" id="message" name="message" rows="5" class="form-control md-textarea" ref="content"></textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </form>
-                                <div class="text-center text-md-left">
-                                    <a class="btn btn-primary">Gửi</a>
+                                <div class="text-center text-md-left btnSend">
+                                    <a class="btn btn-primary" onClick={this.sendInfor}>Gửi</a>
                                 </div>
-                                <div class="status"></div>
+                                {htmlStatus}
                             </div>
                             <div class="col-md-3 text-center">
+                                <h3 className="text-center"><b>Thông tin liên hệ</b></h3>
                                 <ul class="list-unstyled mb-0">
                                     <li><i class="fa fa-map-marker fa-2x"></i>
                                         <p>Số 1, Võ Văn Ngân, Thủ Đức, TP.HCM</p>
@@ -84,7 +115,7 @@ class ContactForm extends React.Component{
                                     </li>
 
                                     <li><i class="fa fa-envelope mt-4 fa-2x"></i>
-                                        <p>nguyengiau9801@gmail.com</p>
+                                        <p>shoelg98@gmail.com</p>
                                     </li>
                                 </ul>
                             </div>
