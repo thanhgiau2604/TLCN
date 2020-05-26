@@ -22,7 +22,8 @@ module.exports = {
         checkout: './app/components/users/checkout.js',
         forgotpassword: './app/components/forgotpassword/forgotpassword.js',
         managemessage: './app/components/admin/manage/message.js',
-        contact: './app/components/common/contact.js'
+        contact: './app/components/common/contact.js',
+        ordersuccess: './app/components/users/ordersuccess.js'
     },
     output: {
       path: __dirname,

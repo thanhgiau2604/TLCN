@@ -389,19 +389,33 @@ class Address extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            err:""
+            err:"",
+            user : {}
         }
         this.addAddress = this.addAddress.bind(this);
-        // this.checkPosition = this.checkPosition.bind(this);
         classAddress = this;
+    }
+    componentDidMount(){
+        var that = this;
+        var emailUser = localStorage.getItem("email");
+        console.log(emailUser);
+        $.post("/getSingleUser",{email:emailUser},function(data){
+            console.log(data);
+            that.setState({user:data});
+            if (data.address){
+                classLocation.setState({address: data.address});
+            }
+        })
     }
     addAddress(e){
         e.preventDefault();
         var address = classLocation.state.address;
         var fullname = this.refs.fullname.value;
         var phonenumber = this.refs.phonenumber.value;
+        var email = localStorage.getItem("email");
+        console.log("add luu = "+address);
         var that = this;
-        $.post("/updateAddress",{id:localStorage.getItem('curorder'),address:address, fullname:fullname,phonenumber:phonenumber},function(data){
+        $.post("/updateAddress",{id:localStorage.getItem('curorder'),email:email,address:address, fullname:fullname,phonenumber:phonenumber},function(data){
             if (data.err == 0) {
                 $.post("/sendmail", { order: JSON.stringify(data.data), id: localStorage.getItem('curorder'), ship:data.ship}, function (data) {
                     main.setState({ curStep: 3 });
@@ -411,18 +425,13 @@ class Address extends React.Component {
             }
         })
     }
-    // checkPosition(){
-    //     var address = this.refs.address.value;
-    //     var that = this;
-    //     $.post("/getPosition",{address:address},function(data){
-    //         if (data.err!=""){
-    //             that.setState({err:data.err})
-    //         } else {
-    //             map.setState({position:data.position});
-    //         }
-    //     })
-    // }
     render(){
+        var name="", number="";
+        if (this.state.user){
+            if (this.state.user.firstName) name += this.state.user.firstName;
+            if (this.state.user.lastName) name += this.state.user.lastName;
+            if (this.state.user.numberPhone) number = this.state.user.numberPhone;
+        }
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
@@ -458,28 +467,25 @@ class Address extends React.Component {
                 <form method="POST" onSubmit={this.addAddress}>
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <input type="text" placeholder="Tên" name="name" required ref="fullname"/>
+                            <label>Họ và tên</label>
+                            <input type="text" placeholder="Tên" name="name" required ref="fullname" defaultValue={name}/>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <input type="text" placeholder="Số điện thoại" name="numberphone" required ref="phonenumber"/>
+                            <label>Số điện thoại</label>
+                            <input type="text" placeholder="Số điện thoại" name="numberphone" required ref="phonenumber" defaultValue={number}/>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            {/* <input type="text" placeholder="Địa chỉ nhận hàng" name="location" required ref="address"/> */}
+                            <label>Địa chỉ:</label>
                             <LocationSearchInput/>
                         </div>
-                        {/* <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">               
-                            <button type="button" className="btn btn-warning" onClick={this.checkPosition}>Kiểm tra</button>
-                        </div> */}
                     </div>
                     <div class="row text-center">
-                        {/* <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-push-3"> */}
                             <GoogleMap/>
-                        {/* </div> */}
                     </div>		                        
                     <h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
                     <div class="row">

@@ -6,18 +6,12 @@ const passportfb = require("passport-facebook").Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const express = require("express");
 const sendmail = require("./mail");
-const time_exprired = "1h";
+const time_exprired = "24h";
 const moment = require('moment');
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 module.exports = function(app,apiRouter,jwt){
-
-    // var startOfWeek = moment().startOf('week').toDate();
-    // var endOfWeek = moment().endOf('week').toDate();
-    // console.log(startOfWeek);
-    // console.log(endOfWeek);
-
     var username="", email="",token,role="";
     var superSecret = 'iamastudent';
     app.get("/",(req,res)=> res.render("trangchu",{username:username}))

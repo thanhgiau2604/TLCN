@@ -46,7 +46,9 @@
     "react-social-buttons": "^1.1.1",
     "react-viewer": "^3.2.1",
     "read-excel-file": "^4.0.6",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

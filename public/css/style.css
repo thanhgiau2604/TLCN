@@ -90,14 +90,13 @@ p.textComment {
     float: right;
 }
 body{
-	font-family: "arial",serif;
+	font-family: Arial, Helvetica, sans-serif;
 	color:#6d6d6d;
 }	
 h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
     margin: 0;	
 	color:#3a3d42;
-	font-family: 'Fira Sans', sans-serif;
 }
 a{
 	color:#777;
@@ -174,7 +173,7 @@ span.mobile-menu-title, .drodown-mega-menu .mega-menu-list ul li a, .new-mark-bo
 2.1 breadcrumb
 -------------------------*/	
 .bstore-breadcrumb{
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size: 15px;
 	margin: 19px 0 19px;
 	text-transform: capitalize;
@@ -320,7 +319,7 @@ border-bottom: 1px solid #d6d4d4;
 color: #383de4;
 font-size:18px;
 line-height:22px;
-font-family: 'Fira Sans', sans-serif;
+/* font-family: 'Fira Sans', sans-serif; */
 font-weight:600;
 margin-bottom: 30px;
 margin-top: 0px;
@@ -586,7 +585,7 @@ span.mobile-menu-title{
 	color: #464646;
 	cursor: pointer;
 	float: left;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size: 13px;
 	min-height: 42px;
 	outline: medium none;
@@ -676,7 +675,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 }
 .header-right-callus span{
 	color: #fff;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size:14px;
 	line-height:20px;
 }
@@ -828,7 +827,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 .shopping-cart a.shop-link{
 	color: #e9e9ea;
 	display: block;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size: 12px;
 	height: 55px;
 	line-height: 55px;
@@ -967,7 +966,7 @@ span.pro-quality a:hover{
 .shipping-checkout-btn a{
 	display:block;
 	text-align:center;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size:14px;
 	text-transform:capitalize;
 	background: #522ace none repeat scroll 0 0;
@@ -1181,7 +1180,7 @@ div.nivo-controlNav a.active{
 .product-info a{
 	color: #000;
 	display: block;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size: 14px;
 	line-height: 20px;
 	margin: 0 0 4px;
@@ -1215,7 +1214,7 @@ div.nivo-controlNav a.active{
 	display: block;
 	font-size:12px;
 	line-height:14px;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	margin-top:3px;
 }
 .price-box{
@@ -1299,7 +1298,7 @@ div.bg-tab-content-area i.owl-prev-icon:hover, div.bg-tab-content-area i.owl-nex
 	transition: all 0.3s ease 0s;
 	font-size:14px;
 	line-height:33px;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-weight:normal;
 }
 .product-bg-nav li a:hover{
@@ -1579,7 +1578,7 @@ div.client-carousel .owl-item img {
 	color: #fff;
 	font-size:14px;
 	line-height:35px;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	margin-top: 10px;
 	padding: 0 20px;
 	text-transform: uppercase;
@@ -2305,7 +2304,7 @@ span.after{
 	margin-bottom:0px;
 }
 .product-left-sidebar h2.left-title{
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size:18px;
 	line-height:48px;
 	color: #3a3d42;
@@ -2326,7 +2325,7 @@ span.sidebar-title{
 	display: block;
 	font-size:14px;
 	line-height:18px;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	margin-bottom: 10px;
 	padding-bottom: 9px;
 	text-transform: uppercase;
@@ -2534,7 +2533,7 @@ ul.gategory-product li.gategory-product-list div.single-product-item .overlay-co
 .product-category-title{}
 .product-category-title h1{
 	color: #555454;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size: 18px;
 	line-height: 24px;
 	margin-bottom: 15px;
@@ -2811,7 +2810,7 @@ li.cat-product-list:after{
 .list-view-content .customar-comments-box a{
 	color: #333;
 	display: block;
-	font-family:'Fira Sans', sans-serif;
+	/* font-family:'Fira Sans', sans-serif; */
 	font-size:18px;
 	line-height:20px;
 	margin: 0px 0 2px;
@@ -2884,7 +2883,7 @@ li.cat-product-list:after{
 	width:inherit;
 	font-size:15px;
 	line-height:45px;
-	font-family:'Fira Sans', sans-serif;
+	/* font-family:'Fira Sans', sans-serif; */
 	margin: 15px 0 0;
 	padding: 0 30px;
 	text-transform: uppercase;
@@ -3666,7 +3665,7 @@ ul.step li.step-todo span {
     position: relative;
 }
 ul.step li.step-done span a{
-	color:#B5B5B5;
+	/* color:#B5B5B5; */
 }
 /*-----------------
 20.2 cart page table
@@ -4357,7 +4356,7 @@ span.large-btn:hover i{
 }
 .single-product-price h2{
 	color: #ff5858;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	font-size: 25px;
 	font-weight: 700;
 	line-height: 30px;
@@ -4493,7 +4492,7 @@ p.small-title{
 	display: inline-block;
 	font-size:13px;
 	line-height:40px;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	padding: 0 30px;
 	position: relative;
 	text-transform: uppercase;
@@ -4518,7 +4517,7 @@ p.small-title{
 	font-size:16px;
 	line-height:54px;
 	font-weight:400;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	padding: 0 10px;
 	position: relative;
 	text-transform: uppercase;
@@ -4701,7 +4700,7 @@ a.write-review-btn{
 	display: block;
 	font-weight:400;
 	font-size:16px;
-	font-family: 'Fira Sans', sans-serif;
+	/* font-family: 'Fira Sans', sans-serif; */
 	text-transform: capitalize;
 	transition: all 300ms ease 0s;
 	margin-right:0px !important;

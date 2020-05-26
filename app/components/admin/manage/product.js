@@ -5,7 +5,9 @@ import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
 import Viewer from 'react-viewer';
-import readXlsxFile from 'read-excel-file'
+import readXlsxFile from 'read-excel-file';
+import io from 'socket.io-client'
+const socket = io('http://localhost:3000');
 var main;
 var curEditProduct, commentClass, singleCommentClass;
 class Products extends React.Component {
@@ -68,13 +70,20 @@ class Products extends React.Component {
       classDeleted = 'deleted';
     }
     var image = "/img/product/default.png"
+    var strCost = this.props.product.costs[this.props.product.costs.length-1].cost.toString();
+		var cost ="", count=0;
+		for (var i=strCost.length-1; i>=0; i--){
+			count++;
+			cost=strCost[i]+cost;
+			if (count%3==0) cost=" "+cost;
+		}
     if (this.props.product.image) image = this.props.product.image.image1;
     return (<tr class={'active '+classDeleted}>
       <td>{this.props.stt}</td>
       <td>{this.props.product.name}</td>
       <td><img src={image} style={{ width: '120px' }} />
       </td>
-      <td>{this.props.product.costs[this.props.product.costs.length-1].cost}</td>
+      <td>{cost}đ</td>
       <td>{this.props.product.quanty}</td>
       <td>{strSize}</td>
       <td>{this.props.product.description}</td>
@@ -852,6 +861,11 @@ class ManageProducts extends React.Component {
     var that = this;
     $.get("/getAllProducts", function (data) {
       that.setState({ listProduct: data });
+    });
+    socket.on("update-quantity",function(data){
+      $.get("/getAllProducts", function(dataProduct) {
+        that.setState({ listProduct: dataProduct });
+      });
     })
   }
   changePage(value, event) {

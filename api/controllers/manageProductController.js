@@ -22,7 +22,7 @@ function getCurrentDayTime() {
     +day.getHours().toString()+":"+day.getMinutes().toString();
     return nowday;
   }
-module.exports = function(app){
+module.exports = function(app,io){
     app.get("/getAllProducts",(req,res)=>{
         Product.find({},function(err,data){
             if (err){
@@ -239,4 +239,5 @@ module.exports = function(app){
             res.json(data.comments.sort((a,b) => (a.id < b.id) ? 1 : ((b.id < a.id) ? -1 : 0)));
         })
     })
+
 }

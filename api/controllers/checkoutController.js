@@ -9,6 +9,7 @@ const NodeGeocoder = require('node-geocoder');
 const distance = require('google-distance');
 var _eQuatorialEarthRadius = 6378.1370;
 var _d2r = (Math.PI / 180.0);
+
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
@@ -33,7 +34,7 @@ function HaversineInKM(lat1, long1, lat2, long2)
     nowday = year.toString()+month.toString()+day.toString();
     return nowday;
 }
-module.exports = function(app,apiRouter){
+module.exports = function(app,io){
     app.get("/checkout",(req,res)=>{
         res.render("checkout");
     })
@@ -82,8 +83,12 @@ module.exports = function(app,apiRouter){
         const address = req.body.address;
         const fullname = req.body.fullname;
         const phonenumber = req.body.phonenumber;
+        const email = req.body.email;
         const id = req.body.id;
         distance.apiKey = 'AIzaSyAAe03FCWqKI0XJjwuuZQT41KpU9KOgBU4';
+        User.update({email:email},{address:address},function(err,data){
+            if (err) console.log(err);
+        })
         distance.get(
             {
               origin: 'Đại học Sư phạm kỹ thuật TPHCM',
@@ -95,7 +100,7 @@ module.exports = function(app,apiRouter){
               } else {
                   console.log(data);
                 var result = 3*data.distanceValue;
-                Order.update({ _id: id }, { $set: { address: data.destination, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
+                Order.update({ _id: id }, { $set: { address: address, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
                     if (err) {
                         throw err;
                     } else {
@@ -211,7 +216,8 @@ module.exports = function(app,apiRouter){
                                     if (err) {
                                         throw err;
                                     } else {
-                                        res.redirect("/");
+
+                                        res.redirect("/ordersuccess");
                                     }
                                 })
                             }
@@ -221,7 +227,11 @@ module.exports = function(app,apiRouter){
             }
         });    
     });
-
+    io.on("connection", function(socket) {
+        socket.on("require-update",(data)=>{
+            io.sockets.emit("update-quantity"," ");
+        });
+    })
     app.post("/addNewDay",(req,res)=>{
         var day = getCurrentDay();
         console.log(day);
@@ -238,6 +248,17 @@ module.exports = function(app,apiRouter){
                 });
             } else {
                 res.json("");
+            }
+        })
+    })
+    app.get("/ordersuccess",(req,res)=>{
+        res.render("dathangthanhcong");
+    })
+    app.post("/getSingleUser",parser,(req,res)=>{
+        const email = req.body.email;
+        User.findOne({email:email},function(err,data){
+            if (!err&&data){
+                res.send(data);
             }
         })
     })
