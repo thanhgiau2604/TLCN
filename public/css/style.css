@@ -4244,6 +4244,8 @@ span.large-btn:hover i{
 }
 
 .new-mark-box{}
+
+.mark-right {right: 10px;color: #fff !important;font-size: 11px;line-height: 27px;padding: 0 10px;position: absolute;text-transform: uppercase;top: 5px;z-index: 10;background: #f90606;font-weight: 800;}
 .single-product-descirption{
 	margin-bottom:30px;
 }
@@ -4981,4 +4983,8 @@ td {
   }
   .autocomplete-dropdown-container {
 	  margin-bottom: 15px;
+  }
+  .notify-hot {
+   color: red;
+   font-weight: 600;
   }

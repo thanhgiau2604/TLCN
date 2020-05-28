@@ -11,12 +11,14 @@ const UserSchema = new Schema({
     numberPhone: String,
     address: String,
     dob: String,
-    password: {type:String,select:false},
+    password: String,
     isDelete: Number,
     favoritelist: [{id:Schema.Types.ObjectId}],
     historylist: [{id:Schema.Types.ObjectId,time:Number}],
     cart: [{idProduct: Schema.Types.ObjectId, quanty:Number, size:Number, color: String, status:String}],
-    role: String
+    role: String,
+    qvisit: Number,
+    qorder: Number,
 });
 //hash password
 UserSchema.pre('save',function(next){

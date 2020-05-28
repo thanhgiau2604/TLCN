@@ -35,7 +35,9 @@ function getCurrentDay() {
     var month = dateObj.getMonth() + 1; //months from 1-12
     var day = dateObj.getDate();
     var year = dateObj.getFullYear();
-    nowday = day.toString()+month.toString()+year.toString();
+    if (day%10==day) day = '0' + day.toString();
+    if (month%10==month) month = '0'+month.toString();
+    nowday = year.toString()+month.toString()+day.toString();
     return nowday;
 }
 function getCurrentDayTime() {
@@ -256,8 +258,10 @@ module.exports = function(app){
 
     app.post("/updateCountView",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
+        console.log(idProduct);
         if (idProduct) {
             var currentDay = getCurrentDay();
+            console.log(currentDay);
             Statistic.findOne({ day: currentDay }, function (err, data) {
                 if (data) {
                     var listViewToday = data.viewproduct;
@@ -279,12 +283,14 @@ module.exports = function(app){
                             result.push(itemresult);
                         }
                     }
+                    console.log(result);
                     if (ok == false) result.push({ id: idProduct, count: 1 });
                     Statistic.update({ day: currentDay }, { $set: { viewproduct: result } }, function (err, data) {
                         if (err) {
                             throw err;
                         } else {
-                            res.json(data)
+                            res.json(data);
+                            
                         }
                     });
                 }

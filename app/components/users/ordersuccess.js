@@ -17,6 +17,7 @@ class Success extends React.Component {
     }
     componentDidMount(){
         socket.emit("require-update"," ");
+        socket.emit("require-update-order-product","");
     }
     render(){
         return(<section class="main-content-section">

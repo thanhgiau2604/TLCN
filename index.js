@@ -17,6 +17,7 @@ const manageProductController = require("./api/controllers/manageProductControll
 const manageCategoryController = require("./api/controllers/manageCategoryController");
 const checkoutController = require("./api/controllers/checkoutController");
 const mangeOrderController = require("./api/controllers/manageOrderController");
+const socketIOController = require("./api/controllers/socketIOController");
 app.set("view engine","ejs");
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
@@ -39,6 +40,7 @@ var apiRouter = express.Router();
 var adminRouter = express.Router();
 app.use("/api",apiRouter);
 app.use("/admin",adminRouter);
+socketIOController(app,io);
 authenController(app,apiRouter,jwt);
 homeController(app,apiRouter);
 personalController(app,apiRouter);

@@ -8,25 +8,13 @@ import { Bar } from "react-chartjs-2";
 import { Line } from "react-chartjs-2";
 import Dropdown from 'react-dropdown';
 import { CSVLink} from "react-csv";
+import io from 'socket.io-client'
+const socket = io('http://localhost:3000');
 var main;
 const options = [
   'today', 'yesterday', 'last7days', 'last28days'
 ];
 const defaultOption = options[2];
-class Products extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    return (<tr class='active'>
-      <td>{this.props.stt}</td>
-      <td>{this.props.product.name}</td>
-      <td><img src={this.props.product.image.image1} style={{ width: '120px' }} /></td>
-      <td>{this.props.product.description}</td>
-      <td>{this.props.count}</td>
-    </tr>)
-  }
-}
 var viewClass, orderClass;
 class TopViewProduct extends React.Component {
   constructor(props){
@@ -93,7 +81,6 @@ class TopViewProduct extends React.Component {
     
   }
 }
-
 class TopOrderProduct extends React.Component {
   constructor(props){
     super(props);
@@ -183,17 +170,50 @@ class Dashboard extends React.Component{
           processing1:false,
           permission: false,
           dataView: [],
-          dataOrder: []
+          dataOrder: [],
+          lDataCustomers:[],
+          btnCurrent: 0
         }
         main=this;
         this._onSelect = this._onSelect.bind(this);
         this._onSelect1 = this._onSelect1.bind(this);
+        this.closeCustomers = this.closeCustomers.bind(this);
+        this.visitFrequently = this.visitFrequently.bind(this);
+        this.notOrder = this.notOrder.bind(this);
     }
     componentDidMount(){
       var that = this;
       $.post("/getMetrics",{option:"last7days"},function(data){
         that.setState({arrMetrics:data.metrics, arrUsers:data.users, arrUsersBefore: data.usersBefore,
         activeUsers: data.countUser});
+      });
+      this.setState({btnCurrent:0});
+      $.get("/getCloseCustomers",function(data){
+        that.setState({lDataCustomers:data});
+      })
+      socket.on("update-view-product", function (data) {
+        $.post("/getMetricProduct", { option: that.state.timeOption1 }, function (data) {
+          viewClass.setState({ topView: data.view });
+          that.setState({ timeOption1: selectedOption.value});
+          var dataView = [];
+          for (var i = 0; i < data.view.length; i++) {
+            var product = data.view[i].product;
+            dataView.push({ idproduct: product._id, nameproduct: product.name, view: data.view[i].view })
+          }
+          that.setState({ dataView: dataView})
+        })
+      });
+      socket.on("update-order-product",function(data){
+        $.post("/getMetricProduct", { option: that.state.timeOption1 }, function (data) {
+          orderClass.setState({ topOrder: data.order });
+          that.setState({ timeOption1: selectedOption.value });
+          var dataOrder = [];
+          for (var i = 0; i < data.order.length; i++) {
+            var product = data.order[i].product;
+            dataOrder.push({ idproduct: product._id, nameproduct: product.name, order: data.order[i].view })
+          }
+          that.setState({dataOrder: dataOrder })
+        })
       })
     }
     _onSelect(selectedOption){
@@ -239,6 +259,27 @@ class Dashboard extends React.Component{
             that.setState({permission:true})
           }
         })
+    }
+    closeCustomers(){
+      var that = this;
+      this.setState({btnCurrent:0});
+      $.get("/getCloseCustomers",function(data){
+        that.setState({lDataCustomers:data});
+      })
+    }
+    visitFrequently(){
+      var that = this;
+      this.setState({btnCurrent:1});
+      $.get("/getVisitFrequently",function(data){
+        that.setState({lDataCustomers:data});
+      })
+    }
+    notOrder(){
+      var that = this;
+      this.setState({btnCurrent:2});
+      $.get("/getNotOrder",function(data){
+        that.setState({lDataCustomers:data});
+      })
     }
     render(){
         return(
@@ -402,7 +443,44 @@ class Dashboard extends React.Component{
                     <h1>{this.state.activeUsers}</h1>
                   </div>
                 </div>
-              </div>          
+              </div>  
+                  <div class='page-header'>
+                    <h4>Customers</h4>
+                    <div>
+                      <div class="row text-center">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                          <button class={this.state.btnCurrent==0 ? "btn btn-choose currentBtn" : "btn btn-choose"} onClick={this.closeCustomers}>Close Customers</button>
+                          <button class={this.state.btnCurrent==1 ? "btn btn-choose currentBtn" : "btn btn-choose"} style={{marginLeft:"5px"}} onClick={this.visitFrequently}>Visit Website Frequently</button>
+                          <button class={this.state.btnCurrent==2 ? "btn btn-choose currentBtn" : "btn btn-choose"} style={{marginLeft:"5px"}} onClick={this.notOrder}>Have not ordered</button>
+                        </div>
+                        <table class='table'>
+                          <thead>
+                            <tr>
+                              <th class="text-center">#</th>
+                              <th class="text-center">First Name</th>
+                              <th class="text-center">Last Name</th>
+                              <th class="text-center">Email</th>
+                              <th class="text-center">Phone</th>
+                              <th class="text-center">{this.state.btnCurrent==0 ? "Number Of Orders" : "Number of Visits"}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {this.state.lDataCustomers.map(function(customer,index){
+                              return(<tr key={index}>
+                                <td class="text-center">{index+1}</td>
+                                <td class="text-center">{customer.firstName}</td>
+                                <td class="text-center">{customer.lastName}</td>
+                                <td class="text-center">{customer.email}</td>
+                                <td class="text-center">{customer.numberPhone}</td>
+                                <td class="text-center">{main.state.btnCurrent==0 ? customer.qorder : customer.qvisit}</td>
+                              </tr>)
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+
+                    </div>
+              </div>        
             <div class='page-header'>
               <h4>Trending products</h4>
             </div>

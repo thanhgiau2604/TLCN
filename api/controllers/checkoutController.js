@@ -9,20 +9,10 @@ const NodeGeocoder = require('node-geocoder');
 const distance = require('google-distance');
 var _eQuatorialEarthRadius = 6378.1370;
 var _d2r = (Math.PI / 180.0);
-
+var arrUserOnline = []
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-function HaversineInKM(lat1, long1, lat2, long2)
-  {
-      var dlong = (long2 - long1) * _d2r;
-      var dlat = (lat2 - lat1) * _d2r;
-      var a = Math.pow(Math.sin(dlat / 2.0), 2.0) + Math.cos(lat1 * _d2r) * Math.cos(lat2 * _d2r) * Math.pow(Math.sin(dlong / 2.0), 2.0);
-      var c = 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
-      var d = _eQuatorialEarthRadius * c;
-  
-      return d;
- }
 
  function getCurrentDay() {
     var dateObj = new Date();
@@ -81,12 +71,13 @@ module.exports = function(app,io){
     })
     app.post("/updateAddress",parser,(req,res)=>{
         const address = req.body.address;
+        console.log(address);
         const fullname = req.body.fullname;
         const phonenumber = req.body.phonenumber;
         const email = req.body.email;
         const id = req.body.id;
         distance.apiKey = 'AIzaSyAAe03FCWqKI0XJjwuuZQT41KpU9KOgBU4';
-        User.update({email:email},{address:address},function(err,data){
+        User.findOneAndUpdate({email:email},{address:address},function(err,data){
             if (err) console.log(err);
         })
         distance.get(
@@ -199,6 +190,10 @@ module.exports = function(app,io){
                         Statistic.update({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
                             if (err) console.log(err);
                         });
+                        //Tăng số lượt đặt hàng của khách hàng --> để thống kê
+                        User.findOneAndUpdate({email:req.params.email},{$inc:{qorder:1}},function(err,data){
+                            if (err) console.log(err);
+                        })
                         //Cập nhật trạng thái confirmed
                         Order.update({ email: req.params.email, code: req.params.code }, { $set: { status: "confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
                             if (err) {
@@ -212,11 +207,10 @@ module.exports = function(app,io){
                                 let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
                                 let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
                                 sendmail(txtTo, txtSubject, txtContent);
-                                User.update({ email: req.params.email }, { $set: { cart: [] } }, function (err, data) {
+                                User.findOneAndUpdate({ email: req.params.email }, { $set: { cart: [] } }, function (err, data) {
                                     if (err) {
                                         throw err;
                                     } else {
-
                                         res.redirect("/ordersuccess");
                                     }
                                 })
@@ -227,14 +221,8 @@ module.exports = function(app,io){
             }
         });    
     });
-    io.on("connection", function(socket) {
-        socket.on("require-update",(data)=>{
-            io.sockets.emit("update-quantity"," ");
-        });
-    })
     app.post("/addNewDay",(req,res)=>{
         var day = getCurrentDay();
-        console.log(day);
         Statistic.findOne({day:day},function(err,data){
             if (!data){
                 var newDay = {

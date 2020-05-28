@@ -34,11 +34,24 @@ class Order extends React.Component {
     })
   }
   render() {
+    var strCost = this.props.order.sumproductcost.toString();
+    var strShipCost = this.props.order.sumshipcost.toString();
+		var costProduct ="", count=0, costShip="",count1=0;
+		for (var i=strCost.length-1; i>=0; i--){
+			count++;
+			costProduct=strCost[i]+costProduct;
+			if (count%3==0) costProduct=" "+costProduct;
+    }
+    for (var i=strShipCost.length-1; i>=0; i--){
+			count1++;
+			costShip=strShipCost[i]+costShip;
+			if (count1%3==0) costShip=" "+costShip;
+		}
     return (<tr class='active'>
       <td className='text-center'>{this.props.stt}</td>
       <td className='text-center'>{this.props.order.email}</td>
-      <td className='text-center'>{this.props.order.sumproductcost}đ</td>
-      <td className='text-center'>{this.props.order.sumshipcost}đ</td>
+      <td className='text-center'>{costProduct}đ</td>
+      <td className='text-center'>{costShip}đ</td>
       <td className='text-center'>{this.props.order.status}</td>
       <td className='text-center'>{this.props.order.time}</td>
       <td class='action'>

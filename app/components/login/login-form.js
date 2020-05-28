@@ -19,11 +19,12 @@ class LoginForm extends React.Component{
 				form.setState({error:data.message});
 			} else {
 				if (data.role=='user'){
-					console.log(data);
 					localStorage.setItem("username", data.username);
 					localStorage.setItem("email", data.email);
 					localStorage.setItem('token', data.token);
 					window.location.replace("/");
+					$.post("/updateQvisit",{email:data.email},function(data){})
+
 				} else {
 					localStorage.setItem("usernamead", data.username);
 					localStorage.setItem("emailad", data.email);
@@ -34,11 +35,6 @@ class LoginForm extends React.Component{
 		})		
 		e.preventDefault();
 	}
-	// handleFacebook(){
-	// 	$.get("/auth/fb",function(data){
-	// 		console.log(data);
-	// 	})
-	// }
     render(){
         return(
 			<section className="main-content-section">

@@ -12,11 +12,28 @@ class Login extends React.Component{
     constructor(props){
         super(props);
     }
+    componentWillMount(){
+        var token = localStorage.getItem("token");
+        var tokenad = localStorage.getItem("tokenad");
+        if (token){
+            $.get("/api", { token: token }, function (data) {
+                if (data.success == 1) {
+                    window.location.replace("/");
+                } 
+            })
+        }
+        if (tokenad){
+            $.get("/admin",{token:tokenad},function(data){
+                if (data.success==1){
+                    window.location.replace("/dashboard");
+                }
+            })
+        }
+    }
     render(){
         $.post("/addNewDay",function(data){
             console.log(data);
         })
-        localStorage.clear();
         return(
 			<div>
                 <HeaderTop/>

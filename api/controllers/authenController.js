@@ -41,10 +41,10 @@ module.exports = function(app,apiRouter,jwt){
                 user.password = password;
                 user.dob = dob;
                 user.role=role;
-                console.log(user);
+                user.qvisit = 0;
+                user.qorder = 0;
                 user.save(function (err) {
                     if (err) {
-                        console.log("Mã lỗi: "+ err.code);
                         if (err.code == 11000) {
                             return res.json("Tài khoản đã tồn tại!");
                         } else {
@@ -91,7 +91,6 @@ module.exports = function(app,apiRouter,jwt){
 
     apiRouter.use(function(req,res,next){
         var token = req.query.token || req.params.token;
-        console.log(token);
         if (token){
             jwt.verify(token,superSecret,function(err,decoded){
                 if (err){
@@ -152,7 +151,6 @@ module.exports = function(app,apiRouter,jwt){
             profileFields: ['email', 'gender', 'locale', 'displayName','first_name','last_name']
         },
         (accessToken, refreshToken, profile, done) => {
-            console.log(profile);
             User.findOne({ id: profile._json.id }, (err, user) => {
                 if (err) return done(err);
                 if (user) return done(null, user);
@@ -176,7 +174,6 @@ module.exports = function(app,apiRouter,jwt){
                 });
                 User.create(newUser, (err, user) => {
                     if (err) return done(err);
-                    console.log("Da qua dc");
                     return done(null, newUser);
                 })
             })
@@ -218,7 +215,6 @@ module.exports = function(app,apiRouter,jwt){
             },
             (accessToken,refreshToken,profile,done) => {
                 process.nextTick(function () {
-                    console.log(profile);
                     User.findOne({ id: profile.id }, (err, user) => {
                         if (err) return done(err);
                         if (user) {
@@ -252,7 +248,6 @@ module.exports = function(app,apiRouter,jwt){
                         });
                         User.create(newUser, (err, user) => {
                             if (err) return done(err);
-                            console.log("Da qua dc");
                             return done(null, newUser);
                         });
                     })              
@@ -284,10 +279,8 @@ module.exports = function(app,apiRouter,jwt){
                 throw err;
             } else {
                 if (data.length==0){
-                    console.log(data);
                     res.json(0);
                 } else {
-                    console.log('là 0');
                     res.json(1);
                 }
             }
@@ -307,8 +300,6 @@ module.exports = function(app,apiRouter,jwt){
     app.post("/resetPassword",parser,(req,res)=>{
         const newpass = req.body.newpass;
         const repass = req.body.repass;
-        console.log(newpass);
-        console.log(repass);
         var err="";
         if (!newpass||!repass){
             err="Vui lòng nhập đầy đủ tất cả các trường"
@@ -328,4 +319,12 @@ module.exports = function(app,apiRouter,jwt){
             })
         }
     });
+
+    app.post("/updateQvisit",parser,(req,res)=>{
+        var email = req.body.email;
+        User.findOneAndUpdate({email:email},{$inc:{qvisit:1}},function(err,data){
+                    if (err) console.log(err); else
+                    res.send("update success");
+        });
+    })
 }

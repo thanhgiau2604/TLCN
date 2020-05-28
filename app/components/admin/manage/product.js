@@ -722,7 +722,7 @@ class UpdateProduct extends React.Component{
             <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} defaultValue={arrSizes[i - 1].size} required/>
           </div>
           <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-            <label>Color:Quanty</label>
+            <label>Color:Quantity</label>
             <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." 
             ref={"color" + i} defaultValue={strColorQuanty} required/>
           </div>
@@ -737,8 +737,8 @@ class UpdateProduct extends React.Component{
             <input type="text" className="form-control" placeholder="Enter size" ref={"size" + i} required/>
           </div>
           <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-            <label>Color:Quanty</label>
-            <input type="text" className="form-control"  placeholder="color1:quanty1,color2:quanty2,..." ref={"color" + i} required/>
+            <label>Color:Quantity</label>
+            <input type="text" className="form-control"  placeholder="color1:quantity1,color2:quantity2,..." ref={"color" + i} required/>
           </div>
           <br />
         </div>);
@@ -990,7 +990,7 @@ class ManageProducts extends React.Component {
               <th class="text-center">Name</th>
               <th class="text-center">Image</th>
               <th class="text-center">Cost</th>
-              <th class="text-center">Quanty</th>
+              <th class="text-center">Quantity</th>
               <th class="text-center">Sizes</th>
               <th class="text-center">Description</th>
               <th class='actions'>

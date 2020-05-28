@@ -9,6 +9,8 @@ import MainContentSection2 from '../homepage/main-content-section2'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+import io from 'socket.io-client'
+const socket = io('http://localhost:3000');
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import ReactGA from 'react-ga'
@@ -19,6 +21,12 @@ function initizeAnalytics(){
 class HomePage extends React.Component{
     constructor(props){
         super(props);
+    }
+    componentDidMount(){
+        // socket.on("require-email",function(data){
+        //     if (localStorage.getItem("email"))
+        //         socket.emit("update-qvisit",localStorage.getItem("email"));
+        // })
     }
     render(){
         initizeAnalytics();

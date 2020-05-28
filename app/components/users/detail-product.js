@@ -8,7 +8,8 @@ import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
 import {FacebookShareButton,GoogleButton} from 'react-social-buttons';
 import Viewer from 'react-viewer';
-
+import io from 'socket.io-client'
+const socket = io('http://localhost:3000');
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
@@ -755,7 +756,7 @@ class TotalPage extends React.Component{
     componentDidMount(){
         var idProduct = localStorage.getItem('curproduct');
         $.post("/updateCountView",{idProduct:idProduct},function(data){
-
+            socket.emit("require-update-view-product","");
         })
     }
     render(){     

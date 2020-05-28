@@ -160,3 +160,26 @@
   .btnAddUser {
     padding-right: 10%;
   }
+  .btn-choose{
+      color: white;
+      background-color: #f5630e;
+      border-color: #f5630e;
+  }
+  .btn-choose:hover{
+     color: white;
+     background-color: orangered;
+  }
+  .btn-choose:visited{
+      color: white;
+  }
+  .btn-choose:focus{
+    color: white;
+   }
+   .btn-choose:focus-within{
+    color: white;
+   }
+  .currentBtn {
+    color: white;
+    border: 2px solid black;
+    background-color: orangered;
+}

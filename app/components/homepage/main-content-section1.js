@@ -154,6 +154,7 @@ class Product2 extends React.Component{
 						<div className="product-image">
 							<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
 							<a href="#" className="new-mark-box">{this.props.desc}</a>
+							{this.props.quantity<=5 ? <a href="#" class="mark-right">HOT</a> : <a></a>}
 							<div className="overlay-content">
 								<ul>
 									<li><a title="Xem sản phẩm" style={{cursor:'pointer'}} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
@@ -181,6 +182,7 @@ class Product2 extends React.Component{
 								<span className="price">{cost}đ</span>
 								<span className="older-price">{oldcost}đ</span>
 							</div>
+							{this.props.quantity<=5 ?<h3 class="notify-hot">Chỉ còn {this.props.quantity} sản phẩm</h3> : <h3></h3>}
 						</div>
 						<RequireAuthentication/>
 					</div>
@@ -220,7 +222,7 @@ class PopularProduct extends React.Component{
 							
 							{this.state.listPoplular.map(function (product, index) {
 								return <Product1 key={index} id={product._id}
-									name={product.name} image={product.image.image1} costs={product.costs}/>
+									name={product.name} image={product.image.image1} costs={product.costs} quantity={product.quanty}/>
 							})}
 						</div>
 					</div>
@@ -262,7 +264,7 @@ class NewProduct extends React.Component{
 									if (product.quanty==0) status="Hết hàng";
 									return <Product2 key={index} id={product._id}
 									name={product.name} image={product.image.image1} 
-									costs={product.costs} desc={status} size={product.sizes}/>
+									costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}/>
 								})}
 							</div>
 						</div>
@@ -301,7 +303,7 @@ class SaleProduct extends React.Component {
 							if (product.quanty==0) status="Hết hàng";
 							return <Product2 key={index} id={product._id}
 								name={product.name} image={product.image.image1} 
-								costs={product.costs} desc={status} size={product.sizes}/>
+								costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}/>
 						})}											
 				</div>										
 			</div>

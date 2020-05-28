@@ -483,6 +483,8 @@ module.exports = function(app,adminRouter,jwt){
         if (monthThatDay%10==monthThatDay) monthThatDay='0'+monthThatDay;
         var strYesterday = yesterday.getFullYear().toString()+monthYesterday.toString()+dayYesterday.toString();
         var strThatDay = d.getFullYear().toString()+monthThatDay.toString()+dayThatDay.toString();
+        if (option=="today") strYesterday = strThatDay;
+        console.log(strThatDay+"-->" + strYesterday);
         Statistic.find({ day: { $gte: strThatDay, $lte: strYesterday } }, function (err, data) {
             if (err) console.log(err); else {
                 var resultOrder = [], resultView = [];
@@ -522,5 +524,31 @@ module.exports = function(app,adminRouter,jwt){
             }
         })
     })
-
+    app.get("/getCloseCustomers",(req,res)=>{
+        User.find({qorder:{$gte:1}},function(err,data){
+            if (err){
+                console.log(err);
+            } else {
+                res.send(data.sort((a,b)=>b.qorder-a.qorder));
+            }
+        })
+    })
+    app.get("/getVisitFrequently",(req,res)=>{
+        User.find({qvisit:{$gte:15}},function(err,data){
+            if (err){
+                console.log(err);
+            } else {
+                res.send(data.sort((a,b)=>b.qvisit-a.qvisit));
+            }
+        })
+    })
+    app.get("/getNotOrder",(req,res)=>{
+        User.find({$and: [{qvisit:{$gte:15}},{qorder:0}]},function(err,data){
+            if (err){
+                console.log(err);
+            } else {
+                res.send(data.sort((a,b)=>b.qvisit-a.qvisit));
+            }
+        })
+    })
 }
