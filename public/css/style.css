@@ -90,7 +90,7 @@ p.textComment {
     float: right;
 }
 body{
-	font-family: Arial, Helvetica, sans-serif;
+	/* font-family: 'Roboto', sans-serif; */
 	color:#6d6d6d;
 }	
 h1, h2, h3, h4, h5, h6 {
@@ -161,7 +161,7 @@ img {
 	font-weight:bold;
 }
 span.mobile-menu-title, .drodown-mega-menu .mega-menu-list ul li a, .new-mark-box, .single-latest-post p, .read-more a, .facality-text span, .staticblock p, .info-text p, .info-text p a, .single-f-widget ul li a, .copy-right address, body.index-2 .category-heading h2, body.index-2 .category-menu-list ul li a, .home-link-menu ul li a, .product-category-title h1 span.count-product, form.error-ser-form .error-ser-btn, .wishlists-chart table tr td span, .Permalink a, a.wish-save, span.shop-pro-item, .price-percent-reduction, .update-button a, .add-new-address a, .list-view-content .review-box span{
-	font-family: "arial",serif;
+	font-family: 'Roboto', sans-serif;;
 }
 .drodown-mega-menu .mega-menu-list a.mega-menu-title, .drodown-mega-menu .mega-menu-list ul li a, .facality-text span{
 	font-weight:normal;
@@ -1649,7 +1649,7 @@ div.client-carousel .owl-item img {
 }
 .staticblock p{
 	color: #fff;
-	font-size:12px;
+	font-size: 13px;
 	line-height:18px;
 }	
 .Store-Information{}
@@ -1679,7 +1679,7 @@ div.client-carousel .owl-item img {
 
 .info-text p{
 	color: #fff;
-	font-size:12px;
+	font-size: 13px;
 	line-height:18px;
 	margin:0;
 }
@@ -1690,7 +1690,7 @@ div.client-carousel .owl-item img {
 	transition: all 0.3s ease 0s;
 	color: #fff;
 	display: block;
-	font-size:12px;
+	font-size: 13px;
 	line-height:20px;
 	text-transform: capitalize;
 }
@@ -4987,4 +4987,7 @@ td {
   .notify-hot {
    color: red;
    font-weight: 600;
+  }
+  .step-done {
+	  cursor: pointer;
   }

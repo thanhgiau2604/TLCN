@@ -21,7 +21,7 @@ class CompanyFacality extends React.Component{
 									</div>
 									<div className="facality-text">
 										<h3 className="facality-heading-text">MIỄN PHÍ SHIP</h3>
-										<span>Với đơn hàng từ 200k</span>
+										<span>Với đơn hàng từ 800k</span>
 									</div>
 								</div>
 							</div>
@@ -60,6 +60,9 @@ class CompanyFacality extends React.Component{
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="chat-socket">
+					<img src="/img/icon-chat.png" />
 				</div>
 				<div class="link-messenger" onClick={this.openChat}>
 					<img src="/img/messenger.png" />

@@ -69,6 +69,14 @@ module.exports = function(app,io){
         //     console.log('error', error.message);
         //   });
     })
+    app.post("/updateOrder",parser,(req,res)=>{
+        const order = JSON.parse(req.body.order);
+        const id = req.body.id;
+        Order.update({_id:id},{$set:{time:order.time,timestamp:order.timestamp,sumproductcost:order.sumproductcost,
+        listproduct:order.listproduct}},function(err,data){
+            if (err) console.log(err); else res.send("Ok");
+        })
+    })
     app.post("/updateAddress",parser,(req,res)=>{
         const address = req.body.address;
         console.log(address);
@@ -76,6 +84,7 @@ module.exports = function(app,io){
         const phonenumber = req.body.phonenumber;
         const email = req.body.email;
         const id = req.body.id;
+        const sumcost = req.body.sumcost;
         distance.apiKey = 'AIzaSyAAe03FCWqKI0XJjwuuZQT41KpU9KOgBU4';
         User.findOneAndUpdate({email:email},{address:address},function(err,data){
             if (err) console.log(err);
@@ -90,7 +99,14 @@ module.exports = function(app,io){
                 res.json({err:1})
               } else {
                   console.log(data);
-                var result = 3*data.distanceValue;
+                console.log(sumcost);
+                var result;
+                if (sumcost>800000){
+                    result=0;
+                } else {
+                    if (distance <= 3000) result = 0;
+                    else result = 3*(data.distanceValue-3000);
+                }
                 Order.update({ _id: id }, { $set: { address: address, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
                     if (err) {
                         throw err;
@@ -99,6 +115,9 @@ module.exports = function(app,io){
                             if (err) {
                                 throw err;
                             } else {
+                                console.log(data.sumproductcost);
+                                if (data.sumproductcost >=800000) result=0;
+                                console.log(result);
                                 res.json({err:0,data:data,ship:result});
                             }
                         })
@@ -115,17 +134,45 @@ module.exports = function(app,io){
         let txtSubject = "XÁC NHẬN ĐƠN HÀNG TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
         let dssp ="";
         var count = 0;
+        var strsp = `<table style="" width="90%">
+        <thead>
+            <tr>
+                <th align="center" style="padding:10px; border:1px solid #333">STT</th>
+                <th align="center" style="padding:10px; border:1px solid #333">Tên sản phẩm</th>
+                <th align="center" style="padding:10px; border:1px solid #333">Số lượng</th>
+                <th align="center" style="padding:10px; border:1px solid #333">Màu sắc</th>
+                <th align="center" style="padding:10px; border:1px solid #333">Kích cỡ</th>
+                <th align="center" style="padding:10px; border:1px solid #333">Giá sản phẩm</th>
+            </tr>
+        </thead>
+            <tbody>`
+    //             <tr className="text-center">
+    //                 <td className="text-center">{this.props.pos}</td>
+    //                 <td className="text-center">{this.props.name}</td>
+    //             </tr>
+    //         </tbody>
+    // </table>
         order.listproduct.forEach(e => {
             count++;
             if (e.size==0) e.size='default';
-            var strsp = `<p>${count}. Tên sản phẩm: ${e.name}; Số lượng: ${e.quanty}; Màu sắc:${e.color}; Size: ${e.size}; Giá sản phẩm: ${e.cost}đ</p>`;
-            dssp = dssp + strsp;
+            strsp += `<tr >
+                        <td align="center" style="padding:10px; border:1px solid #333">${count}</td>
+                        <td align="center" style="padding:10px; border:1px solid #333">${e.name}</td>
+                        <td align="center" style="padding:10px; border:1px solid #333">${e.quanty}</td>
+                        <td align="center" style="padding:10px; border:1px solid #333">${e.color}</td>
+                        <td align="center" style="padding:10px; border:1px solid #333">${e.size}</td>
+                        <td align="center" style="padding:10px; border:1px solid #333">${e.cost}đ</td>
+                   </tr>`
+            // var strsp = `<p>${count}. Tên sản phẩm: ${e.name}; Số lượng: ${e.quanty}; Màu sắc:${e.color}; Size: ${e.size}; Giá sản phẩm: ${e.cost}đ</p>`;
         });
-        let donhang = 
-        "<h3>Đơn hàng của anh/chị: "+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
-        `<h3>Tổng tiền sản phẩm: ${order.sumproductcost}đ;</h3>`+
-        `<h3>Phí vận chuyển: ${order.sumshipcost}đ;</h3>`+
-        `<h3>Tổng tiền đơn hàng: ${order.sumproductcost + order.sumshipcost}đ;</h3>`+
+        strsp += "</tbody> </table>"
+        dssp = dssp + strsp;
+        let donhang =
+        "<h2><b>THÔNG TIN ĐƠN HÀNG</b></h2>" +
+        "<h3><b>Đơn hàng của anh/chị:</b> "+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
+        `<h3><b>Tổng tiền sản phẩm:</b> ${order.sumproductcost}đ;</h3>`+
+        `<h3><b>Phí vận chuyển:</b> ${order.sumshipcost}đ;</h3>`+
+        `<h3><b>Tổng tiền đơn hàng:</b> ${order.sumproductcost + order.sumshipcost}đ;</h3>`+
         `<h3>DANH SÁCH SẢN PHẨM:</h3>`;
         let diachi =`<h3>Địa chỉ nhận hàng: ${order.address}</h3>`
         let numberRandom = randomInt(100000,999999);

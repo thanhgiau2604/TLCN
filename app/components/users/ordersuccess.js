@@ -20,6 +20,7 @@ class Success extends React.Component {
         socket.emit("require-update-order-product","");
     }
     render(){
+        localStorage.removeItem("curorder");
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
@@ -27,7 +28,7 @@ class Success extends React.Component {
                     <div class="bstore-breadcrumb">
                         <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
-                        <span>Địa chỉ</span>
+                        <span>Thanh toán</span>
                     </div>
                 </div>
             </div>

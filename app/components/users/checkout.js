@@ -187,10 +187,16 @@ class Summary extends React.Component {
             status: "unconfirmed",
             code: -1
         }
-        $.post("/saveOrder",{order:JSON.stringify(order)},function(data){
-            localStorage.setItem("curorder",data);
-            main.setState({curStep:2});
-        })
+        if (localStorage.getItem("curorder")){
+            $.post("/updateOrder",{id:localStorage.getItem("curorder"),order:JSON.stringify(order)}, function(data){
+                main.setState({curStep:2});
+            })
+        } else {
+            $.post("/saveOrder",{order:JSON.stringify(order)},function(data){
+                localStorage.setItem("curorder",data);
+                main.setState({curStep:2});
+            })
+        }
     }
     render(){
         var sumCost = 0;
@@ -210,7 +216,7 @@ class Summary extends React.Component {
                     <div class="bstore-breadcrumb">
                         <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right	"></i></span>
-                        <span>Giỏ hàng của bạn</span>
+                        <span>Thanh toán</span>
                     </div>
                 </div>
             </div>
@@ -297,12 +303,16 @@ class GoogleMap extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            position:{}
+            position:{},
+
         }
         map = this;
     }
     render(){
         var url = "https://maps.google.com/maps?q="+this.state.position.lat+","+this.state.position.lng+"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+        if (this.state.position.text){
+            url = "https://maps.google.com/maps?q="+this.state.position.text+"&ie=UTF8&iwloc=&output=embed";
+        }
         return(<div class="mapouter" >
         <div class="gmap_canvas">
             <iframe width="350" height="250" id="gmap_canvas"
@@ -393,17 +403,17 @@ class Address extends React.Component {
             user : {}
         }
         this.addAddress = this.addAddress.bind(this);
+        this.backStep1 = this.backStep1.bind(this);
         classAddress = this;
     }
     componentDidMount(){
         var that = this;
         var emailUser = localStorage.getItem("email");
-        console.log(emailUser);
         $.post("/getSingleUser",{email:emailUser},function(data){
-            console.log(data);
             that.setState({user:data});
             if (data.address){
                 classLocation.setState({address: data.address});
+                map.setState({position:{text:data.address}});
             }
         })
     }
@@ -413,9 +423,13 @@ class Address extends React.Component {
         var fullname = this.refs.fullname.value;
         var phonenumber = this.refs.phonenumber.value;
         var email = localStorage.getItem("email");
-        console.log("add luu = "+address);
         var that = this;
-        $.post("/updateAddress",{id:localStorage.getItem('curorder'),email:email,address:address, fullname:fullname,phonenumber:phonenumber},function(data){
+        var sumCost = 0;
+        step1.state.sumcost.forEach(e => {
+            sumCost+=e;
+        });
+        $.post("/updateAddress",{id:localStorage.getItem('curorder'),email:email,address:address, fullname:fullname,
+        phonenumber:phonenumber, sumcost:sumCost},function(data){
             if (data.err == 0) {
                 $.post("/sendmail", { order: JSON.stringify(data.data), id: localStorage.getItem('curorder'), ship:data.ship}, function (data) {
                     main.setState({ curStep: 3 });
@@ -424,6 +438,9 @@ class Address extends React.Component {
                 that.setState({err:"Vui lòng kiểm tra lại địa chỉ"})
             }
         })
+    }
+    backStep1(){
+        main.setState({curStep:1});
     }
     render(){
         var name="", number="";
@@ -439,15 +456,18 @@ class Address extends React.Component {
                     <div class="bstore-breadcrumb">
                         <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
-                        <span>Địa chỉ</span>
+                        <span>Thanh toán</span>
                     </div>
                 </div>
             </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <h2 class="page-title">Thông tin khách hàng</h2>
+                </div>	
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="shoping-cart-menu">
                         <ul class="step">
-                            <li class="step-todo first step-done">
+                            <li class="step-todo first step-done" onClick={this.backStep1}>
                                 <span>01. Giỏ hàng</span>
                             </li>                   
                             <li class="step-current second">
@@ -503,6 +523,14 @@ class Address extends React.Component {
 class Confirm extends React.Component {
     constructor(props){
         super(props);
+        this.backStep1 = this.backStep1.bind(this);
+        this.backStep2 = this.backStep2.bind(this);
+    }
+    backStep1(){
+        main.setState({curStep:1});
+    }
+    backStep2(){
+        main.setState({curStep:2});
     }
     render(){
         return(<section class="main-content-section">
@@ -512,19 +540,22 @@ class Confirm extends React.Component {
                     <div class="bstore-breadcrumb">
                         <a href="/">Trang chủ</a>
                         <span><i class="fa fa-caret-right"></i></span>
-                        <span>Địa chỉ</span>
+                        <span>Thanh toán</span>
                     </div>
                 </div>
             </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <h2 class="page-title">Xác nhận đơn hàng</h2>
+                </div>	
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="shoping-cart-menu">
                         <ul class="step">
-                            <li class="step-todo first step-done">
+                            <li class="step-todo first step-done" onClick={this.backStep1}>
                                 <span><a href="/checkout">01. Tổng kết</a></span>
                             </li>                   
                            
-                            <li class="step-todo second step-done">
+                            <li class="step-todo second step-done" onClick={this.backStep2}>
                                 <span>02. Địa chỉ</span>
                             </li>
                             <li class="step-current third">

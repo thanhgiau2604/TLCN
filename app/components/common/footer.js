@@ -41,13 +41,6 @@ class Footer extends React.Component{
 									<div className="about-us-area">
 									</div>
 									<div className="fllow-us-area">
-										{/* <h2>Follow us</h2>
-										<ul className="flow-us-link">
-											<li><a href="#"><i className="fa fa-facebook"></i></a></li>
-											<li><a href="#"><i className="fa fa-twitter"></i></a></li>
-											<li><a href="#"><i className="fa fa-rss"></i></a></li>
-											<li><a href="#"><i className="fa fa-google-plus"></i></a></li>
-										</ul> */}
 									</div>
 								</div>
 							</div>
@@ -86,7 +79,7 @@ class Footer extends React.Component{
 															<i className="fa fa-envelope-o"></i>
 														</div>
 														<div className="info-text">
-															<p>Email : <a href="#"><i className="fa fa-angle-double-right"></i> nguyengiau.9801@gmail.com</a></p>
+															<p>Email : <a href="#">shoelg98@gmail.com</a></p>
 														</div>
 													</li>
 												</ul>
@@ -103,7 +96,7 @@ class Footer extends React.Component{
 										</div>
 									</div>
 								</div>
-								<div className="footer-top-right-2">
+								{/* <div className="footer-top-right-2">
 									<div className="row">
 										<div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 
@@ -154,7 +147,7 @@ class Footer extends React.Component{
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> */}
 							</div>
 						</div>
 					</div>

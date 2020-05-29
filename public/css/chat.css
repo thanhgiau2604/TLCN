@@ -11,3 +11,17 @@
   width: 100%;
   height: auto;
 }
+.chat-socket {
+  cursor: pointer;
+  width: 70px;
+  height: auto;
+  bottom: 30%;
+  right: 0;
+  position: fixed;
+  z-index: 1000;
+}
+
+.chat-socket img {
+  width: 100%;
+  height: auto;
+}

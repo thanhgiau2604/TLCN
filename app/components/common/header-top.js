@@ -146,11 +146,11 @@ class HeaderTop extends React.Component {
 										</div>
 									</form>
 								</div>
-								<div className="selected-language">
+								{/* <div className="selected-language">
 									<div className="current-lang">
 										<span className="current-lang-label">Ngôn ngữ : </span><strong>Tiếng Việt</strong>
 									</div>
-								</div>
+								</div> */}
 							</div>
 						</div>
 						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-5">
