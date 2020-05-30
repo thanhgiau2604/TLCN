@@ -12,7 +12,7 @@ function SendMail(receiver,subject,contentMail){
         from: 'shoelg98@gmail.com', // sender address
         to: receiver, // list of receivers
         subject: subject, // Subject line
-        html: contentMail// plain text body
+        html: contentMail// plain text body,
       };
       transporter.sendMail(mailOptions, function (err, info) {
         if (err){

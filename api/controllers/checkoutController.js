@@ -169,10 +169,10 @@ module.exports = function(app,io){
         dssp = dssp + strsp;
         let donhang =
         "<h2><b>THÔNG TIN ĐƠN HÀNG</b></h2>" +
-        "<h3><b>Đơn hàng của anh/chị:</b> "+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
-        `<h3><b>Tổng tiền sản phẩm:</b> ${order.sumproductcost}đ;</h3>`+
-        `<h3><b>Phí vận chuyển:</b> ${order.sumshipcost}đ;</h3>`+
-        `<h3><b>Tổng tiền đơn hàng:</b> ${order.sumproductcost + order.sumshipcost}đ;</h3>`+
+        "<h3 style='font-weight:normal'><b>Đơn hàng của anh/chị:</b> "+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
+        `<h3 style='font-weight:normal'><b>Tổng tiền sản phẩm:</b> ${order.sumproductcost}đ;</h3>`+
+        `<h3 style='font-weight:normal'><b>Phí vận chuyển:</b> ${order.sumshipcost}đ;</h3>`+
+        `<h3 style='font-weight:normal'><b>Tổng tiền đơn hàng:</b> ${order.sumproductcost + order.sumshipcost}đ;</h3>`+
         `<h3>DANH SÁCH SẢN PHẨM:</h3>`;
         let diachi =`<h3>Địa chỉ nhận hàng: ${order.address}</h3>`
         let numberRandom = randomInt(100000,999999);
@@ -258,7 +258,7 @@ module.exports = function(app,io){
                                     if (err) {
                                         throw err;
                                     } else {
-                                        res.redirect("/ordersuccess");
+                                        res.redirect("/ordersuccess/"+req.params.email+"/"+req.params.code);
                                     }
                                 })
                             }
@@ -285,6 +285,9 @@ module.exports = function(app,io){
                 res.json("");
             }
         })
+    })
+    app.get("/ordersuccess/:email/:code",(req,res)=>{
+        res.render("dathangthanhcong");
     })
     app.get("/ordersuccess",(req,res)=>{
         res.render("dathangthanhcong");

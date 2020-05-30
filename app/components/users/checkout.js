@@ -185,7 +185,8 @@ class Summary extends React.Component {
             sumshipcost: 0,
             listproduct: arrProduct,
             status: "unconfirmed",
-            code: -1
+            code: -1,
+            payment: false
         }
         if (localStorage.getItem("curorder")){
             $.post("/updateOrder",{id:localStorage.getItem("curorder"),order:JSON.stringify(order)}, function(data){

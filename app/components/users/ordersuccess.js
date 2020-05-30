@@ -6,18 +6,45 @@ import MainMenu from '../common/main-menu'
 import CompanyFacality from '../common/company-facality'
 import Footer from '../common/footer'
 import CopyRight from '../common/copyright'
+import axios from "axios"
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
-import io from 'socket.io-client'
-const socket = io('http://localhost:3000');
 class Success extends React.Component {
     constructor(props){
         super(props);
+        this.paymentPaypal = this.paymentPaypal.bind(this);
+        this.state = {
+            listProductOrder: [],
+            ship: 0,
+            code: 0,
+            type: "confirm"
+        }
     }
     componentDidMount(){
-        socket.emit("require-update"," ");
-        socket.emit("require-update-order-product","");
+        var url = window.location.pathname;
+        if (url!="/ordersuccess"){
+            var code = "", email = "", i, j;
+            for (i = url.length - 1; i >= 0; i--) {
+                if (url[i] != "/") code = url[i] + code; else break;
+            }
+            for (j = i - 1; j >= 0; j--) {
+                if (url[j] != '/') email = url[j] + email; else break;
+            }
+            code = parseInt(code);
+            var that = this;
+            $.post("/getListProductOrder", { code: code }, function (data) {
+                var ship = data.sumshipcost;
+                that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code})
+            })
+        } else {
+            this.setState({type:"payment"})
+        }
+    }
+    paymentPaypal(){
+        $.post("/payment",{data:JSON.stringify(this.state.listProductOrder),ship:this.state.ship, code:this.state.code},function(data){
+            location.assign(data);
+        })
     }
     render(){
         localStorage.removeItem("curorder");
@@ -53,11 +80,25 @@ class Success extends React.Component {
                     </div>
                 </div> 
             </div>
+            {this.state.type=="confirm" ? 
             <div class="row address">
-                <h3 class="text-center">XÁC NHẬN ĐƠN HÀNG THÀNH CÔNG!</h3>
-                <h3 class="text-center">Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.</h3>	
-                <h3 class="text-center">Chân thành cảm ơn!</h3>		
+                <h2 class="text-center"><b>XÁC NHẬN ĐƠN HÀNG THÀNH CÔNG!</b></h2>
+                <div class="text-center">
+                    <h3 class="text-center ordersuccess">Khách hàng có thể thanh toán thông qua Paypal tại đây:</h3>
+                    <img src="/img/paypal-button.png" class="ordersuccess" width="15%" onClick={this.paymentPaypal} style={{cursor:"pointer"}}/>
+                </div>
+                <h3 class="text-center ordersuccess">Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.</h3>	
+                <h3 class="text-center ordersuccess">Chân thành cảm ơn!</h3>		
             </div>
+            : <div class="row address">
+                <h2 class="text-center"><b>THANH TOÁN THÀNH CÔNG!</b></h2>
+                <div class="text-center">
+                    <h3 class="text-center ordersuccess">Quý khách đã thanh toán thành công thông qua Paypal</h3>
+                </div>
+                <h3 class="text-center ordersuccess">Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.</h3>	
+                <h3 class="text-center ordersuccess">Chân thành cảm ơn!</h3>	
+            </div>
+            }
         </div>
     </section>)
     }

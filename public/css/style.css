@@ -4991,3 +4991,6 @@ td {
   .step-done {
 	  cursor: pointer;
   }
+  .ordersuccess {
+	  padding: 5px;
+  }
