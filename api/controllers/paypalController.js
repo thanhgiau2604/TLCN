@@ -84,7 +84,7 @@ module.exports = function(app){
                 console.log(error.response);
                 throw error;
             } else {
-                Order.findOne({code:code},{$set:{payment:true}});
+                Order.findOneAndUpdate({code:code},{$set:{payment:true}});
                 res.redirect("/ordersuccess")
             }
         });

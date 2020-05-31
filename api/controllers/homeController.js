@@ -158,7 +158,8 @@ module.exports = function(app,apiRouter){
                             product: product,
                             time: order.time,
                             status: order.status,
-                            idOrder: order._id
+                            idOrder: order._id,
+                            payment: order.payment || false
                         }
                         arrResult.push(pro);
                     });

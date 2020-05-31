@@ -414,7 +414,7 @@ span.mobile-menu-title{
 3.1 header top
 -------------------------*/	
 .header-top{
-	background:#d9fdb1;
+	background:#e8eae5;
 	font-size:11px;
 	color:#adadad;
 }
@@ -530,7 +530,7 @@ span.mobile-menu-title{
 3.2 header middle
 -------------------------*/	
 .header-middle{
-	background:#f4f3fd;
+	background:#fff;
 }
 .logo{
 	padding-top:25px;
@@ -1649,11 +1649,10 @@ div.client-carousel .owl-item img {
 }
 .staticblock p{
 	color: #fff;
-	font-size: 13px;
+	font-size: 14px;
 	line-height:18px;
 }	
-.Store-Information{}
-.Store-Information ul{}
+
 .Store-Information ul li{
 	display: block;
 	overflow: hidden;	
@@ -1692,7 +1691,6 @@ div.client-carousel .owl-item img {
 	display: block;
 	font-size: 13px;
 	line-height:20px;
-	text-transform: capitalize;
 }
 .info-text p a i{
 	margin-right:7px;
@@ -1757,7 +1755,7 @@ div.client-carousel .owl-item img {
 -------------------------*/
 .copyright-area{
 	border-top: 1px solid #7bbd42;
-	background: #5b9212;
+	background: #486b1a;
 	padding:20px 0;
 }
 .copy-right{}
@@ -4994,3 +4992,14 @@ td {
   .ordersuccess {
 	  padding: 5px;
   }
+.btnStatus {
+	color: white;
+	cursor: unset;
+}
+.btnStatus:hover {
+	color: white;
+}
+.fa-check {
+    font-size: 15px;
+    color: green;
+}

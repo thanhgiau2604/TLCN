@@ -33,14 +33,16 @@ class RowOrder extends React.Component{
         if (this.props.statusProduct=="confirmed" || this.props.statusProduct=="unconfirmed"){
             disable=false;
         }
+        if (this.props.payment==true) disable=true;
         return(<tr className="text-center">
         <td className="text-center">{this.props.stt}</td>
         <td className="text-center">{this.props.name}</td>
         <td className="text-center"><img src={this.props.image} width="100px" height="100px"/></td>
         <td className="text-center">{this.props.time}</td>
-        <td className="text-center"><button className={"btn btn-warning "+this.props.statusProduct}>{this.props.statusProduct}</button></td>
+        <td className="text-center"><button className={"btn btnStatus "+this.props.statusProduct}>{this.props.statusProduct}</button></td>
         {this.props.statusProduct!="canceled" ? <td className="text-center"><button className="btn btn-primary" disabled={disable}
         onClick={this.cancelOrder}>Hủy đơn hàng</button></td>:""}
+        {this.props.payment ? <td><i class="fa fa-check" aria-hidden="true">Đã thanh toán</i></td> : <td></td>}
       </tr>)
     }
 }
@@ -131,7 +133,8 @@ class TableOrder extends React.Component{
                 <tbody>
                     {lCurOrder.map(function (order, index) {
                         return <RowOrder key={index} name={order.product.name} idProduct={order.product._id} statusProduct = {order.product.status}
-                            status={order.status} stt={start+index + 1} time={order.time} image={order.product.image} idOrder={order.idOrder}/>
+                            status={order.status} stt={start+index + 1} time={order.time} image={order.product.image} idOrder={order.idOrder}
+                            payment = {order.payment}/>
                     })}
                 </tbody>
             </table>
