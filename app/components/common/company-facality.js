@@ -79,9 +79,6 @@ class CompanyFacality extends React.Component {
 						</div>
 					</div>
 				</div>
-				<div class="chat-socket">
-					<img src="/img/icon-chat.png" />
-				</div>
 				<div id="fb-root"></div>
 
 				{/* <!-- Your Chat Plugin code --> */}

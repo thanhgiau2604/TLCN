@@ -22,6 +22,7 @@ class LoginForm extends React.Component{
 					localStorage.setItem("username", data.username);
 					localStorage.setItem("email", data.email);
 					localStorage.setItem('token', data.token);
+					localStorage.setItem("fullname",data.fullname);
 					window.location.replace("/");
 					$.post("/updateQvisit",{email:data.email},function(data){})
 

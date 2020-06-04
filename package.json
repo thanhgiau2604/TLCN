@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "webpack": "webpack"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,7 @@
     "ejs": "^2.7.4",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "file-loader": "^6.0.0",
     "google-distance": "^1.0.1",
     "google-distance-api": "^1.0.0",
     "googleapis": "^48.0.0",
@@ -39,10 +41,12 @@
     "paypal-rest-sdk": "^1.8.1",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
+    "react-chat-window": "^1.2.1",
     "react-csv": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-dropdown": "^1.7.0",
     "react-ga": "^2.7.0",
+    "react-notifications": "^1.6.0",
     "react-places-autocomplete": "^7.2.1",
     "react-rating-stars-component": "^1.0.3",
     "react-redux": "^7.2.0",
@@ -51,7 +55,8 @@
     "read-excel-file": "^4.0.6",
     "redux": "^4.0.5",
     "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0"
+    "socket.io-client": "^2.3.0",
+    "style-loader": "^1.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -60,6 +65,7 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/preset-stage-0": "^7.8.3",
     "babel-loader": "^8.1.0",
+    "css-loader": "^3.5.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }

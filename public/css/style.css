@@ -124,6 +124,11 @@ a:focus {
 img {
 	border:none;
 	max-width:100%;
+}
+
+.logo img {
+    width: 23%;
+    position: absolute;
 }	
 /*-----------------------
 2. global css
@@ -530,6 +535,7 @@ span.mobile-menu-title{
 3.2 header middle
 -------------------------*/	
 .header-middle{
+	margin-bottom: 15px;
 	background:#fff;
 }
 .logo{
@@ -5003,3 +5009,17 @@ td {
     font-size: 15px;
     color: green;
 }
+.mean-container .mean-bar {
+	z-index: 9000
+}
+.sc-header--team-name {
+	font-size: 15px
+}
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  .logo img {
+	  width: 50%;
+	  position: absolute;
+	  display: block;
+	  margin-left: 20%;
+	  margin-right: auto;
+	}

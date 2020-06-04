@@ -23,7 +23,8 @@ module.exports = {
         forgotpassword: './app/components/forgotpassword/forgotpassword.js',
         managemessage: './app/components/admin/manage/message.js',
         contact: './app/components/common/contact.js',
-        ordersuccess: './app/components/users/ordersuccess.js'
+        ordersuccess: './app/components/users/ordersuccess.js',
+        managechat: './app/components/admin/manage/adchat.js'
     },
     output: {
       path: __dirname,
@@ -37,6 +38,21 @@ module.exports = {
           loader: "babel-loader",
           options: {
             presets: ["@babel/env", "@babel/react"]
+          }
+        },
+        {
+          test: /\.css$/i,
+          use: ['style-loader','css-loader'],
+        },
+        {
+          test: /\.(jpg|JPG|jpeg|png|gif|mp3|svg|ttf|woff2|woff|eot|gif)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          use: {
+            loader: "file-loader",
+            options: {
+              name: "[name].[hash].[ext]",
+              outputPath: "./public/assets/imgs",
+              publicPath: "./assets/imgs"
+            }
           }
         }
       ]

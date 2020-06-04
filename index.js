@@ -20,6 +20,7 @@ const checkoutController = require("./api/controllers/checkoutController");
 const mangeOrderController = require("./api/controllers/manageOrderController");
 const socketIOController = require("./api/controllers/socketIOController");
 const paypalController = require('./api/controllers/paypalController');
+const chatController = require('./api/controllers/chatController')
 app.set("view engine","ejs");
 // app.set('trust proxy', 1) // trust first proxy
 // app.use(session({
@@ -57,6 +58,7 @@ manageCategoryController(app);
 checkoutController(app,io);
 mangeOrderController(app);
 paypalController(app);
+chatController(app,io);
 app.use("/", express.static(__dirname+"/public"));
 app.use(express.static(__dirname+"/public"));
 app.get("/login",(req,res)=> res.render("dangnhap"));

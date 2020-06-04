@@ -70,3 +70,72 @@
     padding-top:5px;
     margin-left: 20px;
 }
+
+
+.navbar-brand {
+    padding: 0px;
+  }
+  .navbar-brand>img {
+    height: 100%;
+    padding: 15px;
+    width: auto;
+  }
+  .example2 .navbar-brand>img {
+    padding: 7px 15px;
+  }
+  
+  .example3 .navbar-brand {
+    height: 80px;
+  }
+  
+  .example3 .nav >li >a {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+  .example3 .navbar-toggle {
+    padding: 10px;
+    margin: 25px 15px 25px 0;
+  }
+  .navbar-primary {
+        box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+      border-bottom: 2px solid rgba(221, 221, 221, 0.82);
+      border-top: 3px solid #3e476d;
+        text-transform: uppercase;
+      color: #6d6d6d!important;
+  }
+  .navbar-primary a {
+      color: #6d6d6d!important;
+  }
+  
+  
+  /* EXAMPLE 6 - Background Logo*/
+  .example6 .navbar-brand{ 
+    background: url(../images/logo-admin.png) center / contain no-repeat;
+    width: 200px;
+  }
+  
+  
+  /* CSS Transform Align Navbar Brand Text ... This could also be achieved with table / table-cells */
+  .navbar-alignit .navbar-header {
+        -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    height: 50px;
+  }
+  .navbar-alignit .navbar-brand {
+      top: 50%;
+      display: block;
+      position: relative;
+      height: auto;
+      -webkit-transform: translate(0,-50%);
+              transform: translate(0,-50%);
+      margin-right: 15px;
+    margin-left: 15px;
+  }
+  
+  .navbar-nav>li>.dropdown-menu {
+      z-index: 9999;
+  }
+  .navbar-inverse {
+    background-color: #2c3e50!important;
+    border-color: #2c3e50!important;
+  }

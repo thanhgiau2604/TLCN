@@ -82,7 +82,8 @@ module.exports = function(app,apiRouter,jwt){
                         },superSecret,{
                             expiresIn: time_exprired
                         });
-                        res.json({err:0,username:user.lastName,email:user.email,token:token,role:user.role});          
+                        res.json({err:0,username:user.lastName,email:user.email,token:token,role:user.role,
+                        fullname: user.lastName+" "+user.firstName});          
                     }
                 }
             }

@@ -3,14 +3,8 @@ class Navbar extends React.Component{
     constructor(props){
         super(props);
         this.handleSignOut = this.handleSignOut.bind(this);
-        this.goMessage = this.goMessage.bind(this);
     }
     componentDidMount(){
-        // var token = localStorage.getItem('tokenad');
-        // if (!token)
-        // {
-        //     window.location.assign('/login');
-        // }
     }
     handleSignOut(){
         localStorage.removeItem('usernamead');
@@ -18,37 +12,33 @@ class Navbar extends React.Component{
         localStorage.removeItem('tokenad');
         window.location.assign("/login");
     }
-    goMessage(){
-        window.location.assign("/manageMessage");
-    }
     render(){
-        return (<div class='navbar navbar-default' id='navbar'>
-            <a class='navbar-brand' href='/dashboard'>
-                <img src="/assets/images/logo-admin1.png" />
-            </a>
-            <ul class='nav navbar-nav pull-right'>
-                <li class='dropdown'>
-                    <a style={{cursor:'pointer'}} onClick={this.goMessage}>
-                        <i class='icon-envelope'></i>
-                        Messages
-                    </a>
-                </li>
-                <li class='dropdown user'>
-                    <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
-                        <i class='icon-user'></i>
-                        <strong>{localStorage.getItem('usernamead')}</strong>
-                        {/* <img class="img-rounded" src="http://placehold.it/20x20/ccc/777" /> */}
-                        <b class='caret'></b>
-                    </a>
-                    <ul class='dropdown-menu'>
-                        <li class='divider'></li>
-                        <li>
-                            <a onClick={this.handleSignOut} style={{cursor:'pointer'}}>Sign out</a>
-                        </li>
-                    </ul>
-                </li>
+        return (<nav class="navbar navbar-inverse navbar-static-top example6">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar6">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand text-hide" href="http://disputebills.com">Brand Text
+        </a>
+      </div>
+      <div id="navbar6" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/manageMessage"><i class='icon-envelope'> Messages</i></a></li>
+          <li><a href="/manageChat"><i class='icon-comments-alt'> Manage Chat</i></a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class='icon-user'> {localStorage.getItem('usernamead')}</i> <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a onClick={this.handleSignOut} style={{cursor:'pointer'}}>Log out</a></li>
             </ul>
-        </div>)
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>)       
     }
 }
 export default Navbar;

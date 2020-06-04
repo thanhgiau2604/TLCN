@@ -1,5 +1,6 @@
 import React from 'react'
 import $ from 'jquery'
+import UserChat from '../users/userchat'
 var main;
 class OptionGuest extends React.Component {
 	constructor(props){
@@ -52,7 +53,7 @@ class OptionUser extends React.Component {
 			<ul className="list-inline">
 				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>({this.state.countmessage})</span></a></li>
 				<li><a onClick={this.handleCheckout} style={{cursor:'pointer'}}>Thanh toán</a></li>
-				<li><a href="/listfavorite" >DS yêu thích</a></li>
+				<li><a href="/listfavorite" >Sản phẩm yêu thích</a></li>
 				<li><a href="/manageaccount" onClick={this.handleAccount}>Tài khoản</a></li>
 				<li><a onClick={this.logOut} style={{cursor:'pointer'}}>Đăng xuất</a></li>
 			</ul>
@@ -79,7 +80,8 @@ class HeaderTop extends React.Component {
 		this.logOut = this.logOut.bind(this);
 		this.state = {
 			Option: <OptionGuest/>,
-			Welcome: ""
+			Welcome: "",
+			generateChat: false
 		}
 		main = this;
 	}
@@ -97,7 +99,7 @@ class HeaderTop extends React.Component {
 					localStorage.removeItem("token");
 					that.setState({ Option: <OptionGuest />, Welcome: "" })
 				} else {
-					that.setState({ Option: <OptionUser />, Welcome: <WelcomeUser /> })
+					that.setState({ Option: <OptionUser />, Welcome: <WelcomeUser />,generateChat:true })
 				}
 			})
 		}
@@ -108,8 +110,7 @@ class HeaderTop extends React.Component {
 		localStorage.removeItem('token');
 		that.setState({Option:<OptionGuest/>,Welcome:""});
 	}
-	render() {
-		
+	render() {	
 		return (
 			<div className="header-top">
 				<div className="container">
@@ -174,6 +175,7 @@ class HeaderTop extends React.Component {
 								</div>
 							</div>
 						</div>
+						{this.state.generateChat ? <UserChat/> : <div></div>}
 					</div>
 				</div>
 			</div>
