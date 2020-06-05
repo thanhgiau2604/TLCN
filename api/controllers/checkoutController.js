@@ -109,7 +109,7 @@ module.exports = function(app,io){
                 }
                 Order.update({ _id: id }, { $set: { address: address, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
                     if (err) {
-                        throw err;
+                        console.log(err);
                     } else {
                         Order.findOne({ _id: id }, function (err, data) {
                             if (err) {
@@ -263,6 +263,8 @@ module.exports = function(app,io){
                                 })
                             }
                         });
+                    } else {
+                        res.redirect("/ordersuccess/"+"confirmed"+"/"+req.params.code);
                     }
                 })
             }

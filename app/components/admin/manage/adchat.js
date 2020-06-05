@@ -4,6 +4,7 @@ import io from 'socket.io-client'
 import { Launcher } from 'react-chat-window'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import Navbar from '../common/navbar'
 import $ from 'jquery'
 const socket = io('http://localhost:3000');
 var main,chatAd;
@@ -188,4 +189,10 @@ class AdminChat extends React.Component {
     </div>)
   }
 }
-ReactDOM.render(<AdminChat />, document.getElementById("managechat"));
+ReactDOM.render(
+<div>
+  <Navbar/>
+  <div id="wrapper">
+    <AdminChat />
+  </div>
+</div>, document.getElementById("managechat"));

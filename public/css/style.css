@@ -5023,3 +5023,12 @@ td {
 	  margin-left: 20%;
 	  margin-right: auto;
 	}
+}
+.alert {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.example2 .navbar-default {
+	border: none;
+	background-color: #e8eae5;
+}

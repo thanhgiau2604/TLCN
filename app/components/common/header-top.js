@@ -7,12 +7,18 @@ class OptionGuest extends React.Component {
 		super(props);
 	}
 	render() {
-		return(<nav>
-			<ul className="list-inline">
-				<li><a href="/signup">Đăng ký</a></li>
-				<li><a href="/login">Đăng nhập</a></li>
-			</ul>
-		</nav>)
+		return(<ul class="nav navbar-nav navbar-right">
+		<li>
+		  <a href="/signup">
+		  <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Đăng ký
+		  </a>
+		</li>
+		<li>
+		  <a href="login">
+		   <i class="fa fa-sign-in" aria-hidden="true"></i> Đăng nhập
+		  </a>
+		</li> 
+	</ul>)
 	}
 }
 
@@ -23,9 +29,7 @@ class OptionUser extends React.Component {
 		this.state = {
 			countmessage:0
 		}
-		this.handleAccount = this.handleAccount.bind(this);
 		this.handleCheckout = this.handleCheckout.bind(this);
-		this.handleFL = this.handleFL.bind(this);
 	}
 	logOut(){
 		localStorage.removeItem('username');
@@ -39,25 +43,61 @@ class OptionUser extends React.Component {
             that.setState({countmessage:data.length});
         })
 	}
-	handleAccount(){
-
-	}
 	handleCheckout(){
 		window.location.assign("/checkout");
 	}
-	handleFL(){
-
-	}
 	render() {
-		return(<nav>
-			<ul className="list-inline">
-				<li className="inbox"><i className="fa fa-envelope-o" aria-hidden="true"></i><a href="/message">Tin nhắn<span>({this.state.countmessage})</span></a></li>
-				<li><a onClick={this.handleCheckout} style={{cursor:'pointer'}}>Thanh toán</a></li>
-				<li><a href="/listfavorite" >Sản phẩm yêu thích</a></li>
-				<li><a href="/manageaccount" onClick={this.handleAccount}>Tài khoản</a></li>
-				<li><a onClick={this.logOut} style={{cursor:'pointer'}}>Đăng xuất</a></li>
-			</ul>
-		</nav>)
+		return(<ul class="nav navbar-nav navbar-right">
+		<li>
+		  <a href="/message">
+			<i class="fa fa-envelope" aria-hidden="true"></i> Tin nhắn
+		  </a>
+		</li>
+		<li>
+		  <a href="/orderhistory">
+			<i class="fa fa-file-text" aria-hidden="true"></i> Đơn hàng
+		  </a>
+		</li>
+		<li>
+		  <a href="/listfavorite">
+			<i class="fa fa-heart" aria-hidden="true"></i> Yêu thích
+		  </a>
+		</li>
+		<li>
+		  <a onClick={this.handleCheckout} style={{cursor:'pointer'}}>
+			<i class="fa fa-shopping-cart" aria-hidden="true"></i> Thanh toán
+		  </a>
+		</li>
+		<li class="dropdown">
+		  <a
+			href="#"
+			class="dropdown-toggle"
+			data-toggle="dropdown"
+			role="button"
+			aria-expanded="false"
+		  >
+			<i class="fa fa-user" aria-hidden="true"></i> Chào,
+			 {localStorage.getItem("username")} <span class="caret"></span>
+		  </a>
+		  <ul class="dropdown-menu" role="menu">
+			<li>
+			  <a href="/manageaccount">
+				<i class="fa fa-cog" aria-hidden="true"></i> Quản lý tài khoản
+			  </a>
+			</li>
+			<li>
+			  <a href="/changeaccount">
+				<i class="fa fa-key" aria-hidden="true"></i> Đổi mật khẩu
+			  </a>
+			</li>
+			<li>
+			  <a onClick={this.logOut} style={{cursor:'pointer'}}>
+				<i class="fa fa-sign-out" aria-hidden="true"></i> Đăng xuất
+			  </a>
+			</li>
+		  </ul>
+		</li>
+	  </ul>)
 	}
 }
 class WelcomeUser extends React.Component{
@@ -71,16 +111,15 @@ class WelcomeUser extends React.Component{
 	render(){
 		return(<div className="welcome-info" style={{cursor:'pointer'}} onClick={this.showOption}>
 			Chào, <span>{localStorage.getItem("username")}</span>
+			<span><a>Sản phẩm yêu thích</a></span>
 		</div>)
 	}
 }
 class HeaderTop extends React.Component {
 	constructor(props) {
 		super(props);
-		this.logOut = this.logOut.bind(this);
 		this.state = {
 			Option: <OptionGuest/>,
-			Welcome: "",
 			generateChat: false
 		}
 		main = this;
@@ -97,89 +136,38 @@ class HeaderTop extends React.Component {
 					localStorage.removeItem('username');
 					localStorage.removeItem('email');
 					localStorage.removeItem("token");
-					that.setState({ Option: <OptionGuest />, Welcome: "" })
+					that.setState({ Option: <OptionGuest />})
 				} else {
-					that.setState({ Option: <OptionUser />, Welcome: <WelcomeUser />,generateChat:true })
+					that.setState({ Option: <OptionUser />,generateChat:true })
 				}
 			})
 		}
 	}
-	logOut(){
-		localStorage.removeItem('username');
-		localStorage.removeItem('email');
-		localStorage.removeItem('token');
-		that.setState({Option:<OptionGuest/>,Welcome:""});
-	}
 	render() {	
 		return (
-			<div className="header-top">
-				<div className="container">
-					<div className="row text-center">
-						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-7">
-							<div className="header-left-menu">
-								{this.state.Welcome}
-								<ul class="languages-choose infor-toogle">
-									<li>
-										<a href="/orderhistory">
-											<span>Lịch sử đơn hàng</span>
-										</a>
-									</li>
-									<li>
-										<a href="/manageaccount">
-											<span>Quản lý tài khoản</span>
-										</a>
-									</li>
-									<li>
-										<a href="/message">
-											<span>Tin nhắn</span>
-										</a>
-									</li>
-									<li>
-										<a onClick={this.logOut} style={{cursor:'pointer'}}>
-											<span>Đăng xuất</span>
-										</a>
-									</li>
-								</ul>
-								<div className="currenty-converter">
-									<form method="post" action="#" id="currency-set">
-										<div className="current-currency">
-											<span className="cur-label">Tiền tệ : </span><strong>VND</strong>
-										</div>
-									</form>
-								</div>
-								{/* <div className="selected-language">
-									<div className="current-lang">
-										<span className="current-lang-label">Ngôn ngữ : </span><strong>Tiếng Việt</strong>
-									</div>
-								</div> */}
-							</div>
-						</div>
-						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-5">
-							<div className="header-right-menu">
-								{this.state.Option}
-							</div>
-						</div>
-						<div id="login" className="modal fade" role="dialog">
-							<div className="modal-dialog">
-
-								<div className="modal-content">
-									<div className="modal-body">
-										<button data-dismiss="modal" className="close">&times;</button>
-										<h4>Login</h4>
-										<form>
-											<input type="text" name="username" className="username form-control" placeholder="Username" />
-											<input type="password" name="password" className="password form-control" placeholder="password" />
-											<input className="btn login" type="submit" value="Login" />
-										</form>
-									</div>
-								</div>
-							</div>
-						</div>
-						{this.state.generateChat ? <UserChat/> : <div></div>}
-					</div>
-				</div>
-			</div>
-		)
+      <div class="example2">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button
+                type="button"
+                class="navbar-toggle collapsed"
+                data-toggle="collapse"
+                data-target="#navbar2">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+            <div id="navbar2" class="navbar-collapse collapse">
+              {this.state.Option}
+            </div>
+          </div>
+        </nav>
+		{this.state.generateChat ? <UserChat/> : <div></div>}
+      </div>
+    );
 	}
 }
 export default HeaderTop;

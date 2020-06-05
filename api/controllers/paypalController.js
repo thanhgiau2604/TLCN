@@ -13,6 +13,9 @@ module.exports = function(app){
         var listProduct = JSON.parse(req.body.data);
         var ship = req.body.ship;
         var code = req.body.code;
+        var email = req.body.email;
+
+        console.log(email);
         var listItems = [];
         var subtotal = 0;
         for (var i=0; i<listProduct.length; i++){
@@ -27,7 +30,8 @@ module.exports = function(app){
             listItems.push(item);
         }
         var shipping = parseFloat(ship/usdtovnd).toFixed(2);
-        var total = parseFloat(subtotal)+parseFloat(shipping);
+        var total = (parseFloat(subtotal)+ parseFloat(shipping)).toFixed(2);
+        console.log(subtotal+" "+shipping+" "+total);
         var create_payment_json = {
             "intent": "sale",
             "payer": {
@@ -35,7 +39,7 @@ module.exports = function(app){
             },
             "redirect_urls": {
                 "return_url": "http://localhost:3000/paymentSuccess/"+total+"/"+code,
-                "cancel_url": "http://localhost:3000/paymentCancel"
+                "cancel_url": "http://localhost:3000/paymentCancel/"+email+"/"+code
             },
             "transactions": [{
                 "item_list": {
@@ -55,6 +59,7 @@ module.exports = function(app){
         paypal.payment.create(create_payment_json, function (error, payment) {
             if (error) {
                 console.log(error);
+                if (error.response.details) console.log(error.response.details);
             } else {
                 for (let i=0; i<payment.links.length; i++){
                     if (payment.links[i].rel==="approval_url")
@@ -84,12 +89,17 @@ module.exports = function(app){
                 console.log(error.response);
                 throw error;
             } else {
-                Order.findOneAndUpdate({code:code},{$set:{payment:true}});
+                Order.findOneAndUpdate({code:code},{$set:{payment:true}},function(err,data){
+                    if (err) console.log(err);
+                    else console.log(data);
+                });
                 res.redirect("/ordersuccess")
             }
         });
     })
-    app.get('/paymentCancel', (req, res) => res.send('Cancelled'));
+    app.get('/paymentCancel/:email/:code', (req, res) => {
+        res.redirect("/ordersuccess/"+req.params.email+"/"+req.params.code);
+    });
 
     app.post("/getListProductOrder",parser,(req,res)=>{
         var code = req.body.code;

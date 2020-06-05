@@ -444,6 +444,7 @@ class Address extends React.Component {
         main.setState({curStep:1});
     }
     render(){
+        if (!localStorage.getItem("curorder")) window.location.replace("/");
         var name="", number="";
         if (this.state.user){
             if (this.state.user.firstName) name += this.state.user.firstName;

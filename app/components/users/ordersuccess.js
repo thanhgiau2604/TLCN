@@ -31,23 +31,29 @@ class Success extends React.Component {
             for (j = i - 1; j >= 0; j--) {
                 if (url[j] != '/') email = url[j] + email; else break;
             }
-            code = parseInt(code);
-            var that = this;
-            $.post("/getListProductOrder", { code: code }, function (data) {
+            if (email="confirmed"){
+              this.setState({type:"confirmed"});
+            } else {
+                code = parseInt(code);
+                var that = this;
+                $.post("/getListProductOrder", { code: code }, function (data) {
                 var ship = data.sumshipcost;
                 that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code})
             })
+            }
         } else {
             this.setState({type:"payment"})
         }
     }
     paymentPaypal(){
-        $.post("/payment",{data:JSON.stringify(this.state.listProductOrder),ship:this.state.ship, code:this.state.code},function(data){
+        var email = localStorage.getItem("email");
+        $.post("/payment",{data:JSON.stringify(this.state.listProductOrder),ship:this.state.ship, code:this.state.code, email:email},function(data){
             location.assign(data);
         })
     }
     render(){
         localStorage.removeItem("curorder");
+        var that = this;
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
@@ -80,25 +86,71 @@ class Success extends React.Component {
                     </div>
                 </div> 
             </div>
-            {this.state.type=="confirm" ? 
-            <div class="row address">
-                <h2 class="text-center"><b>XÁC NHẬN ĐƠN HÀNG THÀNH CÔNG!</b></h2>
-                <div class="text-center">
-                    <h3 class="text-center ordersuccess">Khách hàng có thể thanh toán thông qua Paypal tại đây:</h3>
-                    <img src="/img/paypal-button.png" class="ordersuccess" width="15%" onClick={this.paymentPaypal} style={{cursor:"pointer"}}/>
-                </div>
-                <h3 class="text-center ordersuccess">Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.</h3>	
-                <h3 class="text-center ordersuccess">Chân thành cảm ơn!</h3>		
-            </div>
-            : <div class="row address">
-                <h2 class="text-center"><b>THANH TOÁN THÀNH CÔNG!</b></h2>
-                <div class="text-center">
-                    <h3 class="text-center ordersuccess">Quý khách đã thanh toán thành công thông qua Paypal</h3>
-                </div>
-                <h3 class="text-center ordersuccess">Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.</h3>	
-                <h3 class="text-center ordersuccess">Chân thành cảm ơn!</h3>	
-            </div>
-            }
+            {(()=>{
+                if (that.state.type=="confirm"){
+                    return (
+                      <div class="row address">
+                        <h2 class="text-center">
+                          <b>XÁC NHẬN ĐƠN HÀNG THÀNH CÔNG!</b>
+                        </h2>
+                        <div class="text-center">
+                          <h3 class="text-center ordersuccess">
+                            Khách hàng có thể thanh toán thông qua Paypal tại
+                            đây:
+                          </h3>
+                          <img
+                            src="/img/paypal-button.png"
+                            class="ordersuccess"
+                            width="15%"
+                            onClick={this.paymentPaypal}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </div>
+                        <h3 class="text-center ordersuccess">
+                          Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của
+                          quý khách.
+                        </h3>
+                        <h3 class="text-center ordersuccess">
+                          Chân thành cảm ơn!
+                        </h3>
+                      </div>
+                    );
+                } else 
+                if (that.state.type=="payment"){
+                    return (
+                      <div class="row address">
+                        <h2 class="text-center">
+                          <b>THANH TOÁN THÀNH CÔNG!</b>
+                        </h2>
+                        <div class="alert alert-success text-center">
+                          <strong>Quý khách đã thanh toán thành công thông qua Paypal!</strong>
+                        </div>
+                        <h3 class="text-center ordersuccess">
+                          Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.
+                        </h3>
+                        <h3 class="text-center ordersuccess">
+                          Chân thành cảm ơn!
+                        </h3>
+                      </div>
+                    );
+                } else {
+                    return (
+                      <div class="row address">
+                        <div class="alert alert-danger text-center">
+                          <strong>
+                            QÚY KHÁCH ĐÃ XÁC NHẬN ĐƠN HÀNG NÀY RỒI!
+                          </strong>
+                        </div>
+                        <h3 class="text-center ordersuccess">
+                          Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.
+                        </h3>
+                        <h3 class="text-center ordersuccess">
+                          Chân thành cảm ơn!
+                        </h3>
+                      </div>
+                    );
+                }
+            })()}
         </div>
     </section>)
     }

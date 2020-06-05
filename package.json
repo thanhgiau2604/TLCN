@@ -39,6 +39,7 @@
     "passport-google-oauth": "^2.0.0",
     "passport-google-oauth20": "^2.0.0",
     "paypal-rest-sdk": "^1.8.1",
+    "popup": "0.0.3",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
     "react-chat-window": "^1.2.1",
