@@ -448,7 +448,7 @@ class Dashboard extends React.Component{
                     <h4>Customers</h4>
                     <div>
                       <div class="row text-center">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnCustomer">
                           <button class={this.state.btnCurrent==0 ? "btn btn-choose currentBtn" : "btn btn-choose"} onClick={this.closeCustomers}>Close Customers</button>
                           <button class={this.state.btnCurrent==1 ? "btn btn-choose currentBtn" : "btn btn-choose"} style={{marginLeft:"5px"}} onClick={this.visitFrequently}>Visit Website Frequently</button>
                           <button class={this.state.btnCurrent==2 ? "btn btn-choose currentBtn" : "btn btn-choose"} style={{marginLeft:"5px"}} onClick={this.notOrder}>Have not ordered</button>

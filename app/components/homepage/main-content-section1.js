@@ -174,13 +174,13 @@ class Product2 extends React.Component{
 									<i className="fa fa-star-half-empty"></i>
 								</div>
 								<div className="review-box">
-									<span>3 Review(s)</span>
+									{this.props.comments.length>0?<span>{this.props.comments.length} bình luận</span> :<span></span>}
 								</div>
 							</div>
 							<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 							<div className="price-box">
 								<span className="price">{cost}đ</span>
-								<span className="older-price">{oldcost}đ</span>
+								{this.props.from=="sale" ?<span className="older-price">{oldcost}đ</span> :<span></span>}
 							</div>
 							{this.props.quantity<=5 ?<h3 class="notify-hot">Chỉ còn {this.props.quantity} sản phẩm</h3> : <h3></h3>}
 						</div>
@@ -218,8 +218,7 @@ class PopularProduct extends React.Component{
 				<div className="row">
 					<div className="sidebar-best-seller-carousel">
 						{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}
-						<div className="item">
-							
+						<div className="item">				
 							{this.state.listPoplular.map(function (product, index) {
 								return <Product1 key={index} id={product._id}
 									name={product.name} image={product.image.image1} costs={product.costs} quantity={product.quanty}/>
@@ -262,9 +261,13 @@ class NewProduct extends React.Component{
 								{this.state.listNew.map(function(product,index){
 									var status = "NEW";
 									if (product.quanty==0) status="Hết hàng";
+									var comment = [];
+									if (product.comments) 
+									   if (product.comments.length>0) comment = product.comments;
 									return <Product2 key={index} id={product._id}
 									name={product.name} image={product.image.image1} 
-									costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}/>
+									costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}
+									from="new" comments={comment}/>
 								})}
 							</div>
 						</div>
@@ -296,14 +299,17 @@ class SaleProduct extends React.Component {
 			</div>
 			<div className="row">		
 			{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}			
-				<div className="home2-sale-carousel">		
-								
+				<div className="home2-sale-carousel">					
 						{this.state.listSale.map(function (product, index) {
 							var status = "SALE";
 							if (product.quanty==0) status="Hết hàng";
+							var comment = [];
+							if (product.comments) 
+									   if (product.comments.length>0) comment = product.comments;
 							return <Product2 key={index} id={product._id}
 								name={product.name} image={product.image.image1} 
-								costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}/>
+								costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}
+								from="sale" comments={comment}/>
 						})}											
 				</div>										
 			</div>

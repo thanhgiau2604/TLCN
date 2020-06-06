@@ -27,12 +27,12 @@ class Navbar extends React.Component{
       </div>
       <div id="navbar6" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="/manageMessage"><i class='icon-envelope'> Messages</i></a></li>
-          <li><a href="/manageChat"><i class='icon-comments-alt'> Manage Chat</i></a></li>
+          <li><a href="/manageMessage"><i class='icon-envelope'></i> Messages</a></li>
+          <li><a href="/manageChat"><i class='icon-comments-alt'></i> Manage Chat</a></li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class='icon-user'> {localStorage.getItem('usernamead')}</i> <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class='icon-user'></i> {localStorage.getItem('usernamead')}<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-              <li><a onClick={this.handleSignOut} style={{cursor:'pointer'}}>Log out</a></li>
+              <li><a onClick={this.handleSignOut} style={{cursor:'pointer'}}><i class='icon-signout'></i> Log out</a></li>
             </ul>
           </li>
         </ul>

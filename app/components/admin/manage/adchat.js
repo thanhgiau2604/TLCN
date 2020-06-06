@@ -8,6 +8,7 @@ import Navbar from '../common/navbar'
 import $ from 'jquery'
 const socket = io('http://localhost:3000');
 var main,chatAd;
+var listStaticUser;
 class Demo extends React.Component {
   constructor() {
     super();
@@ -25,6 +26,7 @@ class Demo extends React.Component {
     socket.on("send-listuser",function(data){
       if (data.data.data.author== "me"){
         main.setState({listUser:data.listUser});
+        listStaticUser = data.listUser;
       } else {
         var arrUser = data.listUser;
         var index = arrUser.findIndex(item => item.email === data.data.email);
@@ -35,6 +37,7 @@ class Demo extends React.Component {
         }
         socket.emit("change-listuser",arrUser);
         main.setState({listUser:arrUser});
+        listStaticUser = arrUser;
       }
     })
     socket.on("server-send-message", function (data) {
@@ -68,22 +71,26 @@ class Demo extends React.Component {
   _handleClick() {
     var arrUser = main.state.listUser;
     var index = arrUser.findIndex(item => item.email === this.state.nameChat);
-    arrUser[index].seen = true;
-    main.setState({ listUser: arrUser });
-    socket.emit("change-listuser",arrUser);
-    $.post("/updateSeenStatus", { email: this.state.nameChat }, function (data) {
-    })
-    this.setState({
-      isOpen: !this.state.isOpen,
-      newMessagesCount: 0
-    });
+    if (index!=-1){
+      arrUser[index].seen = true;
+      main.setState({ listUser: arrUser });
+      listStaticUser = arrUser;
+      socket.emit("change-listuser", arrUser);
+      $.post("/updateSeenStatus", { email: this.state.nameChat }, function (
+        data
+      ) {});
+      this.setState({
+        isOpen: !this.state.isOpen,
+        newMessagesCount: 0
+      });
+    }
   }
   render() {
     return (<div>
       <Launcher
         agentProfile={{
           teamName: this.state.nameChat,
-          imageUrl: 'https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png'
+          imageUrl: 'img/icon-user-chat.png'
         }}
         onMessageWasSent={this._onMessageWasSent.bind(this)}
         messageList={this.state.messageList}
@@ -107,6 +114,7 @@ class SingleUser extends React.Component {
     chatAd.setState({ nameChat: user.email,isOpen:true});
     localStorage.setItem("curidUser", user.id);
     main.setState({listUser:arrUser});
+    listStaticUser = arrUser;
     socket.emit("change-listuser",arrUser);
     $.post("/getMessage", { email: user.email }, function (data) {
       var arrMessage = [];
@@ -147,46 +155,96 @@ class AdminChat extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      listUser: []
+      listUser: [],
+      permission: false
     }
+    this.handleChange = this.handleChange.bind(this);
     main = this;
   }
   componentDidMount(){
     var that = this;
     $.get("/getListUser",function(data){
       that.setState({listUser:data});
+      listStaticUser = data;
+    })
+  }
+  handleChange(e){
+    var value = e.target.value;
+    var listSearch = [];
+    for (var i=0; i<listStaticUser.length; i++){
+      var email = listStaticUser[i].email;
+      if (email.indexOf(value)!=-1){
+        listSearch.push(listStaticUser[i])
+      }
+    }
+    this.setState({listUser:listSearch});
+  }
+  componentWillMount(){
+    var that = this;
+    const token = localStorage.getItem('tokenad');
+    if (!token) {
+      this.setState({ permission: false })
+    }
+    $.get("/admin", { token: token }, function (data) {
+      if (data.success == 0) {
+        localStorage.removeItem('emailad');
+        localStorage.removeItem('usernamead');
+        that.setState({ permission: false })
+      } else {
+        that.setState({ permission: true })
+      }
     })
   }
   render() {
     var that = this;
-    return (<div>
-      <div class="container">
-        <h3 class=" text-center">Messaging</h3>
-        <div class="messaging">
-          <div class="inbox_msg">
-            <div class="inbox_people">
-              <div class="headind_srch">
-                <div class="recent_heading">
-                  <h4>Recent</h4>
+    return (
+      <div>
+        <div class="container">
+          <h3 class="messagetitle text-center">Messaging</h3>
+          <div class="messaging">
+            <div class="inbox_msg">
+              {this.state.permission == false ? (
+                <div className="text-center notification">
+                  <br />
+                  <h3> Not permitted. Please access the following link to login!</h3>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => window.location.replace("/login")}
+                    style={{ marginTop: "10px", width: "auto" }}>
+                    Đi đến trang đăng nhập
+                  </button>
                 </div>
-                <div class="srch_bar">
-                  <div class="stylish-input-group">
-                    <input type="text" class="search-bar" placeholder="Search" />
+              ) : (
+                <div class="inbox_people">
+                  <div class="headind_srch">
+                    <div class="recent_heading">
+                      <h4>Recent</h4>
+                    </div>
+                    <div class="srch_bar">
+                      <div class="stylish-input-group">
+                        <input
+                          type="text"
+                          class="search-bar"
+                          placeholder="Search"
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inbox_chat">
+                    {this.state.listUser.map(function (user, index) {
+                      return <SingleUser key={index} pos={index} user={user}/>;
+                    })}
                   </div>
                 </div>
-              </div>
-              <div class="inbox_chat">
-                {this.state.listUser.map(function (user, index) {
-                  return (<SingleUser key={index} pos={index} user={user}/>)
-                })}
-              </div>
+              )}
             </div>
           </div>
-        </div></div>)
-      })}
-      <Demo />
-      <NotificationContainer />
-    </div>)
+        </div>
+        ) })}
+        <Demo />
+        <NotificationContainer />
+      </div>);
   }
 }
 ReactDOM.render(

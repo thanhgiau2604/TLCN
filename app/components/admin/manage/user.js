@@ -411,8 +411,8 @@ class ManageUsers extends React.Component{
                     <div className="col-md-5">
                       <div class="radio" onChange={this.changeStatus}>
                         <label><input type="radio" name="optionStatus" value="1" checked={this.state.status == "1"} />All</label>
-                        <label><input type="radio" name="optionStatus" value="2" />Active</label>
-                        <label><input type="radio" name="optionStatus" value="3" />Deleted</label>
+                        <label><input type="radio" name="optionStatus" value="2" style={{marginLeft:"0"}}/> Active</label>
+                        <label><input type="radio" name="optionStatus" value="3" style={{marginLeft:"0"}}/> Deleted</label>
                       </div>
                     </div>
 

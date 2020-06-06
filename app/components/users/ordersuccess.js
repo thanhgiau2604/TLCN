@@ -10,6 +10,8 @@ import axios from "axios"
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
+import io from 'socket.io-client'
+const socket = io('http://localhost:3000');
 class Success extends React.Component {
     constructor(props){
         super(props);
@@ -31,7 +33,7 @@ class Success extends React.Component {
             for (j = i - 1; j >= 0; j--) {
                 if (url[j] != '/') email = url[j] + email; else break;
             }
-            if (email="confirmed"){
+            if (email=="confirmed"){
               this.setState({type:"confirmed"});
             } else {
                 code = parseInt(code);
@@ -88,6 +90,7 @@ class Success extends React.Component {
             </div>
             {(()=>{
                 if (that.state.type=="confirm"){
+                  socket.emit("require-update-order-product");
                     return (
                       <div class="row address">
                         <h2 class="text-center">

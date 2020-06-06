@@ -194,20 +194,17 @@ module.exports = function(app,io){
                 Order.findOne({ email: req.params.email, code: req.params.code }, function (err, order) {
                     console.log(order);
                     if (order && order.status == "unconfirmed") { //nếu trạng thái unconfirmed mới thực hiện cập nhật
-                        console.log("vào dc")
                         dataProduct = order.listproduct;
                         var ok;
-                        var result = [];
+                        var result = listOrderToday;
                         for (var i = 0; i < dataProduct.length; i++) {
                             ok = false;
                             for (var j = 0; j < listOrderToday.length; j++) {
                                 if (dataProduct[i].id.equals(listOrderToday[j].id)) {
                                     ok = true;
-                                    var itemresult = {
-                                        id: dataProduct[i].id,
-                                        count: dataProduct[i].quanty + listOrderToday[j].count
-                                    }
-                                    result.push(itemresult);
+                                    var itemresult = listOrderToday[j];
+                                    itemresult.count += dataProduct[i].quanty;
+                                    result[j] = itemresult;
                                     break;
                                 }
                             }
@@ -233,9 +230,11 @@ module.exports = function(app,io){
 
                             })
                         }
+                        console.log(result);
                         //cập nhật vào thống kê
-                        Statistic.update({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
-                            if (err) console.log(err);
+                        Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
+                            if (err) console.log(err); else
+                            console.log(data);
                         });
                         //Tăng số lượt đặt hàng của khách hàng --> để thống kê
                         User.findOneAndUpdate({email:req.params.email},{$inc:{qorder:1}},function(err,data){

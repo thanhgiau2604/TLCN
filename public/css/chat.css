@@ -96,6 +96,10 @@ font-size: 18px;
 float: left;
 width: 11%;
 }
+
+.chat_img img {
+    width: 70%;
+}
 .chat_ib {
 float: left;
 padding: 0 0 0 15px;

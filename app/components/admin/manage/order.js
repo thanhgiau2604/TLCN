@@ -274,7 +274,8 @@ class ManageOrders extends React.Component {
       listOrder: [],
       curpage: 1,
       isUpdate: false,
-      processing: false
+      processing: false,
+      permission: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.previousPage = this.previousPage.bind(this);

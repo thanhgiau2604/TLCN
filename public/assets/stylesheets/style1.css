@@ -1,290 +1,315 @@
-*, *::before, *::after {
-    box-sizing: border-box;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 .rowb {
-    display: flex;
-    /* margin-right: -15px;
+  display: flex;
+  /* margin-right: -15px;
     margin-left: -15px;
     flex-wrap: wrap; */
-} 
+}
 .col-xl-3 {
+  max-width: 25%;
+  flex: 0 0 25%;
+}
+.col-xs-6 .col-sm-6 .col-md-6 {
+  max-width: 50%;
+  flex: 0 0 50%;
+}
+@media (min-width: 1200px) {
+  .col-xl-3 {
     max-width: 25%;
     flex: 0 0 25%;
-}
-.col-xs-6 .col-sm-6 .col-md-6{
-	max-width: 50%;
-	flex: 0 0 50%;
-}
-@media (min-width: 1200px){
-    .col-xl-3 {
-        max-width: 25%;
-        flex: 0 0 25%;
-    }
+  }
 }
 
-@media (min-width: 768px){
-    .col-md-6 {
-        max-width: 50%;
-        flex: 0 0 50%;
-    }
+@media (min-width: 768px) {
+  .col-md-6 {
+    max-width: 50%;
+    flex: 0 0 50%;
+  }
 }
 
 .card {
-    margin-bottom: 30px;
-    border: 0;
-    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .15);
+  margin-bottom: 30px;
+  border: 0;
+  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15);
 }
 
 .card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    border: 1px solid rgba(0, 0, 0, .05);
-    border-radius: .375rem;
-    background-color: #e4f1f5;
-    background-clip: border-box;
-    /* margin-left: 50px; */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 0.375rem;
+  background-color: #e4f1f5;
+  background-clip: border-box;
+  /* margin-left: 50px; */
 }
 
 .card-stats .card-body {
-    margin: 10px 10px;
+  margin: 10px 10px;
 }
 .card-body {
-    min-height: 1px;
-    padding: 1rem;
-    flex: 1 1 auto;
-    /* margin-left: 20px; */
+  min-height: 1px;
+  padding: 1rem;
+  flex: 1 1 auto;
+  /* margin-left: 20px; */
 }
 
 .col {
-    max-width: 100%;
-    flex-basis: 0;
-    flex-grow: 1;
+  max-width: 100%;
+  flex-basis: 0;
+  flex-grow: 1;
 }
 
 .text-muted {
-    color: #8898aa !important;
+  color: #8898aa !important;
 }
 .text-uppercase {
-    text-transform: uppercase !important;
+  text-transform: uppercase !important;
 }
-.mb-0, .my-0 {
-    margin-bottom: 0 !important;
+.mb-0,
+.my-0 {
+  margin-bottom: 0 !important;
 }
 .card-title {
-    margin-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: inherit;
-    font-weight: 600;
-    line-height: 1.5;
-    margin-bottom: .5rem;
-    color: #32325d;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+  color: #32325d;
 }
 
 .font-weight-bold {
-    font-weight: 600 !important;
+  font-weight: 600 !important;
 }
-.mb-0, .my-0 {
-    margin-bottom: 0 !important;
+.mb-0,
+.my-0 {
+  margin-bottom: 0 !important;
 }
 .col-auto {
-    width: auto;
-    max-width: 100%;
-    flex: 0 0 auto;
-    padding-top: 20px;
+  width: auto;
+  max-width: 100%;
+  flex: 0 0 auto;
+  padding-top: 20px;
 }
 .text-white {
-    color: #fff !important;
+  color: #fff !important;
 }
-[class*='shadow'] {
-    transition: all .15s ease;
+[class*="shadow"] {
+  transition: all 0.15s ease;
 }
 .bg-gradient-red {
-    background: linear-gradient(87deg, #f5365c 0, #f56036 100%) !important;
+  background: linear-gradient(87deg, #f5365c 0, #f56036 100%) !important;
 }
 .icon-shape {
-    display: inline-flex;
-    padding: 12px;
-    text-align: center;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex;
+  padding: 12px;
+  text-align: center;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
 }
 .icon {
-    width: 5rem;
-    height: 5rem;
+  width: 5rem;
+  height: 5rem;
 }
 .text-white {
-    color: #fff !important;
+  color: #fff !important;
 }
 .shadow {
-    box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .15) !important;
+  box-shadow: 0 0 2rem 0 rgba(136, 152, 170, 0.15) !important;
 }
-.rounded-circle, .avatar.rounded-circle img {
-    border-radius: 50% !important;
+.rounded-circle,
+.avatar.rounded-circle img {
+  border-radius: 50% !important;
 }
 
 /* .text-sm {
     font-size: .875rem !important;
 } */
-.mt-3, .my-3 {
-    margin-top: 1rem !important;
+.mt-3,
+.my-3 {
+  margin-top: 1rem !important;
 }
-.mb-0, .my-0 {
-    margin-bottom: 0 !important;
+.mb-0,
+.my-0 {
+  margin-bottom: 0 !important;
 }
 
 .text-success {
-    color: #2dce89 !important;
+  color: #2dce89 !important;
 }
-.mr-2, .mx-2 {
-    margin-right: .5rem !important;
+.mr-2,
+.mx-2 {
+  margin-right: 0.5rem !important;
 }
 
-.fa, .fas {
-    font-weight: 900;
+.fa,
+.fas {
+  font-weight: 900;
 }
-.fa, .far, .fas {
-    font-family: "Font Awesome 5 Free";
+.fa,
+.far,
+.fas {
+  font-family: "Font Awesome 5 Free";
 }
 .text-nowrap {
-    white-space: nowrap !important;
+  white-space: nowrap !important;
 }
 .bg-gradient-orange {
-    background: linear-gradient(87deg, #fb6340 0, #fbb140 100%) !important;
+  background: linear-gradient(87deg, #fb6340 0, #fbb140 100%) !important;
 }
 .bg-gradient-green {
-    background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
+  background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
 }
 .bg-gradient-info {
-    background: linear-gradient(87deg, #11cdef 0, #1171ef 100%) !important;
+  background: linear-gradient(87deg, #11cdef 0, #1171ef 100%) !important;
 }
 
 .activeUser {
-    position: absolute;
-    color: white;
-    font-weight: 700;
-    background-color: royalblue;
-    right: 0;
-    top: 25%;
+  position: absolute;
+  color: white;
+  font-weight: 700;
+  background-color: royalblue;
+  right: 0;
+  top: 25%;
 }
 
-.activeUser h3, .activeUser h1 {
-    color: white;
+.activeUser h3,
+.activeUser h1 {
+  color: white;
 }
 .metrics {
-    position: relative;
-    background-color: #c0d8fd;
+  position: relative;
+  background-color: #c0d8fd;
 }
 .fourMetrics {
-    padding-top:20px;
+  padding-top: 20px;
 }
 
 .Dropdown-root {
-    position: relative;
-  }
-  
-  .Dropdown-control {
-    position: relative;
-    overflow: hidden;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 2px;
-    box-sizing: border-box;
-    color: #333;
-    cursor: default;
-    outline: none;
-    padding: 8px 52px 8px 10px;
-    transition: all 200ms ease;
-  }
-  
-  .Dropdown-control:hover {
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-  }
-  
-  .Dropdown-arrow {
-    border-color: #999 transparent transparent;
-    border-style: solid;
-    border-width: 5px 5px 0;
-    content: ' ';
-    display: block;
-    height: 0;
-    margin-top: -ceil(2.5);
-    position: absolute;
-    right: 10px;
-    top: 14px;
-    width: 0
-  }
-  
-  .is-open .Dropdown-arrow {
-    border-color: transparent transparent #999;
-    border-width: 0 5px 5px;
-  }
-  
-  .Dropdown-menu {
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-    box-sizing: border-box;
-    margin-top: -1px;
-    max-height: 200px;
-    overflow-y: auto;
-    position: absolute;
-    top: 100%;
-    width: 100%;
-    z-index: 1000;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .Dropdown-menu .Dropdown-group > .Dropdown-title{
-    padding: 8px 10px;
-    color: rgba(51, 51, 51, 1);
-    font-weight: bold;
-    text-transform: capitalize;
-  }
-  
-  .Dropdown-option {
-    box-sizing: border-box;
-    color: rgba(51, 51, 51, 0.8);
-    cursor: pointer;
-    display: block;
-    padding: 8px 10px;
-  }
-  
-  .Dropdown-option:last-child {
-    border-bottom-right-radius: 2px;
-     border-bottom-left-radius: 2px;
-  }
-  
-  .Dropdown-option:hover {
-    background-color: #f2f9fc;
-    color: #333;
-  }
-  
-  .Dropdown-option.is-selected {
-    background-color: #f2f9fc;
-    color: #333;
-  }
-  
-  .Dropdown-noresults {
-    box-sizing: border-box;
-    color: #ccc;
-    cursor: default;
-    display: block;
-    padding: 8px 10px;
-  }
-  .table>tbody>tr.deleted>td {
-    background-color: #f5c4be;
-   } 
-   .table>tbody>tr.deleted:hover>td {
-    background-color: #f5c4be;
-   } 
-   .downloadtoexcel {
-       padding-top:10px;
-       margin-bottom: 20px;
-   }
+  position: relative;
+}
 
+.Dropdown-control {
+  position: relative;
+  overflow: hidden;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  box-sizing: border-box;
+  color: #333;
+  cursor: default;
+  outline: none;
+  padding: 8px 52px 8px 10px;
+  transition: all 200ms ease;
+}
+
+.Dropdown-control:hover {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+.Dropdown-arrow {
+  border-color: #999 transparent transparent;
+  border-style: solid;
+  border-width: 5px 5px 0;
+  content: " ";
+  display: block;
+  height: 0;
+  margin-top: -ceil(2.5);
+  position: absolute;
+  right: 10px;
+  top: 14px;
+  width: 0;
+}
+
+.is-open .Dropdown-arrow {
+  border-color: transparent transparent #999;
+  border-width: 0 5px 5px;
+}
+
+.Dropdown-menu {
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-top: -1px;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  z-index: 1000;
+  -webkit-overflow-scrolling: touch;
+}
+
+.Dropdown-menu .Dropdown-group > .Dropdown-title {
+  padding: 8px 10px;
+  color: rgba(51, 51, 51, 1);
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.Dropdown-option {
+  box-sizing: border-box;
+  color: rgba(51, 51, 51, 0.8);
+  cursor: pointer;
+  display: block;
+  padding: 8px 10px;
+}
+
+.Dropdown-option:last-child {
+  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.Dropdown-option:hover {
+  background-color: #f2f9fc;
+  color: #333;
+}
+
+.Dropdown-option.is-selected {
+  background-color: #f2f9fc;
+  color: #333;
+}
+
+.Dropdown-noresults {
+  box-sizing: border-box;
+  color: #ccc;
+  cursor: default;
+  display: block;
+  padding: 8px 10px;
+}
+.table > tbody > tr.deleted > td {
+  background-color: #f5c4be;
+}
+.table > tbody > tr.deleted:hover > td {
+  background-color: #f5c4be;
+}
+.downloadtoexcel {
+  padding-top: 10px;
+  margin-bottom: 20px;
+}
+.messagetitle {
+    color: white;
+}

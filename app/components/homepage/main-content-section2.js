@@ -130,7 +130,7 @@ class Product1 extends React.Component{
 								<i className="fa fa-star-half-empty"></i>
 							</div>
 							<div className="review-box">
-								<span>1 Review(s)</span>
+							{this.props.comments.length>0?<span>{this.props.comments.length} bình luận</span> :<span></span>}
 							</div>
 						</div>
 						<a href="single-product.html">{this.props.name}</a>
@@ -171,9 +171,13 @@ class Sneaker extends React.Component {
 					<div className="feartured-carousel">
 						{this.state.listSneaker.map(function(sneaker,index){
 							var status ="";
-							if (sneaker.quanty==0) status = "Hết hàng"
+							if (sneaker.quanty==0) status = "Hết hàng";
+							var comment = [];
+									if (sneaker.comments) 
+									   if (sneaker.comments.length>0) comment = sneaker.comments;
 							return <Product1 key={index} name={sneaker.name} costs={sneaker.costs}
-							image={sneaker.image.image1} id={sneaker._id} status={status} size={sneaker.sizes}/>
+							image={sneaker.image.image1} id={sneaker._id} status={status} size={sneaker.sizes}
+							comments={comment}/>
 						})}												
 					</div>
 				</div>
@@ -210,9 +214,13 @@ class Sports extends React.Component {
 					<div className="feartured-carousel">									
 				       {this.state.listSport.map(function(sport,index){
 						   var status ="";
-						   if (sport.quanty==0) status = "Hết hàng"
+						   if (sport.quanty==0) status = "Hết hàng";
+						   var comment = [];
+									if (sport.comments) 
+									   if (sport.comments.length>0) comment = sport.comments;
 						   return <Product1 key={index} name={sport.name} costs={sport.costs}
-						   image={sport.image.image1} id={sport._id} status={status} size={sport.sizes}/>
+						   image={sport.image.image1} id={sport._id} status={status} size={sport.sizes}
+						   comments={comment}/>
 					   })}			
 					</div>					
 				</div>
@@ -250,8 +258,12 @@ class Pumps extends React.Component {
 						{this.state.listPumps.map(function(pumps,index){
 							var status="";
 							if (pumps.quanty==0) status="Hết hàng";
+							var comment = [];
+									if (pumps.comments) 
+									   if (pumps.comments.length>0) comment = pumps.comments;
 							return <Product1 key={index} name={pumps.name} costs={pumps.costs}
-							image={pumps.image.image1} id={pumps._id} status={status} size={pumps.sizes}/>
+							image={pumps.image.image1} id={pumps._id} status={status} size={pumps.sizes}
+							comments={comment}/>
 						})}																								
 					</div>		
 				</div>
@@ -288,8 +300,12 @@ class Kids extends React.Component{
 					{this.state.listKids.map(function(kid,index){
 						var status="";
 						if (kid.quanty==0) status="Hết hàng";
+						var comment = [];
+									if (kid.comments) 
+									   if (kid.comments.length>0) comment = kid.comments;
 						return <Product1 key={index} name={kid.name} costs={kid.costs}
-						image={kid.image.image1} id={kid._id} status={status} size={kid.sizes}/>
+						image={kid.image.image1} id={kid._id} status={status} size={kid.sizes}
+						comments={comment}/>
 					})}												
 					</div>							
 				</div>
