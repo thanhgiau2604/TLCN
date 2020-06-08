@@ -74,8 +74,18 @@ class SingleProduct extends React.Component {
             htmlSize.push(size);
             if (e.size == this.state.cursize) {
                 for (var i=0; i<e.colors.length; i++){
-                    var color = <div><label><input type="radio" name={"optionColor"+this.props.stt} value={e.colors[i].color}/>{e.colors[i].color}</label><br/></div>
-                    htmlColor.push(color);
+                    if (e.colors[i].quanty>0){
+                        var color = (
+                          <div>
+                              <label>
+                              <input type="radio" name={"optionColor" + this.props.stt} value={e.colors[i].color} />
+                              {e.colors[i].color}
+                             </label>
+                            <br />
+                          </div>
+                        );
+                        htmlColor.push(color);
+                    }
                 }
             }
         });  

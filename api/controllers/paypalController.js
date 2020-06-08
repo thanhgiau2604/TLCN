@@ -30,6 +30,7 @@ module.exports = function(app){
             listItems.push(item);
         }
         var shipping = parseFloat(ship/usdtovnd).toFixed(2);
+        subtotal = parseFloat(subtotal).toFixed(2);
         var total = (parseFloat(subtotal)+ parseFloat(shipping)).toFixed(2);
         console.log(subtotal+" "+shipping+" "+total);
         var create_payment_json = {
@@ -59,10 +60,11 @@ module.exports = function(app){
         paypal.payment.create(create_payment_json, function (error, payment) {
             if (error) {
                 console.log(error);
+                res.send({err:true});
             } else {
                 for (let i=0; i<payment.links.length; i++){
                     if (payment.links[i].rel==="approval_url")
-                        res.send(payment.links[i].href);
+                        res.send({err:false,link:payment.links[i].href});
                 }
             }
         });

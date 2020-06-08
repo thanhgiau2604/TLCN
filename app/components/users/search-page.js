@@ -59,8 +59,20 @@ class Product extends React.Component{
 		if (!token){
 			$("#modal-authen").modal('show');
 		} else {
-			const thisSize = this.props.size[0].size;
-			const thisColor= this.props.size[0].colors[0].color;
+			var ok = false;
+			var thisSize, thisColor;
+			for (var i=0; i<this.props.size.length; i++){
+				if (ok) break;
+				for (var j=0; j<this.props.size[i].colors.length; j++){
+					var sColor = this.props.size[i].colors[j];
+					if (sColor.quanty>0){
+						thisSize = this.props.size[i].size;
+						thisColor = sColor.color;
+						ok=true;
+						break;
+					}
+				}
+			}
 			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email'),
 			color: thisColor, size:thisSize},function(data){
 				var {dispatch} = main.props;

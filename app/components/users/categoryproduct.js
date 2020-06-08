@@ -329,7 +329,7 @@ class FilterColor extends React.Component {
             }
         }
         return(<div class="radio" onChange={this.changeColor}>
-            <label class="filterColor"><input type="radio" name="optionColor" value="all"/>All</label>
+            <label class="filterColor"><input type="radio" name="optionColor" value="all"/>Tất cả</label>
             {arrColor.map(function(color,index){
                 return(<label class="filterColor"><input type="radio" name="optionColor" value={color}/>{color}</label>)
             })}

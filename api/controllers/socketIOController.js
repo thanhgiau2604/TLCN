@@ -5,6 +5,9 @@ module.exports = function(app,io){
         });
         socket.on("require-update-order-product",(data)=>{
             io.sockets.emit("update-order-product","");
+        });
+        socket.on("require-update-quantity-product",(data)=>{
+            io.sockets.emit("update-quantity-product","");
         })
     })
 }

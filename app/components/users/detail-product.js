@@ -13,7 +13,7 @@ const socket = io('http://localhost:3000');
 var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
-var main,chooseColor="",firstColor;
+var main,chooseColor="",firstColor,firstSize;
 import ReactGA from 'react-ga'
 import ReactStars from 'react-rating-stars-component'
 function initizeAnalytics(){
@@ -125,6 +125,7 @@ class DetailProduct extends React.Component{
     }
     render(){
         var url = window.location.href;
+        var chose = false;
         var htmlSize=[],htmlColor=[];
         if (this.state.product.sizes) {
             this.state.product.sizes.forEach(e => {
@@ -132,7 +133,10 @@ class DetailProduct extends React.Component{
                 htmlSize.push(size);
                 if (e.size == this.state.cursize) {
                     for (var i=0; i<e.colors.length; i++){
-                        if (i==0) firstColor = e.colors[0].color;
+                        if (e.colors[i].quanty > 0 && chose==false) {
+                            firstColor = e.colors[i].color;
+                            chose=true;
+                        }
                         var status=false;
                         if (e.colors[i].quanty==0)  status=true;
                         var color = <div><label>
@@ -221,8 +225,10 @@ class DetailProduct extends React.Component{
                     <h2>{cost}đ</h2>
                 </div>
                 <div class="single-product-desc">
-                    <h4>Mô tả sản phẩm:</h4>
+                    <h4><b>Mô tả sản phẩm:</b></h4>
                     <p>{this.state.product.description}</p>
+                    {this.state.product.quanty<=5 ? <p class="notify-product"><b>Chỉ còn {this.state.product.quanty} sản phẩm</b></p> :
+                    <p>Có sẵn {this.state.product.quanty} sản phẩm</p>}
                 </div>
                 <div class="single-product-info">
                     {buttonFavorite}
@@ -719,6 +725,7 @@ class RelatedProduct extends React.Component{
     componentDidMount(){
         var that = this;
         $.post("/getProductRelate",{idproduct:localStorage.getItem('curproduct')},function(data){
+            console.log(data);
             that.setState({listRelate:data});
         })
     } 

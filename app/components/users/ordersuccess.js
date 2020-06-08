@@ -20,7 +20,9 @@ class Success extends React.Component {
             listProductOrder: [],
             ship: 0,
             code: 0,
-            type: "confirm"
+            type: "confirm",
+            processing: false,
+            err:false
         }
     }
     componentDidMount(){
@@ -48,9 +50,16 @@ class Success extends React.Component {
         }
     }
     paymentPaypal(){
+        var that = this;
         var email = localStorage.getItem("email");
+        that.setState({err:false});
+        this.setState({processing:true});
         $.post("/payment",{data:JSON.stringify(this.state.listProductOrder),ship:this.state.ship, code:this.state.code, email:email},function(data){
-            location.assign(data);
+          if (data.err==true){
+            that.setState({err:true,processing:false});
+          } else {
+            location.assign(data.link);
+          }
         })
     }
     render(){
@@ -90,7 +99,8 @@ class Success extends React.Component {
             </div>
             {(()=>{
                 if (that.state.type=="confirm"){
-                  socket.emit("require-update-order-product");
+                  socket.emit("require-update-order-product","");
+                  socket.emit("require-update-quantity-product","")
                     return (
                       <div class="row address">
                         <h2 class="text-center">
@@ -101,6 +111,11 @@ class Success extends React.Component {
                             Khách hàng có thể thanh toán thông qua Paypal tại
                             đây:
                           </h3>
+                          {this.state.processing == true ? (
+                            <div class="loader text-center"></div>
+                          ) : (
+                            <div></div>
+                          )}
                           <img
                             src="/img/paypal-button.png"
                             class="ordersuccess"
@@ -108,6 +123,11 @@ class Success extends React.Component {
                             onClick={this.paymentPaypal}
                             style={{ cursor: "pointer" }}
                           />
+                          {this.state.err==true? <div class="alert alert-danger text-center">
+                            <strong>
+                              Có lỗi xảy ra. Hãy thử lại sau!
+                            </strong>
+                          </div> : <div></div>}
                         </div>
                         <h3 class="text-center ordersuccess">
                           Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của

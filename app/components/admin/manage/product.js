@@ -862,7 +862,7 @@ class ManageProducts extends React.Component {
     $.get("/getAllProducts", function (data) {
       that.setState({ listProduct: data });
     });
-    socket.on("update-quantity",function(data){
+    socket.on("update-quantity-product",function(data){
       $.get("/getAllProducts", function(dataProduct) {
         that.setState({ listProduct: dataProduct });
       });

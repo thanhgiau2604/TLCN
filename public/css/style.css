@@ -4370,7 +4370,8 @@ span.large-btn:hover i{
 }
 .single-product-desc{}
 .single-product-desc p{
-	margin-bottom:18px;
+	padding-top: 5px;
+	margin-bottom: 0;
 	color:#777;
 }
 .product-in-stock{
