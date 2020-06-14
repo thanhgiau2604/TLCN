@@ -35,6 +35,7 @@ class OptionUser extends React.Component {
 		localStorage.removeItem('username');
 		localStorage.removeItem('email');
 		localStorage.removeItem('token');
+		localStorage.removeItem('phone');
 		window.location.replace("/");
 	}
 	componentDidMount(){

@@ -19,6 +19,8 @@ const UserSchema = new Schema({
     role: String,
     qvisit: Number,
     qorder: Number,
+    topCategory: [{id:Schema.Types.ObjectId,count:Number}],
+    currentVoucher: [{value:Number}]
 });
 //hash password
 UserSchema.pre('save',function(next){

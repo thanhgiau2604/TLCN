@@ -19,7 +19,8 @@ function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
 }
-
+var sumCostProduct;
+var modalDiscount,listDiscount=[];
 class SingleProduct extends React.Component {
     constructor(props){
         super(props);
@@ -111,7 +112,6 @@ class SingleProduct extends React.Component {
             <td class="cart-description">
                 <p class="product-name"><a href="#">{this.props.name}</a></p>
                 <div>
-                    <h4>Chọn Size:</h4>
                     <select name="product-size" style={{width:'50%'}} ref="size" onChange={this.changeSize}>
                         {htmlSize}
                     </select>
@@ -145,14 +145,108 @@ class SingleProduct extends React.Component {
         </tr>)
     }
 }
+class Voucher extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            apply: -1
+        }
+    }
+    componentDidMount(){
+        if (sumCostProduct<this.props.voucher.valueCondition){
+            this.setState({apply:-1});
+        } else {
+            this.setState({apply:0});
+        }
+    }
+    applyVoucher(){
+        this.setState({apply:1});
+        step1.setState({costVoucher: this.props.voucher.value});
+        console.log(listDiscount);
+        var arrVoucher = listDiscount;
+        arrVoucher[this.props.voucher.stt-1].choose = true;
+    }
+    cancelVoucher(){
+        this.setState({apply:0});
+        step1.setState({costVoucher: 0});
+        var arrVoucher = listDiscount;
+        arrVoucher[this.props.voucher.stt-1].choose = false;
+    }
+    render(){
+        console.log(listDiscount[this.props.voucher.stt-1].choose);
+        return(<tr>
+            <td class="text-center">{this.props.voucher.stt}</td>
+            <td class="text-center">{this.props.voucher.name}</td>
+            <td class="text-center">{this.props.voucher.condition}</td>
+            <td class="text-center"> 
+                {this.state.apply==1||listDiscount[this.props.voucher.stt-1].choose==true ? <button class="btn btn-danger" onClick={this.cancelVoucher.bind(this)}>Hủy</button> :
+                (this.state.apply==0? <button class="btn btn-success" onClick={this.applyVoucher.bind(this)}>Áp dụng</button> :
+                <button class="btn btn-success" disabled="true">Áp dụng</button>)}
+            </td>
+        </tr>)
+    }
+}
+class ModalDiscount extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            listVoucher: []
+        }
+        modalDiscount = this;
+    }
+    render(){
+        return(<div class="container">
+        <div class="modal fade" id="modalDiscount" role="dialog">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Chọn ShoeLG Voucher</h4>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="form-group">
+                      <label for="quanty">Danh sách Voucher:</label>
+                      <label for="quanty">Chỉ được chọn 1 Voucher:</label>
+                      <table class='table'>
+                        <thead>
+                          <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">Voucher</th>
+                            <th class="text-center">Điều kiện</th>
+                            <th class="text-center">Chọn</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {this.state.listVoucher.map(function(voucher,index){
+                                return(<Voucher key={index} voucher={voucher}/>)
+                            })}
+                        </tbody>
+                      </table>
+                    </div>  
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Đồng ý</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>)
+    }
+}
 class Summary extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             listProduct: [],
-            sumcost:[]
+            sumcost:[],
+            costVoucher: 0
         }
         this.goStep2 = this.goStep2.bind(this);
+        this.discount = this.discount.bind(this);
         step1 = this;
     }
     componentDidMount(){
@@ -164,6 +258,14 @@ class Summary extends React.Component {
             });
             that.setState({listProduct:data,sumcost:arrayCostProduct})
         })
+        console.log(listDiscount);
+        if (listDiscount.length>0){
+            var index = listDiscount.findIndex(item => item.choose==true);
+            console.log("index="+index);
+             if (index!=-1){
+                this.setState({costVoucher: listDiscount[index].value});
+            }
+        }
     }
     goStep2(){
         var arrProduct = [];
@@ -196,7 +298,8 @@ class Summary extends React.Component {
             listproduct: arrProduct,
             status: "unconfirmed",
             code: -1,
-            payment: false
+            payment: false,
+            costVoucher: this.state.costVoucher
         }
         if (localStorage.getItem("curorder")){
             $.post("/updateOrder",{id:localStorage.getItem("curorder"),order:JSON.stringify(order)}, function(data){
@@ -209,17 +312,42 @@ class Summary extends React.Component {
             })
         }
     }
+    discount(){
+        var email = localStorage.getItem("email");
+        var phone = localStorage.getItem("phone");
+        $.post("/getVoucher",{email:email,phone:phone},function(data){
+            var listVoucher = [];
+            if (data.voucher.length>0){
+                for (var i=1; i<=data.voucher.length; i++){
+                    var value = (i*50000);
+                    var strValue = value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+                    var valueCondition = (200000+i*i*50000);
+                    var condition = valueCondition.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+                    var singleVoucher = {
+                        stt: i,
+                        name: "Mã giảm giá "+ strValue,
+                        value: value,
+                        condition: "Áp dụng cho đơn hàng >= "+ condition,
+                        valueCondition: valueCondition,
+                        choose: false
+                    }
+                    listDiscount.push(singleVoucher);
+                    listVoucher.push(singleVoucher);
+                }
+                modalDiscount.setState({listVoucher: listVoucher});
+            } else {
+                modalDiscount.setState({listVoucher:[]})
+            }
+        })
+    }
     render(){
         var sumCost = 0;
         this.state.sumcost.forEach(e => {
             sumCost+=e;
         });
-        var maxShip=0;
-        this.state.listProduct.forEach(e => {
-            if (e.product.shipcost > maxShip) {
-                maxShip = e.product.shipcost;
-            }
-        });
+        sumCostProduct = sumCost;
+        var subCost = (sumCost-this.state.costVoucher).toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+        sumCost = sumCost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
@@ -275,20 +403,34 @@ class Summary extends React.Component {
                             </tbody>
                             <tfoot>										
                                 <tr class="cart-total-price">
-                                    <td class="cart_voucher" colspan="3" rowspan="4"></td>
+                                    <td class="cart_voucher" colspan="3" rowspan="5"></td>
                                     <td class="text-right" colspan="3">Tổng tiền sản phẩm</td>
-                                    <td id="total_product" class="price" colspan="1">{sumCost}đ</td>
+                                    <td id="total_product" class="price" colspan="1">{sumCost}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-right" colspan="3">Tổng tiền vận chuyển</td>
                                     <td id="total_shipping" class="price" colspan="1">Chưa xác định</td>
                                 </tr>
                                 <tr>
+                                    <td class="text-right" colspan="3">Voucher giảm giá</td>
+                                    <td id="total_shipping" class="price" colspan="1">
+                                    <a class='btn btn-danger' data-toggle='tooltip' style={{cursor:'pointer',marginLeft:'3px'}} title='Mã giảm giá' data-toggle="modal" 
+                                    data-target="#modalDiscount" onClick={this.discount}>Chọn mã</a>
+                                    </td>
+                                </tr>
+                                {this.state.costVoucher!=0 ?
+                                 <tr>
+                                    <td class="text-right" colspan="3">Giảm giá:</td>
+                                    <td id="total_shipping" class="price" colspan="1">
+                                        -{this.state.costVoucher.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}
+                                    </td>
+                                </tr>:""}
+                                <tr>
                                     <td class="total-price-container text-right" colspan="3">
                                         <span>Tổng</span>
                                     </td>
                                     <td id="total-price-container" class="price" colspan="1">
-                                        <span id="total-price">{sumCost}đ (tạm tính)</span>
+                                        <span id="total-price">{subCost} (tạm tính)</span>
                                     </td>
                                 </tr>
                             </tfoot>									
@@ -301,15 +443,14 @@ class Summary extends React.Component {
                         {
                         this.state.listProduct.length>0?<a class="procedtocheckout" onClick={this.goStep2} style={{cursor:'pointer'}}>Tiếp tục thanh toán<i class="fa fa-chevron-right"></i></a>:
                         <a class="procedtocheckout" style={{cursor:'pointer', color:"gray"}}>Tiếp tục thanh toán<i class="fa fa-chevron-right"></i></a>}
-
                     </div>						
                 </div>
             </div>
         </div>
+        <ModalDiscount/>
     </section>)
     }   
 }
-
 class GoogleMap extends React.Component {
     constructor(props){
         super(props);
@@ -335,7 +476,7 @@ class GoogleMap extends React.Component {
     </div>)
     }
 }
-var classLocation, classAddress;
+var classLocation, classAddress, dataSendMail;
 class LocationSearchInput extends React.Component {
     constructor(props) {
       super(props);
@@ -405,7 +546,7 @@ class LocationSearchInput extends React.Component {
         </PlacesAutocomplete>
       );
     }
-  }
+}
 class Address extends React.Component {
     constructor(props){
         super(props);
@@ -434,17 +575,20 @@ class Address extends React.Component {
         var fullname = this.refs.fullname.value;
         var phonenumber = this.refs.phonenumber.value;
         var email = localStorage.getItem("email");
+        var voucher = step1.state.costVoucher;
         var that = this;
         var sumCost = 0;
         step1.state.sumcost.forEach(e => {
             sumCost+=e;
         });
         $.post("/updateAddress",{id:localStorage.getItem('curorder'),email:email,address:address, fullname:fullname,
-        phonenumber:phonenumber, sumcost:sumCost},function(data){
+        phonenumber:phonenumber, sumcost:sumCost, voucher:voucher},function(data){
             if (data.err == 0) {
-                $.post("/sendmail", { order: JSON.stringify(data.data), id: localStorage.getItem('curorder'), ship:data.ship}, function (data) {
-                    main.setState({ curStep: 3 });
-                })
+                dataSendMail = data;
+                main.setState({curStep:3});
+                // $.post("/sendmail", { order: JSON.stringify(data.data), id: localStorage.getItem('curorder'), ship:data.ship}, function (data) {
+                //     main.setState({ curStep: 3 });
+                // })
             } else {
                 that.setState({err:"Vui lòng kiểm tra lại địa chỉ"})
             }
@@ -531,12 +675,19 @@ class Address extends React.Component {
     </section>)
     }
 }
-
+var chooseOption = -1, curCode="",phone;
 class Confirm extends React.Component {
     constructor(props){
         super(props);
         this.backStep1 = this.backStep1.bind(this);
         this.backStep2 = this.backStep2.bind(this);
+        this.state = {  
+            isSendMail: -1,
+            errOption: "",
+            inforMail:"",
+            inforSMS: "",
+            errPhone:""
+        }
     }
     backStep1(){
         main.setState({curStep:1});
@@ -544,7 +695,72 @@ class Confirm extends React.Component {
     backStep2(){
         main.setState({curStep:2});
     }
+    changeOption(e){
+        chooseOption = e.target.value;
+    }
+    continueConfirm(){
+        if (chooseOption==-1){
+            this.setState({errOption:"Bạn chưa chọn hình thức xác nhận đơn hàng"});
+        } else if (chooseOption==1){
+            var id = localStorage.getItem('curorder');
+            $.post("/sendmail", { order: JSON.stringify(dataSendMail.data), id: id, ship:dataSendMail.ship}, function (data) {
+                    main.setState({ curStep: 3 });
+            })
+            this.setState({isSendMail:1})
+        } else {
+            this.setState({isSendMail:0})
+        }
+    }
+    sendSMS(){
+        var that = this;
+        phone = this.refs.phone.value;
+        var phoneno = /^\d{10}$/;
+        if (phone[0]=='8'&&phone[1]=='4')  phoneno = /^\d{11}$/
+        var id = localStorage.getItem('curorder');
+        if(phone.match(phoneno)){
+            $.post("/sendSMS",{phone:phone,order: JSON.stringify(dataSendMail.data), id: id, ship:dataSendMail.ship},function(data){
+                if (data.err==1){
+                    that.setState({errPhone:"Quá trình gửi SMS xảy ra lỗi. Vui lòng thử lại"})
+                } else {
+                    curCode = data.code;
+                    that.setState({isSendMail:3})
+                }
+            })
+        } else {
+            that.setState({errPhone:"Định dạng số điện thoại chưa đúng. Hãy kiểm tra lại"})
+        }
+    }
+    reSendEmail(){
+        var that = this;
+        var id = localStorage.getItem('curorder');
+        that.setState({inforMail:""});
+        $.post("/sendmail", { order: JSON.stringify(dataSendMail.data), id: id, ship:dataSendMail.ship}, function (data) {
+            that.setState({inforMail:"Đã gửi thành công!"});
+    })
+    }
+    reSendSMS(){
+        var that = this;
+        var id = localStorage.getItem('curorder');
+        that.setState({inforSMS:""})
+        $.post("/sendSMS",{phone:phone,order: JSON.stringify(dataSendMail.data), id: id, ship:dataSendMail.ship},function(data){
+            if (data.err==1){
+                that.setState({inforSMS:"Quá trình gửi SMS xảy ra lỗi. Vui lòng thử lại"});
+            } else {
+                curCode = data.code;
+                that.setState({inforSMS:"Đã gửi thành công!"});
+            }
+        })
+    }
+    continueCheckout(){
+        var code = this.refs.codeConfirm.value;
+        if (code==curCode.toString()){
+          location.assign("/confirm/"+phone+"/"+code)
+        } else {
+            this.setState({inforSMS:"Mã xác nhận không đúng!"})
+        }
+    }
     render(){
+        var that = this;
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
@@ -580,10 +796,63 @@ class Confirm extends React.Component {
                     </div>
                 </div> 
             </div>
-            <div class="row address">
-                <h3 class="text-center">Một email đã được gửi vào vào tài khoản email của bạn!</h3>
-                <h3 class="text-center">Vui lòng vào email để xác nhận đơn hàng!</h3>		
-            </div>
+            {(()=>{
+                if (that.state.isSendMail==-1){
+                    return (
+                        <div class="row text-center">
+                        <h4>Chọn hình thức xác nhận đơn hàng</h4>
+                        <div class="form-check" onChange={that.changeOption.bind(that)}>
+                          <input
+                            class="form-check-input addr" type="radio" name="radio-confirm" id="sendEmail" value="1"/>
+                          <label class="form-check-label" for="sendEmail">
+                            Xác nhận qua Email
+                          </label>
+                          <br/>
+                          <input
+                            class="form-check-input addr" type="radio" name="radio-confirm" id="sendSMS" value="0"/>
+                          <label class="form-check-label" for="sendSMS">
+                            Xác nhận qua SMS
+                          </label>
+                        </div>
+                        <button class="btn btn-success btnContinue button addr" onClick={that.continueConfirm.bind(that)}>Tiếp tục</button>
+                        <h4 class="err text-center addr">{that.state.errOption}</h4>
+                      </div>
+                    );
+                } else if (that.state.isSendMail==1){
+                    return(<div class="row text-center">
+                            <h3 class="text-center addr">Một email đã được gửi vào vào tài khoản email của bạn!</h3>
+                            <h3 class="text-center addr">Vui lòng vào email để xác nhận đơn hàng!</h3>	                       
+                            <button class="btn btn-danger button addr" onClick={that.reSendEmail.bind(that)}>Gửi lại email</button>	
+                            <h4 class="infor text-center addr">{that.state.inforMail}</h4>
+                    </div>)
+                } else if (that.state.isSendMail==0){
+                    return (
+                      <div class="row">
+                        <div class="form-group text-center">
+                          <label for="phonenumber">Nhập số điện thoại:</label>
+                          <input
+                            type="tel" class="form-control addr"
+                            id="phonenumber" placeholder="Nhập số điện thoại" ref="phone"/>
+                        </div>
+                        <div class="form-group text-center">
+                          <button class="btn btn-success button addr" onClick={that.sendSMS.bind(this)}>Tiếp tục</button>
+                        </div>
+                        <div class="form-group text-center">
+                          <h4 class="err addr">{that.state.errPhone}</h4>
+                        </div>
+                      </div>
+                    );
+                } else if (that.state.isSendMail==3){
+                    return(<div class="row">
+                        <h3 class="text-center addr">Một mã xác nhận đã được gửi đến số điện thoại của bạn!</h3>
+                        <h3 class="text-center addr">Vui lòng nhập chính xác mã xác nhận để tiếp tục:</h3>
+                        <input type="text" ref="codeConfirm" class="form-control code-input addr" placeholder="Nhập mã xác nhận"/>
+                        <button class="btn btn-primary button addr" onClick={that.continueCheckout.bind(that)}>Tiếp tục</button>
+                        <button class="btn btn-danger button addr" onClick={that.reSendSMS.bind(that)}>Gửi lại SMS</button>	
+                            <h4 class="infor text-center">{that.state.inforSMS}</h4>	
+                    </div>)
+                }
+            })()}
         </div>
     </section>)
     }

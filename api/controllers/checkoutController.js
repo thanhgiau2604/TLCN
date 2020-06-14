@@ -7,6 +7,7 @@ const sendmail = require("./mail");
 var Statistic = require("../models/statistic");
 const NodeGeocoder = require('node-geocoder');
 const distance = require('google-distance');
+const Nexmo = require("nexmo");
 var _eQuatorialEarthRadius = 6378.1370;
 var _d2r = (Math.PI / 180.0);
 var arrUserOnline = []
@@ -79,54 +80,80 @@ module.exports = function(app,io){
     })
     app.post("/updateAddress",parser,(req,res)=>{
         const address = req.body.address;
-        console.log(address);
         const fullname = req.body.fullname;
         const phonenumber = req.body.phonenumber;
         const email = req.body.email;
         const id = req.body.id;
         const sumcost = req.body.sumcost;
+        const voucher = req.body.voucher;
         distance.apiKey = 'AIzaSyAAe03FCWqKI0XJjwuuZQT41KpU9KOgBU4';
         User.findOneAndUpdate({email:email},{address:address},function(err,data){
             if (err) console.log(err);
         })
-        distance.get(
-            {
-              origin: 'Đại học Sư phạm kỹ thuật TPHCM',
-              destination: address
+        // distance.get(
+        //     {
+        //       origin: 'Đại học Sư phạm kỹ thuật TPHCM',
+        //       destination: address
+        //     },
+        //     function(err, data) {
+        //       if (err){
+        //         res.json({err:1})
+        //       } else {
+        //           console.log(data);
+        //         console.log(sumcost);
+        //         var result;
+        //         if (sumcost>800000){
+        //             result=0;
+        //         } else {
+        //             if (distance <= 3000) result = 0;
+        //             else result = 3*(data.distanceValue-3000);
+        //         }
+        //         Order.update({ _id: id }, { $set: { address: address, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
+        //             if (err) {
+        //                 console.log(err);
+        //             } else {
+        //                 Order.findOne({ _id: id }, function (err, data) {
+        //                     if (err) {
+        //                         throw err;
+        //                     } else {
+        //                         console.log(data.sumproductcost);
+        //                         if (data.sumproductcost >=800000) result=0;
+        //                         res.json({err:0,data:data,ship:result});
+        //                     }
+        //                 })
+        //             }
+        //         });
+        //       }
+        //   });
+        // sau này xóa đoạn code bên dưới và mở khóa đoạn code bên trên
+        const result = 10000;
+        Order.findOneAndUpdate(
+          { _id: id },
+          {
+            $set: {
+              address: address,
+              fullname: fullname,
+              phonenumber: phonenumber,
+              sumshipcost: result,
+              costVoucher:voucher
             },
-            function(err, data) {
-              if (err){
-                res.json({err:1})
-              } else {
-                  console.log(data);
-                console.log(sumcost);
-                var result;
-                if (sumcost>800000){
-                    result=0;
+          },
+          function (err, data) {
+            if (err) {
+              console.log(err);
+            } else {
+              Order.findOne({ _id: id }, function (err, data) {
+                if (err) {
+                  throw err;
                 } else {
-                    if (distance <= 3000) result = 0;
-                    else result = 3*(data.distanceValue-3000);
+                  res.json({ err: 0, data: data, ship: result });
                 }
-                Order.update({ _id: id }, { $set: { address: address, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        Order.findOne({ _id: id }, function (err, data) {
-                            if (err) {
-                                throw err;
-                            } else {
-                                console.log(data.sumproductcost);
-                                if (data.sumproductcost >=800000) result=0;
-                                console.log(result);
-                                res.json({err:0,data:data,ship:result});
-                            }
-                        })
-                    }
-                });
-              }
-          });
+              });
+            }
+          }
+        );
     });
-    app.post("/sendmail",parser,(req,res) => {
+    app.post("/sendmail",parser,(req,res) => { //KHOẢNG CÁCH VẬN CHUYỂN ĐƯA VÀO SAU
         const order = JSON.parse(req.body.order);
         const ship = req.body.ship;
         const id = req.body.id;
@@ -166,34 +193,141 @@ module.exports = function(app,io){
             // var strsp = `<p>${count}. Tên sản phẩm: ${e.name}; Số lượng: ${e.quanty}; Màu sắc:${e.color}; Size: ${e.size}; Giá sản phẩm: ${e.cost}đ</p>`;
         });
         strsp += "</tbody> </table>"
-        dssp = dssp + strsp;
+        dssp = dssp + strsp;  
+        var voucher = "";
+        if (order.costVoucher>0) 
+        voucher = `<h3 style='font-weight:normal'><b>Giảm giá (voucher): </b>${order.costVoucher}đ</h3>`
         let donhang =
         "<h2><b>THÔNG TIN ĐƠN HÀNG</b></h2>" +
         "<h3 style='font-weight:normal'><b>Đơn hàng của anh/chị:</b> "+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
         `<h3 style='font-weight:normal'><b>Tổng tiền sản phẩm:</b> ${order.sumproductcost}đ;</h3>`+
-        `<h3 style='font-weight:normal'><b>Phí vận chuyển:</b> ${order.sumshipcost}đ;</h3>`+
-        `<h3 style='font-weight:normal'><b>Tổng tiền đơn hàng:</b> ${order.sumproductcost + order.sumshipcost}đ;</h3>`+
+        `<h3>Địa chỉ nhận hàng: ${order.address}</h3>`+
+        `<h3>Địa chỉ kho hàng: Số 01, Võ Văn Ngân, Thủ Đức, Hồ Chí Minh</h3>`+
+        `<h3>Khoảng cách vận chuyển: 123</h3>`+
+        `<h3 style='font-weight:normal'><b>Phí vận chuyển:</b> ${order.sumshipcost}đ;</h3>`+ voucher+
+        `<h3 style='font-weight:normal'><b>Tổng tiền đơn hàng:</b> ${order.sumproductcost + order.sumshipcost-order.costVoucher}đ;</h3>`+
         `<h3>DANH SÁCH SẢN PHẨM:</h3>`;
-        let diachi =`<h3>Địa chỉ nhận hàng: ${order.address}</h3>`
-        let numberRandom = randomInt(100000,999999);
-        let linkXacNhan = "<h4>Link xác nhận đơn hàng: http://localhost:3000/checkout/"+txtTo+"/"+numberRandom+"</h4>";
+        let numberRandom = randomInt(100000,9999999);
+        let linkXacNhan = "<h4>Link xác nhận đơn hàng: http://localhost:3000/confirm/"+txtTo+"/"+numberRandom+"</h4>";
         //Luu vao databse;
-        Order.update({_id:id},{$set:{code:numberRandom, time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
-            let txtContent = donhang+dssp+diachi+linkXacNhan;
-            sendmail(txtTo,txtSubject,txtContent);
+        Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
+            let txtContent = donhang+dssp+linkXacNhan;
+            sendmail(txtTo,txtSubject,txtContent,function(err,data){
+                if (err){
+                    console.log(err);
+                    res.send({err:1})
+                } else {
+                    res.send({err:0})
+                }
+            });
             res.send("Gửi thành công!");
         });
     });
+    const nexmo = new Nexmo({
+        apiKey: "89d03306",
+        apiSecret: "kP0cq3PjO49r8ht2"
+      }, {debug:true});
+    app.post("/sendSMS",parser,(req,res)=>{
+        const number = req.body.phone;
+        const order = JSON.parse(req.body.order);
+        const ship = req.body.ship;
+        const id = req.body.id;
+        const sum = parseInt(order.sumproductcost)+parseInt(ship);
+        Order.find({},{code:1,_id:0},function(err,data){
+            if (err){
+                console.log(err);
+            } else {
+                let numberRandom = randomInt(100000,9999999);
+                while (data.findIndex(item => item.code===numberRandom)!=-1){
+                    numberRandom = randomInt(100000,9999999);
+                }
+                let message = `Tong tien san pham: ${order.sumproductcost}đ, Tong tien van chuyen: ${ship}đ, Tong: ${sum}đ. MA XAC NHAN DON HANG CUA BAN: ${numberRandom}`
+                console.log(message);
+                Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, 
+                    time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
+                        if (err){
+                            console.log(err);
+                        } else {
+                            res.send({err:0, code:numberRandom});
+                        }
+                })
+            }
+        })
+        // nexmo.message.sendSms('84359627733',number,message,{type:"unicode"},
+        // (err,responseData) =>{
+        //     if (err){
+        //         console.log(err);
+        //         res.send({err:1})
+        //     } else {
+        //         console.log(responseData);
+        //         res.send({err:0})
+        //     }
+        // })
+        
+    });
+    app.get("/confirm/:email/:code",(req,res)=>{
+        Order.findOne({code: req.params.code }, function (err, order) {
+            if (err){
+                console.log(err);
+            } else {
+                if (order && order.status == "unconfirmed") { 
+                    res.redirect("/ordersuccess/"+req.params.email+"/"+req.params.code)
+                } else {
+                    res.redirect("/ordersuccess/"+"confirmed"+"/"+req.params.code);
+                }
+            }
+        })
+    })
+    app.get("/check/:code",(req,res)=>{
+        let code = req.params.code;
+        var arrErrorProduct = [];
+        console.log(code);
+        Order.findOne({code:code},function(err,data){
+            if (err){
+                console.log(err);
+            } else {
+                if (data&&data.listproduct.length>0){
+                    const forLoop = async _ => {
+                        for (var i=0; i<data.listproduct.length; i++){
+                        var pOrder = data.listproduct[i];   
+                        await Product.findOne({_id:pOrder.id},function(err,product){
+                            if (err){
+                                console.log(err);
+                            } else {
+                                let index = product.sizes.findIndex(item => item.size===pOrder.size);
+                                if (index!=-1){
+                                    let pos = product.sizes[index].colors.findIndex(item => item.color===pOrder.color);
+                                    if (product.sizes[index].colors[pos].quanty<pOrder.quanty){
+                                        arrErrorProduct.push(pOrder);
+                                    }
+                                }
+                                if (i==data.listproduct.length-1){
+                                    res.send(arrErrorProduct);
+                                }
+                            }
+                        });
+                    }
+                 }
+                 forLoop();
+                }
+            }
+        })
+    })
 
     app.get("/checkout/:email/:code",(req,res)=>{
         var currentDay = getCurrentDay();
         var dataProduct=[];
+        var infor = req.params.email;
+        var typeInfor = 'email';
+        var phoneno = /^\d{10}$/;
+        if (infor[0]=='8'&&infor[1]=='4')  phoneno = /^\d{11}$/;
+        if(infor.match(phoneno)) typeInfor="phone";
         Statistic.findOne({ day: currentDay }, function (err, data) {
             if (data) {
                 var listOrderToday = data.orderproduct; //Tất cả order trong ngày
-                Order.findOne({ email: req.params.email, code: req.params.code }, function (err, order) {
-                    console.log(order);
+                Order.findOne({code: req.params.code }, function (err, order) {
                     if (order && order.status == "unconfirmed") { //nếu trạng thái unconfirmed mới thực hiện cập nhật
+                        console.log("vô cập nhật")
                         dataProduct = order.listproduct;
                         var ok;
                         var result = listOrderToday;
@@ -237,33 +371,35 @@ module.exports = function(app,io){
                             console.log(data);
                         });
                         //Tăng số lượt đặt hàng của khách hàng --> để thống kê
-                        User.findOneAndUpdate({email:req.params.email},{$inc:{qorder:1}},function(err,data){
+                        User.findOneAndUpdate({code:req.params.code},{$inc:{qorder:1}},function(err,data){
                             if (err) console.log(err);
                         })
                         //Cập nhật trạng thái confirmed
-                        Order.update({ email: req.params.email, code: req.params.code }, { $set: { status: "confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
+                        Order.update({code: req.params.code }, { $set: { status: "confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
                             if (err) {
                                 throw err;
                             } else {
-                                Order.update({ email: req.params.email, code: req.params.code},
+                                Order.update({code: req.params.code},
                                     {$set:{"listproduct.$[].status":"confirmed"}},function(err,data){
                                         
                                     })
-                                let txtTo = req.params.email;
-                                let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
-                                let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
-                                sendmail(txtTo, txtSubject, txtContent);
-                                User.findOneAndUpdate({ email: req.params.email }, { $set: { cart: [] } }, function (err, data) {
+                                if (typeInfor=="email"){
+                                    let txtTo = req.params.email;
+                                    let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
+                                    let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
+                                    sendmail(txtTo, txtSubject, txtContent);
+                                }
+                                User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]}, { $set: { cart: [] } }, function (err, data) {
                                     if (err) {
                                         throw err;
                                     } else {
-                                        res.redirect("/ordersuccess/"+req.params.email+"/"+req.params.code);
+                                        res.send("OK");
                                     }
                                 })
                             }
                         });
                     } else {
-                        res.redirect("/ordersuccess/"+"confirmed"+"/"+req.params.code);
+                        res.send("OK");
                     }
                 })
             }
@@ -301,4 +437,37 @@ module.exports = function(app,io){
             }
         })
     })
+    //get number of user's vouchers
+    app.post("/getVoucher",parser,(req,res)=>{
+        const email = req.body.email;
+        const phone = req.body.phone;
+        console.log("email="+email);
+        if (!phone) phone=-1;
+        User.findOne({$or:[{email:email},{numberPhone:phone}]},function(err,data){
+            if (err) console.log(err);
+            else {
+                if (data){
+                    res.json({voucher:data.currentVoucher})
+                }
+            }
+        })
+    })
+   //check and update voucher
+   app.post("/checkAddVoucher",parser,(req,res)=>{
+       const email = req.body.email;
+       Order.find({$or:[{email:email},{numberphone:email}]},function(err,data){
+           if (err) console.log(err);
+           else {
+               if (data){
+                   if (data.length%5==0){ 
+                    var value = Math.floor(data.length/5)*50000;
+                        User.findOneAndUpdate({$or:[{email:email},{phoneNumber:email}]},
+                            {$push:{value:value}},{new:true},function(err,data){
+                                if (err) console.log(err);
+                        })
+                   }
+               }
+           }
+       })
+   })
 }

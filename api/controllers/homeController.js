@@ -304,4 +304,78 @@ module.exports = function(app,apiRouter){
             }
         })
     })
+    app.post("/getProductRecommend",parser,(req,res)=>{
+        let email = req.body.email;
+        var i =0;
+        var arrResult=[];
+        if (email){
+        User.findOne({email:email},{topCategory:1,_id:0},function(err,data){
+            if (err){
+                console.log(err);
+            } else {
+                if (!data) return res.json({data:[]});
+                var topCategory = data.topCategory;
+                var length = topCategory.length,arrSize=[];
+                if (topCategory.length>3) length = 3;
+                if (length ==1) arrSize[0] = 8; else arrSize[0] = 4;
+                if (length ==2 ) arrSize[1] = 4; else arrSize[1] = 2;
+                arrSize[2] = 2;
+                topCategory.sort((a,b) => (a.count < b.count) ? 1 : ((b.count < a.count) ? -1 : 0));
+                console.log("length="+length);
+                var loop = async _ => {
+                  for (i = 0; i < length; ++i) {
+                       var arr  = await Product.aggregate([
+                        {$match: {$and: [{category:topCategory[i].id},{quanty:{$gt:0}}]}},
+                        {$sample: {size:arrSize[i]}}],function(err,data){
+                            if (err){
+                                console.log(err);
+                            } else {
+                            }
+                        })
+                        Array.prototype.push.apply(arrResult,arr);
+                        if (i==length-1) return res.json({data:arrResult});
+
+                  }
+                };
+                loop();
+            }
+        }) } else {
+            res.json({data:[]})
+        }
+    })
+    app.post("/updateTopCategory",parser,(req,res)=>{
+        let idProduct = req.body.idProduct;
+        let email = req.body.email;
+        //console.log(email);
+        Product.findOne({_id:idProduct},function(err,product){
+            if (err) console.log(err);
+            else {
+                var category = product.category;
+                //console.log(category);
+                User.findOne({email:email},function(err,user){
+                    var topCategory = user.topCategory;
+                    var index = topCategory.findIndex(item => item.id.toString() == category.toString());
+                    //console.log(index);
+                    if (index==-1){
+                        User.findOneAndUpdate({email:email},{"$push":{topCategory:{id:category,count:1}}},{new:true},function(err,data){
+                            if (err) console.log(err); else console.log(data);
+                        });
+                    } else {
+                        User.findOneAndUpdate(
+                          { email: email },
+                          { $inc: { "topCategory.$[filter].count": 1 } },
+                          { arrayFilters: [{ "filter.id": category }] },
+                          function (err, data) {
+                            if (err) {
+                              console.log(err);
+                            } else {
+                              console.log(data);
+                            }
+                          }
+                        );
+                    }
+                })
+            }
+        })
+    })
 }

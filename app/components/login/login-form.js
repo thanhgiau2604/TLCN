@@ -23,6 +23,7 @@ class LoginForm extends React.Component{
 					localStorage.setItem("email", data.email);
 					localStorage.setItem('token', data.token);
 					localStorage.setItem("fullname",data.fullname);
+					localStorage.setItem("phone",data.numberPhone);
 					window.location.replace("/");
 					$.post("/updateQvisit",{email:data.email},function(data){})
 
@@ -30,6 +31,7 @@ class LoginForm extends React.Component{
 					localStorage.setItem("usernamead", data.username);
 					localStorage.setItem("emailad", data.email);
 					localStorage.setItem('tokenad', data.token);
+					localStorage.setItem("phonead",data.numberPhone);
 					window.location.replace("/dashboard");
 				}
 			}

@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-function SendMail(receiver,subject,contentMail){
+function SendMail(receiver,subject,contentMail,callback){
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -16,7 +16,9 @@ function SendMail(receiver,subject,contentMail){
       };
       transporter.sendMail(mailOptions, function (err, info) {
         if (err){
-            console.log(err);
+            callback(err,null);
+        } else {
+            callback(null,info);
         }
      });
 }

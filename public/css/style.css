@@ -4247,9 +4247,19 @@ span.large-btn:hover i{
 	position: relative;
 }
 
-.new-mark-box{}
-
-.mark-right {right: 10px;color: #fff !important;font-size: 11px;line-height: 27px;padding: 0 10px;position: absolute;text-transform: uppercase;top: 5px;z-index: 10;background: #f90606;font-weight: 800;}
+.mark-right {
+	right: 10px;
+	color: #fff !important;
+	font-size: 11px;
+	line-height: 27px;
+	padding: 0 10px;
+	position: absolute;
+	text-transform: uppercase;
+	top: 5px;
+	z-index: 10;
+	background: #f90606;
+	font-weight: 800;
+}
 .single-product-descirption{
 	margin-bottom:30px;
 }
@@ -4802,12 +4812,13 @@ td {
 }
 
 .modal {
-  float: left;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  
+	float: left;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 9999999;
 }
 
 .comment {
@@ -5032,4 +5043,45 @@ td {
 .example2 .navbar-default {
 	border: none;
 	background-color: #e8eae5;
+}
+.form-check-label {
+	display: inline-block;
+}
+.infor, .err {
+	color: red;
+}
+#phonenumber {
+	margin-left: auto!important;
+	margin-right: auto!important;
+	width: 50%!important;
+}
+.button {
+	display: block!important;
+	width: 50%!important;
+	margin-left: auto!important;
+	margin-right: auto!important;
+}
+input.form-control.code-input {
+    margin-left: auto;
+    width: 50%;
+    margin-right: auto;
+}
+.addr {
+	margin-top:10px!important;
+}
+.mark-down {
+	bottom: 10px;
+	color: #fff !important;
+	font-size: 10px;
+	line-height: 27px;
+	padding: 0 10px;
+	position: absolute;
+	z-index: 10;
+	background: #f90606;
+	font-weight: 200;
+}
+.table-bordered>tfoot>tr>td {
+	text-align: center;
+    border: 1px solid #ddd;
+    vertical-align: middle;
 }

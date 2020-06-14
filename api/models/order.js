@@ -13,7 +13,8 @@ const OrderSchema = new Schema({
     listproduct: [{id:Schema.Types.ObjectId,name: String, image:String,quanty: Number, color: String, size: Number, cost:Number, status:String}],
     status: String,
     code: Number,
-    payment: Boolean
+    payment: Boolean,
+    costVoucher: Number
 });
 
 module.exports = mongoose.model('order',OrderSchema);

@@ -108,6 +108,12 @@ module.exports = function(app){
         const description = cat.description;
         const listProduct = cat.listProduct;
         const image = cat.image;
+        for (var i=0; i<listProduct.length; i++){
+            let pro = listProduct[i];
+            Product.findOneAndUpdate({_id:pro._id},{$set:{category:id}},(err,data)=>{
+                if (err) console.log(err);
+            });
+        }
         Category.update({_id:id},{$set:{name:name,quanty:quanty,description:description,
         listProduct:listProduct, image:image}},function(err,data){
             if (err){

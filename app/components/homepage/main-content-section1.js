@@ -167,6 +167,7 @@ class Product2 extends React.Component{
 							<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
 							<a href="#" className="new-mark-box">{this.props.desc}</a>
 							{this.props.quantity<=5 ? <a href="#" class="mark-right">HOT</a> : <a></a>}
+							{this.props.quantity<=5 ?<a href="#" class="mark-down">Còn {this.props.quantity} sản phẩm</a> : <a></a>}
 							<div className="overlay-content">
 								<ul>
 									<li><a title="Xem sản phẩm" style={{cursor:'pointer'}} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
@@ -194,7 +195,7 @@ class Product2 extends React.Component{
 								<span className="price">{cost}đ</span>
 								{this.props.from=="sale" ?<span className="older-price">{oldcost}đ</span> :<span></span>}
 							</div>
-							{this.props.quantity<=5 ?<h3 class="notify-hot">Chỉ còn {this.props.quantity} sản phẩm</h3> : <h3></h3>}
+							
 						</div>
 						<RequireAuthentication/>
 					</div>
@@ -241,6 +242,53 @@ class PopularProduct extends React.Component{
 			</div>
 		</div>)
 	}
+}
+class RecommendationProduct extends React.Component{	
+	constructor(props){
+		super(props);
+		this.state = {
+			listRecommend:[],
+			processing: false
+		}	
+	}
+	componentDidMount(){
+		this.setState({processing:true});
+		var that = this;
+		var email = localStorage.getItem("email");
+		$.post("/getProductRecommend",{email:email},function (data) {
+			that.setState({listRecommend:data.data,processing:false});
+		});
+	}
+	render() {	
+	return(
+		<div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		{this.state.listRecommend.length>0 ?
+			<div className="new-product-area">
+				<div className="left-title-area">
+					<h2 className="left-title">CÓ THỂ BẠN THÍCH</h2>
+				</div>
+				<div className="row">
+					<div className="col-xs-12">
+						{/* <div className="row"> */}
+						{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}
+							<div className="home2-sale-carousel">
+								{this.state.listRecommend.map(function(product,index){
+									var status = "";
+									if (product.quanty==0) status="Hết hàng";
+									var comment = [];
+									if (product.comments) 
+									   if (product.comments.length>0) comment = product.comments;
+									return <Product2 key={index} id={product._id}
+									name={product.name} image={product.image.image1} 
+									costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}
+									from="" comments={comment}/>
+								})}
+							</div>
+						{/* </div> */}
+					</div>
+				</div>
+			</div> : <div></div>}
+		</div>)}
 }
 class NewProduct extends React.Component{	
 	constructor(props){
@@ -342,6 +390,8 @@ class MainContentSection1 extends React.Component{
 					<PopularProduct/>
 					<div className="col-lg-9 col-md-9 col-sm-9 col-xs-12">
 						<div className="row">
+							{/* {localStorage.getItem("email") ? <RecommendationProduct/> : <div></div>} */}
+							<RecommendationProduct/>
 							<NewProduct/>
 							<SaleProduct/>
 						</div>	

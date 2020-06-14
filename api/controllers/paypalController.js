@@ -14,8 +14,7 @@ module.exports = function(app){
         var ship = req.body.ship;
         var code = req.body.code;
         var email = req.body.email;
-
-        console.log(email);
+        var voucher = req.body.voucher;
         var listItems = [];
         var subtotal = 0;
         for (var i=0; i<listProduct.length; i++){
@@ -29,6 +28,19 @@ module.exports = function(app){
             subtotal += (item.price*item.quantity);
             listItems.push(item);
         }
+        console.log(voucher);
+        if (voucher>0){
+            var itemDiscount = {
+                "name": "Discount",
+                "sku":"item",
+                "price": -parseFloat(voucher/usdtovnd).toFixed(2),
+                "currency": "USD",
+                "quantity": 1
+            }
+                listItems.push(itemDiscount);
+                subtotal += itemDiscount.price; 
+        }
+
         var shipping = parseFloat(ship/usdtovnd).toFixed(2);
         subtotal = parseFloat(subtotal).toFixed(2);
         var total = (parseFloat(subtotal)+ parseFloat(shipping)).toFixed(2);

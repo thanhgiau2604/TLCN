@@ -764,7 +764,9 @@ class TotalPage extends React.Component{
         var idProduct = localStorage.getItem('curproduct');
         $.post("/updateCountView",{idProduct:idProduct},function(data){
             socket.emit("require-update-view-product","");
-        })
+        });
+        var email = localStorage.getItem('email');
+        $.post("/updateTopCategory",{idProduct:idProduct,email:email});
     }
     render(){     
         initizeAnalytics();  

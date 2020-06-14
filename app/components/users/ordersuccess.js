@@ -22,7 +22,9 @@ class Success extends React.Component {
             code: 0,
             type: "confirm",
             processing: false,
-            err:false
+            err:false,
+            dataErr:[],
+            voucher: 0
         }
     }
     componentDidMount(){
@@ -40,10 +42,24 @@ class Success extends React.Component {
             } else {
                 code = parseInt(code);
                 var that = this;
-                $.post("/getListProductOrder", { code: code }, function (data) {
-                var ship = data.sumshipcost;
-                that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code})
-            })
+                $.get("/check/"+code,function(data){
+                  if (data.length!=0){
+                    that.setState({type:"error",dataErr:data});
+                  }
+                  else {
+                    $.get("/checkout/"+email+"/"+code,function(data){
+                      $.post("/getListProductOrder", { code: code }, function (data) {
+                        console.log()
+                        var ship = data.sumshipcost;
+                        that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code,
+                        voucher: data.costVoucher})
+                      });
+                      $.post("/checkAddVoucher",{email:email},function(data){
+
+                      })
+                    })         
+                  }
+                })
             }
         } else {
             this.setState({type:"payment"})
@@ -54,7 +70,8 @@ class Success extends React.Component {
         var email = localStorage.getItem("email");
         that.setState({err:false});
         this.setState({processing:true});
-        $.post("/payment",{data:JSON.stringify(this.state.listProductOrder),ship:this.state.ship, code:this.state.code, email:email},function(data){
+        $.post("/payment",{data:JSON.stringify(this.state.listProductOrder),ship:this.state.ship, code:this.state.code, email:email,
+        voucher:this.state.voucher},function(data){
           if (data.err==true){
             that.setState({err:true,processing:false});
           } else {
@@ -156,6 +173,45 @@ class Success extends React.Component {
                         </h3>
                       </div>
                     );
+                } else 
+                if (that.state.type=="error"){
+                  return (
+                    <div class="row">
+                      <div class="alert alert-danger text-center">
+                        <strong>LỖI ĐƠN HÀNG</strong>
+                      </div>
+                      <h3 class="text-center ordersuccess">
+                        Chúng tôi lấy làm tiếc vì số lượng sản phẩm trong kho
+                        không đủ để đáp ứng một số sản phẩm trong đơn hàng của
+                        bạn.
+                      </h3>
+                      <table className="table table-hover text-center">
+                        <thead>
+                          <tr>
+                            <th className="text-center">STT</th>
+                            <th className="text-center">Tên sản phẩm</th>
+                            <th className="text-center">Số lượng</th>
+                            <th className="text-center">Kích cỡ</th>
+                            <th className="text-center">Màu sắc</th>
+                            <th className="text-center">Giá sản phẩm</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {that.state.dataErr.map(function(product,index){
+                            var cost = product.cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+                            return(<tr className="text-center" key={index}>
+                            <td className="text-center">{index+1}</td>
+                            <td className="text-center">{product.name}</td>
+                            <td className="text-center">{product.quanty}</td>
+                            <td className="text-center">{product.size}</td>
+                            <td className="text-center">{product.color}</td>
+                            <td className="text-center">{cost}</td>
+                            </tr>)
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
                 } else {
                     return (
                       <div class="row address">
