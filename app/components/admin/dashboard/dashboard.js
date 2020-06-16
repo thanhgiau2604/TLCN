@@ -311,7 +311,7 @@ class Dashboard extends React.Component{
             </div>
             <div>
             <Dropdown options={options} onChange={this._onSelect} value={this.state.timeOption} 
-                    placeholder="Select an option" />;  
+                    placeholder="Select an option" />  
             </div>
             {this.state.processing==true ? <div class="loader text-center"></div> : ""}
             <div class="row">

@@ -43,7 +43,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arrSale.push(da);
                      if (index==count)
-                     res.json(arrSale);
+                     res.json(arrSale.splice(0,4));
                  })
              });
          })
@@ -334,7 +334,6 @@ module.exports = function(app,apiRouter){
                         })
                         Array.prototype.push.apply(arrResult,arr);
                         if (i==length-1) return res.json({data:arrResult});
-
                   }
                 };
                 loop();
@@ -378,4 +377,50 @@ module.exports = function(app,apiRouter){
             }
         })
     })
+    app.get("/checkSale",(req,res) => {
+        var today = new Date().getTime();
+        const standard1 = 7776000000;
+        const standard2 = 9936000000;
+        Product.find({$and:[{status:"normal"},{orders:{$lt:3}}]},(err,data)=>{
+            if (err) console.log(err);
+            else {
+              var discount1 = async (_) => {
+                for (var i = 0; i < data.length; i++) {
+                  var product = data[i];
+                  var currentCost = product.costs[product.costs.length - 1].cost;
+                  var discount = currentCost - Math.floor(currentCost * 0.15);
+                  if (today - product.createat >= standard1) {
+                    await Product.update(
+                      { _id: product._id },
+                      { $push: { costs:{cost: discount}},$set:{status: 'sale1'}},
+                    );
+                  }
+                }
+              };
+              discount1();
+            }
+        })
+        Product.find({$and:[{status:"sale1"},{orders:{$lt:10}}]},(err,data)=>{
+            if (err) console.log(err);
+            else {
+                var discount2 = async (_) => {
+                    for (var i = 0; i < data.length; i++) {
+                      var product = data[i];
+                      var currentCost = product.costs[product.costs.length - 1].cost;
+                      var discount = currentCost - Math.floor(currentCost * 0.25);
+                      if (today - product.createat >= standard2) {
+                        await Product.update(
+                          { _id: product._id },
+                          { $push: { costs:{cost: discount}},$set:{status: 'sale2'}},
+                        );
+                      }
+                    }
+                };
+                discount2();
+            }
+        })
+    });
+    //San pham dc tao tu ngay
+    console.log(new Date("Mar 20 2020").getTime());
+    console.log(new Date("Feb 20 2020").getTime());
 }

@@ -6,7 +6,9 @@ import Tool from '../common/tool'
 import $ from 'jquery'
 
 var viewCat,main, UpdateCategory;
-
+function formatCurrency(cost){
+  return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class SingleCategory extends React.Component {
     constructor(props) {
       super(props);
@@ -139,7 +141,7 @@ class ModalViewCategory extends React.Component{
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
-                  <label for="quanty">Quanty:</label>
+                  <label for="quanty">Quantity:</label>
                   <input type="text" class="form-control"  value={this.state.quanty} readonly="true"/>
                 </div>
               </div>
@@ -171,19 +173,13 @@ class ModalViewCategory extends React.Component{
                         <th class="text-center">Name</th>
                         <th class="text-center">Image</th>
                         <th class="text-center">Cost</th>
-                        <th class="text-center">Quanty</th>
+                        <th class="text-center">Quantity</th>
                         <th class="text-center">Description</th>
                       </tr>
                     </thead>
                     <tbody>
                       {lCurProduct.map(function(product,index){
-                        var strCost = product.costs[product.costs.length - 1].cost.toString();
-                        var cost = "", count = 0;
-                        for (var i = strCost.length - 1; i >= 0; i--) {
-                          count++;
-                          cost = strCost[i] + cost;
-                          if (count % 3 == 0) cost = " " + cost;
-                        }
+                        var cost = formatCurrency(product.costs[product.costs.length - 1].cost);
                         return(
                           <tr class='active' key={index}>
                             <td>{start+index+1}</td>
@@ -251,13 +247,7 @@ class SingleProduct extends React.Component {
     this.setState({add:true});
   }
   render(){
-    var strCost = this.props.product.costs[this.props.product.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+    var cost = formatCurrency(this.props.product.costs[this.props.product.costs.length-1].cost);
     return(<tr class='active'>
     <td>{this.props.product.stt}</td>
     <td>{this.props.product.name}</td>
@@ -310,7 +300,7 @@ class SingleProductUpdate extends React.Component {
     <td>{this.props.product.stt}</td>
     <td>{this.props.product.name}</td>
     <td><img src={this.props.product.image.image1} width="120px" /></td>
-    <td>{this.props.product.cost}</td>
+    <td>{formatCurrency(this.props.product.costs[this.props.product.costs.length-1].cost)}</td>
     <td>{this.props.product.quanty}</td>
     <td>{this.props.product.description}</td>
     <td><button class="btn btn-success" id="btnAddProduct" onClick={this.addProduct} disabled={!this.state.add}>Add</button>
@@ -484,7 +474,7 @@ class ModalNewCategory extends React.Component{
                         <th class="text-center">Name</th>
                         <th class="text-center">Image</th>
                         <th class="text-center">Cost</th>
-                        <th class="text-center">Quanty</th>
+                        <th class="text-center">Quantity</th>
                         <th class="text-center">Description</th>
                         <th class="text-center">Action</th>
                       </tr>
@@ -688,7 +678,7 @@ class ModalUpdateCategory extends React.Component {
                         <th class="text-center">Name</th>
                         <th class="text-center">Image</th>
                         <th class="text-center">Cost</th>
-                        <th class="text-center">Quanty</th>
+                        <th class="text-center">Quantity</th>
                         <th class="text-center">Description</th>
                         <th class="text-center">Action</th>
                       </tr>

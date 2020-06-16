@@ -5,6 +5,9 @@ import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
 var main,curEditOrder,view;
+function formatCurrency(cost){
+  return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class Order extends React.Component {
   constructor(props) {
     super(props);
@@ -34,24 +37,13 @@ class Order extends React.Component {
     })
   }
   render() {
-    var strCost = this.props.order.sumproductcost.toString();
-    var strShipCost = this.props.order.sumshipcost.toString();
-		var costProduct ="", count=0, costShip="",count1=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			costProduct=strCost[i]+costProduct;
-			if (count%3==0) costProduct=" "+costProduct;
-    }
-    for (var i=strShipCost.length-1; i>=0; i--){
-			count1++;
-			costShip=strShipCost[i]+costShip;
-			if (count1%3==0) costShip=" "+costShip;
-		}
+    var costProduct = formatCurrency(this.props.order.sumproductcost);
+    var costShip = formatCurrency(this.props.order.sumshipcost);
     return (<tr class='active'>
       <td className='text-center'>{this.props.stt}</td>
       <td className='text-center'>{this.props.order.email}</td>
-      <td className='text-center'>{costProduct}đ</td>
-      <td className='text-center'>{costShip}đ</td>
+      <td className='text-center'>{costProduct}</td>
+      <td className='text-center'>{costShip}</td>
       <td className='text-center'>{this.props.order.status}</td>
       <td className='text-center'>{this.props.order.time}</td>
       <td class='action'>
@@ -187,13 +179,13 @@ class ViewOrder extends React.Component{
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
                   <label for="productcost">Product Cost:</label>
-                  <input type="text" class="form-control"  value={this.state.order.sumproductcost+"đ"} readonly="true"/>
+                  <input type="text" class="form-control"  value={formatCurrency(this.state.order.sumproductcost)} readonly="true"/>
                 </div>
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
                   <label for="shipcost">Ship Cost:</label>
-                  <input type="text" class="form-control"  value={this.state.order.sumshipcost+"đ"} readonly="true"/>
+                  <input type="text" class="form-control"  value={formatCurrency(this.state.order.sumshipcost)} readonly="true"/>
                 </div>
               </div>
             </div>
@@ -246,7 +238,7 @@ class ViewOrder extends React.Component{
                           <tr class='active' key={index}>
                             <td class="text-center">{index+1}</td>
                             <td class="text-center">{product.name}</td>
-                            <td class="text-center">{product.cost}đ</td>
+                            <td class="text-center">{formatCurrency(product.cost)}</td>
                             <td class="text-center">{product.quanty}</td>
                             <td class="text-center">{product.size}</td>
                             <td class="text-center">{product.color}</td>

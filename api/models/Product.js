@@ -28,6 +28,8 @@ const ProductSchema = new Schema({
     category: Schema.Types.ObjectId,
     createat: Number,
     views: Number,
+    orders: Number,
+    status: String,
     isDeleted: Number
 });
 

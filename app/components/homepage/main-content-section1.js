@@ -1,6 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
 var main;
+function formatCurrency(cost){
+	 return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class Product1 extends React.Component{ //product for polular product
 	constructor(props){
 		super(props);
@@ -11,13 +14,7 @@ class Product1 extends React.Component{ //product for polular product
 		window.location.assign("/detailproduct")
 	}
 	render(){
-		var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+		var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
 		return(<div className="single-product-item">
 		<div className="sidebar-product-image">
 			<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
@@ -34,7 +31,7 @@ class Product1 extends React.Component{ //product for polular product
 				</div>
 			</div>
 			<div className="price-box">
-				<span className="price">{cost}đ</span>
+				<span className="price">{cost}</span>
 			</div>
 		</div>
 	</div>)
@@ -146,18 +143,18 @@ class Product2 extends React.Component{
 		} else {
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
 		}
-		var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var strOldCost = this.props.costs[this.props.costs.length-2].cost.toString();
-		var cost ="", count=0,oldcost="";
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			oldcost=strOldCost[i]+oldcost;
-			if (count%3==0) {
-				cost=" "+cost;
-				oldcost=" "+oldcost;
-			}
-		}
+		var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
+		var oldCost = formatCurrency(this.props.costs[this.props.costs.length-2].cost);
+		// var cost ="", count=0,oldcost="";
+		// for (var i=strCost.length-1; i>=0; i--){
+		// 	count++;
+		// 	cost=strCost[i]+cost;
+		// 	oldcost=strOldCost[i]+oldcost;
+		// 	if (count%3==0) {
+		// 		cost=" "+cost;
+		// 		oldcost=" "+oldcost;
+		// 	}
+		// }
 		return(
 			<div className="col-xs-6 col-sm-4 col-md-3 col-lg-3">
 			<div className="item">
@@ -192,8 +189,8 @@ class Product2 extends React.Component{
 							</div>
 							<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 							<div className="price-box">
-								<span className="price">{cost}đ</span>
-								{this.props.from=="sale" ?<span className="older-price">{oldcost}đ</span> :<span></span>}
+								<span className="price">{cost}</span>
+								{this.props.from=="sale" ?<span className="older-price">{oldCost}</span> :<span></span>}
 							</div>
 							
 						</div>

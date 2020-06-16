@@ -15,6 +15,9 @@ function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
 }
+function formatCurrency(cost){
+    return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class RequireAuthentication extends React.Component{
 	constructor(props){
 		super(props);
@@ -108,13 +111,7 @@ class ProductGird extends React.Component{
 		} else {
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
         }
-        var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+        var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
         return(<li class="gategory-product-list col-lg-3 col-md-4 col-sm-6 col-xs-12">
         <div class="single-product-item">
             <div class="product-image">
@@ -218,13 +215,7 @@ class ProductList extends React.Component{
 		} else {
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
         }
-        var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+        var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
         return(<li class="cat-product-list">
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="single-product-item">
@@ -247,7 +238,7 @@ class ProductList extends React.Component{
                                 <i class="fa fa-star-half-empty"></i>
                             </div>
                             <div class="review-box">
-                                <span>1 Review(s)</span>
+                            {this.props.comments.length>0?<span>{this.props.comments.length} bình luận</span> :<span></span>}
                             </div>
                         </div>
                         <div class="product-datails">
@@ -418,12 +409,12 @@ class OptionProduct extends React.Component{
                 <span class="sidebar-title">LỌC THEO GIÁ</span>        
                     <div class="radio" onChange={this.changePrice}>
                         <label><input type="radio" name="optionPrice" value="0"/>Tất cả</label> <br/>
-                        <label><input type="radio" name="optionPrice" value="1"/> &lt; 100 000 VND</label>
-                        <label><input type="radio" name="optionPrice" value="2"/>100 000 - 200 000 VND</label>
-                        <label><input type="radio" name="optionPrice" value="3"/>200 000 - 300 000 VND</label>
-                        <label><input type="radio" name="optionPrice" value="4"/>300 000 - 400 000 VND</label>
-                        <label><input type="radio" name="optionPrice" value="5"/>400 000 - 500 000 VND</label>
-                        <label><input type="radio" name="optionPrice" value="6"/>&gt; 500 000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="1"/> &lt; 100.000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="2"/>100.000 - 200.000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="3"/>200.000 - 300.000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="4"/>300.000 - 400.000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="5"/>400.000 - 500.000 VND</label>
+                        <label><input type="radio" name="optionPrice" value="6"/>&gt; 500.000 VND</label>
                     </div>
             </div>
             <div class="product-single-sidebar">
@@ -689,8 +680,12 @@ class Category extends React.Component{
                                         return <ProductGird key={index} name={pro.name} costs={pro.costs}
                                             image={pro.image.image1} id={pro._id} size={pro.sizes}/>
                                     } else {
+                                        var comment = [];
+                                        if (pro.comments) 
+                                           if (pro.comments.length>0) comment = pro.comments;
                                         return <ProductList key={index} name={pro.name} costs={pro.costs}
-                                            image={pro.image.image1} id={pro._id} desc={pro.description} size={pro.sizes}/>
+                                            image={pro.image.image1} id={pro._id} desc={pro.description} size={pro.sizes}
+                                            comments={comment}/>
                                     }
                                 })}
                             </ul>

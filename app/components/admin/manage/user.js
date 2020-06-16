@@ -46,13 +46,21 @@ class Users extends React.Component {
       isDeleted=status;
       classDeleted = 'deleted';
     }
-    return(<tr class={'active '+classDeleted}>
+    var highlight = "";
+    if (this.props.numberOrder>0){
+      if (this.props.stt==1) highlight = "danger"; else
+      if (this.props.stt==2) highlight = "warning"; else
+      if (this.props.stt==3) highlight = "success"; else
+      if (this.props.numberOrder >= 5) highlight = "relative"
+    }    
+    return(<tr class={'active '+classDeleted+" "+highlight}>
     <td>{this.props.stt}</td>
     <td>{this.props.firstname}</td>
     <td>{this.props.lastname}</td>
     <td>{this.props.email}</td>
     <td>{sdt}</td>
     <td>{dob}</td>
+    <td>{this.props.numberOrder}</td>
     <td class='action'>
       <a class='btn btn-info' data-toggle='tooltip' style={{cursor:'pointer'}} title='Edit' onClick={this.editUser}>
         <i class='icon-edit'></i>
@@ -441,6 +449,7 @@ class ManageUsers extends React.Component{
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Date Of Birth</th>
+                <th>Number of orders</th>
                 <th class='actions'>
                   Actions
                 </th>
@@ -448,8 +457,11 @@ class ManageUsers extends React.Component{
             </thead>
             <tbody>         
               {lCurUser.map(function(user,index){
+                var qorder = 0;
+                if (user.qorder) qorder = user.qorder;
                 return <Users key={index} id={user._id} firstname = {user.firstName} lastname={user.lastName}
-                phone={user.numberPhone} email={user.email} dob={user.dob} stt={start+(index+1)} status={user.isDelete}/>
+                phone={user.numberPhone} email={user.email} dob={user.dob} stt={start+(index+1)} status={user.isDelete}
+                numberOrder ={qorder}/>
               })}
             </tbody>
           </table>

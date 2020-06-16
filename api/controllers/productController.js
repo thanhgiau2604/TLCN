@@ -262,6 +262,7 @@ module.exports = function(app){
         if (idProduct) {
             var currentDay = getCurrentDay();
             console.log(currentDay);
+            Product.findOneAndUpdate({_id:idProduct},{$inc:{views:1}},function(err,data){});
             Statistic.findOne({ day: currentDay }, function (err, data) {
                 if (data) {
                     var listViewToday = data.viewproduct;

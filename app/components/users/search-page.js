@@ -10,7 +10,10 @@ var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
 
-var items,table,main;
+var main;
+function formatCurrency(cost){
+	return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class RequireAuthentication extends React.Component{
 	constructor(props){
 		super(props);
@@ -116,13 +119,7 @@ class Product extends React.Component{
 		} else {
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
 		}
-		var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+		var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
 		return (<div className="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<div className="item">
 				<div className="single-product-item">
@@ -148,12 +145,12 @@ class Product extends React.Component{
 								<i className="fa fa-star-half-empty"></i>
 							</div>
 							<div className="review-box">
-								<span>1 Review(s)</span>
+							{this.props.comments.length>0?<span>{this.props.comments.length} bình luận</span> :<span></span>}
 							</div>
 						</div>
 						<a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
 						<div className="price-box">
-							<span className="price">{cost}đ</span>
+							<span className="price">{cost}</span>
 						</div>
 					</div>
 					<RequireAuthentication/>
@@ -187,8 +184,12 @@ class SearchProduct extends React.Component {
                         <div className="row">
                             <div className="feartured-carousel">
                                 {this.state.listSearch.map(function (item, index) {
+									var comment = [];
+									if (item.comments) 
+									   if (item.comments.length>0) comment = item.comments;
                                     return <Product key={index} name={item.name} costs={item.costs}
-                                        image={item.image.image1} id={item._id} size={item.sizes} />
+                                        image={item.image.image1} id={item._id} size={item.sizes} 
+										comments={comment}/>
                                 })}
                             </div>
                         </div>

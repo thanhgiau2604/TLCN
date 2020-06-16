@@ -54,9 +54,6 @@ class Success extends React.Component {
                         that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code,
                         voucher: data.costVoucher})
                       });
-                      $.post("/checkAddVoucher",{email:email},function(data){
-
-                      })
                     })         
                   }
                 })

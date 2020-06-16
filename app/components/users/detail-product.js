@@ -20,6 +20,9 @@ function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
 }
+function formatCurrency(cost){
+    return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class RequireAuthentication extends React.Component{
 	constructor(props){
 		super(props);
@@ -153,13 +156,7 @@ class DetailProduct extends React.Component{
         } else {
             buttonFavorite = <button className='text-center btn btn-success' onClick={this.handleFavorite}><i className='fa fa-heart' style={{paddingRight:'5px'}}></i>Thêm vào danh sách yêu thích</button>;
         }
-        var strCost = this.state.curcost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+        var cost = formatCurrency(this.state.curcost);
         return(<div class="row">
         <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
             <div class="single-product-view">
@@ -222,7 +219,7 @@ class DetailProduct extends React.Component{
                     </div>		
                 </div> */}
                 <div class="single-product-price">
-                    <h2>{cost}đ</h2>
+                    <h2>{cost}</h2>
                 </div>
                 <div class="single-product-desc">
                     <h4><b>Mô tả sản phẩm:</b></h4>
@@ -680,13 +677,7 @@ class SingleRelate extends React.Component{
 		window.location.assign("/detailproduct")
 	}
     render(){
-        var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+        var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
         return(<div className="col-xs-6 col-sm-4 col-md-3 col-lg-3">
         <div class="item">
         <div class="single-product-item">
@@ -708,7 +699,7 @@ class SingleRelate extends React.Component{
                 </div>
                 <a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
                 <div class="price-box">
-                    <span class="price">{cost}đ</span>
+                    <span class="price">{cost}</span>
                 </div>
             </div>
         </div>							

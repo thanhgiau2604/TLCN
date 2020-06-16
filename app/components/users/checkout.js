@@ -21,6 +21,9 @@ function initizeAnalytics(){
 }
 var sumCostProduct;
 var modalDiscount,listDiscount=[];
+function formatCurrency(cost){
+    return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class SingleProduct extends React.Component {
     constructor(props){
         super(props);
@@ -90,20 +93,9 @@ class SingleProduct extends React.Component {
                 }
             }
         });  
-        var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-        }     
-        var strTotal = (this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty)).toString();
-        var tcost ="" , count1=0;
-        for (var i=strTotal.length-1; i>=0; i--){
-			count1++;
-			tcost=strTotal[i]+tcost;
-			if (count1%3==0) tcost=" "+tcost;
-        }   
+        var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)   
+        var tcost = formatCurrency(this.props.costs[this.props.costs.length-1].cost*parseInt(this.state.quanty));
+ 
         return(<tr>
             <td>{this.props.stt}</td>
             <td class="cart-product">
@@ -124,7 +116,7 @@ class SingleProduct extends React.Component {
             </td>
             <td class="cart-unit">
                 <ul class="price text-right">
-                    <li class="price">{cost}đ</li>
+                    <li class="price">{cost}</li>
                 </ul>
             </td>
             <td class="cart_quantity text-center">
@@ -140,7 +132,7 @@ class SingleProduct extends React.Component {
                 </span>
             </td>
             <td class="cart-total text-center">
-                <span class="price"><b>{tcost}đ</b></span>
+                <span class="price"><b>{tcost}</b></span>
             </td>
         </tr>)
     }
@@ -153,6 +145,7 @@ class Voucher extends React.Component{
         }
     }
     componentDidMount(){
+        console.log("vô");
         if (sumCostProduct<this.props.voucher.valueCondition){
             this.setState({apply:-1});
         } else {
@@ -160,20 +153,23 @@ class Voucher extends React.Component{
         }
     }
     applyVoucher(){
-        this.setState({apply:1});
-        step1.setState({costVoucher: this.props.voucher.value});
-        console.log(listDiscount);
-        var arrVoucher = listDiscount;
-        arrVoucher[this.props.voucher.stt-1].choose = true;
+        var index = listDiscount.findIndex(item => item.choose == true);
+        if (index==-1){
+            this.setState({apply:1});
+            step1.setState({costVoucher: this.props.voucher.value});
+            console.log(listDiscount);
+            listDiscount[this.props.voucher.stt-1].choose = true;
+        } else {
+            modalDiscount.setState({err:"Chỉ được chọn 1 voucher"});
+        }
     }
     cancelVoucher(){
         this.setState({apply:0});
         step1.setState({costVoucher: 0});
-        var arrVoucher = listDiscount;
-        arrVoucher[this.props.voucher.stt-1].choose = false;
+        listDiscount[this.props.voucher.stt-1].choose = false;
     }
     render(){
-        console.log(listDiscount[this.props.voucher.stt-1].choose);
+        
         return(<tr>
             <td class="text-center">{this.props.voucher.stt}</td>
             <td class="text-center">{this.props.voucher.name}</td>
@@ -190,7 +186,8 @@ class ModalDiscount extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            listVoucher: []
+            listVoucher: [],
+            err: ""
         }
         modalDiscount = this;
     }
@@ -208,7 +205,11 @@ class ModalDiscount extends React.Component{
                   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="form-group">
                       <label for="quanty">Danh sách Voucher:</label>
-                      <label for="quanty">Chỉ được chọn 1 Voucher:</label>
+                      {this.state.err!=""?<div class="alert alert-danger text-center">
+                            <strong>
+                              {this.state.err}
+                            </strong>
+                        </div>:<div></div>}
                       <table class='table'>
                         <thead>
                           <tr>
@@ -220,7 +221,7 @@ class ModalDiscount extends React.Component{
                         </thead>
                         <tbody>
                             {this.state.listVoucher.map(function(voucher,index){
-                                return(<Voucher key={index} voucher={voucher}/>)
+                                return(<Voucher key={index+Date.now().toString()} voucher={voucher}/>)
                             })}
                         </tbody>
                       </table>
@@ -318,16 +319,15 @@ class Summary extends React.Component {
         $.post("/getVoucher",{email:email,phone:phone},function(data){
             var listVoucher = [];
             if (data.voucher.length>0){
-                for (var i=1; i<=data.voucher.length; i++){
-                    var value = (i*50000);
-                    var strValue = value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
-                    var valueCondition = (200000+i*i*50000);
-                    var condition = valueCondition.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+                for (var i=0; i<data.voucher.length; i++){
+                    var k = Math.floor(data.voucher[i].value/50000);
+                    var value = data.voucher[i].value;
+                    var valueCondition = (200000+k*k*50000);
                     var singleVoucher = {
-                        stt: i,
-                        name: "Mã giảm giá "+ strValue,
+                        stt: i+1,
+                        name: "Mã giảm giá "+ formatCurrency(value),
                         value: value,
-                        condition: "Áp dụng cho đơn hàng >= "+ condition,
+                        condition: "Áp dụng cho đơn hàng >= "+ formatCurrency(valueCondition),
                         valueCondition: valueCondition,
                         choose: false
                     }
@@ -346,15 +346,15 @@ class Summary extends React.Component {
             sumCost+=e;
         });
         sumCostProduct = sumCost;
-        var subCost = (sumCost-this.state.costVoucher).toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
-        sumCost = sumCost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+        var subCost = formatCurrency(sumCost-this.state.costVoucher)
+        sumCost = formatCurrency(sumCost);
         return(<section class="main-content-section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="bstore-breadcrumb">
                         <a href="/">Trang chủ</a>
-                        <span><i class="fa fa-caret-right	"></i></span>
+                        <span><i class="fa fa-caret-right"></i></span>
                         <span>Thanh toán</span>
                     </div>
                 </div>

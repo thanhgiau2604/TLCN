@@ -86,7 +86,7 @@ module.exports = function(app,adminRouter,jwt){
         res.render("quanlyuser");
     });
     app.get("/getListUsers",(req,res)=>{
-        User.find({role:'user'},function(err,data){
+        User.find({role:'user'}).sort({qorder:"descending"}).exec(function(err,data){
             res.send(data);
         })
     });

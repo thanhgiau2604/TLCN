@@ -10,6 +10,9 @@ import io from 'socket.io-client'
 const socket = io('http://localhost:3000');
 var main;
 var curEditProduct, commentClass, singleCommentClass;
+function formatCurrency(cost){
+  return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class Products extends React.Component {
   constructor(props) {
     super(props);
@@ -70,20 +73,14 @@ class Products extends React.Component {
       classDeleted = 'deleted';
     }
     var image = "/img/product/default.png"
-    var strCost = this.props.product.costs[this.props.product.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) cost=" "+cost;
-		}
+    var cost = formatCurrency(this.props.product.costs[this.props.product.costs.length-1].cost);
     if (this.props.product.image) image = this.props.product.image.image1;
     return (<tr class={'active '+classDeleted}>
       <td>{this.props.stt}</td>
       <td>{this.props.product.name}</td>
       <td><img src={image} style={{ width: '120px' }} />
       </td>
-      <td>{cost}đ</td>
+      <td>{cost}</td>
       <td>{this.props.product.quanty}</td>
       <td>{strSize}</td>
       <td>{this.props.product.description}</td>
@@ -255,7 +252,8 @@ class NewProduct extends React.Component {
       },
       createat: parseInt(Date.now().toString()),
       views:0,
-      isDeleted: 0
+      orders: 0,
+      isDeleted: 0,
     }
     this.AddToDatabase(newP);
     e.preventDefault();

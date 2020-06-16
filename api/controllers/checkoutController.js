@@ -25,6 +25,9 @@ function randomInt(min, max) { // min and max included
     nowday = year.toString()+month.toString()+day.toString();
     return nowday;
 }
+function formatCurrency(cost){
+    return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 module.exports = function(app,io){
     app.get("/checkout",(req,res)=>{
         res.render("checkout");
@@ -173,12 +176,6 @@ module.exports = function(app,io){
             </tr>
         </thead>
             <tbody>`
-    //             <tr className="text-center">
-    //                 <td className="text-center">{this.props.pos}</td>
-    //                 <td className="text-center">{this.props.name}</td>
-    //             </tr>
-    //         </tbody>
-    // </table>
         order.listproduct.forEach(e => {
             count++;
             if (e.size==0) e.size='default';
@@ -188,7 +185,7 @@ module.exports = function(app,io){
                         <td align="center" style="padding:10px; border:1px solid #333">${e.quanty}</td>
                         <td align="center" style="padding:10px; border:1px solid #333">${e.color}</td>
                         <td align="center" style="padding:10px; border:1px solid #333">${e.size}</td>
-                        <td align="center" style="padding:10px; border:1px solid #333">${e.cost}đ</td>
+                        <td align="center" style="padding:10px; border:1px solid #333">${formatCurrency(e.cost)}</td>
                    </tr>`
             // var strsp = `<p>${count}. Tên sản phẩm: ${e.name}; Số lượng: ${e.quanty}; Màu sắc:${e.color}; Size: ${e.size}; Giá sản phẩm: ${e.cost}đ</p>`;
         });
@@ -196,16 +193,16 @@ module.exports = function(app,io){
         dssp = dssp + strsp;  
         var voucher = "";
         if (order.costVoucher>0) 
-        voucher = `<h3 style='font-weight:normal'><b>Giảm giá (voucher): </b>${order.costVoucher}đ</h3>`
+        voucher = `<h3 style='font-weight:normal'><b>Giảm giá (voucher): </b>${formatCurrency(order.costVoucher)}đ</h3>`
         let donhang =
         "<h2><b>THÔNG TIN ĐƠN HÀNG</b></h2>" +
         "<h3 style='font-weight:normal'><b>Đơn hàng của anh/chị:</b> "+order.fullname+"- SDT:"+order.phonenumber+"</h3>"+
-        `<h3 style='font-weight:normal'><b>Tổng tiền sản phẩm:</b> ${order.sumproductcost}đ;</h3>`+
+        `<h3 style='font-weight:normal'><b>Tổng tiền sản phẩm:</b> ${formatCurrency(order.sumproductcost)};</h3>`+
         `<h3>Địa chỉ nhận hàng: ${order.address}</h3>`+
         `<h3>Địa chỉ kho hàng: Số 01, Võ Văn Ngân, Thủ Đức, Hồ Chí Minh</h3>`+
         `<h3>Khoảng cách vận chuyển: 123</h3>`+
-        `<h3 style='font-weight:normal'><b>Phí vận chuyển:</b> ${order.sumshipcost}đ;</h3>`+ voucher+
-        `<h3 style='font-weight:normal'><b>Tổng tiền đơn hàng:</b> ${order.sumproductcost + order.sumshipcost-order.costVoucher}đ;</h3>`+
+        `<h3 style='font-weight:normal'><b>Phí vận chuyển:</b> ${formatCurrency(order.sumshipcost)};</h3>`+ voucher+
+        `<h3 style='font-weight:normal'><b>Tổng tiền đơn hàng:</b> ${formatCurrency(order.sumproductcost + order.sumshipcost-order.costVoucher)};</h3>`+
         `<h3>DANH SÁCH SẢN PHẨM:</h3>`;
         let numberRandom = randomInt(100000,9999999);
         let linkXacNhan = "<h4>Link xác nhận đơn hàng: http://localhost:3000/confirm/"+txtTo+"/"+numberRandom+"</h4>";
@@ -232,7 +229,7 @@ module.exports = function(app,io){
         const order = JSON.parse(req.body.order);
         const ship = req.body.ship;
         const id = req.body.id;
-        const sum = parseInt(order.sumproductcost)+parseInt(ship);
+        const sum = parseInt(order.sumproductcost)+parseInt(ship)-parseInt(order.costVoucher);
         Order.find({},{code:1,_id:0},function(err,data){
             if (err){
                 console.log(err);
@@ -241,7 +238,8 @@ module.exports = function(app,io){
                 while (data.findIndex(item => item.code===numberRandom)!=-1){
                     numberRandom = randomInt(100000,9999999);
                 }
-                let message = `Tong tien san pham: ${order.sumproductcost}đ, Tong tien van chuyen: ${ship}đ, Tong: ${sum}đ. MA XAC NHAN DON HANG CUA BAN: ${numberRandom}`
+                let message = `Tong tien san pham: ${formatCurrency(order.sumproductcost)}, Tong tien van chuyen: ${formatCurrency(ship)}, 
+                Voucher su dung: ${formatCurrency(order.costVoucher)}, Tong: ${sum}đ. MA XAC NHAN DON HANG CUA BAN: ${numberRandom}`
                 console.log(message);
                 Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, 
                     time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
@@ -315,6 +313,7 @@ module.exports = function(app,io){
     })
 
     app.get("/checkout/:email/:code",(req,res)=>{
+        console.log("vô 1");
         var currentDay = getCurrentDay();
         var dataProduct=[];
         var infor = req.params.email;
@@ -356,28 +355,43 @@ module.exports = function(app,io){
                                 { _id: dataProduct[i].id },
                                 { $inc: { "sizes.$[filter1].colors.$[filter2].quanty": -dataProduct[i].quanty } },
                                 { arrayFilters: [{ 'filter2.color': dataProduct[i].color }, { 'filter1.size': dataProduct[i].size }] },
-                                function (err, data) {
-                                })
+                                function (err, data) {})
                         }
                         for (var i = 0; i < dataProduct.length; ++i) {
-                            Product.findOneAndUpdate({ _id: dataProduct[i].id }, { $inc: { quanty: -dataProduct[i].quanty } }, function (err, data) {
-
-                            })
+                            Product.findOneAndUpdate({_id: dataProduct[i].id}, {$inc:{quanty: -dataProduct[i].quanty},$inc:{orders:1}}, 
+                            function (err, data) {})
                         }
-                        console.log(result);
+                        if (order.costVoucher>0){
+                            User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
+                                {$pull:{currentVoucher:{value:order.costVoucher}}},{new:true},function(err,data){
+                                    if (err) console.log(err); else
+                                    console.log(data);
+                                })
+                        }
                         //cập nhật vào thống kê
                         Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
                             if (err) console.log(err); else
                             console.log(data);
                         });
                         //Tăng số lượt đặt hàng của khách hàng --> để thống kê
-                        User.findOneAndUpdate({code:req.params.code},{$inc:{qorder:1}},function(err,data){
+                        User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true},function(err,data){
                             if (err) console.log(err);
+                            else {
+                                if (data){
+                                    if (data.qorder%5==0){
+                                        var value = Math.floor(data.qorder/5)*50000;
+                                        User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
+                                            {$push:{currentVoucher:{value:value}}},{new:true},function(err,data){
+                                                if (err) console.log(err);
+                                        })
+                                    }
+                                }
+                            }
                         })
                         //Cập nhật trạng thái confirmed
                         Order.update({code: req.params.code }, { $set: { status: "confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
                             if (err) {
-                                throw err;
+                                console.log(err);
                             } else {
                                 Order.update({code: req.params.code},
                                     {$set:{"listproduct.$[].status":"confirmed"}},function(err,data){
@@ -452,22 +466,4 @@ module.exports = function(app,io){
             }
         })
     })
-   //check and update voucher
-   app.post("/checkAddVoucher",parser,(req,res)=>{
-       const email = req.body.email;
-       Order.find({$or:[{email:email},{numberphone:email}]},function(err,data){
-           if (err) console.log(err);
-           else {
-               if (data){
-                   if (data.length%5==0){ 
-                    var value = Math.floor(data.length/5)*50000;
-                        User.findOneAndUpdate({$or:[{email:email},{phoneNumber:email}]},
-                            {$push:{value:value}},{new:true},function(err,data){
-                                if (err) console.log(err);
-                        })
-                   }
-               }
-           }
-       })
-   })
 }
