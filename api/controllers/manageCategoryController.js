@@ -38,37 +38,55 @@ module.exports = function(app){
                 throw err;
             } else {
                 var arrResult=[];
-                data.listProduct.forEach(product => {
-                    Product.findOne({_id:product._id},function(err,da){
-                        if (err){
-                            throw err;
-                        } else {
-                            arrResult.push(da);
-                            if (data.listProduct.length == arrResult.length){
-                                console.log(arrResult)
-                                var result = {
-                                    name: data.name,
-                                    quanty: data.quanty,
-                                    description: data.description,
-                                    listProduct: arrResult,
-                                    image:data.image
-                                };
-                                res.send(result);
+                if (data.listProduct.length>0){
+                    data.listProduct.forEach(product => {
+                        Product.findOne({_id:product._id},function(err,da){
+                            if (err){
+                                throw err;
+                            } else {
+                                arrResult.push(da);
+                                if (data.listProduct.length == arrResult.length){
+                                    console.log(arrResult)
+                                    var result = {
+                                        name: data.name,
+                                        quanty: data.quanty,
+                                        description: data.description,
+                                        listProduct: arrResult,
+                                        image:data.image
+                                    };
+                                    res.send(result);
+                                }
                             }
-                        }
+                        })
+                    });
+                } else {
+                    res.send({
+                        name: data.name,
+                        quanty: data.quanty,
+                        description: data.description,
+                        listProduct: [],
+                        image:data.image
                     })
-                });
+                }
             }
         })
     });
 
     app.post("/deleteCategory",parser,(req,res)=>{
         const id = req.body.id;
-        Category.remove({_id:id},function(err,data){
-            if (err){
-                throw err;
-            } else {
-                getCategory(res);
+        Category.findOne({_id:id},(err,cate)=>{
+            if (!err && cate){
+                for (var i=0; i<cate.listProduct.length; i++){
+                    var product = cate.listProduct[i];
+                    Product.findOneAndUpdate({_id:product._id},{$pull:{category:{id:id}}},(err,data)=>{})
+                }
+                Category.remove({_id:id},function(err,data){
+                    if (err){
+                        console.log(err);
+                    } else {    
+                        getCategory(res);
+                    }
+                })
             }
         })
     });
@@ -96,10 +114,33 @@ module.exports = function(app){
             if (err){
                 throw err;
             } else {
+                for (var i=0; i<data.listProduct.length; i++){
+                    var product = data.listProduct[i];
+                    Product.findOneAndUpdate({_id:product._id},{$push:{category:{id:data._id}}},(err,data)=>{})
+                }
                 getCategory(res);
             }
         })
     });
+    app.post("/addCategory",parser,(req,res)=>{
+        const idPro = req.body.idPro;
+        const idCategory = req.body.idCategory;
+        Product.findOneAndUpdate({_id:idPro},{$push:{category:{id:idCategory}}},(err,data)=>{
+            if (!err &&data){
+                res.send("OK");
+            }
+        })
+    })
+    app.post("/removeCategory",parser,(req,res)=>{
+        const idPro = req.body.idPro;
+        const idCategory = req.body.idCategory;
+        console.log(idCategory);
+        Product.findOneAndUpdate({_id:idPro},{$pull:{category:{id:idCategory}}},(err,data)=>{
+            if (!err &&data){
+                res.send("OK");
+            }
+        })
+    })
     app.post("/updateCategory",parser,(req,res)=>{
         const cat = JSON.parse(req.body.category);
         const id = cat.id;
@@ -108,12 +149,12 @@ module.exports = function(app){
         const description = cat.description;
         const listProduct = cat.listProduct;
         const image = cat.image;
-        for (var i=0; i<listProduct.length; i++){
-            let pro = listProduct[i];
-            Product.findOneAndUpdate({_id:pro._id},{$set:{category:id}},(err,data)=>{
-                if (err) console.log(err);
-            });
-        }
+        // for (var i=0; i<listProduct.length; i++){
+        //     let pro = listProduct[i];
+        //     Product.findOneAndUpdate({_id:pro._id},{$push:{category:{id:id}}},(err,data)=>{
+        //         if (err) console.log(err);
+        //     });
+        // }
         Category.update({_id:id},{$set:{name:name,quanty:quanty,description:description,
         listProduct:listProduct, image:image}},function(err,data){
             if (err){

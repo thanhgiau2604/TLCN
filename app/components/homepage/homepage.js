@@ -23,10 +23,9 @@ class HomePage extends React.Component{
         super(props);
     }
     componentDidMount(){
-        // socket.on("require-email",function(data){
-        //     if (localStorage.getItem("email"))
-        //         socket.emit("update-qvisit",localStorage.getItem("email"));
-        // })
+        $.get("/checkSale",function(data){
+            
+        })
     }
     render(){
         initizeAnalytics();

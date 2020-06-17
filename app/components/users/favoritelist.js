@@ -14,27 +14,33 @@ function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
 }
+function formatCurrency(cost){
+    return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class RowFavorite extends React.Component{
     constructor(props){
         super(props);
         this.handleDelete = this.handleDelete.bind(this);
     }
     handleDelete(){
-        $.post("/deleteFav",{idDel:this.props.id,email:localStorage.getItem('email')},function(data){
-            if (Math.ceil(data.length / 3)<table.state.curpage){
+        $.post("/deleteFav",{idDel:this.props.product._id,email:localStorage.getItem('email')},function(data){
+            if (Math.ceil(data.length / 5)<table.state.curpage){
                 table.setState({curpage:table.state.curpage-1});
             }
-            if (Math.ceil(data.length / 8)<items.state.curpage){
-                items.setState({curpage:items.state.curpage-1});
-            }
+            // if (Math.ceil(data.length / 8)<items.state.curpage){
+            //     items.setState({curpage:items.state.curpage-1});
+            // }
             table.setState({listFav:data});
-            items.setState({listFav:data});
+            // items.setState({listFav:data});
         })
     }
     render(){
+        var cost = formatCurrency(this.props.product.costs[this.props.product.costs.length-1].cost);
         return(<tr className="text-center">
             <td className="text-center">{this.props.pos}</td>
-            <td className="text-center">{this.props.name}</td>
+            <td className="text-center">{this.props.product.name}</td>
+            <td className="text-center"><img src={this.props.product.image.image1} width="100px" height="100px"/></td>
+            <td className="text-center">{cost}</td>
             <td className="text-center"><button className="btn btn-danger" 
             onClick={this.handleDelete}>Xóa</button></td>
           </tr>)
@@ -79,7 +85,7 @@ class TableFavorite extends React.Component{
         var length = this.state.listFav.length;
         if (length!=0){
             page = [];
-            var perpage = 3;
+            var perpage = 5;
             var start = (this.state.curpage - 1) * perpage;
             var finish = (start+perpage);
             if (finish>length) finish=length;
@@ -100,15 +106,16 @@ class TableFavorite extends React.Component{
             <table className="table table-hover text-center">
                 <thead>
                     <tr>
-                        <th className="text-center">STT</th>
+                        <th className="text-center">#</th>
                         <th className="text-center">Tên sản phẩm</th>
+                        <th className="text-center">Hình ảnh</th>
+                        <th className="text-center">Giá sản phẩm</th>
                         <th className="text-center">Xóa khỏi FavoriteList</th>
                     </tr>
                 </thead>
                 <tbody>
                     {lCurFav.map(function (product, index) {
-                        return <RowFavorite key={index} pos={start+(index + 1)} name={product.name}
-                            id={product._id} />
+                        return <RowFavorite key={index} pos={start+(index + 1)} product={product} />
                     })}
                 </tbody>
             </table>
@@ -286,14 +293,14 @@ class ListFavorite extends React.Component {
                                     <TableFavorite />
                                 </div>
                             </div>
-                            <div className="wishlists-item">
+                            {/* <div className="wishlists-item">
                                 <div className="wishlists-all-item">
                                     <ListItems />
                                     <div className="wish-back-link">
                                        
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

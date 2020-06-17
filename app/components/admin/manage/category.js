@@ -235,7 +235,6 @@ class SingleProduct extends React.Component {
     }
   }
   addProduct(){
-    console.log(this.props.product._id);
     arrAddProduct.push({_id:this.props.product._id});
     this.setState({add:false});
   }
@@ -286,14 +285,19 @@ class SingleProductUpdate extends React.Component {
   addProduct(){
     arrProduct.push({_id:this.props.product._id});
     this.setState({add:false});
+    $.post("/addCategory",{idPro:this.props.product._id,idCategory:UpdateCategory.state.category._id},function(data){
+      
+    })
   }
   removeProduct(){
     var value = this.props.product._id;
     arrProduct = arrProduct.filter(function(item){
       return item._id!==value;
     })
-    console.log(arrProduct);
     this.setState({add:true});
+    $.post("/removeCategory",{idPro:this.props.product._id,idCategory:UpdateCategory.state.category._id},function(data){
+      
+    })
   }
   render(){
     return(<tr class='active'>
@@ -731,10 +735,10 @@ class ManageCategory extends React.Component {
         processing: false
       }
       this.handleChange = this.handleChange.bind(this);
-      this.clickNewCateogry = this.clickNewCateogry.bind(this);
+      this.clickNewCategory = this.clickNewCategory.bind(this);
       main = this;
     }
-    clickNewCateogry(){
+    clickNewCategory(){
       newCategory.setState({addSuccess:0})
     }
     componentDidMount(){
@@ -813,13 +817,13 @@ class ManageCategory extends React.Component {
                 </div>
               </div>
               <div class="text-right" style={{marginTop: "50px", paddingRight: "10%"}}>
-                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-new-category" onClick={this.clickNewCateogry}>
+                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-new-category" onClick={this.clickNewCategory}>
                   <i class="icon-plus-sign"></i> Add New Category
                 </button>
               </div>
                 <div class="row text-center" style={{ marginTop: "30px" }}>
                   {this.state.listCategory.map(function (category, index) {
-                    return <SingleCategory key={index} category={category} stt={index+1}/>
+                    return <SingleCategory key={index+Date.now().toString()} category={category} stt={index+1}/>
                   })}
                 </div>
                 <ModalViewCategory/>

@@ -2,6 +2,9 @@ import React from 'react'
 import {connect} from 'react-redux'
 var main;
 
+function formatCurrency(cost){
+	return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class RequireAuthentication extends React.Component{
 	constructor(props){
 		super(props);
@@ -44,15 +47,7 @@ class Product extends React.Component{
 		})
 	}
 	render(){
-		var strCost = this.props.costs[this.props.costs.length-1].cost.toString();
-		var cost ="", count=0;
-		for (var i=strCost.length-1; i>=0; i--){
-			count++;
-			cost=strCost[i]+cost;
-			if (count%3==0) {
-				cost=" "+cost;
-			}
-		}
+		var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost);
 		return(<div className="shipping-item">
 		<span className="cross-icon"><i className="fa fa-times-circle" onClick={this.removeFromCart}></i></span>
 		<div className="shipping-item-image">
@@ -61,7 +56,7 @@ class Product extends React.Component{
 		<div className="shipping-item-text">
 			<span>{this.props.quanty}<span className="pro-quan-x">x</span> <a href="#" className="pro-cat">{this.props.name}</a></span>
 			<span className="pro-quality"><a href="#">{this.props.size},{this.props.color}</a></span>
-			<p>{cost}đ</p>
+			<p>{cost}</p>
 		</div>
 	</div>)
 	}
@@ -101,15 +96,7 @@ class Cart extends React.Component{
 				sum+=e.product.costs[e.product.costs.length-1].cost*e.quanty;
 			});
 		}
-		var strSum = sum.toString();
-		var sumcost ="", count=0;
-		for (var i=strSum.length-1; i>=0; i--){
-			count++;
-			sumcost=strSum[i]+sumcost;
-			if (count%3==0) {
-				sumcost=" "+sumcost;
-			}
-		}
+		var sumcost = formatCurrency(sum);
 		return(<div className="col-lg-3 col-md-3 col-sm-12 col-xs-12 pull-right shopingcartarea ">
 		<div className="shopping-cart-out pull-right">
 			<div className="shopping-cart">
@@ -126,7 +113,7 @@ class Cart extends React.Component{
 					})}
 					<div className="shipping-total-bill">
 						<div className="total-shipping-prices">
-							<span className="shipping-total">{sumcost}đ</span>
+							<span className="shipping-total">{sumcost}</span>
 							<span>Tổng tiền SP</span>
 						</div>										
 					</div>

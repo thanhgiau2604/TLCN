@@ -14,7 +14,7 @@ var arrUserOnline = []
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
-
+//Định dạng ngày
  function getCurrentDay() {
     var dateObj = new Date();
     var month = dateObj.getMonth() + 1; //months from 1-12
@@ -25,9 +25,20 @@ function randomInt(min, max) { // min and max included
     nowday = year.toString()+month.toString()+day.toString();
     return nowday;
 }
+//format tiền tệ VND
 function formatCurrency(cost){
     return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
 }
+//format thời gian để lưu vào đơn hàng
+function getCurrentDayTime() {
+    offset = "+7";
+    var d = new Date();
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    var day = new Date(utc + (3600000*offset));
+    var nowday = day.getDate().toString()+"-"+(day.getMonth()+1).toString()+"-"+day.getFullYear().toString()+" "
+    +day.getHours().toString()+":"+day.getMinutes().toString();
+    return nowday;
+ }
 module.exports = function(app,io){
     app.get("/checkout",(req,res)=>{
         res.render("checkout");
@@ -207,7 +218,7 @@ module.exports = function(app,io){
         let numberRandom = randomInt(100000,9999999);
         let linkXacNhan = "<h4>Link xác nhận đơn hàng: http://localhost:3000/confirm/"+txtTo+"/"+numberRandom+"</h4>";
         //Luu vao databse;
-        Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
+        Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString())}},function(err,data){
             let txtContent = donhang+dssp+linkXacNhan;
             sendmail(txtTo,txtSubject,txtContent,function(err,data){
                 if (err){
@@ -242,7 +253,7 @@ module.exports = function(app,io){
                 Voucher su dung: ${formatCurrency(order.costVoucher)}, Tong: ${sum}đ. MA XAC NHAN DON HANG CUA BAN: ${numberRandom}`
                 console.log(message);
                 Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, 
-                    time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString())}},function(err,data){
+                    time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString())}},function(err,data){
                         if (err){
                             console.log(err);
                         } else {
@@ -389,7 +400,7 @@ module.exports = function(app,io){
                             }
                         })
                         //Cập nhật trạng thái confirmed
-                        Order.update({code: req.params.code }, { $set: { status: "confirmed", time: new Date().toLocaleString(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
+                        Order.update({code: req.params.code }, { $set: { status: "confirmed", time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
                             if (err) {
                                 console.log(err);
                             } else {

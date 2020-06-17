@@ -875,7 +875,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	border-left:1px solid #d7d7d7;
 	border-bottom:1px solid #d7d7d7;
 	border-right:1px solid #d7d7d7;
-	width:270px;
+	width: 290px;
 	position:absolute;
 	right:0;
 	top:55px;

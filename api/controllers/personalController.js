@@ -84,8 +84,6 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-
-
     app.get("/manageaccount",(req,res)=>res.render("quanlytaikhoan"));
     app.get("/personalinfor",(req,res)=> res.render("thongtincanhan"));
 }

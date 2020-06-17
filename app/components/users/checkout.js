@@ -21,9 +21,20 @@ function initizeAnalytics(){
 }
 var sumCostProduct;
 var modalDiscount,listDiscount=[];
+//format tiền tệ
 function formatCurrency(cost){
     return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
 }
+//format ngày tháng năm đặt hàng
+function getCurrentDayTime() {
+    offset = "+7";
+    var d = new Date();
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    var day = new Date(utc + (3600000*offset));
+    var nowday = day.getDate().toString()+"-"+(day.getMonth()+1).toString()+"-"+day.getFullYear().toString()+" "
+    +day.getHours().toString()+":"+day.getMinutes().toString();
+    return nowday;
+  }
 class SingleProduct extends React.Component {
     constructor(props){
         super(props);
@@ -289,7 +300,7 @@ class Summary extends React.Component {
         });
         var order = {
             email: localStorage.getItem('email'),
-            time: new Date().toLocaleString(),
+            time: getCurrentDayTime(),
             timestamp: parseInt(Date.now().toString()),
             fullname:"",
             phonenumber:"",
