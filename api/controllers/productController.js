@@ -71,42 +71,36 @@ module.exports = function(app){
     app.post("/getProductRelate",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
         if (idproduct){
-            Product.findOne({_id:idproduct},function(err,product){
+            Product.findOne({_id:idproduct},function(err,singleProduct){
                 if (err) {
                     throw err;
                 } else {
-                    if (!product.category){
+                    if (!singleProduct.category){
                         res.send([]);
                     } else {
-                        ProductCategory.findOne({_id:product.category},function(err,category){
-                            if (err){
-                                throw err;
-                            } else {
-                                var arrresult = [];
-                                var count = 0;
-                                category.listProduct.forEach(pro => {
-                                    Product.findOne({_id:pro._id},function(err,data){
-                                        count++;
-                                        if (err) {
-                                            throw err;
-                                        } else {
-                                            if (data){
-                                                arrresult.push(data);
-                                                if (category.listProduct.length == count) {
-                                                    res.send(arrresult);
-                                                }
-                                            }
-                                        }
-                                    })
-                                });
+                        var arrResult = [];
+                        var loop = async (_) => {
+                          for (var i = 0; i < singleProduct.category.length; i++) {
+                            var category = await ProductCategory.findOne({_id: singleProduct.category[i].id },function (err, category) {});
+                            if (category) {
+                                for (var j=0; j<category.listProduct.length; j++) {
+                                  var pro = category.listProduct[j];
+                                  var index = arrResult.findIndex((item) => item._id == pro._id);
+                                  if (index == -1) {
+                                    var product = await Product.findOne({ _id: pro._id },function (err, product) {});
+                                    if (product) arrResult.push(product);
+                                  }
+                                }
                             }
-                        })
+                          }
+                          res.send(arrResult.splice(0,8));
+                        };
+                        loop();
                     }
                 }
             })
         }
     });
-
     app.post("/updateProductHistory",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
         const email = req.body.email;
@@ -146,8 +140,6 @@ module.exports = function(app){
             })
         }
     })
-
-    
     app.post("/cart",parser,(req,res)=>{
         const email = req.body.email;
         User.findOne({email:email},function(err,data){
@@ -158,7 +150,6 @@ module.exports = function(app){
             }
         })
     });
-
     app.post("/addToCart",parser,(req,res)=>{
         const id = req.body.id;
         const email = req.body.email;
@@ -217,7 +208,6 @@ module.exports = function(app){
             }
         })
     });
-
     app.post("/addToFavorite",parser,(req,res)=>{
         const id = req.body.id;
         const email = req.body.email;
@@ -284,14 +274,12 @@ module.exports = function(app){
                             result.push(itemresult);
                         }
                     }
-                    console.log(result);
                     if (ok == false) result.push({ id: idProduct, count: 1 });
                     Statistic.update({ day: currentDay }, { $set: { viewproduct: result } }, function (err, data) {
                         if (err) {
-                            throw err;
+                            console.log(err);
                         } else {
-                            res.json(data);
-                            
+                            res.json(data);     
                         }
                     });
                 }

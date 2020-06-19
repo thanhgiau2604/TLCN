@@ -20,7 +20,7 @@ function initizeAnalytics(){
     ReactGA.pageview(window.location.pathname + window.location.search);
 }
 var sumCostProduct;
-var modalDiscount,listDiscount=[];
+var modalDiscount,listDiscount=[],modalViewOrder;
 //format tiền tệ
 function formatCurrency(cost){
     return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
@@ -558,6 +558,90 @@ class LocationSearchInput extends React.Component {
       );
     }
 }
+class DisplayDetailOrder extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            order: {},
+            distance:0
+        }
+        modalViewOrder = this;
+    }
+    continueConfirm(){
+        main.setState({curStep:3});
+    }
+    render(){
+        return(<div class="container">
+        <div class="modal fade" id="modalViewOrder" role="dialog">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thông tin chi tiết đơn hàng của quý khách</h4>
+              </div>
+              <div class="modal-body">
+              {Object.keys(this.state.order).length==0 ? <div class="loader text-center"></div>:
+              <div>
+                <div class="row text-center">             
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                      <h2><b>THÔNG TIN ĐƠN HÀNG</b></h2>
+                  </div>               
+                </div>
+                <div class="row">             
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 displayDetailOrder">
+                      <h3><b>Đơn hàng của anh/chị: </b> {this.state.order.fullname} - <b>SĐT: </b>{this.state.order.phonenumber}</h3>
+                      <h3><b>Tổng tiền sản phẩm: </b> {formatCurrency(this.state.order.sumproductcost)}</h3>
+                      <h3><b>Địa chỉ nhận hàng: </b> {this.state.order.address}</h3>
+                      <h3><b>Địa chỉ kho hàng: </b>Số 01, Võ Văn Ngân, Thủ Đức, Hồ Chí Minh</h3>
+                      <h3><b>Khoảng cách vận chuyển: </b>{parseFloat(this.state.distance/1000).toFixed(2)}km</h3>
+                      <h3><b>Chi phí vận chuyển: </b>{formatCurrency(this.state.order.sumshipcost)}</h3>
+                      <h3><b>Tổng tiền đơn hàng: </b>{formatCurrency(this.state.order.sumproductcost + this.state.order.sumshipcost-this.state.order.costVoucher)}</h3>
+                  </div>               
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="form-group">
+                      <h3><b>DANH SÁCH SẢN PHẨM</b></h3>
+                      <table class='table'>
+                        <thead>
+                          <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">Tên sản phẩm</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-center">Màu sắc</th>
+                            <th class="text-center">Kích cõ</th>
+                            <th class="text-center">Giá sản phẩm</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.order.listproduct.map(function(product,index){
+                            return(
+                              <tr class='active' key={index}>
+                                <td class="text-center">{index+1}</td>
+                                <td class="text-center">{product.name}</td>
+                                <td class="text-center">{product.quanty}</td>
+                                <td class="text-center">{product.color}</td>
+                                <td class="text-center">{product.size}</td>
+                                <td class="text-center">{formatCurrency(product.cost)}</td>
+                              </tr>)
+                          })}
+                        </tbody>
+                      </table>
+                    </div>  
+                  </div>
+                </div>
+                </div>}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" onClick={this.continueConfirm.bind(this)}>Tiếp tục</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>)
+    }
+}
 class Address extends React.Component {
     constructor(props){
         super(props);
@@ -596,10 +680,7 @@ class Address extends React.Component {
         phonenumber:phonenumber, sumcost:sumCost, voucher:voucher},function(data){
             if (data.err == 0) {
                 dataSendMail = data;
-                main.setState({curStep:3});
-                // $.post("/sendmail", { order: JSON.stringify(data.data), id: localStorage.getItem('curorder'), ship:data.ship}, function (data) {
-                //     main.setState({ curStep: 3 });
-                // })
+                modalViewOrder.setState({order:data.data,distance:data.distance})
             } else {
                 that.setState({err:"Vui lòng kiểm tra lại địa chỉ"})
             }
@@ -651,7 +732,7 @@ class Address extends React.Component {
                 </div> 
             </div>
             <div class="row address">
-                <form method="POST" onSubmit={this.addAddress}>
+                <form>
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
                             <label>Họ và tên</label>
@@ -677,11 +758,13 @@ class Address extends React.Component {
                     <h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <button type="submit" class="btn btn-danger">Tiếp tục thanh toán</button>
+                            <button class="btn btn-danger" onClick={this.addAddress} title='update status' data-toggle="modal" 
+                            data-target="#modalViewOrder">Tiếp tục thanh toán</button>
                         </div>
                     </div>
                 </form>			
             </div>
+            <DisplayDetailOrder/>
         </div>
     </section>)
     }
@@ -714,7 +797,7 @@ class Confirm extends React.Component {
             this.setState({errOption:"Bạn chưa chọn hình thức xác nhận đơn hàng"});
         } else if (chooseOption==1){
             var id = localStorage.getItem('curorder');
-            $.post("/sendmail", { order: JSON.stringify(dataSendMail.data), id: id, ship:dataSendMail.ship}, function (data) {
+            $.post("/sendmail", { order: JSON.stringify(dataSendMail.data),id:id,ship:dataSendMail.ship,distance:dataSendMail.distance}, function (data) {
                     main.setState({ curStep: 3 });
             })
             this.setState({isSendMail:1})
@@ -745,7 +828,8 @@ class Confirm extends React.Component {
         var that = this;
         var id = localStorage.getItem('curorder');
         that.setState({inforMail:""});
-        $.post("/sendmail", { order: JSON.stringify(dataSendMail.data), id: id, ship:dataSendMail.ship}, function (data) {
+        $.post("/sendmail", { order: JSON.stringify(dataSendMail.data), id: id, ship:dataSendMail.ship,
+        distance: dataSendMail.distance}, function (data) {
             that.setState({inforMail:"Đã gửi thành công!"});
     })
     }
@@ -919,8 +1003,6 @@ class TotalPage extends React.Component{
         
     }   
 }
-
-
 const Page = connect(function(state){  
 })(TotalPage)
 

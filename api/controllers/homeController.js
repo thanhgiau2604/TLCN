@@ -341,33 +341,32 @@ module.exports = function(app,apiRouter){
     app.post("/updateTopCategory",parser,(req,res)=>{
         let idProduct = req.body.idProduct;
         let email = req.body.email;
-        //console.log(email);
         Product.findOne({_id:idProduct},function(err,product){
             if (err) console.log(err);
             else {
                 var category = product.category;
-                //console.log(category);
                 User.findOne({email:email},function(err,user){
                     var topCategory = user.topCategory;
-                    var index = topCategory.findIndex(item => item.id.toString() == category.toString());
-                    //console.log(index);
-                    if (index==-1){
-                        User.findOneAndUpdate({email:email},{"$push":{topCategory:{id:category,count:1}}},{new:true},function(err,data){
-                            if (err) console.log(err); else console.log(data);
-                        });
-                    } else {
-                        User.findOneAndUpdate(
-                          { email: email },
-                          { $inc: { "topCategory.$[filter].count": 1 } },
-                          { arrayFilters: [{ "filter.id": category }] },
-                          function (err, data) {
-                            if (err) {
-                              console.log(err);
-                            } else {
-                              console.log(data);
-                            }
-                          }
-                        );
+                    if (category&&category.length>0){
+                        var index = topCategory.findIndex(item => item.id.toString() == category[0].id.toString());
+                        if (index==-1){
+                            User.findOneAndUpdate({email:email},{"$push":{topCategory:{id:category[0].id,count:1}}},{new:true},function(err,data){
+                                if (err) console.log(err); else console.log(data);
+                            });
+                        } else {
+                            User.findOneAndUpdate(
+                              { email: email },
+                              { $inc: { "topCategory.$[filter].count": 1 } },
+                              { arrayFilters: [{ "filter.id": category[0].id }] },
+                              function (err, data) {
+                                if (err) {
+                                  console.log(err);
+                                } else {
+                                  console.log(data);
+                                }
+                              }
+                            );
+                        }
                     }
                 })
             }

@@ -104,73 +104,46 @@ module.exports = function(app,io){
         User.findOneAndUpdate({email:email},{address:address},function(err,data){
             if (err) console.log(err);
         })
-        // distance.get(
-        //     {
-        //       origin: 'Đại học Sư phạm kỹ thuật TPHCM',
-        //       destination: address
-        //     },
-        //     function(err, data) {
-        //       if (err){
-        //         res.json({err:1})
-        //       } else {
-        //           console.log(data);
-        //         console.log(sumcost);
-        //         var result;
-        //         if (sumcost>800000){
-        //             result=0;
-        //         } else {
-        //             if (distance <= 3000) result = 0;
-        //             else result = 3*(data.distanceValue-3000);
-        //         }
-        //         Order.update({ _id: id }, { $set: { address: address, fullname:fullname, phonenumber:phonenumber, sumshipcost:result} }, function (err, data) {
-        //             if (err) {
-        //                 console.log(err);
-        //             } else {
-        //                 Order.findOne({ _id: id }, function (err, data) {
-        //                     if (err) {
-        //                         throw err;
-        //                     } else {
-        //                         console.log(data.sumproductcost);
-        //                         if (data.sumproductcost >=800000) result=0;
-        //                         res.json({err:0,data:data,ship:result});
-        //                     }
-        //                 })
-        //             }
-        //         });
-        //       }
-        //   });
-        // sau này xóa đoạn code bên dưới và mở khóa đoạn code bên trên
-        const result = 10000;
-        Order.findOneAndUpdate(
-          { _id: id },
-          {
-            $set: {
-              address: address,
-              fullname: fullname,
-              phonenumber: phonenumber,
-              sumshipcost: result,
-              costVoucher:voucher
+        distance.get(
+            {
+              origin: 'Đại học Sư phạm kỹ thuật TPHCM',
+              destination: address
             },
-          },
-          function (err, data) {
-            if (err) {
-              console.log(err);
-            } else {
-              Order.findOne({ _id: id }, function (err, data) {
-                if (err) {
-                  throw err;
+            function(err, data) {
+              if (err){
+                res.json({err:1})
+              } else {
+                var result;
+                if (sumcost>800000){
+                    result=0;
                 } else {
-                  res.json({ err: 0, data: data, ship: result });
+                    if (data.distanceValue <= 3000) result = 0;
+                    else result = 3*(data.distanceValue-3000);
                 }
-              });
-            }
-          }
-        );
+                Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
+                    sumshipcost:result,costVoucher:voucher}}, function (err, or) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        Order.findOne({ _id: id }, function (err, order) {
+                            if (err) {
+                                throw err;
+                            } else {
+                                console.log(order.sumproductcost);
+                                if (order.sumproductcost >=800000) result=0;
+                                res.json({err:0,data:order,ship:result,distance:data.distanceValue});
+                            }
+                        })
+                    }
+                });
+              }
+          });
     });
     app.post("/sendmail",parser,(req,res) => { //KHOẢNG CÁCH VẬN CHUYỂN ĐƯA VÀO SAU
         const order = JSON.parse(req.body.order);
         const ship = req.body.ship;
         const id = req.body.id;
+        const distance = req.body.distance;
         let txtTo = order.email;
         let txtSubject = "XÁC NHẬN ĐƠN HÀNG TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
         let dssp ="";
@@ -178,7 +151,7 @@ module.exports = function(app,io){
         var strsp = `<table style="" width="90%">
         <thead>
             <tr>
-                <th align="center" style="padding:10px; border:1px solid #333">STT</th>
+                <th align="center" style="padding:10px; border:1px solid #333">#</th>
                 <th align="center" style="padding:10px; border:1px solid #333">Tên sản phẩm</th>
                 <th align="center" style="padding:10px; border:1px solid #333">Số lượng</th>
                 <th align="center" style="padding:10px; border:1px solid #333">Màu sắc</th>
@@ -211,7 +184,7 @@ module.exports = function(app,io){
         `<h3 style='font-weight:normal'><b>Tổng tiền sản phẩm:</b> ${formatCurrency(order.sumproductcost)};</h3>`+
         `<h3>Địa chỉ nhận hàng: ${order.address}</h3>`+
         `<h3>Địa chỉ kho hàng: Số 01, Võ Văn Ngân, Thủ Đức, Hồ Chí Minh</h3>`+
-        `<h3>Khoảng cách vận chuyển: 123</h3>`+
+        `<h3>Khoảng cách vận chuyển: ${parseFloat(distance/1000).toFixed(2)}km</h3>`+
         `<h3 style='font-weight:normal'><b>Phí vận chuyển:</b> ${formatCurrency(order.sumshipcost)};</h3>`+ voucher+
         `<h3 style='font-weight:normal'><b>Tổng tiền đơn hàng:</b> ${formatCurrency(order.sumproductcost + order.sumshipcost-order.costVoucher)};</h3>`+
         `<h3>DANH SÁCH SẢN PHẨM:</h3>`;

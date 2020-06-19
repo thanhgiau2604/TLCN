@@ -153,6 +153,7 @@ module.exports = function(app,apiRouter,jwt){
         },
         (accessToken, refreshToken, profile, done) => {
             User.findOne({ id: profile._json.id }, (err, user) => {
+                console.log(profile);
                 if (err) return done(err);
                 if (user) return done(null, user);
                 const newUser = {
@@ -168,8 +169,8 @@ module.exports = function(app,apiRouter,jwt){
                 username = newUser.lastName;
                 email = newUser.email;
                 token = jwt.sign({
-                    name: user.lastName,
-                    email: user.email
+                    name: newUser.lastName,
+                    email: newUser.email
                 },superSecret,{
                     expiresIn: time_exprired
                 });

@@ -5160,3 +5160,6 @@ input.form-control.code-input {
     font-weight: 700;
     color: red;
 }
+.displayDetailOrder h3{
+	line-height: 25px;
+}
