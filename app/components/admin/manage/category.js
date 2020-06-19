@@ -4,8 +4,9 @@ import Navbar from '../common/navbar'
 import Sidebar from '../common/sidebar'
 import Tool from '../common/tool'
 import $ from 'jquery'
-
-var viewCat,main, UpdateCategory;
+import io from 'socket.io-client'
+const socket = io('http://localhost:3000');
+var viewCat,main, UpdateCategory, modalSaleProduct;
 function formatCurrency(cost){
   return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
 }
@@ -16,6 +17,7 @@ class SingleCategory extends React.Component {
       this.confirmDelete = this.confirmDelete.bind(this);
       this.deleteCategory = this.deleteCategory.bind(this);
       this.updateCategory = this.updateCategory.bind(this);
+      this.saleCategory = this.saleCategory.bind(this);
     }
     viewCategory(){
         var that = this;
@@ -36,6 +38,13 @@ class SingleCategory extends React.Component {
         main.setState({listCategory:data});
       })
     }
+    saleCategory(){
+      var that = this;
+      modalSaleProduct.setState({idCategory:this.props.category._id,nameCategory:this.props.category.name});
+      $.post("/getListEvents",{id:that.props.category._id},function(data){
+        modalSaleProduct.setState({listEvents:data});
+      })
+    }
     render(){
         return(
         <div class="col-xs-10 col-sm-5 col-md-5 col-lg-5 boxthumbnail col-md-push-1">
@@ -47,6 +56,7 @@ class SingleCategory extends React.Component {
                         <a data-toggle="modal" data-target="#modalViewCategory"  class="btn btn-primary btnAction" onClick={this.viewCategory}><i class='icon-zoom-in'></i></a>
                         <a data-toggle="modal" data-target="#modalEditCategory" class="btn btn-primary btnAction" onClick={this.updateCategory}><i class="icon-edit"></i></a>
                         <a data-toggle="modal" data-target="#modalDeleteCategory" class="btn btn-primary btnAction" onClick={this.deleteCategory}><i class='icon-trash'></i></a>
+                        <a data-toggle="modal" data-target="#modalSaleCategory" class="btn btn-primary btnAction" onClick={this.saleCategory} title='Event sale product'><i class='icon-long-arrow-down'></i></a>
                     </div>
                     <div class="caption">
                         <h3>{this.props.category.name}</h3>
@@ -75,6 +85,131 @@ class SingleCategory extends React.Component {
             </div>
         </div>)
     }
+}
+class RowSaleEvent extends React.Component {
+  constructor(props){
+    super(props);
+  }
+  offSale(){
+    var that = this;
+    $.post("/offSale",{id: modalSaleProduct.state.idCategory,idOff:this.props.event._id},function(data){
+      modalSaleProduct.setState({listEvents:data.saleEvents});
+      var dataSend = {
+        idSale: that.props.event._id,
+        nameCategory: modalSaleProduct.state.nameCategory
+      }
+      socket.emit("require-stop-sale",dataSend)
+    })
+  }
+  render(){
+    var date = new Date(this.props.event.end);
+    var dueTime = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()+" "+date.getHours()+":"
+    +date.getMinutes()+":"+date.getSeconds();
+    return( <tr class='active'>
+    <td>{this.props.pos}</td>
+    <td>{this.props.event.name}</td>
+    <td>{this.props.event.discount}%</td>
+    <td>{dueTime}</td>
+    <td><button class="btn btn-danger" onClick={this.offSale.bind(this)}>OFF</button></td>
+  </tr>)
+  }
+}
+class ModalSaleCategory extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      idCategory:"",
+      nameCategory:"",
+      listEvents: [],
+      addEvent: false
+    }
+    modalSaleProduct = this;
+  }
+  saleProduct(){
+    var name = this.refs.eventName.value;
+    var discount = this.refs.discount.value;
+    var end = new Date(this.refs.endTime.value).getTime();
+    var that = this;
+    $.post("/addSaleEvent",{id:this.state.idCategory,name:name,discount:discount,end:end},function(data){
+      that.setState({listEvents:data.data.saleEvents});
+      var dt = {
+        name: that.state.nameCategory,
+        end: end,
+        idSale : data.idSale
+      }
+      socket.emit("run-sale",dt);
+    })
+  }
+  addEvent(){
+    this.setState({addEvent:!this.state.addEvent});
+  }
+  render(){
+    return(<div class="container">
+    <div class="modal fade" id="modalSaleCategory" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Event Sale Product</h4>
+          </div>
+          <div class="modal-body">
+            <button class="btn btn-success" onClick={this.addEvent.bind(this)}>
+            {this.state.addEvent ? <div><i class="icon-minus-sign"></i> Hide</div>: 
+            <div><i class="icon-plus-sign"></i>  Add event</div>}</button>
+            {this.state.addEvent ? <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                  <label for="eventName">Event name:</label> <br/>
+                  <input type="text" class="form-control" ref="eventName" name="eventName"/>
+                </div>
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                  <label for="discount">Percentage discount:</label> <br/>
+                  <input type="number" class="form-control" ref="discount" name="discount" max="100" min="5"/>
+                </div>
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                  <label for="discount">End of the promotional period:</label> <br/>
+                  <input type="datetime-local" id="endtime" name="endtime" ref="endTime"/>
+                </div>
+              </div>
+            </div> : <div></div>}
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-group">
+                  <label for="quanty">List events are running:</label>
+                  <table class='table'>
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Discount</th>
+                        <th class="text-center">End</th>
+                        <th class="text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.listEvents.map(function(event,index){
+                      if (event.status=="running")
+                        return(<RowSaleEvent key={index} pos={index+1} event={event}/>)
+                      })}
+                    </tbody>
+                  </table>
+                </div>  
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onClick={this.saleProduct.bind(this)}>Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>)
+  }
 }
 class ModalViewCategory extends React.Component{
   constructor(props){
@@ -726,7 +861,6 @@ class ModalUpdateCategory extends React.Component {
   </div>)
   }
 }
-
 class ManageCategory extends React.Component {
     constructor(props) {
       super(props);
@@ -829,6 +963,7 @@ class ManageCategory extends React.Component {
                 <ModalViewCategory/>
                 <ModalNewCategory/>
                 <ModalUpdateCategory/>
+                <ModalSaleCategory/>
             </div>
           </div>}
       </div>

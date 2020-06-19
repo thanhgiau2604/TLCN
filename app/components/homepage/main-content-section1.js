@@ -144,17 +144,9 @@ class Product2 extends React.Component{
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
 		}
 		var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
-		var oldCost = formatCurrency(this.props.costs[this.props.costs.length-2].cost);
-		// var cost ="", count=0,oldcost="";
-		// for (var i=strCost.length-1; i>=0; i--){
-		// 	count++;
-		// 	cost=strCost[i]+cost;
-		// 	oldcost=strOldCost[i]+oldcost;
-		// 	if (count%3==0) {
-		// 		cost=" "+cost;
-		// 		oldcost=" "+oldcost;
-		// 	}
-		// }
+		var oldCost;
+		if (this.props.costs.length-2>=0)
+		    oldCost = formatCurrency(this.props.costs[this.props.costs.length-2].cost);
 		return(
 			<div className="col-xs-6 col-sm-4 col-md-3 col-lg-3">
 			<div className="item">
@@ -253,6 +245,7 @@ class RecommendationProduct extends React.Component{
 		var that = this;
 		var email = localStorage.getItem("email");
 		$.post("/getProductRecommend",{email:email},function (data) {
+			console.log(data);
 			that.setState({listRecommend:data.data,processing:false});
 		});
 	}
@@ -333,47 +326,6 @@ class NewProduct extends React.Component{
 			</div>
 		</div>)}
 }
-class SaleProduct extends React.Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			listSale: [],
-			processing: false
-		}
-	}
-	componentDidMount(){
-		var that = this;
-		this.setState({processing:true});
-		$.get("/getSale",function(data){		
-		     that.setState({listSale:data, processing:false})		
-		})
-	}
-	render(){
-		return(<div className="col-xs-12">						
-		<div className="sale-poduct-area new-product-area">
-			<div className="left-title-area">
-				<h2 className="left-title">KHUYẾN MÃI</h2>
-			</div>
-			<div className="row">		
-			{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}			
-				<div className="home2-sale-carousel">					
-						{this.state.listSale.map(function (product, index) {
-							var status = "SALE";
-							if (product.quanty==0) status="Hết hàng";
-							var comment = [];
-							if (product.comments) 
-									   if (product.comments.length>0) comment = product.comments;
-							return <Product2 key={index} id={product._id}
-								name={product.name} image={product.image.image1} 
-								costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}
-								from="sale" comments={comment}/>
-						})}											
-				</div>										
-			</div>
-		</div>								
-	</div>)
-	}
-}
 class MainContentSection1 extends React.Component{
     constructor(props){
 		super(props);
@@ -387,10 +339,8 @@ class MainContentSection1 extends React.Component{
 					<PopularProduct/>
 					<div className="col-lg-9 col-md-9 col-sm-9 col-xs-12">
 						<div className="row">
-							{/* {localStorage.getItem("email") ? <RecommendationProduct/> : <div></div>} */}
 							<RecommendationProduct/>
 							<NewProduct/>
-							<SaleProduct/>
 						</div>	
 					</div>	
 				</div>

@@ -5,6 +5,7 @@ const Category = require("../models/ProductCategory");
 const ObjectId = require('mongodb').ObjectId;
 const multer = require("multer");
 const fs = require("fs");
+const ProductCategory = require("../models/ProductCategory");
 function getProducts(res) {
     Product.find(function (err, data) {
         if (err) {
@@ -174,5 +175,66 @@ module.exports = function(app){
                 res.send(data);
             }
         })
+    })
+    //add event api
+    app.post("/addSaleEvent",parser,(req,res)=>{
+        const objSale = {
+            name: req.body.name,
+            discount : req.body.discount,
+            end: req.body.end,
+            status: "running"
+        }
+        const id = req.body.id;
+        ProductCategory.findOneAndUpdate({_id:id},{$addToSet:{saleEvents:objSale},$set:{status:"sale"}},{new:true},(err,data)=> {
+            var loop = async (_) => {
+              for (var i = 0; i < data.listProduct.length; i++) {
+                  const product = data.listProduct[i];
+                  await ProductCategory.findOneAndUpdate({name: "Sale Product"},{$pull:{listProduct:{_id:product._id}}},(err,data)=>{});
+                  await ProductCategory.findOneAndUpdate({name: "Sale Product"},{$addToSet:{listProduct:{_id:product._id}}},(err,data)=>{});
+                  const singleProduct = await Product.findOne({_id:product._id},(err,data)=>{})
+                  const currentCost = singleProduct.costs[singleProduct.costs.length-1].cost;
+                  const discount = currentCost - Math.floor((currentCost*req.body.discount)/100);
+                  await Product.findOneAndUpdate({_id:product._id},{$addToSet:{costs:{cost:discount}},$set:{status:"sale"}},(err,data)=>{})
+              }
+            };
+            loop();
+            var index = data.saleEvents.findIndex(item => item.status=="running");
+            res.send({data:data,idSale:data.saleEvents[index]._id});
+        })
+    })
+    //get list sales in specific category 
+    app.post("/getListEvents",parser,(req,res)=>{
+        const id = req.body.id;
+        ProductCategory.findOne({_id:id},(err,data)=>{
+            if (!err&&data){
+                if (data.saleEvents && data.saleEvents.length>0)
+                    res.send(data.saleEvents);
+                else res.send([]);
+            } else {
+                res.send([]);
+            }
+        })
+    })
+    //end sale
+    app.post("/offSale",parser,(req,res)=>{
+        const id = req.body.id;
+        const idOff = req.body.idOff;
+        ProductCategory.findOneAndUpdate({_id:id},
+            {$set:{"saleEvents.$[filter].status":"off",status:"normal"}},
+            {arrayFilters: [{"filter._id":idOff}],new:true},(err,data)=>{
+                if (!err && data){
+                    var loop = async (_) => {
+                        for (var i = 0; i < data.listProduct.length; i++) {
+                            const product = data.listProduct[i];
+                            await ProductCategory.findOneAndUpdate({name: "Sale Product"},{$pull:{listProduct:{_id:product._id}}},(err,data)=>{});
+                            const singleProduct = await Product.findOne({_id:product._id},(err,data)=>{})
+                            const currentCost = singleProduct.costs[singleProduct.costs.length-1].cost;
+                            await Product.findOneAndUpdate({_id:product._id},{$pull:{costs:{cost:currentCost}},$set:{status:"normal"}},(err,data)=>{})
+                        }
+                      };
+                      loop();
+                    res.send(data);
+                }
+            })
     })
 }

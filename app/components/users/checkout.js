@@ -27,7 +27,7 @@ function formatCurrency(cost){
 }
 //format ngày tháng năm đặt hàng
 function getCurrentDayTime() {
-    offset = "+7";
+    var offset = "+7";
     var d = new Date();
     var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
     var day = new Date(utc + (3600000*offset));
@@ -814,13 +814,13 @@ class Confirm extends React.Component {
                         <h4>Chọn hình thức xác nhận đơn hàng</h4>
                         <div class="form-check" onChange={that.changeOption.bind(that)}>
                           <input
-                            class="form-check-input addr" type="radio" name="radio-confirm" id="sendEmail" value="1"/>
+                            class="form-check-input" type="radio" name="radio-confirm" id="sendEmail" value="1"/>
                           <label class="form-check-label" for="sendEmail">
                             Xác nhận qua Email
                           </label>
                           <br/>
                           <input
-                            class="form-check-input addr" type="radio" name="radio-confirm" id="sendSMS" value="0"/>
+                            class="form-check-input" type="radio" name="radio-confirm" id="sendSMS" value="0"/>
                           <label class="form-check-label" for="sendSMS">
                             Xác nhận qua SMS
                           </label>

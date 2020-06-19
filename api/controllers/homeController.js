@@ -43,7 +43,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arrSale.push(da);
                      if (index==count)
-                     res.json(arrSale.splice(0,4));
+                     res.json(arrSale.splice(0,6));
                  })
              });
          })
@@ -201,7 +201,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json(arr);
+                     res.json({data:arr,category:data[0]});
                  })
              });
          })
@@ -217,7 +217,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json(arr);
+                     res.json({data:arr,category:data[0]});
                  })
              });
          })
@@ -233,7 +233,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json(arr);
+                     res.json({data:arr,category:data[0]});
                  })
              });
          })
@@ -249,7 +249,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json(arr);
+                     res.json({data:arr,category:data[0]});
                  })
              });
          })
@@ -315,11 +315,10 @@ module.exports = function(app,apiRouter){
                 if (length ==2 ) arrSize[1] = 4; else arrSize[1] = 2;
                 arrSize[2] = 2;
                 topCategory.sort((a,b) => (a.count < b.count) ? 1 : ((b.count < a.count) ? -1 : 0));
-                console.log("length="+length);
                 var loop = async _ => {
-                  for (i = 0; i < length; ++i) {
+                  for (i = 0; i < length; i++) {
                        var arr  = await Product.aggregate([
-                        {$match: {$and: [{category:topCategory[i].id},{quanty:{$gt:0}}]}},
+                        {$match: {$and: [{category:{$elemMatch:{id:topCategory[i].id}}},{quanty:{$gt:0}}]}},
                         {$sample: {size:arrSize[i]}}],function(err,data){
                             if (err){
                                 console.log(err);
@@ -327,7 +326,10 @@ module.exports = function(app,apiRouter){
                             }
                         })
                         Array.prototype.push.apply(arrResult,arr);
-                        if (i==length-1) return res.json({data:arrResult});
+                        if (i==length-1)  {
+                            console.log(arrResult);
+                            return res.json({data:arrResult});
+                        }
                   }
                 };
                 loop();
@@ -414,7 +416,8 @@ module.exports = function(app,apiRouter){
         })
     });
     //San pham dc tao tu ngay
-    console.log(new Date("Mar 14 2020").getTime());
+    // console.log(new Date("Mar 14 2020").getTime());
     //console.log(new Date("Apr 10 2020").getTime());
-    console.log(new Date().getTime()-1584118800000);
+    // console.log(new Date().getTime()-1584118800000);
+    
 }

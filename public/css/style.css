@@ -5046,7 +5046,23 @@ td {
 }
 .form-check-label {
 	display: inline-block;
+	margin-left: 15px;
 }
+.form-check {
+	position: relative;
+	display: block;
+	padding-left: 1.25rem;
+  }
+  input[type="checkbox"],
+  input[type="radio"] {
+	box-sizing: border-box;
+	padding: 0;
+  }
+  .form-check-input {
+	position: absolute;
+	margin-top: 0.3rem;
+	margin-left: -1.25rem;
+  }
 .infor, .err {
 	color: red;
 }
@@ -5084,4 +5100,63 @@ input.form-control.code-input {
 	text-align: center;
     border: 1px solid #ddd;
     vertical-align: middle;
+}
+.saleProduct {
+	position: relative;
+	display: inline-block;
+	background: red;
+	color: white;
+	height: 2.5rem;
+	width: 2.5rem;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 2.5rem;
+	margin-left: 15px;
+	-webkit-transform: rotate(-20deg);
+			transform: rotate(-20deg);
+	-webkit-animation: beat 1s ease infinite alternate;
+			animation: beat 1s ease infinite alternate;
+  }
+  .saleProduct:before, .saleProduct:after {
+	content: "";
+	position: absolute;
+	background: inherit;
+	height: inherit;
+	width: inherit;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	-webkit-transform: rotate(30deg);
+			transform: rotate(30deg);
+  }
+  .saleProduct:after {
+	-webkit-transform: rotate(60deg);
+			transform: rotate(60deg);
+  }
+  
+  @-webkit-keyframes beat {
+	from {
+	  -webkit-transform: rotate(-20deg) scale(1);
+			  transform: rotate(-20deg) scale(1);
+	}
+	to {
+	  -webkit-transform: rotate(-20deg) scale(1.1);
+			  transform: rotate(-20deg) scale(1.1);
+	}
+  }
+  
+  @keyframes beat {
+	from {
+	  -webkit-transform: rotate(-20deg) scale(1);
+			  transform: rotate(-20deg) scale(1);
+	}
+	to {
+	  -webkit-transform: rotate(-20deg) scale(1.1);
+			  transform: rotate(-20deg) scale(1.1);
+	}
+  }
+  h2.text-center.timersale {
+    padding-bottom: 15px;
+    font-weight: 700;
+    color: red;
 }

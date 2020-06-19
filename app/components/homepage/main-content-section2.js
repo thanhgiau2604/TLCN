@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
-
+import io from 'socket.io-client'
+const socket = io('http://localhost:3000');
 var main;
 function formatCurrency(cost){
 	return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
@@ -111,6 +112,9 @@ class Product1 extends React.Component{
 			htmlFavorite=<li><a title="Thêm vào favorite list" style={{cursor:'pointer'}} onClick={this.handleFavorite}><span className="fa-stack"><i className="fa fa-heart-o"></i></span></a></li>
 		}
 		var cost = formatCurrency(this.props.costs[this.props.costs.length-1].cost)
+		var oldCost;
+		if (this.props.costs.length-2>=0)
+			oldCost = formatCurrency(this.props.costs[this.props.costs.length-2].cost)
 		return (<div className="col-xs-6 col-sm-4 col-md-2 col-lg-2">
 			<div className="item">
 				<div className="single-product-item">
@@ -142,6 +146,7 @@ class Product1 extends React.Component{
 						<a href="single-product.html">{this.props.name}</a>
 						<div className="price-box">
 							<span className="price">{cost}</span>
+							{this.props.sale||this.props.from=="sale" ?<span className="older-price">{oldCost}</span> :<span></span>}
 						</div>
 						<RequireAuthentication/>
 					</div>
@@ -149,41 +154,112 @@ class Product1 extends React.Component{
 			</div></div>)
 	}
 }
-
-class Sneaker extends React.Component {
+class SaleProduct extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			listSneaker:[],
+			listSale: [],
 			processing: false
 		}
 	}
 	componentDidMount(){
 		var that = this;
 		this.setState({processing:true});
-		$.get("/getSneaker",function(data){
-			that.setState({listSneaker:data, processing:false})
+		$.get("/getSale",function(data){		
+		     that.setState({listSale:data, processing:false})		
 		})
 	}
 	render(){
+		return(<div className="col-xs-12">						
+		<div className="sale-poduct-area new-product-area">
+			<div className="left-title-area">
+				<h2 className="left-title">KHUYẾN MÃI</h2>
+			</div>
+			<div className="row">		
+			{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}			
+				<div className="home2-sale-carousel">					
+						{this.state.listSale.map(function (product, index) {
+							var status = "SALE";
+							if (product.quanty==0) status="Hết hàng";
+							var comment = [];
+							if (product.comments) 
+									   if (product.comments.length>0) comment = product.comments;
+							return <Product1 key={index} id={product._id}
+								name={product.name} image={product.image.image1} 
+								costs={product.costs} status={status} size={product.sizes} quantity={product.quanty}
+								from="sale" comments={comment}/>
+						})}											
+				</div>										
+			</div>
+		</div>								
+	</div>)
+	}
+}
+class Sneaker extends React.Component {
+	constructor(props){
+		super(props);
+		this.state = {
+			listSneaker:[],
+			processing: false,
+			saleTime: {},
+			isSale: false,
+			category: {}
+		}
+	}
+	componentDidMount(){
+		var that = this;
+		this.setState({processing:true});
+		$.get("/getSneaker",function(data){
+			var status = false;
+			if (data.category.status=="sale") status=true;
+			that.setState({listSneaker:data.data, processing:false,isSale:status,category:data.category});
+		});
+		socket.on("sale-sneaker-product",function(receive){
+			$.get("/getSneaker",function(data){
+				that.setState({listSneaker:data.data,isSale:true});
+				socket.emit("run-time-sneaker",receive);
+			})
+		});
+		socket.on("running-time-sneaker",function(data){
+			that.setState({saleTime:data,isSale:true});
+		})
+		socket.on("stop-sale-sneaker",function(idSale){
+			$.post("/offSale",{id:that.state.category._id,idOff:idSale},function(data){
+				setTimeout(function(){
+					$.get("/getSneaker",function(data){
+						that.setState({listSneaker:data.data, processing:false,isSale:false,category:data.category});
+					})
+				},2000)
+			})
+		})
+	}
+	render(){
+		var that = this;
 		return(<div className="row">
 		<div className="col-xs-12">
 			<div className="featured-products-area">
 				<div className="left-title-area">
-					<h2 className="left-title">SNEAKER</h2>
+					<h2 className="left-title">SNEAKER
+					{this.state.isSale ? <span class="saleProduct">sale</span>: <span></span>}</h2>
+					{this.state.isSale==true ? <h2 class="text-center timersale">
+						Thời gian khuyến mãi còn: {this.state.saleTime.ngay+" ngày "
+						+this.state.saleTime.gio+" giờ "+this.state.saleTime.phut+" phút "+this.state.saleTime.giay+" giây"}
+					</h2>
+					:<h2></h2>}
 				</div>	
 				<div className="row">
 				{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}				
 					<div className="feartured-carousel">
 						{this.state.listSneaker.map(function(sneaker,index){
 							var status ="";
-							if (sneaker.quanty==0) status = "Hết hàng";
+							if (sneaker.quanty==0) status = "Hết hàng"; else
+							if (that.state.isSale) status="sale";
 							var comment = [];
 									if (sneaker.comments) 
 									   if (sneaker.comments.length>0) comment = sneaker.comments;
 							return <Product1 key={index} name={sneaker.name} costs={sneaker.costs}
 							image={sneaker.image.image1} id={sneaker._id} status={status} size={sneaker.sizes}
-							comments={comment}/>
+							comments={comment} sale={that.state.isSale}/>
 						})}												
 					</div>
 				</div>
@@ -192,41 +268,71 @@ class Sneaker extends React.Component {
 	</div>)
 	}
 }
-
 class Sports extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
 			listSport:[],
-			processing: false
+			processing: false,
+			saleTime: {},
+			isSale: false,
+			category: {}
 		}
 	}
 	componentDidMount(){
 		this.setState({processing:true});
 		var that = this;
 		$.get("/getSport",function(data){
-			that.setState({listSport:data, processing:false})
+			var status = false;
+			if (data.category.status=="sale") status=true;
+			that.setState({listSport:data.data, processing:false,isSale:status,category:data.category});
+		})
+		socket.on("sale-sport-product",function(receive){
+			$.get("/getSport",function(data){
+				that.setState({listSport:data.data,isSale:true});
+				socket.emit("run-time-sport",receive);
+			})
+		});
+		socket.on("running-time-sport",function(data){
+			that.setState({saleTime:data,isSale:true});
+		})
+		socket.on("stop-sale-sport",function(idSale){
+			$.post("/offSale",{id:that.state.category._id,idOff:idSale},function(data){
+				setTimeout(function(){
+					$.get("/getSport",function(data){
+						that.setState({listSport:data.data, processing:false,isSale:false,category:data.category});
+					})
+				},2000)
+			})
 		})
 	}
 	render(){
+		var that = this;
 		return(<div className="row">
 		<div className="col-xs-12">						
 			<div className="featured-products-area">
 				<div className="left-title-area">
-					<h2 className="left-title">Giày thể thao</h2>
+					<h2 className="left-title">Giày thể thao
+					{this.state.isSale ? <span class="saleProduct">sale</span>: <span></span>}</h2>
+					{this.state.isSale==true ? <h2 class="text-center timersale">
+						Thời gian khuyến mãi còn: {this.state.saleTime.ngay+" ngày "
+						+this.state.saleTime.gio+" giờ "+this.state.saleTime.phut+" phút "+this.state.saleTime.giay+" giây"}
+					</h2>
+					:<h2></h2>}
 				</div>	
 				<div className="row">	
 				{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}								
 					<div className="feartured-carousel">									
 				       {this.state.listSport.map(function(sport,index){
 						   var status ="";
-						   if (sport.quanty==0) status = "Hết hàng";
+						   if (sport.quanty==0) status = "Hết hàng"; else 
+						   if (that.state.isSale) status="sale"
 						   var comment = [];
 									if (sport.comments) 
 									   if (sport.comments.length>0) comment = sport.comments;
 						   return <Product1 key={index} name={sport.name} costs={sport.costs}
 						   image={sport.image.image1} id={sport._id} status={status} size={sport.sizes}
-						   comments={comment}/>
+						   comments={comment} sale={that.state.isSale}/>
 					   })}			
 					</div>					
 				</div>
@@ -235,41 +341,73 @@ class Sports extends React.Component {
 	</div>)
 	}
 }
-
 class Pumps extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
 			listPumps:[],
-			processing: false
+			processing: false,
+			saleTime: {},
+			isSale: false,
+			category: {}
 		}
 	}
 	componentDidMount(){
 		var that = this;
 		this.setState({processing:true});
 		$.get("/getPump",function(data){
-			that.setState({listPumps:data, processing:false})
+			var status = false;
+			if (data.category.status=="sale") status=true;
+			that.setState({listPumps:data.data, processing:false,isSale:status,category:data.category});
 		})
+		socket.on("sale-pump-product",function(receive){
+			$.get("/getPump",function(data){
+				that.setState({listPumps:data.data,isSale:true});
+				socket.emit("run-time-pump",receive);
+			})
+		});
+		socket.on("running-time-pump",function(data){
+			that.setState({saleTime:data,isSale:true});
+		})
+		socket.on("stop-sale-pump",function(idSale){
+			$.post("/offSale",{id:that.state.category._id,idOff:idSale},function(data){
+				setTimeout(function(){
+					$.get("/getPump",function(data){
+						that.setState({listPumps:data.data, processing:false,isSale:false,category:data.category});
+					})
+				},2000)
+			})
+		})
+	
 	}
 	render(){
+		var that = this;
 		return(<div className="row">
 		<div className="col-xs-12">	
 			<div className="featured-products-area">
 				<div className="left-title-area">
-					<h2 className="left-title">Giày cao gót</h2>
+					<h2 className="left-title">Giày cao gót
+					{this.state.isSale ? <span class="saleProduct">sale</span>: <span></span>}</h2>
+					{this.state.isSale==true ? <h2 class="text-center timersale">
+						Thời gian khuyến mãi còn: {this.state.saleTime.ngay+" ngày "
+						+this.state.saleTime.gio+" giờ "+this.state.saleTime.phut+" phút "+this.state.saleTime.giay+" giây"}
+					</h2>
+					:<h2></h2>}
+					
 				</div>	
 				<div className="row">			
 					{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}				
 					<div className="feartured-carousel">
 						{this.state.listPumps.map(function(pumps,index){
 							var status="";
-							if (pumps.quanty==0) status="Hết hàng";
+							if (pumps.quanty==0) status="Hết hàng"; else 
+							if (that.state.isSale) status="sale"
 							var comment = [];
 									if (pumps.comments) 
 									   if (pumps.comments.length>0) comment = pumps.comments;
 							return <Product1 key={index} name={pumps.name} costs={pumps.costs}
 							image={pumps.image.image1} id={pumps._id} status={status} size={pumps.sizes}
-							comments={comment}/>
+							comments={comment} sale={that.state.isSale}/>
 						})}																								
 					</div>		
 				</div>
@@ -283,35 +421,66 @@ class Kids extends React.Component{
 		super(props);
 		this.state = {
 			listKids : [],
-			processing: false
+			processing: false,
+			saleTime: {},
+			isSale: false,
+			category: {}
 		}
 	}
 	componentDidMount(){
 		var that = this;
 		this.setState({processing:true});
 		$.get("/getKid",function(data){
-			that.setState({listKids:data, processing:false})
+			var status = false;
+			if (data.category.status=="sale") status=true;
+			that.setState({listKids:data.data, processing:false,isSale:status,category:data.category});
+		});
+		socket.on("sale-kid-product",function(receive){
+			$.get("/getKid",function(data){
+				that.setState({listKids:data.data,isSale:true});
+				socket.emit("run-time-kid",receive);
+			})
+		});
+		socket.on("running-time-kid",function(data){
+			that.setState({saleTime:data,isSale:true});
+		})
+		socket.on("stop-sale-kid",function(idSale){
+			$.post("/offSale",{id:that.state.category._id,idOff:idSale},function(data){
+				setTimeout(function(){
+					$.get("/getKid",function(data){
+						that.setState({listKids:data.data, processing:false,isSale:false,category:data.category});
+					})
+				},2000)
+			})
 		})
 	}
 	render(){
+		var that = this;
 		return(<div className="row">
 		<div className="col-xs-12">				
 			<div className="featured-products-area">
 				<div className="left-title-area">
-					<h2 className="left-title">Giày trẻ em</h2>
+					<h2 className="left-title">Giày trẻ em
+					{this.state.isSale ? <span class="saleProduct">sale</span>: <span></span>}</h2>
+					{this.state.isSale==true ? <h2 class="text-center timersale">
+						Thời gian khuyến mãi còn: {this.state.saleTime.ngay+" ngày "
+						+this.state.saleTime.gio+" giờ "+this.state.saleTime.phut+" phút "+this.state.saleTime.giay+" giây"}
+					</h2>
+					:<h2></h2>}
 				</div>	
 				<div className="row">
 				{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}
 					<div className="feartured-carousel">	
 					{this.state.listKids.map(function(kid,index){
 						var status="";
-						if (kid.quanty==0) status="Hết hàng";
+						if (kid.quanty==0) status="Hết hàng"; else
+						if (that.state.isSale) status="sale"
 						var comment = [];
 									if (kid.comments) 
 									   if (kid.comments.length>0) comment = kid.comments;
 						return <Product1 key={index} name={kid.name} costs={kid.costs}
 						image={kid.image.image1} id={kid._id} status={status} size={kid.sizes}
-						comments={comment}/>
+						comments={comment} sale={that.state.isSale}/>
 					})}												
 					</div>							
 				</div>
@@ -331,6 +500,7 @@ class MainContentSection2 extends React.Component{
 			<div className="container">
 				<div className="row">
 				</div>
+				<SaleProduct/>
 				<Sneaker/>
 				<div className="row">
 					<div className="image-add-area">
