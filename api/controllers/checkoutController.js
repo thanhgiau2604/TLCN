@@ -222,30 +222,26 @@ module.exports = function(app,io){
                 while (data.findIndex(item => item.code===numberRandom)!=-1){
                     numberRandom = randomInt(100000,9999999);
                 }
-                let message = `Tong tien san pham: ${formatCurrency(order.sumproductcost)}, Tong tien van chuyen: ${formatCurrency(ship)}, 
-                Voucher su dung: ${formatCurrency(order.costVoucher)}, Tong: ${sum}đ. MA XAC NHAN DON HANG CUA BAN: ${numberRandom}`
-                console.log(message);
+                var messageSend = "Ma xac nhan: "+numberRandom;
                 Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, 
                     time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString())}},function(err,data){
                         if (err){
                             console.log(err);
                         } else {
-                            res.send({err:0, code:numberRandom});
+                             nexmo.message.sendSms("84969315430",number,messageSend,{type: "unicode" },
+                              (err, responseData) => {
+                                if (err) {
+                                  res.json({ err: 1 });
+                                } else {
+                                  console.log(responseData);
+                                  res.json({err: 0,code:numberRandom});
+                                }
+                              }
+                            );
                         }
                 })
             }
-        })
-        // nexmo.message.sendSms('84359627733',number,message,{type:"unicode"},
-        // (err,responseData) =>{
-        //     if (err){
-        //         console.log(err);
-        //         res.send({err:1})
-        //     } else {
-        //         console.log(responseData);
-        //         res.send({err:0})
-        //     }
-        // })
-        
+        })  
     });
     app.get("/confirm/:email/:code",(req,res)=>{
         Order.findOne({code: req.params.code }, function (err, order) {
@@ -386,6 +382,7 @@ module.exports = function(app,io){
                                     let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
                                     sendmail(txtTo, txtSubject, txtContent);
                                 }
+                                console.log(req.params.email);
                                 User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]}, { $set: { cart: [] } }, function (err, data) {
                                     if (err) {
                                         throw err;
@@ -402,6 +399,15 @@ module.exports = function(app,io){
             }
         });    
     });
+    app.post("/updateCart",parser,(req,res)=>{
+        const email1 = req.body.email1;
+        const email2 = req.body.email2;
+        User.findOneAndUpdate({$or:[{email:email1},{email:email2},{numberPhone:email1}]},{$set:{cart:[]}},function(err,data){
+            if (!err&&data){
+                res.send("OK");
+            }
+        })
+    })
     app.post("/addNewDay",(req,res)=>{
         var day = getCurrentDay();
         Statistic.findOne({day:day},function(err,data){

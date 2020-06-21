@@ -12,6 +12,7 @@ var store = require("../../store");
 import {connect} from 'react-redux'
 import io from 'socket.io-client'
 const socket = io('http://localhost:3000');
+var main;
 class Success extends React.Component {
     constructor(props){
         super(props);
@@ -26,6 +27,7 @@ class Success extends React.Component {
             dataErr:[],
             voucher: 0
         }
+        main = this;
     }
     componentDidMount(){
         var url = window.location.pathname;
@@ -47,14 +49,17 @@ class Success extends React.Component {
                     that.setState({type:"error",dataErr:data});
                   }
                   else {
-                    $.get("/checkout/"+email+"/"+code,function(data){
-                      $.post("/getListProductOrder", { code: code }, function (data) {
-                        console.log()
-                        var ship = data.sumshipcost;
-                        that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code,
-                        voucher: data.costVoucher})
-                      });
-                    })         
+                    $.post("/updateCart",{email1:email,email2:localStorage.getItem("email")},function(data){
+                      $.get("/checkout/"+email+"/"+code,function(data){
+                        $.post("/getListProductOrder", { code: code }, function (data) {
+                          var {dispatch} = main.props;
+				                  dispatch({type:"UPDATE_PRODUCT",newcart:[]});
+                          var ship = data.sumshipcost;
+                          that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code,
+                          voucher: data.costVoucher})
+                        });
+                      })         
+                    })
                   }
                 })
             }
