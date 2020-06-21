@@ -310,7 +310,6 @@ module.exports = function(app,io){
                 var listOrderToday = data.orderproduct; //Tất cả order trong ngày
                 Order.findOne({code: req.params.code }, function (err, order) {
                     if (order && order.status == "unconfirmed") { //nếu trạng thái unconfirmed mới thực hiện cập nhật
-                        console.log("vô cập nhật")
                         dataProduct = order.listproduct;
                         var ok;
                         var result = listOrderToday;

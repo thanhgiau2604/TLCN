@@ -16,6 +16,9 @@ const options = [
 ];
 const defaultOption = options[2];
 var viewClass, orderClass;
+function formatCurrency(cost){
+  return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+}
 class TopViewProduct extends React.Component {
   constructor(props){
     super(props);
@@ -156,6 +159,7 @@ const headersOrder = [
   { label: "Tên sản phẩm", key: "nameproduct" },
   { label: "Số lượt đặt hàng", key: "order" }
 ];
+var optionDisplay = "all", date="", optionSort="descending";
 class Dashboard extends React.Component{
     constructor(props){
         super(props);
@@ -172,7 +176,8 @@ class Dashboard extends React.Component{
           dataView: [],
           dataOrder: [],
           lDataCustomers:[],
-          btnCurrent: 0
+          btnCurrent: 0,
+          dataSellingProduct: []
         }
         main=this;
         this._onSelect = this._onSelect.bind(this);
@@ -190,6 +195,9 @@ class Dashboard extends React.Component{
       this.setState({btnCurrent:0});
       $.get("/getCloseCustomers",function(data){
         that.setState({lDataCustomers:data});
+      })
+      $.post("/getAllSellingProduct",{optionSort:"descending"},function(data){
+        that.setState({dataSellingProduct: data});
       })
       socket.on("update-view-product", function (data) {
         $.post("/getMetricProduct", { option: that.state.timeOption1 }, function (data) {
@@ -281,179 +289,285 @@ class Dashboard extends React.Component{
         that.setState({lDataCustomers:data});
       })
     }
+    changeOptionDisplay(e){
+      optionDisplay = e.target.value;
+      var that = this;
+      if (optionDisplay == "all"){
+        $.post("/getAllSellingProduct",{optionSort:optionSort},function(data){
+          that.setState({dataSellingProduct: data});
+        })
+      } else {
+        if (date!=""){
+          $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort},function(data){
+            that.setState({dataSellingProduct:data});
+          })
+        }
+      }
+    }
+    changeDate(e){
+      var that = this;
+      date = e.target.value;
+      if (optionDisplay == "specific"){
+        $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort},function(data){
+          that.setState({dataSellingProduct:data});
+        })
+      }
+    }
+    sortProduct(e){
+      var that = this;
+      optionSort = e.target.value;
+      if (optionDisplay=="all"){
+        $.post("/getAllSellingProduct",{optionSort:optionSort},function(data){
+          that.setState({dataSellingProduct: data});
+        })
+      } else {
+        if (date!=""){
+          $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort},function(data){
+            that.setState({dataSellingProduct:data});
+          })
+        }
+      }
+    }
     render(){
-        return(
-        <div id='content'>
-        <div class='panel panel-default'>
-          <div class='panel-heading'>
-            <i class='icon-beer icon-large'></i>
-            Dashboard!
-            <div class='panel-tools'>
-              <div class='btn-group'>
-                <a class='btn' href='#'>
-                  {/* <i class='icon-refresh'></i>
-                  Refresh statics */}
-                </a>
-                <a class='btn' data-toggle='toolbar-tooltip' href='#' title='Toggle'>
-                  <i class='icon-chevron-down'></i>
-                </a>
+        return (
+          <div id="content">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <i class="icon-beer icon-large"></i>
+                Dashboard!
+                <div class="panel-tools">
+                  <div class="btn-group">
+                    <a class="btn" href="#">
+                    </a>
+                    <a
+                      class="btn"
+                      data-toggle="toolbar-tooltip"
+                      href="#"
+                      title="Toggle"
+                    >
+                      <i class="icon-chevron-down"></i>
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          {this.state.permission==false ? 
+              {this.state.permission == false ? (
                 <div className="text-center notification">
                   <br />
-                  <h3>Not permitted. Please access the following link to login!</h3>
-                  <button className="btn btn-primary" onClick={() => window.location.replace("/login")} style={{ marginTop: '10px', width: 'auto' }}>Đi đến trang đăng nhập</button>
-                </div> :
-          <div class='panel-body'>      
-            <div class='progress'>                   
-            </div>
-            <div>
-            <Dropdown options={options} onChange={this._onSelect} value={this.state.timeOption} 
-                    placeholder="Select an option" />  
-            </div>
-            {this.state.processing==true ? <div class="loader text-center"></div> : ""}
-            <div class="row">
-              <div class="fourMetrics">         
-                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-                  <div class="card card-stats">
-                    <div class="card-body">
-                      <div class="row rowb">
-                        <div class="col">
-                          <h5 class="card-title text-uppercase text-muted mb-0">Users</h5>
-                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[0]}</span>
-                        </div>
-                        <div class="col-auto">
-                          <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                            <i class="ni ni-user-run"></i>
-                          </div>
-                        </div>
-                      </div>
-                      {/* <p class="mt-3 mb-0 text-sm">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                        <span class="text-nowrap">Since last month</span>
-                      </p> */}
-                    </div>
-                  </div>
+                  <h3>
+                    Not permitted. Please access the following link to login!
+                  </h3>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => window.location.replace("/login")}
+                    style={{ marginTop: "10px", width: "auto" }}
+                  >
+                    Đi đến trang đăng nhập
+                  </button>
                 </div>
-                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-                  <div class="card card-stats">
-                    <div class="card-body">
-                      <div class="row rowb">
-                        <div class="col">
-                          <h5 class="card-title text-uppercase text-muted mb-0">Sessions</h5>
-                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[1]}</span>
-                        </div>
-                        <div class="col-auto">
-                          <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                            <i class="ni ni-time-alarm"></i>
-                          </div>
-                        </div>
-                      </div>
-                      {/* <p class="mt-3 mb-0 text-sm">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                        <span class="text-nowrap">Since last month</span>
-                      </p> */}
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-                  <div class="card card-stats">
-                    <div class="card-body">
-                      <div class="row rowb">
-                        <div class="col">
-                          <h5 class="card-title text-uppercase text-muted mb-0">Bounce Rate</h5>
-                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[2]}%</span>
-                        </div>
-                        <div class="col-auto">
-                          <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                            <i class="ni ni-chart-pie-35"></i>
-                          </div>
-                        </div>
-                      </div>
-                      {/* <p class="mt-3 mb-0 text-sm">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                        <span class="text-nowrap">Since last month</span>
-                      </p> */}
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-                  <div class="card card-stats">
-                    <div class="card-body">
-                      <div class="row rowb">
-                        <div class="col">
-                          <h5 class="card-title text-uppercase text-muted mb-0">Session Duration</h5>
-                          <span class="h2 font-weight-bold mb-0">{this.state.arrMetrics[3]}s</span>
-                        </div>
-                        <div class="col-auto">
-                          <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                            <i class="ni ni-watch-time"></i>
-                          </div>
-                        </div>
-                      </div>
-                      {/* <p class="mt-3 mb-0 text-sm">
-                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                        <span class="text-nowrap">Since last month</span>
-                      </p> */}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-              <div class=" row metrics">
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                  <Line
-                    data={{
-                      labels: this.state.arrUsers.map(element => element[0]),
-                      datasets: [
-                        {
-                          data: this.state.arrUsers.map(element => element[1]),
-                          label: this.state.timeOption,
-                          borderColor: "#3e95cd",
-                          fill: false
-                        },
-                        {
-                          data: this.state.arrUsersBefore.map(element => element[1]),
-                          label: "Previous period",
-                          borderColor: "#8e5ea2",
-                          fill: false,
-                          borderDash: [5, 15]
-                        }
-                      ]
-                    }}
-                    options={{
-                      title: {
-                        display: true,
-                        text: "The numbers of users"
-                      },
-                      legend: {
-                        display: true,
-                        position: "bottom"
-                      }
-                    }}
-                  />
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 activeUser">
+              ) : (
+                <div class="panel-body">
+                  <div class="progress"></div>
                   <div>
-                    <h3>Active Users right now</h3>
+                    <Dropdown
+                      options={options}
+                      onChange={this._onSelect}
+                      value={this.state.timeOption}
+                      placeholder="Select an option"
+                    />
                   </div>
-                  <div>
-                    <h1>{this.state.activeUsers}</h1>
+                  {this.state.processing == true ? (
+                    <div class="loader text-center"></div>) : ("")}
+                  <div class="row">
+                    <div class="fourMetrics">
+                      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                        <div class="card card-stats">
+                          <div class="card-body">
+                            <div class="row rowb">
+                              <div class="col">
+                                <h5 class="card-title text-uppercase text-muted mb-0">
+                                  Users
+                                </h5>
+                                <span class="h2 font-weight-bold mb-0">
+                                  {this.state.arrMetrics[0]}
+                                </span>
+                              </div>
+                              <div class="col-auto">
+                                <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                                  <i class="ni ni-user-run"></i>
+                                </div>
+                              </div>
+                            </div>
+                            {/* <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p> */}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                        <div class="card card-stats">
+                          <div class="card-body">
+                            <div class="row rowb">
+                              <div class="col">
+                                <h5 class="card-title text-uppercase text-muted mb-0">
+                                  Sessions
+                                </h5>
+                                <span class="h2 font-weight-bold mb-0">
+                                  {this.state.arrMetrics[1]}
+                                </span>
+                              </div>
+                              <div class="col-auto">
+                                <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                                  <i class="ni ni-time-alarm"></i>
+                                </div>
+                              </div>
+                            </div>
+                            {/* <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p> */}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                        <div class="card card-stats">
+                          <div class="card-body">
+                            <div class="row rowb">
+                              <div class="col">
+                                <h5 class="card-title text-uppercase text-muted mb-0">
+                                  Bounce Rate
+                                </h5>
+                                <span class="h2 font-weight-bold mb-0">
+                                  {this.state.arrMetrics[2]}%
+                                </span>
+                              </div>
+                              <div class="col-auto">
+                                <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                  <i class="ni ni-chart-pie-35"></i>
+                                </div>
+                              </div>
+                            </div>
+                            {/* <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p> */}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                        <div class="card card-stats">
+                          <div class="card-body">
+                            <div class="row rowb">
+                              <div class="col">
+                                <h5 class="card-title text-uppercase text-muted mb-0">
+                                  Session Duration
+                                </h5>
+                                <span class="h2 font-weight-bold mb-0">
+                                  {this.state.arrMetrics[3]}s
+                                </span>
+                              </div>
+                              <div class="col-auto">
+                                <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                                  <i class="ni ni-watch-time"></i>
+                                </div>
+                              </div>
+                            </div>
+                            {/* <p class="mt-3 mb-0 text-sm">
+                        <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                        <span class="text-nowrap">Since last month</span>
+                      </p> */}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>  
-                  <div class='page-header'>
+                  <div class=" row metrics">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                      <Line
+                        data={{
+                          labels: this.state.arrUsers.map(
+                            (element) => element[0]
+                          ),
+                          datasets: [
+                            {
+                              data: this.state.arrUsers.map(
+                                (element) => element[1]
+                              ),
+                              label: this.state.timeOption,
+                              borderColor: "#3e95cd",
+                              fill: false,
+                            },
+                            {
+                              data: this.state.arrUsersBefore.map(
+                                (element) => element[1]
+                              ),
+                              label: "Previous period",
+                              borderColor: "#8e5ea2",
+                              fill: false,
+                              borderDash: [5, 15],
+                            },
+                          ],
+                        }}
+                        options={{
+                          title: {
+                            display: true,
+                            text: "The numbers of users",
+                          },
+                          legend: {
+                            display: true,
+                            position: "bottom",
+                          },
+                        }}
+                      />
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 activeUser">
+                      <div>
+                        <h3>Active Users right now</h3>
+                      </div>
+                      <div>
+                        <h1>{this.state.activeUsers}</h1>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="page-header">
                     <h4>Customers</h4>
                     <div>
                       <div class="row text-center">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnCustomer">
-                          <button class={this.state.btnCurrent==0 ? "btn btn-choose currentBtn" : "btn btn-choose"} onClick={this.closeCustomers}>Close Customers</button>
-                          <button class={this.state.btnCurrent==1 ? "btn btn-choose currentBtn" : "btn btn-choose"} style={{marginLeft:"5px"}} onClick={this.visitFrequently}>Visit Website Frequently</button>
-                          <button class={this.state.btnCurrent==2 ? "btn btn-choose currentBtn" : "btn btn-choose"} style={{marginLeft:"5px"}} onClick={this.notOrder}>Have not ordered</button>
+                          <button
+                            class={
+                              this.state.btnCurrent == 0
+                                ? "btn btn-choose currentBtn"
+                                : "btn btn-choose"
+                            }
+                            onClick={this.closeCustomers}
+                          >
+                            Close Customers
+                          </button>
+                          <button
+                            class={
+                              this.state.btnCurrent == 1
+                                ? "btn btn-choose currentBtn"
+                                : "btn btn-choose"
+                            }
+                            style={{ marginLeft: "5px" }}
+                            onClick={this.visitFrequently}
+                          >
+                            Visit Website Frequently
+                          </button>
+                          <button
+                            class={
+                              this.state.btnCurrent == 2
+                                ? "btn btn-choose currentBtn"
+                                : "btn btn-choose"
+                            }
+                            style={{ marginLeft: "5px" }}
+                            onClick={this.notOrder}
+                          >
+                            Have not ordered
+                          </button>
                         </div>
-                        <table class='table'>
+                        <table class="table">
                           <thead>
                             <tr>
                               <th class="text-center">#</th>
@@ -461,51 +575,133 @@ class Dashboard extends React.Component{
                               <th class="text-center">Last Name</th>
                               <th class="text-center">Email</th>
                               <th class="text-center">Phone</th>
-                              <th class="text-center">{this.state.btnCurrent==0 ? "Number Of Orders" : "Number of Visits"}</th>
+                              <th class="text-center">
+                                {this.state.btnCurrent == 0
+                                  ? "Number Of Orders"
+                                  : "Number of Visits"}
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
-                            {this.state.lDataCustomers.map(function(customer,index){
-                              return(<tr key={index}>
-                                <td class="text-center">{index+1}</td>
-                                <td class="text-center">{customer.firstName}</td>
-                                <td class="text-center">{customer.lastName}</td>
-                                <td class="text-center">{customer.email}</td>
-                                <td class="text-center">{customer.numberPhone}</td>
-                                <td class="text-center">{main.state.btnCurrent==0 ? customer.qorder : customer.qvisit}</td>
-                              </tr>)
+                            {this.state.lDataCustomers.map(function (
+                              customer,
+                              index
+                            ) {
+                              return (
+                                <tr key={index}>
+                                  <td class="text-center">{index + 1}</td>
+                                  <td class="text-center">
+                                    {customer.firstName}
+                                  </td>
+                                  <td class="text-center">
+                                    {customer.lastName}
+                                  </td>
+                                  <td class="text-center">{customer.email}</td>
+                                  <td class="text-center">
+                                    {customer.numberPhone}
+                                  </td>
+                                  <td class="text-center">
+                                    {main.state.btnCurrent == 0
+                                      ? customer.qorder
+                                      : customer.qvisit}
+                                  </td>
+                                </tr>
+                              );
                             })}
                           </tbody>
                         </table>
                       </div>
-
                     </div>
-              </div>        
-            <div class='page-header'>
-              <h4>Trending products</h4>
+                  </div>
+                  <div class="page-header">
+                    <h4>Trending products</h4>
+                  </div>
+                  <div>
+                    <Dropdown
+                      options={options}
+                      onChange={this._onSelect1}
+                      value={this.state.timeOption1}
+                      placeholder="Select an option"
+                    />
+                    ;
+                  </div>
+                  {this.state.processing1 == true ? (
+                    <div class="loader text-center"></div>) : ("")}
+                  <div class="row text-center">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                      <h3 style={{ color: "#0c967a" }}>
+                        <b>TOP VIEWED PRODUCTS</b>
+                      </h3>
+                      <TopViewProduct />
+                      <CSVLink
+                        data={this.state.dataView}
+                        headers={headersView}
+                        filename={"TopView-" + Date.now().toString() + ".csv"}
+                      >
+                        <i class="icon-download-alt"></i> Download CSV File
+                      </CSVLink>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                      <h3 style={{ color: "#0c967a" }}>
+                        <b>TOP ORDERED PRODUCTS</b>
+                      </h3>
+                      <TopOrderProduct />
+                      <CSVLink
+                        data={this.state.dataOrder}
+                        headers={headersOrder}
+                        filename={"TopOrder-" + Date.now().toString() + ".csv"}
+                      >
+                        <i class="icon-download-alt"></i> Download CSV File
+                      </CSVLink>
+                    </div>
+                  </div>
+                  <div class="page-header">
+                    <h4>Information About Selling Product</h4>
+                  </div>
+                  <div>
+                    <div class="radio classOption" onChange={this.changeOptionDisplay.bind(this)}>
+                      <h5><b>Option Date:</b></h5>
+                      <input type="radio" name="date" value="all" defaultChecked="true"/><label>All</label><br/>
+                      <input type="radio" name="date" value="specific"  id="changeDate"/><label>Specific Date: </label>
+                      <input type="date" name="specificDate" ref="specificDate" onChange={this.changeDate.bind(this)}/>
+                    </div>
+                    <div class="radio classOption" onChange={this.sortProduct.bind(this)}>
+                      <h5><b>Option Sort:</b></h5>
+                      <input type="radio" name="sort" value="descending" defaultChecked="true"/><label>Descending</label><br/>
+                      <input type="radio" name="sort" value="ascending" /><label>Ascending</label>
+                    </div>
+                  </div>
+                  <div>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="text-center">#</th>
+                          <th class="text-center">Name</th>
+                          <th class="text-center">Image</th>
+                          <th class="text-center">Cost</th>
+                          <th class="text-center">Number Of Orders</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {this.state.dataSellingProduct.map(function (product,index) {
+                          return (
+                            <tr key={index} class="active">
+                              <td class="text-center">{index + 1}</td>
+                              <td class="text-center">{product.name}</td>
+                              <td class="text-center"><img src={product.image.image1} width="120px"/></td>
+                              <td class="text-center">{formatCurrency(product.costs[product.costs.length-1].cost)}</td>
+                              <td class="text-center">{product.orders}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
-            <div>
-            <Dropdown options={options} onChange={this._onSelect1} value={this.state.timeOption1} 
-                    placeholder="Select an option" />;  
-            </div>
-            {this.state.processing1==true ? <div class="loader text-center"></div> : ""}
-            <div class='row text-center'>  
-              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-              <h3 style={{color:'#0c967a'}}><b>TOP VIEWED PRODUCTS</b></h3>
-                <TopViewProduct/>
-                <CSVLink data={this.state.dataView} headers={headersView} filename={"TopView-"+Date.now().toString()+".csv"}>
-                <i class="icon-download-alt"></i> Download CSV File</CSVLink>
-              </div>
-              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <h3 style={{color:'#0c967a'}}><b>TOP ORDERED PRODUCTS</b></h3>
-                  <TopOrderProduct/>
-                  <CSVLink data={this.state.dataOrder} headers={headersOrder} filename={"TopOrder-"+Date.now().toString()+".csv"}>
-                  <i class="icon-download-alt"></i> Download CSV File</CSVLink>
-              </div>      
-            </div>
-          </div>}
-        </div>
-      </div>)
+          </div>
+        );
     }
 }
 ReactDOM.render(

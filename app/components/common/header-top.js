@@ -137,6 +137,7 @@ class HeaderTop extends React.Component {
 					localStorage.removeItem('username');
 					localStorage.removeItem('email');
 					localStorage.removeItem("token");
+					localStorage.removeItem("phone");
 					that.setState({ Option: <OptionGuest />})
 				} else {
 					that.setState({ Option: <OptionUser />,generateChat:true })

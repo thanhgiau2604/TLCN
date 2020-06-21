@@ -326,6 +326,47 @@ class NewProduct extends React.Component{
 			</div>
 		</div>)}
 }
+class SaleProduct extends React.Component {
+	constructor(props){
+		super(props);
+		this.state = {
+			listSale: [],
+			processing: false
+		}
+	}
+	componentDidMount(){
+		var that = this;
+		this.setState({processing:true});
+		$.get("/getSale",function(data){		
+		     that.setState({listSale:data, processing:false})		
+		})
+	}
+	render(){
+		return(<div className="col-xs-12">						
+		<div className="sale-poduct-area new-product-area">
+			<div className="left-title-area">
+				<h2 className="left-title">KHUYẾN MÃI</h2>
+			</div>
+			<div className="row">		
+			{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}			
+				<div className="home2-sale-carousel">					
+						{this.state.listSale.map(function (product, index) {
+							var status = "SALE";
+							if (product.quanty==0) status="Hết hàng";
+							var comment = [];
+							if (product.comments) 
+									   if (product.comments.length>0) comment = product.comments;
+							return <Product2 key={index} id={product._id}
+								name={product.name} image={product.image.image1} 
+								costs={product.costs} desc={status} size={product.sizes} quantity={product.quanty}
+								from="sale" comments={comment}/>
+						})}											
+				</div>										
+			</div>
+		</div>								
+	</div>)
+	}
+}
 class MainContentSection1 extends React.Component{
     constructor(props){
 		super(props);
@@ -341,6 +382,7 @@ class MainContentSection1 extends React.Component{
 						<div className="row">
 							<RecommendationProduct/>
 							<NewProduct/>
+							{!localStorage.getItem("email") ? <SaleProduct/> : <div></div>}
 						</div>	
 					</div>	
 				</div>

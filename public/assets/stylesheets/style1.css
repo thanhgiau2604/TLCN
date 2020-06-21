@@ -316,3 +316,13 @@ h6,
 .table>tbody>tr.relative>td {
   background-color: #dedefc;
 }
+.classOption {
+  margin-left:37%;
+}
+.table>tbody>tr.active>td {
+  text-align: center;
+  vertical-align: middle;
+}
+#changeDate {
+  margin-top: 14px;
+}

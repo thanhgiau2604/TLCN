@@ -500,7 +500,7 @@ class MainContentSection2 extends React.Component{
 			<div className="container">
 				<div className="row">
 				</div>
-				<SaleProduct/>
+				{localStorage.getItem("email") ? <SaleProduct/> : <div></div>}
 				<Sneaker/>
 				<div className="row">
 					<div className="image-add-area">

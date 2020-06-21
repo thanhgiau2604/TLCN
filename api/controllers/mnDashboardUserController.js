@@ -3,7 +3,7 @@ const parser = bodyParser.urlencoded({extended:false});
 const Admin = require("../models/admin");
 const User = require("../models/users");
 const Message = require("../models/message");
-var Statistic = require("../models/statistic");
+const Statistic = require("../models/statistic");
 const Product = require("../models/Product");
 const { google } = require('googleapis')
 const scopes = 'https://www.googleapis.com/auth/analytics.readonly'
@@ -548,6 +548,54 @@ module.exports = function(app,adminRouter,jwt){
                 console.log(err);
             } else {
                 res.send(data.sort((a,b)=>b.qvisit-a.qvisit));
+            }
+        })
+    })
+    //Thông kê sản phẩm bán chạy + không bán chạy dựa vào option truyền vào
+    //Option = "Ascending" or "Descending"
+    app.post("/getAllSellingProduct",parser,(req,res)=>{
+        const optionSort = req.body.optionSort;
+        console.log(optionSort);
+        Product.find({}).sort({orders:optionSort}).exec(function(err,arrProduct){
+            if (!err && arrProduct){
+                res.send(arrProduct);
+            }
+        })
+    })
+    //Thống kê sản phẩm bán được trong một ngày cụ thể, truyền vào DATE
+    app.post("/getSpecificDateSaleProduct",parser,(req,res)=>{
+        const date = req.body.date.toString().replace(/-/g,"");
+        const optionSort = req.body.optionSort;
+        console.log(date);
+        console.log(optionSort);
+        /// xử lý date
+        Statistic.findOne({day:date},(err,statistic)=>{
+            if (!err && statistic){
+                var arrResult = [];
+                var loop = async _ => {
+                    for (var i=0; i<statistic.orderproduct.length; i++){
+                        var product = statistic.orderproduct[i];
+                        var pro = await Product.findOne({_id:product.id},(err,dataProduct)=>{})
+                        if (pro){
+                            var result = {
+                                name: pro.name,
+                                image: pro.image,
+                                costs: pro.costs,
+                                orders: product.count
+                            }
+                            arrResult.push(result);
+                        }
+                    }
+                    if (optionSort=="descending"){
+                        res.send(arrResult.sort((a,b) => (a.orders < b.orders) ? 1 : ((b.orders < a.orders) ? -1 : 0))); 
+                    } else 
+                    if (optionSort=="ascending"){
+                        res.send(arrResult.sort((a,b) => (a.orders > b.orders) ? 1 : ((b.orders > a.orders) ? -1 : 0)));
+                    }
+                }
+                loop();
+            } else {
+                res.send([]);
             }
         })
     })
