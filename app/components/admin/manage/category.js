@@ -92,6 +92,7 @@ class RowSaleEvent extends React.Component {
   }
   offSale(){
     var that = this;
+    
     $.post("/offSale",{id: modalSaleProduct.state.idCategory,idOff:this.props.event._id},function(data){
       modalSaleProduct.setState({listEvents:data.saleEvents});
       var dataSend = {

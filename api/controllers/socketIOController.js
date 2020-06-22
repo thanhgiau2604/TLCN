@@ -154,19 +154,19 @@ module.exports = function(app,io){
             switch (nameCategory) {
               case "Kid Product":
                   clearInterval(x);
-                  io.sockets.emit("stop-sale-kid",idSale);
+                  io.sockets.emit("stop-sale-kid-from-admin",idSale);
                 break;
               case "Pump Product":
                 clearInterval(y);
-                io.sockets.emit("stop-sale-pump",idSale);
+                io.sockets.emit("stop-sale-pump-from-admin",idSale);
                 break;
               case "Sport Product":
                 clearInterval(z);
-                io.sockets.emit("stop-sale-sport",idSale);
+                io.sockets.emit("stop-sale-sport-from-admin",idSale);
                 break;
               case "Sneaker Product":
                 clearInterval(t);
-                io.sockets.emit("stop-sale-sneaker",idSale);
+                io.sockets.emit("stop-sale-sneaker-from-admin",idSale);
                 break;
             }
         })

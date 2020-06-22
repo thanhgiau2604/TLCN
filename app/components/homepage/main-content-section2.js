@@ -231,6 +231,13 @@ class Sneaker extends React.Component {
 					})
 				},2000)
 			})
+		});
+		socket.on("stop-sale-sneaker-from-admin",function(data){
+			setTimeout(function(){
+				$.get("/getSneaker",function(data){
+					that.setState({listSneaker:data.data, processing:false,isSale:false,category:data.category});
+				})
+			},2000)
 		})
 	}
 	render(){
@@ -305,6 +312,13 @@ class Sports extends React.Component {
 				},2000)
 			})
 		})
+		socket.on("stop-sale-sport-from-admin",function(data){
+			setTimeout(function(){
+				$.get("/getSport",function(data){
+					that.setState({listSport:data.data, processing:false,isSale:false,category:data.category});
+				})
+			},2000)
+		})
 	}
 	render(){
 		var that = this;
@@ -377,6 +391,13 @@ class Pumps extends React.Component {
 					})
 				},2000)
 			})
+		})
+		socket.on("stop-sale-pump-from-admin",function(data){
+			setTimeout(function(){
+				$.get("/getPump",function(data){
+					that.setState({listPumps:data.data, processing:false,isSale:false,category:data.category});
+				})
+			},2000)
 		})
 	
 	}
@@ -452,6 +473,13 @@ class Kids extends React.Component{
 					})
 				},2000)
 			})
+		})
+		socket.on("stop-sale-kid-from-admin",function(data){
+			setTimeout(function(){
+				$.get("/getKid",function(data){
+					that.setState({listKids:data.data, processing:false,isSale:false,category:data.category});
+				})
+			},2000)
 		})
 	}
 	render(){
