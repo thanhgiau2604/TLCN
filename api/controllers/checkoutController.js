@@ -209,11 +209,14 @@ module.exports = function(app,io){
         apiSecret: "kP0cq3PjO49r8ht2"
       }, {debug:true});
     app.post("/sendSMS",parser,(req,res)=>{
-        const number = req.body.phone;
+        var number = req.body.phone;
         const order = JSON.parse(req.body.order);
         const ship = req.body.ship;
         const id = req.body.id;
         const sum = parseInt(order.sumproductcost)+parseInt(ship)-parseInt(order.costVoucher);
+        if (number[0]=="0"){
+            number = number.replace("0","84");
+        }
         Order.find({},{code:1,_id:0},function(err,data){
             if (err){
                 console.log(err);

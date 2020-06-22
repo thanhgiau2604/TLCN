@@ -1,5 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 var main;
 function formatCurrency(cost){
 	 return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
@@ -85,7 +87,7 @@ class Product2 extends React.Component{
 
 		if (!token){
 			$("#modal-authen").modal('show');
-		} else {
+		} else if (this.props.quantity>0){
 			var ok = false;
 			var thisSize, thisColor;
 			for (var i=0; i<this.props.size.length; i++){
@@ -101,10 +103,12 @@ class Product2 extends React.Component{
 				}
 			}
 			$.post("/addToCart",{id:this.props.id,email:localStorage.getItem('email'), 
-		color: thisColor, size:thisSize},function(data){
+			color: thisColor, size:thisSize},function(data){
 				var {dispatch} = main.props;
 				dispatch({type:"UPDATE_PRODUCT",newcart:data});
 			})
+		} else {
+			NotificationManager.error("Sản phẩm đã hết hàng","Thông báo",3000);
 		}
 	}
 	handleFavorite(){
@@ -375,6 +379,7 @@ class MainContentSection1 extends React.Component{
     render(){
         return(
 			<section className="main-content-section">
+			<NotificationContainer />
 			<div className="container">
 				<div className="row">					
 					<PopularProduct/>

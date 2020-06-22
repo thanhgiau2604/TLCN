@@ -1,6 +1,8 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import io from 'socket.io-client'
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 const socket = io('http://localhost:3000');
 var main;
 function formatCurrency(cost){
@@ -53,7 +55,8 @@ class Product1 extends React.Component{
 		const token = localStorage.getItem('token');
 		if (!token){
 			$("#modal-authen").modal('show');
-		} else {
+		} else 
+		if (this.props.quantity>0){
 			var ok = false;
 			var thisSize, thisColor;
 			for (var i=0; i<this.props.size.length; i++){
@@ -73,6 +76,8 @@ class Product1 extends React.Component{
 				var {dispatch} = main.props;
 				dispatch({type:"UPDATE_PRODUCT",newcart:data});
 			})
+		} else {
+			NotificationManager.error("Sản phẩm đã hết hàng","Thông báo",3000);
 		}
 	}
 	handleFavorite(){
@@ -266,7 +271,7 @@ class Sneaker extends React.Component {
 									   if (sneaker.comments.length>0) comment = sneaker.comments;
 							return <Product1 key={index} name={sneaker.name} costs={sneaker.costs}
 							image={sneaker.image.image1} id={sneaker._id} status={status} size={sneaker.sizes}
-							comments={comment} sale={that.state.isSale}/>
+							comments={comment} sale={that.state.isSale} quantity={sneaker.quanty}/>
 						})}												
 					</div>
 				</div>
@@ -346,7 +351,7 @@ class Sports extends React.Component {
 									   if (sport.comments.length>0) comment = sport.comments;
 						   return <Product1 key={index} name={sport.name} costs={sport.costs}
 						   image={sport.image.image1} id={sport._id} status={status} size={sport.sizes}
-						   comments={comment} sale={that.state.isSale}/>
+						   comments={comment} sale={that.state.isSale} quantity={sport.quanty}/>
 					   })}			
 					</div>					
 				</div>
@@ -428,7 +433,7 @@ class Pumps extends React.Component {
 									   if (pumps.comments.length>0) comment = pumps.comments;
 							return <Product1 key={index} name={pumps.name} costs={pumps.costs}
 							image={pumps.image.image1} id={pumps._id} status={status} size={pumps.sizes}
-							comments={comment} sale={that.state.isSale}/>
+							comments={comment} sale={that.state.isSale} quantity={pumps.quanty}/>
 						})}																								
 					</div>		
 				</div>
@@ -508,7 +513,7 @@ class Kids extends React.Component{
 									   if (kid.comments.length>0) comment = kid.comments;
 						return <Product1 key={index} name={kid.name} costs={kid.costs}
 						image={kid.image.image1} id={kid._id} status={status} size={kid.sizes}
-						comments={comment} sale={that.state.isSale}/>
+						comments={comment} sale={that.state.isSale} quantity={kid.quanty}/>
 					})}												
 					</div>							
 				</div>
@@ -525,6 +530,7 @@ class MainContentSection2 extends React.Component{
     render(){
         return(
             <section className="main-content-section-full-column">
+			<NotificationContainer />
 			<div className="container">
 				<div className="row">
 				</div>
