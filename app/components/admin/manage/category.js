@@ -111,7 +111,7 @@ class RowSaleEvent extends React.Component {
     <td>{this.props.event.name}</td>
     <td>{this.props.event.discount}%</td>
     <td>{dueTime}</td>
-    <td><button class="btn btn-danger" onClick={this.offSale.bind(this)}>OFF</button></td>
+    {this.props.event.status == "running" ? <td><button class="btn btn-danger" onClick={this.offSale.bind(this)}>OFF</button></td>:<td></td>}
   </tr>)
   }
 }
@@ -193,7 +193,6 @@ class ModalSaleCategory extends React.Component {
                     </thead>
                     <tbody>
                       {this.state.listEvents.map(function(event,index){
-                      if (event.status=="running")
                         return(<RowSaleEvent key={index} pos={index+1} event={event}/>)
                       })}
                     </tbody>
