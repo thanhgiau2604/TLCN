@@ -333,7 +333,7 @@ class Summary extends React.Component {
                 for (var i=0; i<data.voucher.length; i++){
                     var k = Math.floor(data.voucher[i].value/50000);
                     var value = data.voucher[i].value;
-                    var valueCondition = (200000+k*k*50000);
+                    var valueCondition = (250000+(k*k-k)*50000);
                     var singleVoucher = {
                         stt: i+1,
                         name: "Mã giảm giá "+ formatCurrency(value),

@@ -74,7 +74,7 @@ module.exports = function(app,io){
             day = hour * 24;
             console.log(distance);
             x = setInterval(function(){
-                if (distance-1000<=0) {
+                if (distance-2000<=0) {
                     io.sockets.emit("stop-sale-kid",data.idSale);
                     clearInterval(x);
                 }

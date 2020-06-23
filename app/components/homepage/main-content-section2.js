@@ -206,7 +206,7 @@ class Sneaker extends React.Component {
 		this.state = {
 			listSneaker:[],
 			processing: false,
-			saleTime: {},
+			saleTime: {ngay:"00",gio:"00",phut:"00",giay:"00"},
 			isSale: false,
 			category: {}
 		}
@@ -286,7 +286,7 @@ class Sports extends React.Component {
 		this.state = {
 			listSport:[],
 			processing: false,
-			saleTime: {},
+			saleTime: {ngay:"00",gio:"00",phut:"00",giay:"00"},
 			isSale: false,
 			category: {}
 		}
@@ -366,7 +366,7 @@ class Pumps extends React.Component {
 		this.state = {
 			listPumps:[],
 			processing: false,
-			saleTime: {},
+			saleTime: {ngay:"00",gio:"00",phut:"00",giay:"00"},
 			isSale: false,
 			category: {}
 		}
@@ -448,7 +448,7 @@ class Kids extends React.Component{
 		this.state = {
 			listKids : [],
 			processing: false,
-			saleTime: {},
+			saleTime: {ngay:"00",gio:"00",phut:"00",giay:"00"},
 			isSale: false,
 			category: {}
 		}
