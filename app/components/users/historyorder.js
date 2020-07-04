@@ -14,148 +14,11 @@ function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
 }
-var tableOrder;
-class RowOrder extends React.Component{
-    constructor(props){
-        super(props);
-        this.cancelOrder = this.cancelOrder.bind(this);
-    }
-    cancelOrder(){
-        $.post("/cancelOrder",{idProduct:this.props.idProduct, idOrder:this.props.idOrder,
-            email:localStorage.getItem('email')},function(data){
-                console.log(data);
-            tableOrder.setState({listorder:data});
-        });
-    }
-    render()
-    {
-        var disable = true;
-        if (this.props.statusProduct=="confirmed" || this.props.statusProduct=="unconfirmed"){
-            disable=false;
-        }
-        if (this.props.payment==true) disable=true;
-        return(<tr className="text-center">
-        <td className="text-center">{this.props.stt}</td>
-        <td className="text-center">{this.props.name}</td>
-        <td className="text-center"><img src={this.props.image} width="100px" height="100px"/></td>
-        <td className="text-center">{this.props.time}</td>
-        <td className="text-center"><button className={"btn btnStatus "+this.props.statusProduct}>{this.props.statusProduct}</button></td>
-        {this.props.statusProduct!="canceled" ? <td className="text-center"><button className="btn btn-primary" disabled={disable}
-        onClick={this.cancelOrder}>Hủy đơn hàng</button></td>:""}
-        {this.props.payment ? <td><i class="fa fa-check" aria-hidden="true">Đã thanh toán</i></td> : <td></td>}
-      </tr>)
-    }
+function formatCurrency(cost){
+	return cost.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
 }
-class TableOrder extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            listorder : [],
-            permission:0,
-            curpage:1
-        }   
-        this.goLogin = this.goLogin.bind(this); 
-        this.changePage = this.changePage.bind(this);
-        this.previousPage = this.previousPage.bind(this);
-        this.nextPage = this.nextPage.bind(this);
-        tableOrder=this;
-    }
-    componentDidMount(){
-        var that = this;
-        var token = localStorage.getItem('token');
-        if (!token) {
-            this.setState({ permission: 0 });
-        }
-        $.get("/api", { token: token }, function (data) {
-            if (data.success == 1) {
-                that.setState({ permission: 1 });
-                $.post("/getOrder",{email:localStorage.getItem('email')},function(data){
-                    that.setState({listorder:data});
-                })
-            }
-        })
-    }
-    goLogin(){
-        window.location.replace('/login');
-    }
-    changePage(value, event) {
-        this.setState({ curpage: value });
-    }
-    previousPage(){
-        if (this.state.curpage>1)
-              this.setState({curpage:this.state.curpage-1});
-    }
-    nextPage(){
-        var length = this.state.listorder.length;
-        var perpage = 5;
-        if (this.state.curpage<Math.ceil(length / perpage))
-              this.setState({curpage:this.state.curpage+1});
-    }
-    render()
-    {
-        if (this.state.permission == 0) {
-            return (<div className="text-center">
-                <br />
-                <h3>Để thực hiện chức năng này bạn phải đăng nhập!</h3>
-                <button className="btn btn-primary" onClick={this.goLogin} style={{ marginTop: '10px' }}>Đi đến trang đăng nhập</button>
-            </div>)
-        } else {
-            var page = "";
-            var lCurOrder = [];
-            var length = this.state.listorder.length;
-            if (length!=0){
-                page = [];
-                var perpage = 5;
-                var start = (this.state.curpage - 1) * perpage;
-                var finish = (start+perpage);
-                if (finish>length) finish=length;
-                lCurOrder = this.state.listorder.slice(start, start + perpage);
-                var numberpage = Math.ceil(length / perpage);
-                for (var i = 1; i <= numberpage; i++) {
-                    if (this.state.curpage == i) {
-                        page.push(<li class='active'><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>);
-                    } else {
-                        page.push(<li><a onClick={this.changePage.bind(this, i)} style={{ cursor: 'pointer' }}>{i}</a></li>)
-                    }
-                }
-            }
-            return (<div><table className="table table-hover text-center">
-                <thead>
-                    <tr>
-                        <th className="text-center">STT</th>
-                        <th className="text-center">Tên sản phẩm</th>
-                        <th className="text-center">Hình ảnh</th>
-                        <th className="text-center">Ngày đặt hàng</th>
-                        <th className="text-center">Trạng thái</th>
-                        <th className="text-center">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {lCurOrder.map(function (order, index) {
-                        return <RowOrder key={index} name={order.product.name} idProduct={order.product._id} statusProduct = {order.product.status}
-                            status={order.status} stt={start+index + 1} time={order.time} image={order.product.image} idOrder={order.idOrder}
-                            payment = {order.payment}/>
-                    })}
-                </tbody>
-            </table>
-                <div class='panel-footer'>
-                    <ul class='pagination pagination-sm'>
-                        <li>
-                            <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
-                        </li>
-                        {page}
-                        <li>
-                            <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
-                        </li>
-                    </ul>
-                    <div class='pull-right'>
-                        Hiển thị từ {start + 1} đến {finish} trên {this.state.listorder.length} sản phẩm
-                </div>
-                </div>
-            </div>)
-        }
-    }
-}
+var mainOrder;
+
 class ItemHistory extends React.Component{
     constructor(props){
         super(props);
@@ -318,9 +181,161 @@ class HistoryOrder extends React.Component{
     </section>)
     }
 }
-
+class RowProduct extends React.Component {
+    constructor(props){
+        super(props);
+    }
+    cancelProduct(){
+        var idProduct = this.props.product.id;
+        var email = localStorage.getItem("email");
+        var idOrder = this.props.idOrder;
+        $.post("/cancelProduct",{idProduct:idProduct, idOrder:idOrder,email:email},function(data){
+            console.log(data);
+            mainOrder.setState({listOrder:data});
+        });
+    }
+    render(){
+        return(<div class="item-product">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 display-product">
+          <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
+            <div class="imgOrder">
+              <img src={this.props.product.image} width="120px"/>
+            </div>
+          </div>
+          <div class="col-xs-6 col-sm-6 col-md-8 col-lg-8">
+            <div class="itemDetail">
+              <div class="item-name">{this.props.product.name}</div>
+              <div class="item-variation">Phân loại hàng: {this.props.product.size}, {this.props.product.color}</div>
+              <div class="item-quantity"> x {this.props.product.quanty}</div>
+              <div class="item-price">
+                  <div class="item-current-price"><b>{formatCurrency(this.props.product.cost)}</b></div>
+               </div>
+            </div>
+          </div>    
+          <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 wrapper-cancel-product">
+                <div class="cancel-product">
+                    {this.props.product.status=="canceled" ?
+                    <h4 class="infor-status-product">Đã hủy</h4> :
+                    ( this.props.product.status=="confirmed"?
+                    <button class="btn btn-danger" onClick={this.cancelProduct.bind(this)}>
+                        <i class="fa fa-times" aria-hidden="true"></i> Hủy
+                    </button> : "")
+                    }
+                </div>
+            </div>     
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="line"></div>
+        </div>   
+      </div>)
+    }
+}
+class ListOrders extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            listOrder: [],
+            permission:0
+        }
+        this.cancelOrder = this.cancelOrder.bind(this);
+        mainOrder = this;
+    }
+    componentDidMount(){
+        var that = this;
+        var token = localStorage.getItem('token');
+        if (!token) {
+            this.setState({ permission: 0 });
+        }
+        $.get("/api", { token: token }, function (data) {
+            if (data.success == 1) {
+                that.setState({ permission: 1 });
+                $.post("/getListOrder",{email:localStorage.getItem('email')},function(data){
+                    that.setState({listOrder:data});
+                })
+            }
+        })
+    }
+    cancelOrder(order){
+        var that = this;
+        console.log(order);
+        var idOrder = order._id;
+        var email = localStorage.getItem("email");
+        $.post("/cancelOrder",{idOrder:idOrder,email:email},function(data){
+            that.setState({listOrder: data});
+        })
+    }
+    render(){
+        var that = this;
+        if (this.state.permission==0){
+            return(<div className="text-center">
+            <br />
+            <h3>Để thực hiện chức năng này bạn phải đăng nhập!</h3>
+            <button className="btn btn-primary" onClick={this.goLogin} style={{ marginTop: '10px' }}>Đi đến trang đăng nhập</button>
+        </div>)
+        } else
+        return(<div class="container" style={{marginTop:"30px"}}>
+        <div class="row">
+        <div class="text-center" style={{paddingTop:"30px",paddingBottom:"30px"}}>
+            <h2><b>DANH SÁCH ĐƠN HÀNG</b></h2>
+        </div>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="panel-group" id="accordion">
+        {this.state.listOrder.map(function(order,index){
+            return(<div class="panel panel-default" key={index}>
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href={"#collapse"+index}>
+                  <b class="title-order">#{index+1}: Đơn hàng #{order.code} ngày {order.time}</b>
+                </a>
+                <span class="status-order"><i class="fa fa-commenting-o" aria-hidden="true"></i>
+                  Trạng thái đơn hàng: 
+                  <span class="detail-status"> {order.status}</span>
+                  {order.status=="canceled" ?
+                    <h4 class="infor-status-product">Đã hủy</h4> :
+                    (order.status=="confirmed"?
+                    <button class="btn btn-warning cancel-order" onClick={() => that.cancelOrder(order)}>
+                        <i class="fa fa-times" aria-hidden="true"></i> Hủy đơn hàng
+                    </button> : <button class="btn btn-warning cancel-order" onClick={() => that.cancelOrder(order)} disabled="true">
+                        <i class="fa fa-times" aria-hidden="true"></i> Hủy đơn hàng
+                    </button>)}
+                </span>              
+              </h4>
+            </div>
+            <div id={"collapse"+index} class="panel-collapse collapse in">
+              <div class="panel-body">
+                <div class="list-product">
+                {order.listproduct.map(function(product,pos){
+                    return(<RowProduct key={pos} product={product} idOrder = {order._id}/>)
+                })}  
+                </div>
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 infor-cost">
+                      <div class="col-xs-5 col-sm-5 col-md-7 col-lg-7"></div> 
+                      <div class="col-xs-7 col-sm-7 col-md-5 col-lg-5">
+                          <h3><i class="fa fa-shopping-bag" aria-hidden="true"></i>
+                            Tổng tiền sản phẩm: <span class="display-cost">{formatCurrency(order.sumproductcost)}</span></h3>
+                          <h3><i class="fa fa-motorcycle" aria-hidden="true"></i>
+                            Ship: <span class="display-cost">{formatCurrency(order.sumshipcost)}</span></h3>
+                          {order.costVoucher ? <h3><i class="fa fa-gift" aria-hidden="true"></i>
+                            Voucher sử dụng: <span class="display-cost">{formatCurrency(order.costVoucher)}</span></h3> : ""}
+                          <h3 class="total-order"><i class="fa fa-file-text" aria-hidden="true"></i>
+                            <b>Tổng tiền đơn hàng: <span class="display-cost">
+                                {order.costVoucher ? formatCurrency(order.sumproductcost+order.sumshipcost-order.costVoucher) :
+                                formatCurrency(order.sumproductcost+order.sumshipcost)}
+                                </span></b></h3>
+                      </div> 
+                  </div>   
+              </div>
+            </div>
+          </div>)
+        })}
+        </div>
+      </div>
+    </div> 
+        </div>)
+    }
+}
 const History = connect(function(state){  
-})(HistoryOrder)
+})(ListOrders)
 
 
 ReactDOM.render(

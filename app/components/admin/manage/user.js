@@ -158,7 +158,7 @@ class EditForm extends React.Component{
                 <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }}/>
               </div>
             </div>
-            <div class="text-center">
+            <div class="text-center" style={{marginBottom:'15px'}}>
               <button type="submit" class="btn btn-danger">Save</button>
               <button type="button" class="btn btn-default" onClick={this.Cancel}
               style={{marginLeft:'10px'}}>Cancel</button>
@@ -232,7 +232,7 @@ class AddForm extends React.Component {
                 <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }} required/>
               </div>
           </div>
-          <div class="text-center">
+          <div class="text-center" style={{marginBottom:'15px'}}>
             <button type="submit" class="btn btn-danger">Save</button>
             <button type="button" class="btn btn-default" onClick={this.Cancel}
             style={{marginLeft:'10px'}}>Cancel</button>
@@ -381,107 +381,159 @@ class ManageUsers extends React.Component{
         notify = <div class="alert alert-danger" style={{marginTop:'10px'}}>
         <strong>An error has occurred!</strong></div>
       }
-        return(<div id='content'>
-        <div class='panel panel-default grid'>
-          <div class='panel-heading'>
-            <i class='icon-table icon-large'></i>
-            Manage Users
-            <div class='panel-tools'>
-              <div class='btn-group'>
+        return (
+          <div id="content">
+            <div class="panel panel-default grid">
+              <div class="panel-heading">
+                <i class="icon-table icon-large"></i>
+                Manage Users
+                <div class="panel-tools">
+                  <div class="btn-group"></div>
+                  {/* <div class='badge'>3 record</div> */}
+                </div>
               </div>
-              {/* <div class='badge'>3 record</div> */}
-            </div>
-          </div>
-          {this.state.permission==false ? 
+              {this.state.permission == false ? (
                 <div className="text-center notification">
                   <br />
-                  <h3>Not permitted. Please access the following link to login!</h3>
-                  <button className="btn btn-primary" onClick={() => window.location.replace("/login")} style={{ marginTop: '10px', width: 'auto' }}>Đi đến trang đăng nhập</button>
-                </div> :
-          <div>
-                <div class='panel-body filters'>
-                  <div class="row">
-                    <h3 class="text-center"><b>LIST USER ACCOUNTS</b></h3>
-                  </div>
-                  <div class='row'>
-                    <div class='col-md-3'>
-                    </div>
-                    <div class='col-md-3'>
-                      <div class='input-group'>
-                        <input class='form-control' placeholder='Search user' type='text' onChange={this.handleChange} />
-                        <span class='input-group-btn'>
-                          <button class='btn' type='button'>
-                            <i class='icon-search'></i>
-                          </button>
-                        </span>
-                      </div>
-                    </div>
-                    <div className="col-md-5">
-                      <div class="radio" onChange={this.changeStatus}>
-                        <label><input type="radio" name="optionStatus" value="1" checked={this.state.status == "1"} />All</label>
-                        <label><input type="radio" name="optionStatus" value="2" style={{marginLeft:"0"}}/> Active</label>
-                        <label><input type="radio" name="optionStatus" value="3" style={{marginLeft:"0"}}/> Deleted</label>
-                      </div>
-                    </div>
-
-                  </div>
-                  <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnAddUser text-right">
-                      <button class="btn btn-warning" onClick={this.handleAddUser}>
-                        <i class="icon-plus-sign"></i> Add New User
-                      </button>
-                      <div class="upload-btn-wrapper">
-                        <button class="btnUpload" >Import an Excel File</button>
-                        <input type="file" name="myfile" onChange={this.readFile} id="input" />
-                      </div>
-                    </div>
-                  </div>
-                  {notify}
+                  <h3>
+                    Not permitted. Please access the following link to login!
+                  </h3>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => window.location.replace("/login")}
+                    style={{ marginTop: "10px", width: "auto" }}
+                  >
+                    Đi đến trang đăng nhập
+                  </button>
                 </div>
-          {Edit}
-          {Add}
-          <table class='table'>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Date Of Birth</th>
-                <th>Number of orders</th>
-                <th class='actions'>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>         
-              {lCurUser.map(function(user,index){
-                var qorder = 0;
-                if (user.qorder) qorder = user.qorder;
-                return <Users key={index} id={user._id} firstname = {user.firstName} lastname={user.lastName}
-                phone={user.numberPhone} email={user.email} dob={user.dob} stt={start+(index+1)} status={user.isDelete}
-                numberOrder ={qorder}/>
-              })}
-            </tbody>
-          </table>
-          <div class='panel-footer'>
-            <ul class='pagination pagination-sm'>
-                <li>
-                  <a style={{ cursor: 'pointer' }} onClick={this.previousPage}>«</a>
-                </li>
-                {page}
-                <li>
-                  <a style={{ cursor: 'pointer' }} onClick={this.nextPage}>»</a>
-                </li>
-            </ul>
-            <div class='pull-right'>
-              Showing {start + 1} to {finish} of {this.state.listUsers.length} entries
+              ) : (
+                <div>
+                  <div class="panel-body filters">
+                    <div class="row">
+                      <h3 class="text-center">
+                        <b>LIST USER ACCOUNTS</b>
+                      </h3>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3"></div>
+                      <div class="col-md-3">
+                        <div class="input-group">
+                          <input
+                            class="form-control"
+                            placeholder="Search user"
+                            type="text"
+                            onChange={this.handleChange}
+                          />
+                          <span class="input-group-btn">
+                            <button class="btn" type="button">
+                              <i class="icon-search"></i>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                      <div className="col-md-5">
+                        <div class="radio" onChange={this.changeStatus}>
+                          <label>
+                            <input class="with-gap" name="optionStatus" type="radio" value="1" checked={this.state.status == "1"}/> 
+                            <span>All</span>
+                          </label>
+                          <label>
+                            <input class="with-gap" name="optionStatus" type="radio" value="2" checked={this.state.status == "2"}/> 
+                            <span>Active</span>
+                          </label>
+                          <label>
+                            <input class="with-gap" name="optionStatus" type="radio" value="3" checked={this.state.status == "3"}/> 
+                            <span>Deleted</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnAddUser text-right">
+                        <button
+                          class="btn btnNewSomething"
+                          onClick={this.handleAddUser}
+                        >
+                          <i class="icon-plus-sign"></i> Add New User
+                        </button>
+                        <div class="upload-btn-wrapper">
+                          <button class="btnUpload">
+                            Import an Excel File
+                          </button>
+                          <input
+                            type="file" name="myfile" onChange={this.readFile} id="input"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                      </div>
+                    </div>
+                    {notify}
+                  </div>
+                  {Edit}
+                  {Add}
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Date Of Birth</th>
+                        <th>Number of orders</th>
+                        <th class="actions">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lCurUser.map(function (user, index) {
+                        var qorder = 0;
+                        if (user.qorder) qorder = user.qorder;
+                        return (
+                          <Users
+                            key={index}
+                            id={user._id}
+                            firstname={user.firstName}
+                            lastname={user.lastName}
+                            phone={user.numberPhone}
+                            email={user.email}
+                            dob={user.dob}
+                            stt={start + (index + 1)}
+                            status={user.isDelete}
+                            numberOrder={qorder}
+                          />
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <div class="panel-footer">
+                    <ul class="pagination pagination-sm">
+                      <li>
+                        <a
+                          style={{ cursor: "pointer" }}
+                          onClick={this.previousPage}>
+                          «
+                        </a>
+                      </li>
+                      {page}
+                      <li>
+                        <a
+                          style={{ cursor: "pointer" }}
+                          onClick={this.nextPage}>
+                          »
+                        </a>
+                      </li>
+                    </ul>
+                    <div class="pull-right">
+                      Showing {start + 1} to {finish} of{" "}
+                      {this.state.listUsers.length} entries
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-          </div>}
-        </div>
-      </div>)
+        );
     }
 }
 ReactDOM.render(

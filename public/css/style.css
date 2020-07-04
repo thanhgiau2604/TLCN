@@ -109,6 +109,15 @@ ul {
     padding: 0;
     list-style: none;
 }
+
+.continue-payment ul {
+    display: inline-block;
+    list-style-type: square;
+}
+
+.continue-payment ul li {
+    margin-top: 7px;
+}
 a {
     text-decoration: none;
 }
@@ -5182,4 +5191,141 @@ input.form-control.code-input {
 }
 #googleMap >iframe{
   height: 287px !important;
+}
+
+.panel-heading .accordion-toggle:after {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+    content: "\e114";    /* adjust as needed, taken from bootstrap.css */
+    float: right;        /* adjust as needed */
+    color: #4c4b4b;         /* adjust as needed */
+}
+.panel-heading .accordion-toggle.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+}
+.panel-default>.panel-heading {
+	color: white;
+	background: #efeced;
+}
+.itemDetail {
+	padding-top: 10px;
+	position: relative;
+	min-width: 0;
+	word-wrap: break-word;
+	pointer-events: none;
+}
+.item-name {
+	width: 100%;
+	overflow: hidden;
+	display: -webkit-box;
+	text-overflow: ellipsis;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	margin-bottom: .3125rem;
+	line-height: 1rem;
+	max-height: 2rem;
+}
+.item-variation {
+	color: rgba(0,0,0,.54);
+}
+.item-quantity {}
+.item-price {
+	display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+.item-old-price {
+	color: rgba(0,0,0,.26);
+    text-decoration: line-through;
+}
+.item-current-price {
+	color: #ee4d2d;
+}
+.line {
+	margin-bottom: 20px;
+	padding-top: 15px;
+	border-bottom: 1px solid #ccc;
+}
+.infor-cost h3{
+	font-size: 20px
+}
+.infor-cost p{
+	font-size: 22px
+}
+span.display-cost {
+	color: #e40f22;
+}
+.infor-cost h3 i {
+	padding-right: 10px;
+	font-size: 24px;
+	color: #e40f22;
+}
+.infor-cost p i {
+	font-size: 24px;
+	color: #e40f22;
+}
+.cancel-order {
+    padding: 0 7px!important;
+    float: right;
+    margin-right: 20px;
+}
+.status-order {
+	color: black;
+	display: block;
+	text-align: center;
+}
+.title-order {
+	color: blue;
+}
+span.detail-status {
+	color: red;
+}
+.status-order i {
+	font-size: 22px;
+	color: #e40f22;
+}
+.wrapper-cancel-product {
+	position: absolute!important;
+	top:50%;
+	right:0;
+	-ms-transform: translateY(-50%);
+  	transform: translateY(-50%);
+}
+.display-product {
+	position: relative!important;
+}
+.infor-status-product {
+	color: #444141;
+}
+button.btn.btn-warning.cancel-order i {
+    color: white;
+    font-size: 15px;
+}
+.paymentOnline img {
+	cursor: pointer;
+}
+.continue-payment {
+	padding: 10px 10px;
+	border: 1px solid #d8d5d5;
+	background-color: #e8e9ea;
+	border-radius: 10px;
+	padding-left: 25px;
+}
+
+.continue-payment button {
+    padding: 5px 5px;
+}
+
+.continue-payment button i {
+    padding-right: 5px;
 }

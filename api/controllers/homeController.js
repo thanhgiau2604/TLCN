@@ -162,30 +162,53 @@ module.exports = function(app,apiRouter){
             }
         })
     });
-    app.post("/cancelOrder",parser,(req,res)=>{
+    app.post("/getListOrder",parser,(req,res)=>{
+        const email = req.body.email;
+        Order.find({email:email}).sort({timestamp:"descending"}).exec(function(err,data){
+            if (err){
+                throw err;
+            } else {
+                res.send(data);
+            }
+        })
+    });
+    app.post('/cancelOrder',parser,(req,res)=>{
+        const idOrder = req.body.idOrder;
+        const email = req.body.email;
+        console.log(idOrder);
+        Order.findOneAndUpdate({_id:idOrder},{$set:{status:"canceled","listproduct.$[].status":"canceled"}},{new:true},
+        (err,data) =>  {
+            if (err) console.log(err);
+            if (!err&&data){
+                Order.find({email:email}).sort({timestamp:"descending"}).exec(function(err,listOrder){
+                    if (err){
+                        console.log(err);
+                    } else {
+                        res.send(listOrder);
+                    }
+                })
+            }
+        })
+    })
+    app.post("/cancelProduct",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
         const idOrder = req.body.idOrder;
         const email = req.body.email;
-        Order.findOneAndUpdate({_id:idOrder,"listproduct._id":idProduct},
+        console.log(idProduct);
+        console.log(idOrder);
+        Order.findOneAndUpdate({_id:idOrder,"listproduct.id":idProduct},
         {$set:{"listproduct.$.status":"canceled"}},{new:true},function(err,data){
             Order.find({email:email},function(err,data){
                 if (err){
                     throw err;
                 } else {
-                    var arrResult=[];
-                    data.forEach(order => {
-                        order.listproduct.forEach(product => {
-                            var pro = {
-                                product: product,
-                                time: order.time,
-                                status: order.status,
-                                idOrder: order._id
-                            }
-                            arrResult.push(pro);
-                        });
-                    });
-                    console.log(arrResult);
-                    res.send(arrResult);
+                    Order.find({email:email}).sort({timestamp:"descending"}).exec(function(err,listOrder){
+                        if (err){
+                            throw err;
+                        } else {
+                            res.send(listOrder);
+                        }
+                    })
                 }
             })
         })

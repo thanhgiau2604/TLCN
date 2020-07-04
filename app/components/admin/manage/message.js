@@ -179,7 +179,7 @@ class ManageMessage extends React.Component{
                 </div>
               </div>
               <div class="text-right" style={{ marginTop: '50px', paddingRight: '10%' }}>
-              <button class="btn btn-warning" onClick={this.handleAddMessage}>
+              <button class="btn btnNewSomething" onClick={this.handleAddMessage}>
                 <i class="icon-plus-sign"></i> Add Message
                </button>
             </div>

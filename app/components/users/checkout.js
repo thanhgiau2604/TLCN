@@ -290,7 +290,7 @@ class Summary extends React.Component {
                 color: pro.color,
                 size: pro.size,
                 cost: pro.product.costs[pro.product.costs.length-1].cost,
-                status:"unconfirmed"
+                status:"unconfirmed",
             }
             arrProduct.push(product);
         });
@@ -311,7 +311,8 @@ class Summary extends React.Component {
             status: "unconfirmed",
             code: -1,
             payment: false,
-            costVoucher: this.state.costVoucher
+            costVoucher: this.state.costVoucher,
+            paymentMethod: "cash"
         }
         if (localStorage.getItem("curorder")){
             $.post("/updateOrder",{id:localStorage.getItem("curorder"),order:JSON.stringify(order)}, function(data){
@@ -524,12 +525,17 @@ class LocationSearchInput extends React.Component {
         >
           {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
             <div>
+            <div class="group locationAddress">
               <input
                 {...getInputProps({
                   placeholder: 'Search Places ...',
                   className: 'location-search-input',
                 })}
               />
+              <span class="highlight"></span>
+              <span class="bar"></span>
+              <label class="labelMaterialButton">Địa chỉ</label>
+            </div>
               <div className="autocomplete-dropdown-container">
                 {loading && <div>Loading...</div>}
                 {suggestions.map(suggestion => {
@@ -538,8 +544,18 @@ class LocationSearchInput extends React.Component {
                     : 'suggestion-item';
                   // inline style for demonstration purpose
                   const style = suggestion.active
-                    ? { backgroundColor: '#9c9b98', cursor: 'pointer', border: "solid #9c9b98 1px", color:"black"}
-                    : { backgroundColor: '#ffffff', cursor: 'pointer',border: "solid #9c9b98 1px", color:"black"};
+                    ? { 
+                        backgroundColor: '#9c9b98', 
+                        cursor: 'pointer', 
+                        borderBottom: "solid #ccc 1px", 
+                        color:"black",
+                        padding: "5px 5px"}
+                    : { 
+                        backgroundColor: '#ffffff', 
+                        cursor: 'pointer',
+                        borderBottom: "solid #ccc 1px", 
+                        color:"black",
+                        padding: "5px 5px"};
                   return (
                     <div
                       {...getSuggestionItemProps(suggestion, {
@@ -635,7 +651,7 @@ class DisplayDetailOrder extends React.Component {
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Hủy</button>
                 <button type="button" class="btn btn-success" data-dismiss="modal" onClick={this.continueConfirm.bind(this)}>Tiếp tục</button>
-              </div>
+              </div> 
             </div>
           </div>
         </div>
@@ -689,6 +705,40 @@ class Address extends React.Component {
     backStep1(){
         main.setState({curStep:1});
     }
+    // changMethodPayment(e){
+    //     if (!this.refs.fullname.value || !this.refs.phonenumber.value || classLocation.state.address==''){
+    //         alert("Bạn phải nhập đầy đủ thông tin cá nhân trước");
+    //     } else {
+    //         this.setState({methodPayment: e.target.value});
+    //         if (e.target.value == "card") {
+    //             var address = classLocation.state.address;
+    //             var fullname = this.refs.fullname.value;
+    //             var phonenumber = this.refs.phonenumber.value;
+    //             var email = localStorage.getItem("email");
+    //             var voucher = step1.state.costVoucher;
+    //             var that = this;
+    //             var sumCost = 0;
+    //             step1.state.sumcost.forEach(e => {
+    //                 sumCost += e;
+    //             });
+    //             $.post("/updateAddress", {
+    //                 id: localStorage.getItem('curorder'), email: email, address: address, fullname: fullname,
+    //                 phonenumber: phonenumber, sumcost: sumCost, voucher: voucher
+    //             }, function (data) {
+    //                 if (data.err == 0) {
+    //                     dataSendMail = data;
+    //                     $("#modalViewOrder").modal("show");
+    //                     modalViewOrder.setState({ order: data.data, distance: data.distance });
+    //                     let amount = sumCost+data.ship-voucher;
+    //                     that.setState({amount:amount});
+    //                     that.setState({stripeProduct:{name:"SHOES FROM SHOELG",price:amount,productBy:"SHOELG"}})
+    //                 } else {
+    //                     that.setState({ err: "Vui lòng kiểm tra lại địa chỉ" })
+    //                 }
+    //             })
+    //         }
+    //     }
+    // }
     render(){
         if (!localStorage.getItem("curorder")) window.location.replace("/");
         var name="", number="";
@@ -732,38 +782,42 @@ class Address extends React.Component {
                 </div> 
             </div>
             <div class="row address">
-                <form>
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <label>Họ và tên</label>
-                            <input type="text" placeholder="Tên" name="name" required ref="fullname" defaultValue={name}/>
+                          <div class="group">      
+                            <input type="text" name="name" required ref="fullname" defaultValue={name}/>
+                            <span class="highlight"></span>
+                            <span class="bar"></span>
+                            <label class="labelMaterialButton">Họ và tên</label>
+                           </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <label>Số điện thoại</label>
-                            <input type="text" placeholder="Số điện thoại" name="numberphone" required ref="phonenumber" defaultValue={number}/>
+                          <div class="group">      
+                            <input type="text" name="numberphone" required ref="phonenumber" defaultValue={number}/>
+                            <span class="highlight"></span>
+                            <span class="bar"></span>
+                            <label class="labelMaterialButton">Số điện thoại</label>
+                           </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <label>Địa chỉ:</label>
                             <LocationSearchInput/>
                         </div>
                     </div>
                     <div class="row text-center">
                             <GoogleMap/>
                     </div>		                        
-                    <h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
-                    <div class="row">
-                        <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-                            <button class="btn btn-danger" onClick={this.addAddress} title='update status' data-toggle="modal" 
-                            data-target="#modalViewOrder">Tiếp tục thanh toán</button>
-                        </div>
+                <h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
+                <div class="row">
+                    <div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
+                        <button class="btn btn-danger" onClick={this.addAddress} title='update status' data-toggle="modal" 
+                        data-target="#modalViewOrder">Tiếp tục thanh toán</button>
                     </div>
-                </form>			
-            </div>
+                </div>
+            </div>	
             <DisplayDetailOrder/>
         </div>
     </section>)
@@ -896,19 +950,17 @@ class Confirm extends React.Component {
                     return (
                         <div class="row text-center">
                         <h4>Chọn hình thức xác nhận đơn hàng</h4>
-                        <div class="form-check" onChange={that.changeOption.bind(that)}>
-                          <input
-                            class="form-check-input" type="radio" name="radio-confirm" id="sendEmail" value="1"/>
-                          <label class="form-check-label" for="sendEmail">
-                            Xác nhận qua Email
-                          </label>
-                          <br/>
-                          <input
-                            class="form-check-input" type="radio" name="radio-confirm" id="sendSMS" value="0"/>
-                          <label class="form-check-label" for="sendSMS">
-                            Xác nhận qua SMS
-                          </label>
-                        </div>
+                            <div class="radio classOption" onChange={that.changeOption.bind(that)}>
+                                <label>
+                                    <input class="with-gap" name="methodConfirm" type="radio" value="1"/>
+                                    <span>Xác nhận qua Email</span>
+                                </label> <br/>
+                                <label>
+                                    <input
+                                        class="with-gap" name="methodConfirm"type="radio" value="0"/>
+                                    <span>Xác nhận qua SMS</span>
+                                </label>
+                            </div>
                         <button class="btn btn-success btnContinue button addr" onClick={that.continueConfirm.bind(that)}>Tiếp tục</button>
                         <h4 class="err text-center addr">{that.state.errOption}</h4>
                       </div>

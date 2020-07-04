@@ -20,15 +20,11 @@ const checkoutController = require("./api/controllers/checkoutController");
 const mangeOrderController = require("./api/controllers/manageOrderController");
 const socketIOController = require("./api/controllers/socketIOController");
 const paypalController = require('./api/controllers/paypalController');
-const chatController = require('./api/controllers/chatController')
+const chatController = require('./api/controllers/chatController');
+const stripeController = require("./api/controllers/stripeController");
+const vnpayController = require("./api/controllers/vnpayController");
 app.set("view engine","ejs");
-// app.set('trust proxy', 1) // trust first proxy
-// app.use(session({
-//   secret: "secret_key",
-//   resave: false,
-//   saveUninitialized: true,
-//   cookie: { secure: false }
-// }));
+
 app.use(function(req,res,next) {
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,DELETE,FETCH');
@@ -59,6 +55,8 @@ checkoutController(app,io);
 mangeOrderController(app);
 paypalController(app);
 chatController(app,io);
+stripeController(app);
+vnpayController(app);
 app.use("/", express.static(__dirname+"/public"));
 app.use(express.static(__dirname+"/public"));
 app.get("/login",(req,res)=> res.render("dangnhap"));

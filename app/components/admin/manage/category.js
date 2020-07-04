@@ -951,7 +951,7 @@ class ManageCategory extends React.Component {
                 </div>
               </div>
               <div class="text-right" style={{marginTop: "50px", paddingRight: "10%"}}>
-                <button class="btn btn-warning" data-toggle="modal" data-target="#modal-new-category" onClick={this.clickNewCategory}>
+                <button class="btn btnNewSomething" data-toggle="modal" data-target="#modal-new-category" onClick={this.clickNewCategory}>
                   <i class="icon-plus-sign"></i> Add New Category
                 </button>
               </div>

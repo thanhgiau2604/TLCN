@@ -6,7 +6,7 @@ const Product = require("../models/Product");
 const sendmail = require("./mail");
 var Statistic = require("../models/statistic");
 const NodeGeocoder = require('node-geocoder');
-const distance = require('google-distance');
+var distance = require('google-distance');
 const Nexmo = require("nexmo");
 var _eQuatorialEarthRadius = 6378.1370;
 var _d2r = (Math.PI / 180.0);
@@ -104,40 +104,59 @@ module.exports = function(app,io){
         User.findOneAndUpdate({email:email},{address:address},function(err,data){
             if (err) console.log(err);
         })
-        distance.get(
-            {
-              origin: 'Đại học Sư phạm kỹ thuật TPHCM',
-              destination: address
-            },
-            function(err, data) {
-              if (err){
-                res.json({err:1})
-              } else {
-                var result;
-                if (sumcost>800000){
-                    result=0;
-                } else {
-                    if (data.distanceValue <= 3000) result = 0;
-                    else result = 3*(data.distanceValue-3000);
-                }
-                Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
-                    sumshipcost:result,costVoucher:voucher}}, function (err, or) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        Order.findOne({ _id: id }, function (err, order) {
-                            if (err) {
-                                throw err;
-                            } else {
-                                console.log(order.sumproductcost);
-                                if (order.sumproductcost >=800000) result=0;
-                                res.json({err:0,data:order,ship:result,distance:data.distanceValue});
-                            }
-                        })
-                    }
-                });
-              }
-          });
+        // distance.get(
+        //     {
+        //       origin: 'Đại học Sư phạm kỹ thuật TPHCM',
+        //       destination: address
+        //     },
+        //     function(err, data) {
+        //       if (err){
+        //         res.json({err:1})
+        //       } else {
+        //         var result;
+        //         if (sumcost>800000){
+        //             result=0;
+        //         } else {
+        //             if (data.distanceValue <= 3000) result = 0;
+        //             else result = 3*(data.distanceValue-3000);
+        //         }
+        //         Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
+        //             sumshipcost:result,costVoucher:voucher}}, function (err, or) {
+        //             if (err) {
+        //                 console.log(err);
+        //             } else {
+        //                 Order.findOne({ _id: id }, function (err, order) {
+        //                     if (err) {
+        //                         throw err;
+        //                     } else {
+        //                         console.log(order.sumproductcost);
+        //                         if (order.sumproductcost >=800000) result=0;
+        //                         res.json({err:0,data:order,ship:result,distance:data.distanceValue});
+        //                     }
+        //                 })
+        //             }
+        //         });
+        //       }
+        //   });
+
+        //mốt xóa khúc dưới đi
+        var result = 10000;
+        var distanceResult = 3000;
+        Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
+                        sumshipcost:result,costVoucher:voucher}}, function (err, or) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            Order.findOne({ _id: id }, function (err, order) {
+                                if (err) {
+                                    throw err;
+                                } else {
+                                    if (order.sumproductcost >=800000) result=0;
+                                    res.json({err:0,data:order,ship:result,distance:distanceResult});
+                                }
+                            })
+                        }
+                    });
     });
     app.post("/sendmail",parser,(req,res) => { //KHOẢNG CÁCH VẬN CHUYỂN ĐƯA VÀO SAU
         const order = JSON.parse(req.body.order);
@@ -262,7 +281,7 @@ module.exports = function(app,io){
     app.get("/check/:code",(req,res)=>{
         let code = req.params.code;
         var arrErrorProduct = [];
-        console.log(code);
+        var arrValidProduct = [];
         Order.findOne({code:code},function(err,data){
             if (err){
                 console.log(err);
@@ -270,31 +289,27 @@ module.exports = function(app,io){
                 if (data&&data.listproduct.length>0){
                     const forLoop = async _ => {
                         for (var i=0; i<data.listproduct.length; i++){
-                        var pOrder = data.listproduct[i];   
-                        await Product.findOne({_id:pOrder.id},function(err,product){
-                            if (err){
-                                console.log(err);
-                            } else {
+                            var pOrder = data.listproduct[i];   
+                            var product = await Product.findOne({_id:pOrder.id},function(err,pro){});
+                            if (product){
                                 let index = product.sizes.findIndex(item => item.size===pOrder.size);
                                 if (index!=-1){
                                     let pos = product.sizes[index].colors.findIndex(item => item.color===pOrder.color);
                                     if (product.sizes[index].colors[pos].quanty<pOrder.quanty){
                                         arrErrorProduct.push(pOrder);
+                                    } else {
+                                        arrValidProduct.push(pOrder);
                                     }
                                 }
-                                if (i==data.listproduct.length-1){
-                                    res.send(arrErrorProduct);
-                                }
                             }
-                        });
-                    }
+                        }
+                        res.json({dataErr:arrErrorProduct,dataValid:arrValidProduct,voucher: data.costVoucher});
                  }
                  forLoop();
                 }
             }
         })
     })
-
     app.get("/checkout/:email/:code",(req,res)=>{
         console.log("vô 1");
         var currentDay = getCurrentDay();
@@ -390,13 +405,13 @@ module.exports = function(app,io){
                                     if (err) {
                                         throw err;
                                     } else {
-                                        res.send("OK");
+                                        res.send("UPDATED");
                                     }
                                 })
                             }
                         });
                     } else {
-                        res.send("OK");
+                        res.send("NOT UPDATE");
                     }
                 })
             }
@@ -429,8 +444,21 @@ module.exports = function(app,io){
             }
         })
     })
-    app.get("/ordersuccess/:email/:code",(req,res)=>{
+    app.get("/ordersuccess/confirmed/:code",(req,res)=>{
         res.render("dathangthanhcong");
+    })
+    app.get("/ordersuccess/:email/:code",(req,res)=>{
+        Order.findOne({code: req.params.code }, function (err, order) {
+            if (err){
+                console.log(err);
+            } else {
+                if (order && order.status == "unconfirmed") { 
+                    res.render("dathangthanhcong");
+                } else {
+                    res.redirect("/ordersuccess/"+"confirmed"+"/"+req.params.code);
+                }
+            }
+        })
     })
     app.get("/ordersuccess",(req,res)=>{
         res.render("dathangthanhcong");
@@ -455,6 +483,25 @@ module.exports = function(app,io){
                 if (data){
                     res.json({voucher:data.currentVoucher})
                 }
+            }
+        })
+    })
+    //update order when change list product when got an error
+    app.post("/updateWhenEditProduct",parser,(req,res)=>{
+        let listProduct = JSON.parse(req.body.listProduct);
+        let code = req.body.code;
+        let voucher = req.body.voucher;
+        let productSum = 0;
+        listProduct.forEach(product => {productSum+=product.cost*product.quanty});
+        if (voucher && voucher!=0){
+            var k = Math.floor(voucher/50000);
+            if (productSum<250000+(k*k-k)*50000) voucher = 0;
+        }
+        console.log(voucher);
+        Order.findOneAndUpdate({code:code},{$set:{listproduct:listProduct,timestamp:parseInt(Date.now().toString()),
+        time:getCurrentDayTime(),costVoucher:voucher,sumproductcost:productSum}},(err,data)=>{
+            if (!err&&data){
+                res.send("OK");
             }
         })
     })

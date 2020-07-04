@@ -159,7 +159,7 @@ const headersOrder = [
   { label: "Tên sản phẩm", key: "nameproduct" },
   { label: "Số lượt đặt hàng", key: "order" }
 ];
-var optionDisplay = "all", date="", optionSort="descending";
+var optionDisplay = "all", date="", optionSort="descending", optionCategory="all";
 class Dashboard extends React.Component{
     constructor(props){
         super(props);
@@ -177,14 +177,13 @@ class Dashboard extends React.Component{
           dataOrder: [],
           lDataCustomers:[],
           btnCurrent: 0,
-          dataSellingProduct: []
+          dataSellingProduct: [],
+          statusCustomer: 1,
+          curpage:1
         }
         main=this;
         this._onSelect = this._onSelect.bind(this);
         this._onSelect1 = this._onSelect1.bind(this);
-        this.closeCustomers = this.closeCustomers.bind(this);
-        this.visitFrequently = this.visitFrequently.bind(this);
-        this.notOrder = this.notOrder.bind(this);
     }
     componentDidMount(){
       var that = this;
@@ -196,7 +195,7 @@ class Dashboard extends React.Component{
       $.get("/getCloseCustomers",function(data){
         that.setState({lDataCustomers:data});
       })
-      $.post("/getAllSellingProduct",{optionSort:"descending"},function(data){
+      $.post("/getAllSellingProduct",{optionSort:"descending",optionCategory:"all"},function(data){
         that.setState({dataSellingProduct: data});
       })
       socket.on("update-view-product", function (data) {
@@ -268,37 +267,16 @@ class Dashboard extends React.Component{
           }
         })
     }
-    closeCustomers(){
-      var that = this;
-      this.setState({btnCurrent:0});
-      $.get("/getCloseCustomers",function(data){
-        that.setState({lDataCustomers:data});
-      })
-    }
-    visitFrequently(){
-      var that = this;
-      this.setState({btnCurrent:1});
-      $.get("/getVisitFrequently",function(data){
-        that.setState({lDataCustomers:data});
-      })
-    }
-    notOrder(){
-      var that = this;
-      this.setState({btnCurrent:2});
-      $.get("/getNotOrder",function(data){
-        that.setState({lDataCustomers:data});
-      })
-    }
     changeOptionDisplay(e){
       optionDisplay = e.target.value;
       var that = this;
       if (optionDisplay == "all"){
-        $.post("/getAllSellingProduct",{optionSort:optionSort},function(data){
+        $.post("/getAllSellingProduct",{optionSort:optionSort,optionCategory:optionCategory},function(data){
           that.setState({dataSellingProduct: data});
         })
       } else {
         if (date!=""){
-          $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort},function(data){
+          $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort,optionCategory:optionCategory},function(data){
             that.setState({dataSellingProduct:data});
           })
         }
@@ -308,7 +286,7 @@ class Dashboard extends React.Component{
       var that = this;
       date = e.target.value;
       if (optionDisplay == "specific"){
-        $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort},function(data){
+        $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort,optionCategory:optionCategory},function(data){
           that.setState({dataSellingProduct:data});
         })
       }
@@ -317,18 +295,71 @@ class Dashboard extends React.Component{
       var that = this;
       optionSort = e.target.value;
       if (optionDisplay=="all"){
-        $.post("/getAllSellingProduct",{optionSort:optionSort},function(data){
+        $.post("/getAllSellingProduct",{optionSort:optionSort,optionCategory:optionCategory},function(data){
           that.setState({dataSellingProduct: data});
         })
       } else {
         if (date!=""){
-          $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort},function(data){
+          $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort,optionCategory:optionCategory},function(data){
+            that.setState({dataSellingProduct:data});
+          })
+        }
+      }
+    }
+    statusCloseCustomer(){
+      var that = this;
+      this.setState({statusCustomer:1});
+      $.get("/getCloseCustomers",function(data){
+        that.setState({lDataCustomers:data});
+      })
+    }
+    statusVisitWebsite(){
+      this.setState({statusCustomer:2})
+      var that = this;
+      $.get("/getVisitFrequently",function(data){
+        that.setState({lDataCustomers:data});
+      })
+    }
+    statusNotOrder(){
+      this.setState({statusCustomer:3})
+      var that = this;
+      $.get("/getNotOrder",function(data){
+        that.setState({lDataCustomers:data});
+      })
+    }
+    changePage(value,event){
+      this.setState({curpage:value});
+    }
+    previousPage() {
+      if (this.state.curpage > 1)
+        this.setState({ curpage: this.state.curpage - 1 });
+    }
+    nextPage() {
+      var perpage = 5;
+      if (this.state.curpage < Math.ceil(this.state.dataSellingProduct.length / perpage))
+        this.setState({ curpage: this.state.curpage + 1 });
+    }
+    changeCategory(e){
+      optionCategory = e.target.value;
+      var that = this;
+      if (optionDisplay=="all"){
+        $.post("/getAllSellingProduct",{optionSort:optionSort,optionCategory:optionCategory},function(data){
+          that.setState({dataSellingProduct: data});
+        })
+      } else {
+        if (date!=""){
+          $.post("/getSpecificDateSaleProduct",{date:date,optionSort:optionSort,optionCategory:optionCategory},function(data){
             that.setState({dataSellingProduct:data});
           })
         }
       }
     }
     render(){
+      const perpage = 5;
+      var that = this;
+      var start = (this.state.curpage - 1) * perpage;
+      var finish = start+perpage;
+      if (finish>this.state.dataSellingProduct.length) finish=this.state.dataSellingProduct.length;
         return (
           <div id="content">
             <div class="panel panel-default">
@@ -336,18 +367,7 @@ class Dashboard extends React.Component{
                 <i class="icon-beer icon-large"></i>
                 Dashboard!
                 <div class="panel-tools">
-                  <div class="btn-group">
-                    <a class="btn" href="#">
-                    </a>
-                    <a
-                      class="btn"
-                      data-toggle="toolbar-tooltip"
-                      href="#"
-                      title="Toggle"
-                    >
-                      <i class="icon-chevron-down"></i>
-                    </a>
-                  </div>
+                  <div class="btn-group"></div>
                 </div>
               </div>
               {this.state.permission == false ? (
@@ -365,8 +385,8 @@ class Dashboard extends React.Component{
                   </button>
                 </div>
               ) : (
+                // body dashboard
                 <div class="panel-body">
-                  <div class="progress"></div>
                   <div>
                     <Dropdown
                       options={options}
@@ -376,7 +396,10 @@ class Dashboard extends React.Component{
                     />
                   </div>
                   {this.state.processing == true ? (
-                    <div class="loader text-center"></div>) : ("")}
+                    <div class="loader text-center"></div>
+                  ) : (
+                    ""
+                  )}
                   <div class="row">
                     <div class="fourMetrics">
                       <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
@@ -530,91 +553,113 @@ class Dashboard extends React.Component{
                     </div>
                   </div>
                   <div class="page-header">
-                    <h4>Customers</h4>
-                    <div>
-                      <div class="row text-center">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnCustomer">
-                          <button
-                            class={
-                              this.state.btnCurrent == 0
-                                ? "btn btn-choose currentBtn"
-                                : "btn btn-choose"
-                            }
-                            onClick={this.closeCustomers}
-                          >
-                            Close Customers
-                          </button>
-                          <button
-                            class={
-                              this.state.btnCurrent == 1
-                                ? "btn btn-choose currentBtn"
-                                : "btn btn-choose"
-                            }
-                            style={{ marginLeft: "5px" }}
-                            onClick={this.visitFrequently}
-                          >
-                            Visit Website Frequently
-                          </button>
-                          <button
-                            class={
-                              this.state.btnCurrent == 2
-                                ? "btn btn-choose currentBtn"
-                                : "btn btn-choose"
-                            }
-                            style={{ marginLeft: "5px" }}
-                            onClick={this.notOrder}
-                          >
-                            Have not ordered
-                          </button>
+                    <h4 class="titleDashboard">Customers</h4>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="card">
+                          <div class="card-header card-header-tabs card-header-primary">
+                            <div class="nav-tabs-navigation">
+                              <div class="nav-tabs-wrapper">
+                                <span class="nav-tabs-title">Tasks:</span>
+                                <ul class="nav nav-tabs" data-tabs="tabs">
+                                  <li class="nav-item">
+                                    <a
+                                      class={
+                                        this.state.statusCustomer == 1
+                                          ? "nav-link active"
+                                          : "nav-link"
+                                      }
+                                      onClick={this.statusCloseCustomer.bind(
+                                        this
+                                      )}
+                                    >
+                                      Close Customers
+                                      <div class="ripple-container"></div>
+                                    </a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a
+                                      class={
+                                        this.state.statusCustomer == 2
+                                          ? "nav-link active"
+                                          : "nav-link"
+                                      }
+                                      onClick={this.statusVisitWebsite.bind(
+                                        this
+                                      )}
+                                    >
+                                      Visit Website Frequently
+                                      <div class="ripple-container"></div>
+                                    </a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a
+                                      class={
+                                        this.state.statusCustomer == 3
+                                          ? "nav-link active"
+                                          : "nav-link"
+                                      }
+                                      onClick={this.statusNotOrder.bind(this)}
+                                    >
+                                      Have not ordered
+                                      <div class="ripple-container"></div>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="card-body table-responsive">
+                            <table class="table table-hover">
+                              <thead>
+                                <th class="text-center">#</th>
+                                <th class="text-center">First Name</th>
+                                <th class="text-center">Last Name</th>
+                                <th class="text-center">Email</th>
+                                <th class="text-center">Phone</th>
+                                <th class="text-center">
+                                  {this.state.statusCustomer == 1
+                                    ? "Number Of Orders"
+                                    : "Number of Visits"}
+                                </th>
+                              </thead>
+                              <tbody>
+                                {this.state.lDataCustomers.map(function (
+                                  customer,
+                                  index
+                                ) {
+                                  return (
+                                    <tr key={index}>
+                                      <td class="text-center">{index + 1}</td>
+                                      <td class="text-center">
+                                        {customer.firstName}
+                                      </td>
+                                      <td class="text-center">
+                                        {customer.lastName}
+                                      </td>
+                                      <td class="text-center">
+                                        {customer.email}
+                                      </td>
+                                      <td class="text-center">
+                                        {customer.numberPhone}
+                                      </td>
+                                      <td class="text-center">
+                                        {main.state.statusCustomer == 1
+                                          ? customer.qorder
+                                          : customer.qvisit}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
-                        <table class="table">
-                          <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">First Name</th>
-                              <th class="text-center">Last Name</th>
-                              <th class="text-center">Email</th>
-                              <th class="text-center">Phone</th>
-                              <th class="text-center">
-                                {this.state.btnCurrent == 0
-                                  ? "Number Of Orders"
-                                  : "Number of Visits"}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.lDataCustomers.map(function (
-                              customer,
-                              index
-                            ) {
-                              return (
-                                <tr key={index}>
-                                  <td class="text-center">{index + 1}</td>
-                                  <td class="text-center">
-                                    {customer.firstName}
-                                  </td>
-                                  <td class="text-center">
-                                    {customer.lastName}
-                                  </td>
-                                  <td class="text-center">{customer.email}</td>
-                                  <td class="text-center">
-                                    {customer.numberPhone}
-                                  </td>
-                                  <td class="text-center">
-                                    {main.state.btnCurrent == 0
-                                      ? customer.qorder
-                                      : customer.qvisit}
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
                       </div>
                     </div>
                   </div>
                   <div class="page-header">
-                    <h4>Trending products</h4>
+                    <h4 class="titleDashboard">Trending products</h4>
                   </div>
                   <div>
                     <Dropdown
@@ -623,10 +668,12 @@ class Dashboard extends React.Component{
                       value={this.state.timeOption1}
                       placeholder="Select an option"
                     />
-                    ;
                   </div>
                   {this.state.processing1 == true ? (
-                    <div class="loader text-center"></div>) : ("")}
+                    <div class="loader text-center"></div>
+                  ) : (
+                    ""
+                  )}
                   <div class="row text-center">
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                       <h3 style={{ color: "#0c967a" }}>
@@ -656,19 +703,84 @@ class Dashboard extends React.Component{
                     </div>
                   </div>
                   <div class="page-header">
-                    <h4>Information About Selling Product</h4>
+                    <h4 class="titleDashboard">
+                      Information About Selling Product
+                    </h4>
                   </div>
                   <div>
-                    <div class="radio classOption" onChange={this.changeOptionDisplay.bind(this)}>
-                      <h5><b>Option Date:</b></h5>
-                      <input type="radio" name="date" value="all" defaultChecked="true"/><label>All</label><br/>
-                      <input type="radio" name="date" value="specific"  id="changeDate"/><label>Specific Date: </label>
-                      <input type="date" name="specificDate" ref="specificDate" onChange={this.changeDate.bind(this)}/>
+                    <div class="form-group classOption">
+                      <select class="form-control optionCategory" onChange={this.changeCategory.bind(this)}>
+                        <option value="" disabled selected> Choose Category</option>
+                        <option value="all">All</option>
+                        <option value="Men Product">Men</option>
+                        <option value="Girl Product">Girl</option>
+                        <option value="Kid Product">Kid</option>
+                        <option value="Sneaker Product">Sneaker</option>
+                        <option value="Adidas Product">Adidas</option>
+                        <option value="Nike Product">Nike</option>
+                        <option value="Jordan Product">Jordan</option>
+                        <option value="Pumps Product">Pumps</option>
+                      </select>
                     </div>
-                    <div class="radio classOption" onChange={this.sortProduct.bind(this)}>
-                      <h5><b>Option Sort:</b></h5>
-                      <input type="radio" name="sort" value="descending" defaultChecked="true"/><label>Descending</label><br/>
-                      <input type="radio" name="sort" value="ascending" /><label>Ascending</label>
+                    <div
+                      class="radio classOption"
+                      onChange={this.changeOptionDisplay.bind(this)}>
+                      <h5>
+                        <b>Option Date:</b>
+                      </h5>
+                      <label>
+                        <input
+                          class="with-gap"
+                          name="date"
+                          type="radio"
+                          value="all"
+                          defaultChecked="true"
+                        />
+                        <span>All</span>
+                      </label>
+                      <label>
+                        <input
+                          class="with-gap"
+                          name="date"
+                          type="radio"
+                          value="specific"
+                        />
+                        <span>Specific Date:</span>
+                      </label>
+                      <input
+                        class="with-gap"
+                        type="date"
+                        name="specificDate"
+                        ref="specificDate"
+                        onChange={this.changeDate.bind(this)}
+                      />
+                    </div>
+                    <div
+                      class="radio classOption"
+                      onChange={this.sortProduct.bind(this)}
+                    >
+                      <h5>
+                        <b>Option Sort:</b>
+                      </h5>
+                      <label>
+                        <input
+                          class="with-gap"
+                          type="radio"
+                          name="sort"
+                          value="descending"
+                          defaultChecked="true"
+                        />
+                        <span>Descending</span>
+                      </label>
+                      <label>
+                        <input
+                          class="with-gap"
+                          type="radio"
+                          name="sort"
+                          value="ascending"
+                        />
+                        <span>Ascending</span>
+                      </label>
                     </div>
                   </div>
                   <div>
@@ -683,19 +795,76 @@ class Dashboard extends React.Component{
                         </tr>
                       </thead>
                       <tbody>
-                        {this.state.dataSellingProduct.map(function (product,index) {
-                          return (
-                            <tr key={index} class="active">
-                              <td class="text-center">{index + 1}</td>
-                              <td class="text-center">{product.name}</td>
-                              <td class="text-center"><img src={product.image.image1} width="120px"/></td>
-                              <td class="text-center">{formatCurrency(product.costs[product.costs.length-1].cost)}</td>
-                              <td class="text-center">{product.orders}</td>
-                            </tr>
-                          );
-                        })}
+                        {this.state.dataSellingProduct
+                          .slice(start, finish)
+                          .map(function (product, index) {
+                            return (
+                              <tr key={index} class="active">
+                                <td class="text-center">{start + index + 1}</td>
+                                <td class="text-center">{product.name}</td>
+                                <td class="text-center">
+                                  <img
+                                    src={product.image.image1}
+                                    width="120px"
+                                  />
+                                </td>
+                                <td class="text-center">
+                                  {formatCurrency(
+                                    product.costs[product.costs.length - 1].cost
+                                  )}
+                                </td>
+                                <td class="text-center">{product.orders}</td>
+                              </tr>
+                            );
+                          })}
                       </tbody>
                     </table>
+                    <div class="panel-footer">
+                      <ul class="pagination pagination-sm">
+                        <li>
+                          <a
+                            style={{ cursor: "pointer" }}
+                            onClick={this.previousPage.bind(this)}
+                          >
+                            «
+                          </a>
+                        </li>
+                        {Array.from(
+                          Array(
+                            Math.ceil(
+                              that.state.dataSellingProduct.length / perpage
+                            )
+                          ).keys()
+                        ).map(function (item, index) {
+                          return (
+                            <li
+                              class={
+                                index + 1 == that.state.curpage ? "active" : ""
+                              }
+                            >
+                              <a
+                                onClick={that.changePage.bind(that, index + 1)}
+                                style={{ cursor: "pointer" }}
+                              >
+                                {index + 1}
+                              </a>
+                            </li>
+                          );
+                        })}
+                        <li>
+                          <a
+                            style={{ cursor: "pointer" }}
+                            onClick={this.nextPage.bind(this)}
+                          >
+                            »
+                          </a>
+                        </li>
+                      </ul>
+                      <div class="pull-right">
+                        Showing {start + 1} to {finish} of{" "}
+                        {this.state.dataSellingProduct.length} entries
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

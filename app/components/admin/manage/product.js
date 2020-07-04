@@ -970,7 +970,7 @@ class ManageProducts extends React.Component {
           </div>
               <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnAddUser text-right">
-                  <button class="btn btn-warning" data-toggle="modal" data-target="#modalNewProduct">
+                  <button class="btn btnNewSomething" data-toggle="modal" data-target="#modalNewProduct">
                     <i class="icon-plus-sign"></i> Add New Product
                       </button>
                   <div class="upload-btn-wrapper">

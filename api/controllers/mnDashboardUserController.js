@@ -5,6 +5,7 @@ const User = require("../models/users");
 const Message = require("../models/message");
 const Statistic = require("../models/statistic");
 const Product = require("../models/Product");
+const ProductCategory = require("../models/ProductCategory");
 const { google } = require('googleapis')
 const scopes = 'https://www.googleapis.com/auth/analytics.readonly'
 process.env.CLIENT_EMAIL = "new-service-account@atlantean-house-272907.iam.gserviceaccount.com";
@@ -555,26 +556,59 @@ module.exports = function(app,adminRouter,jwt){
     //Option = "Ascending" or "Descending"
     app.post("/getAllSellingProduct",parser,(req,res)=>{
         const optionSort = req.body.optionSort;
-        console.log(optionSort);
-        Product.find({}).sort({orders:optionSort}).exec(function(err,arrProduct){
-            if (!err && arrProduct){
-                res.send(arrProduct);
-            }
-        })
+        const optionCategory = req.body.optionCategory;
+        console.log(optionCategory);
+        if (optionCategory!="all"){
+            ProductCategory.findOne({name:optionCategory},function(err,category){
+                if (!err&&category){
+                    var listPro = category.listProduct;
+                    var arrResult = [];
+                    var forLoop = async (_) => {
+                      for (var i = 0; i < listPro.length; i++) {
+                        var product = await Product.findOne({_id:listPro[i]._id},(err,pro)=>{});
+                        if (product){
+                            arrResult.push(product);
+                        }
+                      }
+                      if (optionSort=="descending"){
+                        res.send(arrResult.sort((a,b) => (a.orders < b.orders) ? 1 : ((b.orders < a.orders) ? -1 : 0))); 
+                      } else 
+                       if (optionSort=="ascending"){
+                        res.send(arrResult.sort((a,b) => (a.orders > b.orders) ? 1 : ((b.orders > a.orders) ? -1 : 0)));
+                      }
+                    };
+                    forLoop();
+                }
+            })
+        } else {
+            Product.find({}).sort({orders:optionSort}).exec(function(err,arrProduct){
+                if (!err && arrProduct){
+                    res.send(arrProduct);
+                }
+            })
+        }
     })
     //Thống kê sản phẩm bán được trong một ngày cụ thể, truyền vào DATE
     app.post("/getSpecificDateSaleProduct",parser,(req,res)=>{
         const date = req.body.date.toString().replace(/-/g,"");
         const optionSort = req.body.optionSort;
-        console.log(date);
-        console.log(optionSort);
+        const optionCategory = req.body.optionCategory;
         /// xử lý date
         Statistic.findOne({day:date},(err,statistic)=>{
             if (!err && statistic){
                 var arrResult = [];
                 var loop = async _ => {
+                    var category = await ProductCategory.findOne({name:optionCategory},(err,cate)=>{})
+                    var listProduct;
+                    console.log(category);
+                    if (category)  listProduct = category.listProduct;
+                    console.log(listProduct);
                     for (var i=0; i<statistic.orderproduct.length; i++){
                         var product = statistic.orderproduct[i];
+                        if (optionCategory!='all' && listProduct){
+                            var index = listProduct.findIndex(item => item._id.toString()==product.id.toString());
+                            if (index==-1) continue;
+                        }
                         var pro = await Product.findOne({_id:product.id},(err,dataProduct)=>{})
                         if (pro){
                             var result = {

@@ -14,7 +14,8 @@ const OrderSchema = new Schema({
     status: String,
     code: Number,
     payment: Boolean,
-    costVoucher: Number
+    costVoucher: Number,
+    paymentMethod: String
 });
 
 module.exports = mongoose.model('order',OrderSchema);
