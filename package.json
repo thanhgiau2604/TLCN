@@ -28,7 +28,7 @@
     "google-distance": "^1.0.1",
     "google-distance-api": "^1.0.0",
     "googleapis": "^48.0.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.2.1",
