@@ -1,6 +1,6 @@
 const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({ extended: false });
-
+var Order = require("../models/order");
 function sortObject(o) {
   var sorted = {},
     key,
@@ -46,11 +46,11 @@ module.exports = function (app) {
 
     var config = require("config");
     var dateFormat = require("dateformat");
-
+    console.log(req.body.code);
     var tmnCode = config.get("vnp_TmnCode");
     var secretKey = config.get("vnp_HashSecret");
     var vnpUrl = config.get("vnp_Url");
-    var returnUrl = config.get("vnp_ReturnUrl");
+    var returnUrl = config.get("vnp_ReturnUrl")+"/"+req.body.code;
 
     var date = new Date();
     var createDate = dateFormat(date, "yyyymmddHHmmss");
@@ -103,9 +103,10 @@ module.exports = function (app) {
     //res.redirect(vnpUrl)
   });
 
-  app.get("/vnpay_return", function (req, res, next) {
+  app.get("/vnpay_return/:code", function (req, res, next) {
     var vnp_Params = req.query;
-
+    var code = req.params.code;
+    console.log("return "+req.params.code);
     var secureHash = vnp_Params["vnp_SecureHash"];
 
     delete vnp_Params["vnp_SecureHash"];
@@ -127,12 +128,19 @@ module.exports = function (app) {
 
     if (secureHash === checkSum) {
       //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-      // res.redirect("/ordersuccess?code="+vnp_Params["vnp_ResponseCode"]);
-      res.redirect("/ordersuccess");
+       res.redirect("/payment?method=vnpay&coderesponse="+vnp_Params["vnp_ResponseCode"]+"&code="+code);
     } else {
-      res.redirect("/success?code="+'97');
+      res.redirect("/payment?method=vnpay&coderesponse="+'97');
     }
   });
+  app.post("/updateOrderVnpay",parser,(req,res)=>{
+    const code = req.body.code;
+    Order.findOneAndUpdate({code:code},{$set:{payment:true,paymentMethod:"vnpay"}},function(err,data){
+      if (!err && data){
+        res.json({ok:1});
+      }
+    });
+  }) 
   // app.get("/success?code=:code", (req, res) => {
   //   res.render("success");
   // });

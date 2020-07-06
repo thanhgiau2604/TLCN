@@ -5329,3 +5329,22 @@ button.btn.btn-warning.cancel-order i {
 .continue-payment button i {
     padding-right: 5px;
 }
+.radio.chooseColor label span {
+    font-size: 14px!important;
+}
+.modal-body {
+	max-height: 500px;
+    overflow: scroll;
+}
+.customButton {
+	width: auto!important;
+}
+.wait-refund {
+	margin: 0 auto;
+    border: 2px solid #d2d5e8;
+    border-radius: 50%;
+    border-top: 2px solid #1b861e;
+    border-bottom: 2px solid #1b861e;
+    width: 20px;
+    height: 20px;
+}

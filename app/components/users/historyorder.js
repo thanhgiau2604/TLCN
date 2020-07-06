@@ -10,6 +10,9 @@ var {Provider} = require("react-redux");
 var store = require("../../store");
 import {connect} from 'react-redux'
 import ReactGA from 'react-ga'
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
+
 function initizeAnalytics(){
     ReactGA.initialize("UA-155099372-1");
     ReactGA.pageview(window.location.pathname + window.location.search);
@@ -214,9 +217,9 @@ class RowProduct extends React.Component {
           </div>    
           <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 wrapper-cancel-product">
                 <div class="cancel-product">
-                    {this.props.product.status=="canceled" ?
-                    <h4 class="infor-status-product">Đã hủy</h4> :
-                    ( this.props.product.status=="confirmed"?
+                    {this.props.product.status=="canceled" ? <h4 class="infor-status-product">Đã hủy</h4> :
+                    ( this.props.product.status=="confirmed" &&
+                    (!this.props.paymentMethod || this.props.paymentMethod=="cash")?
                     <button class="btn btn-danger" onClick={this.cancelProduct.bind(this)}>
                         <i class="fa fa-times" aria-hidden="true"></i> Hủy
                     </button> : "")
@@ -235,7 +238,8 @@ class ListOrders extends React.Component {
         super(props);
         this.state = {
             listOrder: [],
-            permission:0
+            permission:0,
+            processing:[]
         }
         this.cancelOrder = this.cancelOrder.bind(this);
         mainOrder = this;
@@ -255,14 +259,65 @@ class ListOrders extends React.Component {
             }
         })
     }
-    cancelOrder(order){
+    cancelOrder(order,index){
         var that = this;
-        console.log(order);
         var idOrder = order._id;
         var email = localStorage.getItem("email");
-        $.post("/cancelOrder",{idOrder:idOrder,email:email},function(data){
-            that.setState({listOrder: data});
-        })
+        var arrProcessing = this.state.processing;
+        arrProcessing[index] = true;
+        this.setState({processing:arrProcessing});
+        if (!order.paymentMethod || order.paymentMethod=="cash"){
+            $.post("/cancelOrder",{idOrder:idOrder,email:email},function(data){
+                that.setState({listOrder: data});
+                NotificationManager.success( 'Hủy đơn hàng thành công', 'Thông báo',4000);
+                arrProcessing[index] = false;
+                that.setState({processing:arrProcessing});
+            })
+        } else 
+        if (new Date().getTime()-order.timestamp<=86400000){
+            const strErr = 'Đã xảy ra lỗi trong quá trình hoàn tiền, thử lại sau!';
+            const strSuccess = 'Hủy đơn hàng và hoàn tiền thành công';
+            if (order.paymentMethod=="paypal"){
+                $.post("/paypalrefund",{idSale:order.paypalSale.idSale,total:order.paypalSale.amount},function(data){
+                    if (data.success==true){
+                        $.post("/cancelOrder",{idOrder:idOrder,email:email},function(data){
+                            that.setState({listOrder: data});
+                            NotificationManager.success(strSuccess, 'Thông báo', 4000);
+                            arrProcessing[index] = false;
+                            that.setState({processing:arrProcessing});
+                        })
+                    } else {
+                        NotificationManager.error(strErr,'Thông báo',5000);
+                        arrProcessing[index] = false;
+                        that.setState({processing:arrProcessing});
+                    }
+                })
+            } else
+            if (order.paymentMethod=="stripe"){
+                $.post("/stripeRefund",{chargeId:order.stripeChargeId},function(data){
+                    if (data.refund==true){
+                        $.post("/cancelOrder",{idOrder:idOrder,email:email},function(data){
+                            that.setState({listOrder: data});
+                            NotificationManager.success(strSuccess, 'Thông báo', 4000);
+                            arrProcessing[index] = false;
+                            that.setState({processing:arrProcessing});
+                        })
+                    } else {
+                        NotificationManager.error(strErr,'Thông báo',5000);
+                        arrProcessing[index] = false;
+                        that.setState({processing:arrProcessing});
+                    }
+                })
+            }
+        } else {
+            NotificationManager.error(
+            'Đã vượt quá 24h cho phép để hủy đơn hàng khi thanh toán online', 'Thông báo', 5000);
+            arrProcessing[index] = false;
+            that.setState({processing:arrProcessing});
+        }
+    }
+    goLogin(){
+        window.location.replace("/");
     }
     render(){
         var that = this;
@@ -270,10 +325,11 @@ class ListOrders extends React.Component {
             return(<div className="text-center">
             <br />
             <h3>Để thực hiện chức năng này bạn phải đăng nhập!</h3>
-            <button className="btn btn-primary" onClick={this.goLogin} style={{ marginTop: '10px' }}>Đi đến trang đăng nhập</button>
+            <button className="btn btn-primary" onClick={this.goLogin.bind(this)} style={{ marginTop: '10px' }}>Đi đến trang đăng nhập</button>
         </div>)
         } else
         return(<div class="container" style={{marginTop:"30px"}}>
+         <NotificationContainer />
         <div class="row">
         <div class="text-center" style={{paddingTop:"30px",paddingBottom:"30px"}}>
             <h2><b>DANH SÁCH ĐƠN HÀNG</b></h2>
@@ -287,25 +343,45 @@ class ListOrders extends React.Component {
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href={"#collapse"+index}>
                   <b class="title-order">#{index+1}: Đơn hàng #{order.code} ngày {order.time}</b>
                 </a>
-                <span class="status-order"><i class="fa fa-commenting-o" aria-hidden="true"></i>
-                  Trạng thái đơn hàng: 
-                  <span class="detail-status"> {order.status}</span>
-                  {order.status=="canceled" ?
-                    <h4 class="infor-status-product">Đã hủy</h4> :
-                    (order.status=="confirmed"?
-                    <button class="btn btn-warning cancel-order" onClick={() => that.cancelOrder(order)}>
-                        <i class="fa fa-times" aria-hidden="true"></i> Hủy đơn hàng
-                    </button> : <button class="btn btn-warning cancel-order" onClick={() => that.cancelOrder(order)} disabled="true">
-                        <i class="fa fa-times" aria-hidden="true"></i> Hủy đơn hàng
-                    </button>)}
-                </span>              
+                <span class="status-order">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                {order.payment==true ?
+                                (order.paymentMethod=="paypal" ? <img src="img/paypal.png" width="30%"/> :
+                                (order.paymentMethod=="stripe" ? <img src="img/stripe.png" width="30%"/> :
+                                (order.paymentMethod=="vnpay" ? <img src="img/vnpay.png" width="30%"/> :
+                                (order.paymentMethod=="zalopay" ? <img src="img/zalopay.png" width="30%"/>:
+                                <h4>Đã thanh toán khi nhận hàng</h4>))))
+                                : <div></div>
+                                }
+                            </div>
+                            <div class="col-md-5">
+                                <i class="fa fa-commenting-o" aria-hidden="true"></i>Trạng thái đơn hàng:<span class="detail-status"> {order.status}</span>
+                            </div>
+                            <div class="col-md-3">
+                                {order.status == "canceled" ?
+                                <h4 class="infor-status-product">Đã hủy</h4> :
+                                (order.status == "confirmed" || 
+                                (order.status=="Payment Success" && (new Date().getTime()-order.timestamp<=86400000))?
+                                <button class="btn btn-warning cancel-order" onClick={() => that.cancelOrder(order,index)}>
+                                <i class="fa fa-times" aria-hidden="true"></i> Hủy đơn hàng</button> : 
+                                 <button class="btn btn-warning cancel-order" disabled="true">
+                                 <i class="fa fa-times" aria-hidden="true"></i> Hủy đơn hàng
+                                 </button>)}
+                                 {that.state.processing[index]==true ? <div class="loader text-center wait-refund"></div> : <div></div>}
+                            </div>
+                        </div>
+                    </div>
+                </span>          
               </h4>
             </div>
             <div id={"collapse"+index} class="panel-collapse collapse in">
               <div class="panel-body">
                 <div class="list-product">
                 {order.listproduct.map(function(product,pos){
-                    return(<RowProduct key={pos} product={product} idOrder = {order._id}/>)
+                    return(<RowProduct key={pos} product={product} idOrder = {order._id}
+                    paymentMethod = {order.paymentMethod}/>)
                 })}  
                 </div>
                   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 infor-cost">

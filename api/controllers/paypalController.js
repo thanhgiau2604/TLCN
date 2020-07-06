@@ -3,6 +3,17 @@ var Order = require("../models/order");
 const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({extended:false});
 const usdtovnd = 23281.5;
+
+function getCurrentDayTime() {
+    offset = "+7";
+    var d = new Date();
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    var day = new Date(utc + (3600000*offset));
+    var nowday = day.getDate().toString()+"-"+(day.getMonth()+1).toString()+"-"+day.getFullYear().toString()+" "
+    +day.getHours().toString()+":"+day.getMinutes().toString();
+    return nowday;
+ }
+
 module.exports = function(app){
     paypal.configure({
         'mode': 'sandbox', //sandbox or live
@@ -86,7 +97,6 @@ module.exports = function(app){
         const paymentId = req.query.paymentId;
         const total = req.params.total;
         const code = req.params.code;
-        console.log("code để update nè "+ code);
         const execute_payment_json = {
             "payer_id": payerId,
             "transactions": [{
@@ -102,11 +112,19 @@ module.exports = function(app){
                 console.log(error.response);
                 throw error;
             } else {
-                Order.findOneAndUpdate({code:code},{$set:{payment:true}},function(err,data){
+                console.log(JSON.stringify(payment));
+                const sale = payment.transactions[0].related_resources[0].sale;
+                const paypalSale = {
+                    idSale : sale.id,
+                    amount : sale.amount.total
+                }
+                Order.findOneAndUpdate({code:code},{$set:{payment:true,paymentMethod:"paypal"},
+                paypalSale:paypalSale,timestamp:parseInt(Date.now().toString()),status:"Payment Success",
+                time:getCurrentDayTime()},function(err,data){
                     if (err) console.log(err);
                     else console.log(data);
                 });
-                res.redirect("/ordersuccess")
+                res.redirect("/payment?method=paypal&code="+code);
             }
         });
     })
@@ -123,5 +141,24 @@ module.exports = function(app){
                 res.send(data);
             }
         })
+    });
+    app.post("/paypalrefund",parser,(req,res)=>{
+        var idSale = req.body.idSale;
+        var data = {
+            "amount": {
+                "currency":"USD",
+                "total": req.body.total
+            }
+        }
+        console.log(req.body.idSale);
+        console.log(req.body.total);
+        paypal.sale.refund(idSale,data,function(err,refund){
+            if (err){
+                res.send({success:false});
+            } else {
+                res.send({success:true});
+            }
+        })
     })
+    console.log(new Date("3 July 2020").getTime());
 }

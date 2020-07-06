@@ -15,7 +15,9 @@ const OrderSchema = new Schema({
     code: Number,
     payment: Boolean,
     costVoucher: Number,
-    paymentMethod: String
+    paymentMethod: String,
+    paypalSale: {idSale:String, amount: Number},
+    stripeChargeId: String
 });
 
 module.exports = mongoose.model('order',OrderSchema);

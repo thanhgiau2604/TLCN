@@ -24,7 +24,8 @@ module.exports = {
         managemessage: './app/components/admin/manage/message.js',
         contact: './app/components/common/contact.js',
         ordersuccess: './app/components/users/ordersuccess.js',
-        managechat: './app/components/admin/manage/adchat.js'
+        managechat: './app/components/admin/manage/adchat.js',
+        payment: './app/components/users/payment.js'
     },
     output: {
       path: __dirname,

@@ -31,7 +31,6 @@ class ModalEditOrder extends React.Component {
     editOrder = this;
   }
   payment(){
-    console.log("code="+codeOrder);
     var listProductOrder = [];
     var that = this;
     this.state.listStatus.map(function(item,index){
@@ -126,7 +125,8 @@ class Success extends React.Component {
             dataErr:[],
             voucher: 0,
             amount:0,
-            stripeProduct: {name:"",price:0,productBy:""}
+            stripeProduct: {name:"",price:0,productBy:""},
+            listValidProduct:[]
         }
         this.makePayment = this.makePayment.bind(this);
         main = this;
@@ -149,7 +149,8 @@ class Success extends React.Component {
                 var that = this;
                 $.get("/check/"+code,function(data){
                   if (data.dataErr.length!=0){
-                    that.setState({type:"error",dataErr:data.dataErr});
+                    that.setState({type:"error",dataErr:data.dataErr,listValidProduct:data.dataValid,
+                  voucher:data.voucher});
                     editOrder.setState({listValidProduct:data.dataValid,
                     listStatus: new Array(data.dataValid.length).fill(false),
                     voucher: data.voucher})
@@ -183,7 +184,7 @@ class Success extends React.Component {
   }
   vnPayment(){
       console.log(this.state.amount);
-      $.post("/create_payment_url",{amount:this.state.amount},function(data){
+      $.post("/create_payment_url",{amount:this.state.amount,code:codeOrder},function(data){
           if (data.code=='00'){
               if (window.vnpay){
                   vnpay.open({width: 768, height: 600, url: data.data});
@@ -203,7 +204,9 @@ class Success extends React.Component {
           product: that.state.stripeProduct
       }
       $.post("/checkout/stripe",{data:JSON.stringify(body)},function(data){
-          console.log(data);
+          if (data.success==true){
+            window.location.replace("/payment?method=stripe&code="+codeOrder+"&chargeid="+data.chargeId);
+          }
       })
   }
   paymentPaypal(){
@@ -222,6 +225,12 @@ class Success extends React.Component {
   }
   backHomepage(){
     window.location.replace("/");
+  }
+  continuePayment(){
+    $.post("/updateWhenEditProduct",{code:codeOrder,listProduct:JSON.stringify(this.state.listValidProduct),
+    voucher: this.state.voucher},function(data){
+        window.location.replace(window.location.pathname);
+    });
   }
     render(){
         localStorage.removeItem("curorder");
@@ -356,11 +365,11 @@ class Success extends React.Component {
                       </table>
                       
                       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 continue-payment col-md-push-1">
-                        <h3><b>Hiện tại trong đơn hàng có {editOrder.state.listValidProduct.length} sản phẩm hợp lệ.</b></h3>
+                        <h3><b>Hiện tại trong đơn hàng có {this.state.listValidProduct.length} sản phẩm hợp lệ.</b></h3>
                         <ul style={{listStyleType:"square"}}>
                           <li>
                             <h4>Nếu muốn tiếp tục thanh toán các sản phẩm hợp lệ trong đơn hàng, click vào đây:
-                              <button class="btn btn-danger">
+                              <button class="btn btn-danger" onClick={this.continuePayment.bind(this)}>
                               <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>Tiếp tục thanh toán</button>
                             </h4>
                           </li>

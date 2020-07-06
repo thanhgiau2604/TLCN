@@ -93,9 +93,10 @@ class SingleProduct extends React.Component {
                         var color = (
                           <div>
                               <label>
-                              <input type="radio" name={"optionColor" + this.props.stt} value={e.colors[i].color} />
-                              {e.colors[i].color}
-                             </label>
+                                    <input class="with-gap" name={"optionColor" + this.props.stt} value={e.colors[i].color}
+                                    type ="radio"/>
+                                    <span>{e.colors[i].color}</span>
+                             </label> <br/>   
                             <br />
                           </div>
                         );
@@ -115,11 +116,12 @@ class SingleProduct extends React.Component {
             <td class="cart-description">
                 <p class="product-name"><a href="#">{this.props.name}</a></p>
                 <div>
-                    <select name="product-size" style={{width:'50%'}} ref="size" onChange={this.changeSize}>
+                    <select name="product-size" style={{width:'50%'}} ref="size" onChange={this.changeSize}
+                    class="form-control">
                         {htmlSize}
                     </select>
                     <h4>Chọn Màu:</h4>
-                    <div class="radio" ref='color' onChange={this.changeColor}>
+                    <div class="radio chooseColor" ref='color' onChange={this.changeColor}>
                         {htmlColor}
                     </div>
                 </div>
@@ -241,7 +243,7 @@ class ModalDiscount extends React.Component{
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Đồng ý</button>
+                <button type="button" class="btn btn-primary customButton" data-dismiss="modal">Đóng</button>
               </div>
             </div>
           </div>
@@ -649,8 +651,8 @@ class DisplayDetailOrder extends React.Component {
                 </div>}
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-success" data-dismiss="modal" onClick={this.continueConfirm.bind(this)}>Tiếp tục</button>
+                <button type="button" class="btn btn-primary customButton" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-success customButton" data-dismiss="modal" onClick={this.continueConfirm.bind(this)}>Tiếp tục</button>
               </div> 
             </div>
           </div>

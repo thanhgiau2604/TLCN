@@ -505,4 +505,7 @@ module.exports = function(app,io){
             }
         })
     })
+    app.get("/payment",(req,res)=>{
+        res.render("thanhtoan");
+    })
 }

@@ -160,7 +160,7 @@ class Product2 extends React.Component{
 							<a onClick={this.getDetail} style={{cursor:'pointer'}}><img src={this.props.image} alt="product-image" /></a>
 							<a href="#" className="new-mark-box">{this.props.desc}</a>
 							{this.props.quantity<=5 ? <a href="#" class="mark-right">HOT</a> : <a></a>}
-							{this.props.quantity<=5 ?<a href="#" class="mark-down">Còn {this.props.quantity} sản phẩm</a> : <a></a>}
+							{this.props.quantity<=5&&this.props.quantity!=0 ?<a href="#" class="mark-down">Còn {this.props.quantity} sản phẩm</a> : <a></a>}
 							<div className="overlay-content">
 								<ul>
 									<li><a title="Xem sản phẩm" style={{cursor:'pointer'}} onClick={this.getDetail}><i className="fa fa-search"></i></a></li>
