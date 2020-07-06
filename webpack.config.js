@@ -25,7 +25,8 @@ module.exports = {
         contact: './app/components/common/contact.js',
         ordersuccess: './app/components/users/ordersuccess.js',
         managechat: './app/components/admin/manage/adchat.js',
-        payment: './app/components/users/payment.js'
+        payment: './app/components/users/payment.js',
+        zalohome: './app/components/users/zalohome.js'
     },
     output: {
       path: __dirname,
