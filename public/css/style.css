@@ -641,7 +641,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	font-size:14px;
 }
 .search-button{
-	background: #5403ad none repeat scroll 0 0;
+	background: green none repeat scroll 0 0;
 	border: medium none;
 	color: #fff;
 	float: right;
@@ -705,7 +705,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	position:relative;
 }
 .mainmenu{
-	background: #7bbd42;
+	background: #0b665a;
 	padding-left:5px;
 }
 .mainmenu nav{}
@@ -724,10 +724,10 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	transition: all 300ms ease 0s;
 }
 .mainmenu nav ul li a:hover{
-	background:#5b9212;
+	background: #05483f;
 }
 .mainmenu nav ul li.active a{
-	background: #5b9212;
+	background: #05483f;
 }
 .mainmenu nav ul li .home-var-menu{
 	left: 15px;
@@ -835,7 +835,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 3.4 mainmenu my cart
 -------------------------*/
 .shopping-cart-out{
-	background: #522ace;
+	background: #27ad44c4;
 	height:55px;
 }
 .shopping-cart{
@@ -867,7 +867,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	top: 0px;
 }
 .ajax-cart-quantity{
-	background: #5403ad none repeat scroll 0 0;
+	background: green none repeat scroll 0 0;
 	color: #fff;
 	display: inline-block;
 	font-size: 16px;
@@ -986,10 +986,10 @@ span.pro-quality a:hover{
 	/* font-family: 'Fira Sans', sans-serif; */
 	font-size:14px;
 	text-transform:capitalize;
-	background: #522ace none repeat scroll 0 0;
+	background: green none repeat scroll 0 0;
 	color: #fff;
 	padding: 7px 0;
-	transition: all 300ms ease 0s;	
+	transition: all 300ms ease 0s;
 }
 .shipping-checkout-btn a:hover{
 	background:#5403ad;
@@ -1133,7 +1133,7 @@ div.nivo-controlNav a.active{
 	display:block;
 }
 .new-mark-box{
-	background: #ff4f4f none repeat scroll 0 0;
+	background: #ff4f4f none repeat scroll 0 0!important;
 	color: #fff !important;
 	display: block;
 	font-size:11px;
@@ -1143,7 +1143,7 @@ div.nivo-controlNav a.active{
 	position: absolute;
 	text-transform: uppercase;
 	top: 5px;
-	z-index: 10;	
+	z-index: 10;
 }
 .overlay-content{
 	height: 100%;
@@ -1547,10 +1547,10 @@ div.client-carousel .owl-item img {
 9.1 footer top
 -------------------------*/	
 .footer-top-area{
-	background: #7bbd42;
+	background: #0b665a;
 }
 .footer-top-container{
-	background: #7bbd42;
+	background: #0b665a;
 }
 .footer-top-right-2{}
 .footer-top-left{
@@ -1646,14 +1646,14 @@ div.client-carousel .owl-item img {
 	border: 1px solid #FF4F4F;
 }*/
 .footer-top-right-1{
-	border-bottom: 1px solid #078e1e;
+	border-bottom: 1px solid #0b665a;
 	padding-bottom:34px;
 }
 .footer-top-right-1 p{
 	margin:0;
 }
 .footer-top-right-1 h2{
-	border-bottom: 1px solid #555;
+	border-bottom: 1px solid white;
 	color: #fff;
 	font-size:18px;
 	line-height:22px;
@@ -1773,8 +1773,8 @@ div.client-carousel .owl-item img {
 9.2 footer bottom
 -------------------------*/
 .copyright-area{
-	border-top: 1px solid #7bbd42;
-	background: #486b1a;
+	border-top: 1px solid #05483f;
+	background: #05483f;
 	padding:20px 0;
 }
 .copy-right{}
@@ -1799,16 +1799,16 @@ body.index-2 .welcome-info{
 	cursor: pointer;
 }
 body.index-2 .welcome-info span, body.index-2 .current-currency strong, body.index-2 .current-lang strong, body.index-2 .languages-choose li a:hover, body.index-2 .currency-list li a:hover, body.index-2 .header-right-menu nav ul li a:hover, body.index-2 span.cross-icon:hover, body.index-2 .shipping-item-text span a.pro-cat:hover, body.index-2 span.pro-quality a:hover, body.index-2 .product-info a:hover, body.index-2 h2.left-title a:hover, body.index-2 .latest-news-area .left-title-area h2.left-title a:hover, body.index-2 .single-latest-post h2 a:hover, body.index-2 .read-more a:hover, body.index-2 .single-facality:hover .facality-text h3, body.index-2 .info-text p a:hover, body.index-2 .single-f-widget ul li a:hover, body.index-2 .copy-right address a, body.index-2 .latest-news-row h2.center-title a:hover, body.index-2 .drodown-mega-menu .mega-menu-list a:hover{
-  color: #d81010;
+  color: green;
 }
 body.index-2 .nivo-caption a:hover, body.index-2 div.nivo-controlNav a.active, body.index-2 .slider-bolut:hover, body.index-2 div.nivo-controlNav a.nivo-control:hover, body.index-2 .new-mark-box, body.index-2 .overlay-content ul li a:hover, body.index-2 .single-facality:hover .facality-icon, body.index-2 .bstore-scrollertop:hover{
-	background: #f12642;
+	background: green;
 }
 body.index-2 .ajax-cart-quantity:hover {
-	background: #522ace;
+	background: #17752bc4;
 }
 body.index-2 .search-button, body.index-2 .ajax-cart-quantity{
-	background: #5403ad
+	background: green;
 }
 body.index-2 .newsletter-area {
 	background: #5b9212;
@@ -1843,7 +1843,7 @@ body.index-2 .left-category-menu{
 body.index-2 .left-product-cat{}
 body.index-2 .category-heading{}
 body.index-2 .category-heading h2{
-	background: #7bbd42 none repeat scroll 0 0;
+	background: #0b665a none repeat scroll 0 0;
 	color: #fff;
 	cursor: pointer;
 	font-size:14px;
@@ -1858,7 +1858,7 @@ body.index-2 .category-heading h2{
 	word-wrap: break-word;
 }
 body.index-2 .category-heading h2:before{
-	background: #5b9212 none repeat scroll 0 0;
+	background: #05483f none repeat scroll 0 0;
 	content: "";
 	display: block;
 	float: left;
@@ -1918,7 +1918,7 @@ body.index-2 .category-menu-list ul li a i{
 }
 body.index-2 .category-menu-list ul li a:hover{
 	color:#fff;
-	background:#CCCCCC;
+	background: #0b665aa3;
 }
 /*-----------------------
 10.3 category mega menu
@@ -4773,7 +4773,7 @@ a.write-review-btn{
 }
 
 .thanhmenu {
-	background-color: #7bbd42;
+	background-color: #0b665a;
 }
 
 .link-top li a{
