@@ -3648,22 +3648,22 @@ ul.step li.last span {
 }
 ul.step li.step-current {
     border-color: #399b49 #51ae5c #208931 #369946;
-	background: #42b856;
-	background: -moz-linear-gradient(#42b856, #43ab54);
-	background: -webkit-linear-gradient(#42b856, #43ab54);
-	background: -o-linear-gradient(#42b856, #43ab54);
-	background: -ms-linear-gradient(#42b856, #43ab54);/*For IE10*/
-	background: linear-gradient(#42b856, #43ab54);
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#42b856', endColorstr='#43ab54');
+    background: #42b856;
+    background: -moz-linear-gradient(#42b856, #43ab54);
+    background: -webkit-linear-gradient(#42b856, #43ab54);
+    background: -o-linear-gradient(#42b856, #43ab54);
+    background: -ms-linear-gradient(#42b856, #43ab54);/*For IE10*/
+    background: linear-gradient(to right,#0b665ab8, #0b665a);
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#42b856', endColorstr='#43ab54');
 }
 ul.step li.step-current span {
-	border-left:1px solid #73ca77;
-	border-right:1px solid #73ca77;
-	border-top:1px solid #73ca77;
-	border-bottom:1px solid #73ca77;
-    color: #fff;
-    position: relative;
-    text-shadow: 1px 1px #208931;
+	border-left: 1px solid #0b665a;
+	border-right: 1px solid #0b665a;
+	border-top: 1px solid #0b665a;
+	border-bottom: 1px solid #0b665a;
+	color: #fff;
+	position: relative;
+	text-shadow: 1px 1px #0b665a;
 	padding:13px 10px 14px;
 }
 ul.step li.step-todo {

@@ -319,6 +319,12 @@ class ListOrders extends React.Component {
     goLogin(){
         window.location.replace("/");
     }
+    changeOptionDisplay(e){
+
+    }
+    changeDate(e){
+        
+    }
     render(){
         var that = this;
         if (this.state.permission==0){
@@ -331,9 +337,29 @@ class ListOrders extends React.Component {
         return(<div class="container" style={{marginTop:"30px"}}>
          <NotificationContainer />
         <div class="row">
-        <div class="text-center" style={{paddingTop:"30px",paddingBottom:"30px"}}>
+        <div class="text-center" style={{paddingTop:"30px",paddingBottom:"20px"}}>
             <h2><b>DANH SÁCH ĐƠN HÀNG</b></h2>
         </div>
+        <div class="text-center" style={{paddingBottom:"30px"}}>
+                    <div
+                        class="radio classOption"
+                        onChange={this.changeOptionDisplay.bind(this)}>
+                        <label>
+                            <input
+                                class="with-gap" name="date" type="radio" value="all" defaultChecked="true"/>
+                            <span>Tất cả</span>
+                        </label>
+                        <label>
+                            <input
+                                class="with-gap" name="date" type="radio" value="specific"/>
+                            <span>Ngày cụ thể:</span>
+                        </label>
+                        <input
+                            class="with-gap" type="date" name="specificDate" ref="specificDate"
+                            onChange={this.changeDate.bind(this)}
+                        />
+                    </div>
+                </div>
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="panel-group" id="accordion">
         {this.state.listOrder.map(function(order,index){

@@ -612,7 +612,7 @@ class DisplayDetailOrder extends React.Component {
                       <h3><b>Địa chỉ nhận hàng: </b> {this.state.order.address}</h3>
                       <h3><b>Địa chỉ kho hàng: </b>Số 01, Võ Văn Ngân, Thủ Đức, Hồ Chí Minh</h3>
                       <h3><b>Khoảng cách vận chuyển: </b>{parseFloat(this.state.distance/1000).toFixed(2)}km</h3>
-                      <h3><b>Chi phí vận chuyển: </b>{formatCurrency(this.state.order.sumshipcost)}</h3>
+                      <h3><b>Shipping: </b>{formatCurrency(this.state.order.sumshipcost)}</h3>
                       <h3><b>Tổng tiền đơn hàng: </b>{formatCurrency(this.state.order.sumproductcost + this.state.order.sumshipcost-this.state.order.costVoucher)}</h3>
                   </div>               
                 </div>

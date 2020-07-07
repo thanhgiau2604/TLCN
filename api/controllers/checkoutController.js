@@ -104,59 +104,59 @@ module.exports = function(app,io){
         User.findOneAndUpdate({email:email},{address:address},function(err,data){
             if (err) console.log(err);
         })
-        // distance.get(
-        //     {
-        //       origin: 'Đại học Sư phạm kỹ thuật TPHCM',
-        //       destination: address
-        //     },
-        //     function(err, data) {
-        //       if (err){
-        //         res.json({err:1})
-        //       } else {
-        //         var result;
-        //         if (sumcost>800000){
-        //             result=0;
-        //         } else {
-        //             if (data.distanceValue <= 3000) result = 0;
-        //             else result = 3*(data.distanceValue-3000);
-        //         }
-        //         Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
-        //             sumshipcost:result,costVoucher:voucher}}, function (err, or) {
-        //             if (err) {
-        //                 console.log(err);
-        //             } else {
-        //                 Order.findOne({ _id: id }, function (err, order) {
-        //                     if (err) {
-        //                         throw err;
-        //                     } else {
-        //                         console.log(order.sumproductcost);
-        //                         if (order.sumproductcost >=800000) result=0;
-        //                         res.json({err:0,data:order,ship:result,distance:data.distanceValue});
-        //                     }
-        //                 })
-        //             }
-        //         });
-        //       }
-        //   });
+        distance.get(
+            {
+              origin: 'Đại học Sư phạm kỹ thuật TPHCM',
+              destination: address
+            },
+            function(err, data) {
+              if (err){
+                res.json({err:1})
+              } else {
+                var result;
+                if (sumcost>800000){
+                    result=0;
+                } else {
+                    if (data.distanceValue <= 3000) result = 0;
+                    else result = 3*(data.distanceValue-3000);
+                }
+                Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
+                    sumshipcost:result,costVoucher:voucher}}, function (err, or) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        Order.findOne({ _id: id }, function (err, order) {
+                            if (err) {
+                                throw err;
+                            } else {
+                                console.log(order.sumproductcost);
+                                if (order.sumproductcost >=800000) result=0;
+                                res.json({err:0,data:order,ship:result,distance:data.distanceValue});
+                            }
+                        })
+                    }
+                });
+              }
+          });
 
         //mốt xóa khúc dưới đi
-        var result = 10000;
-        var distanceResult = 3000;
-        Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
-                        sumshipcost:result,costVoucher:voucher}}, function (err, or) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            Order.findOne({ _id: id }, function (err, order) {
-                                if (err) {
-                                    throw err;
-                                } else {
-                                    if (order.sumproductcost >=800000) result=0;
-                                    res.json({err:0,data:order,ship:result,distance:distanceResult});
-                                }
-                            })
-                        }
-                    });
+        // var result = 10000;
+        // var distanceResult = 3000;
+        // Order.update({ _id:id}, {$set:{address:address,fullname:fullname,phonenumber:phonenumber,
+        //                 sumshipcost:result,costVoucher:voucher}}, function (err, or) {
+        //                 if (err) {
+        //                     console.log(err);
+        //                 } else {
+        //                     Order.findOne({ _id: id }, function (err, order) {
+        //                         if (err) {
+        //                             throw err;
+        //                         } else {
+        //                             if (order.sumproductcost >=800000) result=0;
+        //                             res.json({err:0,data:order,ship:result,distance:distanceResult});
+        //                         }
+        //                     })
+        //                 }
+        //             });
     });
     app.post("/sendmail",parser,(req,res) => { //KHOẢNG CÁCH VẬN CHUYỂN ĐƯA VÀO SAU
         const order = JSON.parse(req.body.order);
@@ -244,7 +244,7 @@ module.exports = function(app,io){
                 while (data.findIndex(item => item.code===numberRandom)!=-1){
                     numberRandom = randomInt(100000,9999999);
                 }
-                var messageSend = "Ma xac nhan: "+numberRandom;
+                var messageSend = "Code: "+numberRandom;
                 Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, 
                     time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString())}},function(err,data){
                         if (err){
@@ -282,33 +282,55 @@ module.exports = function(app,io){
         let code = req.params.code;
         var arrErrorProduct = [];
         var arrValidProduct = [];
-        Order.findOne({code:code},function(err,data){
-            if (err){
-                console.log(err);
-            } else {
-                if (data&&data.listproduct.length>0){
-                    const forLoop = async _ => {
-                        for (var i=0; i<data.listproduct.length; i++){
-                            var pOrder = data.listproduct[i];   
-                            var product = await Product.findOne({_id:pOrder.id},function(err,pro){});
-                            if (product){
-                                let index = product.sizes.findIndex(item => item.size===pOrder.size);
-                                if (index!=-1){
-                                    let pos = product.sizes[index].colors.findIndex(item => item.color===pOrder.color);
-                                    if (product.sizes[index].colors[pos].quanty<pOrder.quanty){
-                                        arrErrorProduct.push(pOrder);
-                                    } else {
-                                        arrValidProduct.push(pOrder);
-                                    }
-                                }
+        var loop = async _ => {
+            var data = await Order.findOne({code:code},function(err,data){});
+            if (data&&data.listproduct.length>0){
+                for (var i=0; i<data.listproduct.length; i++){
+                    var pOrder = data.listproduct[i];   
+                    var product = await Product.findOne({_id:pOrder.id},function(err,pro){});
+                    if (product){
+                        let index = product.sizes.findIndex(item => item.size===pOrder.size);
+                        if (index!=-1){
+                            let pos = product.sizes[index].colors.findIndex(item => item.color===pOrder.color);
+                            if (product.sizes[index].colors[pos].quanty<pOrder.quanty){
+                                arrErrorProduct.push(pOrder);
+                            } else {
+                                arrValidProduct.push(pOrder);
                             }
                         }
-                        res.json({dataErr:arrErrorProduct,dataValid:arrValidProduct,voucher: data.costVoucher});
-                 }
-                 forLoop();
+                    }
                 }
             }
-        })
+            res.json({dataErr:arrErrorProduct,dataValid:arrValidProduct,voucher: data.costVoucher});
+        }
+        loop();
+        // Order.findOne({code:code},function(err,data){
+        //     if (err){
+        //         console.log(err);
+        //     } else {
+        //         if (data&&data.listproduct.length>0){
+        //             const forLoop = async _ => {
+        //                 for (var i=0; i<data.listproduct.length; i++){
+        //                     var pOrder = data.listproduct[i];   
+        //                     var product = await Product.findOne({_id:pOrder.id},function(err,pro){});
+        //                     if (product){
+        //                         let index = product.sizes.findIndex(item => item.size===pOrder.size);
+        //                         if (index!=-1){
+        //                             let pos = product.sizes[index].colors.findIndex(item => item.color===pOrder.color);
+        //                             if (product.sizes[index].colors[pos].quanty<pOrder.quanty){
+        //                                 arrErrorProduct.push(pOrder);
+        //                             } else {
+        //                                 arrValidProduct.push(pOrder);
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //                 res.json({dataErr:arrErrorProduct,dataValid:arrValidProduct,voucher: data.costVoucher});
+        //          }
+        //          forLoop();
+        //         }
+        //     }
+        // })
     })
     app.get("/checkout/:email/:code",(req,res)=>{
         console.log("vô 1");
@@ -319,103 +341,187 @@ module.exports = function(app,io){
         var phoneno = /^\d{10}$/;
         if (infor[0]=='8'&&infor[1]=='4')  phoneno = /^\d{11}$/;
         if(infor.match(phoneno)) typeInfor="phone";
-        Statistic.findOne({ day: currentDay }, function (err, data) {
-            if (data) {
-                var listOrderToday = data.orderproduct; //Tất cả order trong ngày
-                Order.findOne({code: req.params.code }, function (err, order) {
-                    if (order && order.status == "unconfirmed") { //nếu trạng thái unconfirmed mới thực hiện cập nhật
-                        dataProduct = order.listproduct;
-                        var ok;
-                        var result = listOrderToday;
-                        for (var i = 0; i < dataProduct.length; i++) {
-                            ok = false;
-                            for (var j = 0; j < listOrderToday.length; j++) {
-                                if (dataProduct[i].id.equals(listOrderToday[j].id)) {
-                                    ok = true;
-                                    var itemresult = listOrderToday[j];
-                                    itemresult.count += dataProduct[i].quanty;
-                                    result[j] = itemresult;
-                                    break;
-                                }
-                            }
-                            if (ok == false) {
-                                var itemresult = {
-                                    id: dataProduct[i].id,
-                                    count: dataProduct[i].quanty
-                                }
-                                result.push(itemresult);
+        const forLoop = async _ => {
+            const data = await Statistic.findOne({ day: currentDay }, function (err, data) {});
+            if (data){
+                var listOrderToday = data.orderproduct;
+                const order = await Order.findOne({code: req.params.code }, function (err, order) {});
+                if (order && order.status == "unconfirmed") {
+                    dataProduct = order.listproduct;
+                    var ok;
+                    var result = listOrderToday;
+                    for (var i = 0; i < dataProduct.length; i++) {
+                        ok = false;
+                        for (var j = 0; j < listOrderToday.length; j++) {
+                            if (dataProduct[i].id.equals(listOrderToday[j].id)) {
+                                ok = true;
+                                var itemresult = listOrderToday[j];
+                                itemresult.count += dataProduct[i].quanty;
+                                result[j] = itemresult;
+                                break;
                             }
                         }
-
-                        for (var i = 0; i < dataProduct.length; ++i) {
-                            Product.findOneAndUpdate(
-                                { _id: dataProduct[i].id },
-                                { $inc: { "sizes.$[filter1].colors.$[filter2].quanty": -dataProduct[i].quanty } },
-                                { arrayFilters: [{ 'filter2.color': dataProduct[i].color }, { 'filter1.size': dataProduct[i].size }] },
-                                function (err, data) {})
-                        }
-                        for (var i = 0; i < dataProduct.length; ++i) {
-                            Product.findOneAndUpdate({_id: dataProduct[i].id}, {$inc:{quanty: -dataProduct[i].quanty},$inc:{orders:1}}, 
-                            function (err, data) {})
-                        }
-                        if (order.costVoucher>0){
-                            User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
-                                {$pull:{currentVoucher:{value:order.costVoucher}}},{new:true},function(err,data){
-                                    if (err) console.log(err); else
-                                    console.log(data);
-                                })
-                        }
-                        //cập nhật vào thống kê
-                        Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
-                            if (err) console.log(err); else
-                            console.log(data);
-                        });
-                        //Tăng số lượt đặt hàng của khách hàng --> để thống kê
-                        User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true},function(err,data){
-                            if (err) console.log(err);
-                            else {
-                                if (data){
-                                    if (data.qorder%5==0){
-                                        var value = Math.floor(data.qorder/5)*50000;
-                                        User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
-                                            {$push:{currentVoucher:{value:value}}},{new:true},function(err,data){
-                                                if (err) console.log(err);
-                                        })
-                                    }
-                                }
+                        if (ok == false) {
+                            var itemresult = {
+                                id: dataProduct[i].id,
+                                count: dataProduct[i].quanty
                             }
-                        })
-                        //Cập nhật trạng thái confirmed
-                        Order.update({code: req.params.code }, { $set: { status: "confirmed", time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                Order.update({code: req.params.code},
-                                    {$set:{"listproduct.$[].status":"confirmed"}},function(err,data){
-                                        
-                                    })
-                                if (typeInfor=="email"){
-                                    let txtTo = req.params.email;
-                                    let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
-                                    let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
-                                    sendmail(txtTo, txtSubject, txtContent);
-                                }
-                                console.log(req.params.email);
-                                User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]}, { $set: { cart: [] } }, function (err, data) {
-                                    if (err) {
-                                        throw err;
-                                    } else {
-                                        res.send("UPDATED");
-                                    }
-                                })
-                            }
-                        });
-                    } else {
-                        res.send("NOT UPDATE");
+                            result.push(itemresult);
+                        }
                     }
-                })
+                    // console.log(dataProduct);
+                    for (var i = 0; i < dataProduct.length; ++i) {
+                          Product.findOneAndUpdate(
+                            { _id: dataProduct[i].id },
+                            { $inc: { "sizes.$[filter1].colors.$[filter2].quanty": -dataProduct[i].quanty }},
+                            { arrayFilters: [{ 'filter2.color': dataProduct[i].color }, { 'filter1.size': dataProduct[i].size }] },
+                            function (err, data) {})
+                    }
+                    for (var j = 0; j < dataProduct.length; ++j) {
+                        console.log(dataProduct[j]);
+                        Product.updateOne({_id: dataProduct[j].id}, {$inc:{quanty: -dataProduct[j].quanty,orders:dataProduct[j].quanty}}, 
+                        function (err, data) {
+                            if (err) console.log(err);
+                            else console.log(data);
+                        })
+                    }
+                    if (order.costVoucher>0){
+                        await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
+                            {$pull:{currentVoucher:{value:order.costVoucher}}},{new:true},function(err,data){
+                                // if (err) console.log(err); else
+                                // console.log(data);
+                            })
+                    }
+                    //cập nhật vào thống kê
+                    await Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
+                        // if (err) console.log(err); else
+                        // console.log(data);
+                    });
+                    //Tăng số lượt đặt hàng của khách hàng --> để thống kê
+                    const dataUser = await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true},function(err,data){
+                    });
+                    if (dataUser){
+                        if (dataUser.qorder%5==0){
+                            var value = Math.floor(dataUser.qorder/5)*50000;
+                            await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
+                                {$push:{currentVoucher:{value:value}}},{new:true},function(err,data){
+                            })
+                        }
+                    }
+                    //Cập nhật trạng thái confirmed
+                    await Order.update({code: req.params.code }, { $set: { status: "confirmed", time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
+                    });
+                    await Order.update({code: req.params.code},{$set:{"listproduct.$[].status":"confirmed"}},function(err,data){ })
+                    if (typeInfor=="email"){
+                        let txtTo = req.params.email;
+                        let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
+                        let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
+                        sendmail(txtTo, txtSubject, txtContent);
+                    }
+                    await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]}, { $set: { cart: [] } }, function (err, data) {
+                    })
+                    res.send("UPDATED");
+                } else res.send("NOT UPDATE");
             }
-        });    
+        }
+        forLoop();
+        // Statistic.findOne({ day: currentDay }, function (err, data) {
+        //     if (data) {
+        //         var listOrderToday = data.orderproduct; //Tất cả order trong ngày
+        //         Order.findOne({code: req.params.code }, function (err, order) {
+        //             if (order && order.status == "unconfirmed") { //nếu trạng thái unconfirmed mới thực hiện cập nhật
+        //                 dataProduct = order.listproduct;
+        //                 var ok;
+        //                 var result = listOrderToday;
+        //                 for (var i = 0; i < dataProduct.length; i++) {
+        //                     ok = false;
+        //                     for (var j = 0; j < listOrderToday.length; j++) {
+        //                         if (dataProduct[i].id.equals(listOrderToday[j].id)) {
+        //                             ok = true;
+        //                             var itemresult = listOrderToday[j];
+        //                             itemresult.count += dataProduct[i].quanty;
+        //                             result[j] = itemresult;
+        //                             break;
+        //                         }
+        //                     }
+        //                     if (ok == false) {
+        //                         var itemresult = {
+        //                             id: dataProduct[i].id,
+        //                             count: dataProduct[i].quanty
+        //                         }
+        //                         result.push(itemresult);
+        //                     }
+        //                 }
+
+        //                 for (var i = 0; i < dataProduct.length; ++i) {
+        //                     Product.findOneAndUpdate(
+        //                         { _id: dataProduct[i].id },
+        //                         { $inc: { "sizes.$[filter1].colors.$[filter2].quanty": -dataProduct[i].quanty } },
+        //                         { arrayFilters: [{ 'filter2.color': dataProduct[i].color }, { 'filter1.size': dataProduct[i].size }] },
+        //                         function (err, data) {})
+        //                 }
+        //                 for (var i = 0; i < dataProduct.length; ++i) {
+        //                     Product.findOneAndUpdate({_id: dataProduct[i].id}, {$inc:{quanty: -dataProduct[i].quanty},$inc:{orders:1}}, 
+        //                     function (err, data) {})
+        //                 }
+        //                 if (order.costVoucher>0){
+        //                     User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
+        //                         {$pull:{currentVoucher:{value:order.costVoucher}}},{new:true},function(err,data){
+        //                             if (err) console.log(err); else
+        //                             console.log(data);
+        //                         })
+        //                 }
+        //                 //cập nhật vào thống kê
+        //                 Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
+        //                     if (err) console.log(err); else
+        //                     console.log(data);
+        //                 });
+        //                 //Tăng số lượt đặt hàng của khách hàng --> để thống kê
+        //                 User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true},function(err,data){
+        //                     if (err) console.log(err);
+        //                     else {
+        //                         if (data){
+        //                             if (data.qorder%5==0){
+        //                                 var value = Math.floor(data.qorder/5)*50000;
+        //                                 User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
+        //                                     {$push:{currentVoucher:{value:value}}},{new:true},function(err,data){
+        //                                         if (err) console.log(err);
+        //                                 })
+        //                             }
+        //                         }
+        //                     }
+        //                 })
+        //                 //Cập nhật trạng thái confirmed
+        //                 Order.update({code: req.params.code }, { $set: { status: "confirmed", time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
+        //                     if (err) {
+        //                         console.log(err);
+        //                     } else {
+        //                         Order.update({code: req.params.code},
+        //                             {$set:{"listproduct.$[].status":"confirmed"}},function(err,data){
+                                        
+        //                             })
+        //                         if (typeInfor=="email"){
+        //                             let txtTo = req.params.email;
+        //                             let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
+        //                             let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
+        //                             sendmail(txtTo, txtSubject, txtContent);
+        //                         }
+        //                         console.log(req.params.email);
+        //                         User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]}, { $set: { cart: [] } }, function (err, data) {
+        //                             if (err) {
+        //                                 throw err;
+        //                             } else {
+        //                                 res.send("UPDATED");
+        //                             }
+        //                         })
+        //                     }
+        //                 });
+        //             } else {
+        //                 res.send("NOT UPDATE");
+        //             }
+        //         })
+        //     }
+        // });    
     });
     app.post("/updateCart",parser,(req,res)=>{
         const email1 = req.body.email1;

@@ -20,7 +20,8 @@ class ZaloHome extends React.Component {
             listBank: [],
             methodPay: 1,
             showQR: 0,
-            web2appLink: "#"
+            web2appLink: "#",
+            amount: 0
             
         }
         this.showQR = this.showQR.bind(this);
@@ -32,6 +33,9 @@ class ZaloHome extends React.Component {
     }
     componentDidMount(){
         var that = this;
+        var params = new URLSearchParams(window.location.search);
+        var amount= parseInt(params.get("amount"));
+        this.setState({amount:amount});
         $.get("/zalo/getbanklist",function(data){
             if (data.returncode == 1) {
                 const bankList = [];
@@ -209,7 +213,7 @@ class ZaloHome extends React.Component {
                     </div>
                     <div class="form-group">
                         <label for="exampleInputPassword1">Số tiền <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="amount" placeholder="Nhập số tiền" value="50000" ref="amount"/>
+                        <input type="number" class="form-control" id="amount" placeholder="Nhập số tiền" value={this.state.amount} ref="amount"/>
                     </div>
                     <button class="btn btn-primary" onClick={this.payment}>Thanh toán</button>
                 </form>

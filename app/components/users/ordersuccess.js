@@ -232,6 +232,9 @@ class Success extends React.Component {
         window.location.replace(window.location.pathname);
     });
   }
+  zaloPayment(){
+    window.location.assign("/zalohome?amount="+this.state.amount);
+  }
     render(){
         localStorage.removeItem("curorder");
         var that = this;
@@ -298,7 +301,7 @@ class Success extends React.Component {
                               />
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                              <img src="../../img/zalopay.png" width="120px" />
+                              <img src="../../img/zalopay.png" width="120px" onClick={this.zaloPayment.bind(this)}/>
                             </div>
                           </div>
                           <h3 class="text-center ordersuccess" style={{paddingTop:"15px"}}>
@@ -366,6 +369,7 @@ class Success extends React.Component {
                       
                       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 continue-payment col-md-push-1">
                         <h3><b>Hiện tại trong đơn hàng có {this.state.listValidProduct.length} sản phẩm hợp lệ.</b></h3>
+                        {this.state.listValidProduct.length>0 ?
                         <ul style={{listStyleType:"square"}}>
                           <li>
                             <h4>Nếu muốn tiếp tục thanh toán các sản phẩm hợp lệ trong đơn hàng, click vào đây:
@@ -386,7 +390,12 @@ class Success extends React.Component {
                                 <i class="fa fa-reply-all" aria-hidden="true"></i>Về trang chủ</button>
                             </h4>
                           </li>
-                        </ul>
+                        </ul> : 
+                        <div>
+                          <button class="btn btn-primary" onClick={this.backHomepage.bind(this)}
+                          style={{paddingTop:"15px"}}>
+                                <i class="fa fa-reply-all" aria-hidden="true"></i>Về trang chủ</button>
+                          </div>}
                       </div>
                     </div>
                   );

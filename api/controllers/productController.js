@@ -6,7 +6,7 @@ const Product = require("../models/Product");
 const Statistic = require("../models/statistic");
 function getCart(data,res){
     var arr = [];
-    if (data.cart.length==0) {
+    if (!data.cart||data.cart.length==0) {
         res.send(arr);
         return;
     }
