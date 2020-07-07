@@ -24,6 +24,7 @@ module.exports = function(app,apiRouter,jwt){
         const repass = req.body.repass;
         const dob = req.body.dob;
         const role='user';
+        console.log(password);
         var err="";
         if (!firstName || !lastName || !email || !password || !repass) {
             err = "Không được bỏ trống các trường bắt buộc (*)";
@@ -43,6 +44,7 @@ module.exports = function(app,apiRouter,jwt){
                 user.role=role;
                 user.qvisit = 0;
                 user.qorder = 0;
+                user.isDelete=0;
                 user.save(function (err) {
                     if (err) {
                         if (err.code == 11000) {
@@ -65,7 +67,7 @@ module.exports = function(app,apiRouter,jwt){
         User.findOne({$or:[
             {email:emailorphone, isDelete:0},
             {numberPhone:emailorphone, isDelete:0}
-        ]}).select("email firstName lastName numberPhone dateofBirth password role").exec(function(err,user){
+        ]}).select("email firstName lastName numberPhone dob password role").exec(function(err,user){
             if (err){
                 res.send(err);
             } else {
@@ -73,6 +75,7 @@ module.exports = function(app,apiRouter,jwt){
                     res.json({err:1,message:"Không đúng Email/SDT hoặc password"});
                 } else {
                     var validPassword = user.comparePassword(password);
+                    console.log(validPassword);
                     if (!validPassword){
                         res.json({err:1,message:"Không đúng Email/SDT hoặc password"});
                     } else {
