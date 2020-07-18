@@ -76,34 +76,39 @@ class PasswordForm extends React.Component{
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <h2 class="page-title text-center">ĐỔI MẬT KHẨU</h2>
                         </div>
-                        <h3 className="text-center" style={{ color: 'red' }}>{this.state.err}</h3>
-                        <h3 className="text-center" style={{ color: 'blue' }}>{this.state.message}</h3>
                         <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 col-lg-push-4 col-md-push-3 col-sm-push-3">
                             <form onSubmit={this.handleSubmit}>
                                 <div class="account-info">
                                     <div class="single-account-info">
-                                        <div class="form-group">
-                                            <label class="control-label" for="old-password">Mật khẩu cũ</label>
-                                            <div class="input-wrap">
-                                                <input type="password" name="old-password" class="form-control" id="old_password" ref={(data) => { this.oldpass = data; }} />
-                                                <span class="help-block"></span>
-                                            </div>
+                                        <div class="group">
+                                            <input type="password" name="old-password" required ref={(data) => { this.oldpass = data; }} />
+                                            <span class="highlight"></span>
+                                            <span class="bar"></span>
+                                            <label class="labelMaterialButton">Mật khẩu cũ</label>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="control-label" for="new-password">Mật khẩu mới</label>
-                                            <div class="input-wrap">
-                                                <input type="password" class="form-control" name="new-password" id="new_password" ref={(data) => { this.newpass = data; }} />
-                                            </div>
+
+                                        <div class="group">
+                                            <input type="password" name="new-password" required ref={(data) => { this.newpass = data; }} />
+                                            <span class="highlight"></span>
+                                            <span class="bar"></span>
+                                            <label class="labelMaterialButton">Mật khẩu mới</label>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="control-label" for="re-password">Nhập lại mật khẩu mới</label>
-                                            <div class="input-wrap">
-                                                <input type="password" class="form-control" name="re-password" id="re_password" ref={(data) => { this.repass = data; }} />
-                                            </div>
+
+                                        <div class="group">
+                                            <input type="password" name="re-password" required ref={(data) => { this.repass = data; }} />
+                                            <span class="highlight"></span>
+                                            <span class="bar"></span>
+                                            <label class="labelMaterialButton">Nhập lại mật khẩu mới</label>
                                         </div>
                                         {this.state.processing==true ? <div class="loader text-center"></div> : ""}
-                                        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 text-center">
-                                            <input type="submit" class="btn btn-success text-center" value="Lưu" />
+                                        <did class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+                                                <input type="submit" class="btn btn-success text-center submitPass" value="Lưu" />
+                                            </div>
+                                        </did>
+                                        <div>
+                                            <h3 className="text-center" style={{ color: 'red' }}>{this.state.err}</h3>
+                                            <h3 className="text-center" style={{ color: 'blue' }}>{this.state.message}</h3>
                                         </div>
                                     </div>
                                 </div>

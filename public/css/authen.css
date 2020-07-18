@@ -1,4 +1,4 @@
-.signup input[type=text], .signup input[type=password] {
+/* .signup input[type=text], .signup input[type=password] {
   width: 100%;
   padding: 15px;
   margin: 5px 0 22px 0;
@@ -15,7 +15,7 @@
 .signup hr {
   border: 1px solid #f1f1f1;
   margin-bottom: 25px;
-}
+} */
 
 /* Set a style for all buttons */
 .signup button {
@@ -47,7 +47,7 @@
 
 /* Add padding to container elements */
 .signup .container {
-  padding: 16px;
+  /* padding: 16px; */
 }
 
 /* Clear floats */

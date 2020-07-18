@@ -47,54 +47,72 @@ class SignUpForm extends React.Component{
 					</div>
 					<form onSubmit={this.handleSubmit}>
 							<div className="container">
-								<div className="row">
-									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
-										<label for="firstname"><b>Họ</b></label>
-										<input type="text" placeholder="Nhập Họ" name="firstname" required ref={(data) => { this.firstName = data; }}/>
+								<div class="row">
+									<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
+										<div class="group">
+											<input type="text" name="firstname" required ref={(data) => { this.firstName = data; }} />
+											<span class="highlight"></span>
+											<span class="bar"></span>
+											<label class="labelMaterialButton">Họ</label>
+										</div>
 									</div>
 								</div>
-
-								<div className="row">
-									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
-										<label for="lastname"><b>Tên</b></label>
-										<input type="text" placeholder="Nhập Tên" name="lastname" required ref={(data) => { this.lastName = data; }}/>
+								<div class="row">
+									<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
+										<div class="group">
+											<input type="text" name="lastname" required ref={(data) => { this.lastName = data; }} />
+											<span class="highlight"></span>
+											<span class="bar"></span>
+											<label class="labelMaterialButton">Tên</label>
+										</div>
 									</div>
 								</div>
-
-								<div className="row">
-									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
-										<label for="email"><b>Email</b></label>
-										<input type="text" placeholder="Nhập Email" name="email" required ref={(data) => { this.email = data; }}/>
+								<div class="row">
+									<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
+										<div class="group">
+											<input type="text" name="email" required ref={(data) => { this.email = data; }} />
+											<span class="highlight"></span>
+											<span class="bar"></span>
+											<label class="labelMaterialButton">Email</label>
+										</div>
 									</div>
 								</div>
-
-								<div className="row">
-									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
-										<label for="phonenumber"><b>Số điện thoại</b></label>
-										<input type="text" placeholder="Nhập số điện thoại" name="phonenumber" ref={(data) => { this.phoneNumber = data; }}/>
+								<div class="row">
+									<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
+										<div class="group">
+											<input type="text" name="phonenumber"required ref={(data) => { this.phoneNumber = data; }} />
+											<span class="highlight"></span>
+											<span class="bar"></span>
+											<label class="labelMaterialButton">Số điện thoại</label>
+										</div>
 									</div>
 								</div>
-								
-								<div className="row">
-									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
-										<label for="password"><b>Mật khẩu</b></label>
-										<input type="password" placeholder="Nhập mật khẩu" name="password" required ref={(data) => { this.password = data; }}/>
+								<div class="row">
+									<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
+										<div class="group">
+											<input type="password" name="password" required ref={(data) => { this.password = data; }} />
+											<span class="highlight"></span>
+											<span class="bar"></span>
+											<label class="labelMaterialButton">Mật khẩu</label>
+										</div>
+									</div>
+								</div>						
+								<div class="row">
+									<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
+										<div class="group">
+											<input type="password" name="repass" required ref={(data) => { this.repass = data; }} />
+											<span class="highlight"></span>
+											<span class="bar"></span>
+											<label class="labelMaterialButton">Xác nhận mật khẩu</label>
+										</div>
 									</div>
 								</div>
-								
-								<div className="row">
-									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
-										<label for="repass"><b>Xác nhận mật khẩu</b></label>
-										<input type="password" placeholder="Nhập lại mật khẩu" name="repass" required ref={(data) => { this.repass = data; }}/>
-									</div>
-								</div>	
-
 								<div className="row">
 									<div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-push-3">
 										<label><b>Ngày sinh</b></label>
 										<br/>
 										<div className="birth-day">
-											<select id="d-b-day" name="day" ref="day" required>
+											<select id="d-b-day" name="day" ref="day" required class="form-control">
 												<option>- &nbsp;&nbsp;</option>
 												<option value="1">1 </option>
 												<option value="2">2 </option>
@@ -130,7 +148,7 @@ class SignUpForm extends React.Component{
 											</select>												
 										</div>
 										<div className="birth-month">
-											<select id="d-b-month" name="month" ref="month" required>
+											<select id="d-b-month" name="month" ref="month" required class="form-control">
 												<option value="">- &nbsp;&nbsp;</option>
 												<option value="1">Tháng 1</option>
 												<option value="2">Tháng 2 </option>
@@ -147,7 +165,7 @@ class SignUpForm extends React.Component{
 											</select>												
 										</div>
 										<div className="birth-year">
-											<select id="d-b-year" name="year" ref="year" required>
+											<select id="d-b-year" name="year" ref="year" required class="form-control">
 												<option value="">-  &nbsp;&nbsp;</option>
 												<option value="2015">2015</option>
 												<option value="2014">2014</option>

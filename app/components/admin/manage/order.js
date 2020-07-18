@@ -118,7 +118,7 @@ class UpdateOrder extends React.Component{
         <option value="fail">Fail</option>
         <option value="canceled">Be Canceled</option>
       </select> <br/>
-      <div className="text-center" style={{paddingTop:'15px'}}>
+      <div className="text-center" style={{paddingTop:'15px',paddingBottom:"20px"}}>
         <button className="btn btn-danger" onClick={this.updateStatus}>Update</button>
         <button className="btn btn-primary" onClick={this.cancel} style={{marginLeft:'10px'}}>Cancel</button>
       </div>

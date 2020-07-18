@@ -992,7 +992,7 @@ span.pro-quality a:hover{
 	transition: all 300ms ease 0s;
 }
 .shipping-checkout-btn a:hover{
-	background:#5403ad;
+	background: #107718;
 }
 .shipping-checkout-btn a i{}
 /*-----------------------
@@ -1189,9 +1189,9 @@ div.nivo-controlNav a.active{
 	top: 0;
 	width: 25px;
 }
-.overlay-content ul li a:hover{
+.overlay-content ul li a:hover,body.index-2 .overlay-content ul li a:hover{
 	color:#fff;
-	background:#FF5858;
+	background: #FF5858!important;
 }
 .product-info{}
 .product-info a{
@@ -4793,7 +4793,8 @@ a.write-review-btn{
 }
 
 .btnHandle {
-	width: 100%;
+	margin-left: 15px;
+	width: 45%;
 	margin-bottom: 10px;
 }
 .sidebar-product-image img {
@@ -5347,4 +5348,10 @@ button.btn.btn-warning.cancel-order i {
     border-bottom: 2px solid #1b861e;
     width: 20px;
     height: 20px;
+}
+.detail-infor-user {
+	padding-bottom:10px;
+}
+.submitPass {
+	width:100%
 }
