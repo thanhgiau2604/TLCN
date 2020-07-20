@@ -32,8 +32,14 @@ class EnterEmail extends React.Component{
 		return(<form onSubmit={this.handleSubmit}>
 			<div class="form-group">
 				<div class="row">
+
 					<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
-						<input type="email" class="form-control" placeholder="Nhập địa chỉ Email" required ref={(data) => { this.email = data;}}/>
+						<div class="group-forgot">
+							<input type="text" name="email" required ref={(data) => { this.email = data; }} />
+							<span class="highlight"></span>
+							<span class="bar"></span>
+							<label class="labelMaterialButton">Nhập email hoặc số điện thoại</label>
+						</div>
 					</div>
 				</div>
 				<h3 style={{color:'red'}} className='text-center'>{this.state.err}</h3>
@@ -73,14 +79,31 @@ class ConfirmCode extends React.Component{
 		})
 	}
 	render(){
+		var email = localStorage.getItem("curemail");
 		return(<div class="form-group">
 		<div class="row">
-			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
-				<h3 class="text-center" style={{color:'#f10668'}}>Một mã xác nhận đã được gửi đến email của bạn</h3>
-				<h3><a href="https://mail.google.com/" target="_blank" class="text-center" style={{color:'#414eec'}}>Đi đến Gmail</a></h3>
-				<h3><a href="https://mail.yahoo.com/" target="_blank" class="text-center" style={{color:'#414eec'}}>Đi đến Yahoomail</a></h3>
-				<h3><a style={{cursor:'pointer',color:'#530aca'}} onClick={this.reSendCode} class="text-center">Gửi lại mã</a></h3>
-				<input type="email" class="form-control" placeholder="Nhập mã xác nhận" ref={(data) => { this.code = data; }} required/>
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3 text-center receive-code-forgot">
+				{email[0]=="0" || email[0]=="8" ? 
+				<div>
+					<h3 class="text-center" style={{ color: '#f10668' }}>Một mã xác nhận đã được gửi đến số điện thoại của bạn</h3>
+				</div> : 
+				<div>
+					<h3 class="text-center" style={{ color: '#f10668' }}>Một mã xác nhận đã được gửi đến email của bạn</h3>
+					<h3>
+						<a href="https://mail.google.com/" target="_blank" class="text-center" style={{ color: '#414eec' }}><img src="img/gmail-icon.png" width="25px" /> Gmail</a>
+						<a href="https://mail.yahoo.com/" target="_blank" class="text-center" style={{ color: '#414eec', paddingLeft: "10px" }}><img src="img/yahoo-icon.png" width="25px" /> Yahoomail</a>
+					</h3>
+				</div>}
+				
+				
+				<h3><a style={{cursor:'pointer',color:'#530aca'}} onClick={this.reSendCode} class="text-center"><i class="fa fa-undo" aria-hidden="true"></i> Gửi lại mã</a></h3>
+				<div class="group">
+					<input type="text" name="code" ref={(data) => { this.code = data; }} required/>
+					<span class="highlight"></span>
+					<span class="bar"></span>
+					<label class="labelMaterialButton">Nhập mã xác nhận</label>
+				</div>
+				{/* <input type="email" class="form-control" placeholder="Nhập mã xác nhận" ref={(data) => { this.code = data; }} required/> */}
 				<h3 style={{color:'red'}}>{this.state.err}</h3>
 			</div>
 		</div>
@@ -117,17 +140,29 @@ class ChangePassword extends React.Component{
 	render(){
 		return(<div class="form-group">
 		<div class="row">
-			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
-				<input type="password" class="form-control" placeholder="Nhập mật khẩu mới" required ref={(data) => { this.newpass = data; }}/>
-			</div>
+				<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+					<div class="group">
+						<input type="password" name="new-password" required ref={(data) => { this.newpass = data; }} />
+						<span class="highlight"></span>
+						<span class="bar"></span>
+						<label class="labelMaterialButton">Nhập mật khẩu mới</label>
+					</div>
+					{/* <input type="password" class="form-control" placeholder="Nhập mật khẩu mới" required ref={(data) => { this.newpass = data; }} /> */}
+				</div>
 		</div>
 		<div class="row">
-			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
-				<input type="password" class="form-control" placeholder="Xác nhận mật khẩu" required ref={(data) => { this.repass = data; }}/>
-			</div>
+				<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+					<div class="group">
+						<input type="password" name="re-password" required ref={(data) => { this.repass = data; }} />
+						<span class="highlight"></span>
+						<span class="bar"></span>
+						<label class="labelMaterialButton">Nhập lại mật khẩu mới</label>
+					</div>
+					{/* <input type="password" class="form-control" placeholder="Xác nhận mật khẩu" required ref={(data) => { this.repass = data; }} /> */}
+				</div>
 		</div>
 		<div class="row">
-			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3">
+			<div className="col-lg-6 col-md-6 col-sm-8 col-xs-10 col-md-push-3 text-center">
 				<h3 style={{color:'red'}}>{this.state.err}</h3>
 			</div>
 		</div>

@@ -323,34 +323,35 @@ span {
   margin-bottom:45px; 
 }
 input[type="text"],input[type="password"]				{
+  background: transparent;
   font-size:18px;
   padding:10px 10px 10px 5px;
   display:block;
   width:100%;
   border:none;
-  border-bottom:1px solid #757575;
+  border-bottom: 1px solid #ccc;
 }
 input:focus 		{ outline:none; }
 
 /* LABEL ======================================= */
 label.labelMaterialButton				 {
-  color:#999; 
-  font-size:18px;
-  font-weight:normal;
-  position: absolute;
+  color:#999!important; 
+  font-size:18px!important;
+  font-weight:normal!important;
+  position: absolute!important;
   pointer-events:none;
-  left:5px;
-  top:10px;
-  transition:0.2s ease all; 
-  -moz-transition:0.2s ease all; 
-  -webkit-transition:0.2s ease all;
+  left:5px!important;
+  top:10px!important;
+  transition:0.2s ease all!important; 
+  -moz-transition:0.2s ease all!important; 
+  -webkit-transition:0.2s ease all!important;
 }
 
 /* active state */
-input:focus ~ label, input:valid ~ label 		{
-  top:-20px;
-  font-size:14px;
-  color:#5264AE;
+input:focus ~ label 		{
+  top: -20px!important;
+  font-size: 14px!important;
+  color: #5264AE!important;
 }
 
 /* BOTTOM BARS ================================= */

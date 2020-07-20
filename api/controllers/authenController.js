@@ -7,7 +7,7 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const express = require("express");
 const sendmail = require("./mail");
 const time_exprired = "24h";
-const moment = require('moment');
+const Nexmo = require("nexmo");
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
@@ -278,8 +278,11 @@ module.exports = function(app,apiRouter,jwt){
     });
 
     app.post("/checkEmail",parser,(req,res)=>{
-        const email = req.body.email;
-        User.find({email:email},function(err,data){
+        var email = req.body.email;
+        if (email[0]=="8"&&email[1]=="4"){
+            email = email.replace("84","0");
+        }
+        User.find({$or:[{email:email},{numberPhone:email}]},function(err,data){
             if (err){
                 throw err;
             } else {
@@ -291,15 +294,37 @@ module.exports = function(app,apiRouter,jwt){
             }
         })
     })
-
+    const nexmo = new Nexmo({
+        apiKey: "89d03306",
+        apiSecret: "kP0cq3PjO49r8ht2"
+      }, {debug:true});
     app.post("/sendCodeToEmail",parser,(req,res)=>{
-        const email = req.body.email;
-        let numberRandom = randomInt(100000,999999);
-        let txtTo = email;
-        let txtSubject = "XÁC NHẬN ĐỔI MẬT KHẨU - SHOP BÁN GIÀY ONLINE";
-        let txtContent = `<h3>Mã xác nhận để đổi mật khẩu của bạn là: ${numberRandom}</h3>`;
-        sendmail(txtTo,txtSubject,txtContent);
-        res.json(numberRandom);
+        var email = req.body.email;
+        if (email[0]=='0'|| email[0]=='8'){
+            console.log("vô sdt");
+            if (email[0]=="0"){
+                email = email.replace("0","84");
+            }
+            let messageSend = randomInt(100000,999999);
+            nexmo.message.sendSms("84969315430", email, "code = "+messageSend, { type: "unicode" },
+                (err, responseData) => {
+                    if (err) {
+                        console.log(err);
+                        res.json({ err: 1 });
+                    } else {
+                        console.log(responseData);
+                        res.json(messageSend);
+                    }
+                }
+            );
+        } else {
+            let numberRandom = randomInt(100000,999999);
+            let txtTo = email;
+            let txtSubject = "XÁC NHẬN ĐỔI MẬT KHẨU - SHOP BÁN GIÀY ONLINE";
+            let txtContent = `<h3>Mã xác nhận để đổi mật khẩu của bạn là: ${numberRandom}</h3>`;
+            sendmail(txtTo,txtSubject,txtContent);
+            res.json(numberRandom);
+        }
     });
 
     app.post("/resetPassword",parser,(req,res)=>{
@@ -315,7 +340,7 @@ module.exports = function(app,apiRouter,jwt){
             res.send({err:err,user:""});
         } else {
             const email = req.body.email;
-            User.update({email:email},{$set:{password:newpass}},function(err,data){
+            User.update({$or:[{email:email},{numberPhone:email}]},{$set:{password:newpass}},function(err,data){
                 if (err){
                     throw err;
                 } else {

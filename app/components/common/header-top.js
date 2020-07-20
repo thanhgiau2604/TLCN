@@ -87,7 +87,7 @@ class OptionUser extends React.Component {
 			  </a>
 			</li>
 			<li>
-			  <a href="/changeaccount">
+			  <a href="/changepassword">
 				<i class="fa fa-key" aria-hidden="true"></i> Đổi mật khẩu
 			  </a>
 			</li>

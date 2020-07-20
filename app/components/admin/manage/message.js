@@ -55,14 +55,14 @@ class AddForm extends React.Component {
   }
   render(){
     return(<div class="container">
-    <div class="row">
+    <div class="row" style={{paddingBottom:"15px"}}>
       <form onSubmit={this.AddMessage}>
         <div class="col-sm-12">
           <div class="row">
-              <label>Nội dung tin nhắn</label>
-                <textarea class="form-control"  ref={(data) => { this.content = data; }} rows='5' cols="auto" required></textarea>
+              <label><b>Nội dung tin nhắn:</b></label>
+              <textarea class="form-control"  ref={(data) => { this.content = data; }} rows='5' cols="auto" required></textarea>
           </div>
-          <div class="text-center">
+          <div class="text-center" style={{paddingTop:"10px"}}>
             <button type="submit" class="btn btn-danger">Save</button>
             <button type="button" class="btn btn-default" onClick={this.Cancel}
             style={{marginLeft:'10px'}}>Cancel</button>

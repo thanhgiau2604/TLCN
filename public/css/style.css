@@ -5355,3 +5355,10 @@ button.btn.btn-warning.cancel-order i {
 .submitPass {
 	width:100%
 }
+label.control-label.no-lh {
+    color: #5264AE;
+    font-weight: 100;
+}
+.receive-code-forgot h3{
+	padding-top:10px
+}

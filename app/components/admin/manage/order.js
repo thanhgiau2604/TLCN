@@ -160,67 +160,67 @@ class ViewOrder extends React.Component{
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Detail Order</h4>
           </div>
-          <div class="modal-body">
+          <div class="modal-body view-anything">
             <div class="row">
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
-                  <label for="email">Email:</label>
-                  <input type="text" class="form-control" value={this.state.order.email} readonly="true"/>
+                  <label for="email"><b>Email: </b> {this.state.order.email}</label>
+                  {/* <input type="text" class="form-control" value={this.state.order.email} readonly="true"/> */}
                 </div>
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
-                  <label for="time">Time:</label>
-                  <input type="text" class="form-control"  value={this.state.order.time} readonly="true"/>
+                  <label for="time"><b>Time: </b> {this.state.order.time}</label>
+                  {/* <input type="text" class="form-control"  value={this.state.order.time} readonly="true"/> */}
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
-                  <label for="productcost">Product Cost:</label>
-                  <input type="text" class="form-control"  value={formatCurrency(this.state.order.sumproductcost)} readonly="true"/>
+                  <label for="productcost"><b>Product Cost: </b>{formatCurrency(this.state.order.sumproductcost)}</label>
+                  {/* <input type="text" class="form-control"  value={formatCurrency(this.state.order.sumproductcost)} readonly="true"/> */}
                 </div>
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
-                  <label for="shipcost">Ship Cost:</label>
-                  <input type="text" class="form-control"  value={formatCurrency(this.state.order.sumshipcost)} readonly="true"/>
+                  <label for="shipcost"><b>Ship Cost: </b>{formatCurrency(this.state.order.sumshipcost)}</label>
+                  {/* <input type="text" class="form-control"  value={formatCurrency(this.state.order.sumshipcost)} readonly="true"/> */}
                 </div>
               </div>
             </div>
             <div class="row">
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
-                  <label for="status">Status:</label>
-                  <input type="text" class="form-control"  value={this.state.order.status} readonly="true"/>
+                  <label for="status"><b>Status: </b>{this.state.order.status}</label>
+                  {/* <input type="text" class="form-control"  value={this.state.order.status} readonly="true"/> */}
                 </div>
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
-                  <label for="code">Code:</label>
-                  <input type="text" class="form-control"  value={this.state.order.code} readonly="true"/>
+                  <label for="code"><b>Code: </b>{this.state.order.code}</label>
+                  {/* <input type="text" class="form-control"  value={this.state.order.code} readonly="true"/> */}
                 </div>
               </div>
             </div>
             <div class="row">
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                   <div class="form-group">
-                    <label for="infor">Information customer:</label>
-                    <input type="text" class="form-control" value={infor} readonly="true" />
+                    <label for="infor"><b>Information customer: </b>{infor}</label>
+                    {/* <input type="text" class="form-control" value={infor} readonly="true" /> */}
                   </div>
                 </div>
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                   <div class="form-group">
-                    <label for="address">Address:</label>
-                    <input type="text" class="form-control" value={address} readonly="true" />
+                    <label for="address"><b>Address: </b>{address}</label>
+                    {/* <input type="text" class="form-control" value={address} readonly="true" /> */}
                   </div>
                 </div>
             </div>
             <div class="row">
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="form-group">
-                  <label for="quanty">List product:</label>
+                  <label for="quanty"><b>List product:</b></label>
                   <table class='table'>
                     <thead>
                       <tr>

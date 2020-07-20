@@ -132,30 +132,66 @@ class EditForm extends React.Component{
           <div class="col-sm-12">
             <div class="row">
               <div class="col-sm-4 form-group">
-                <label>First Name</label>
-                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.firstname} ref={(data) => { this.firstName = data; }} required/>
+                <div class="group">
+									<input type="text"  defaultValue={user.props.firstname} ref={(data) => { this.firstName = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Firstname</label>
+								</div>
+                {/* <label>First Name</label>
+                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.firstname} ref={(data) => { this.firstName = data; }} required/> */}
               </div>
               <div class="col-sm-4 form-group">
-                <label>Last Name</label>
-                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.lastname} ref={(data) => { this.lastName = data; }} required/>
+                <div class="group">
+									<input type="text"  defaultValue={user.props.lastname} ref={(data) => { this.lastName = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Lastname</label>
+								</div>
+                {/* <label>Last Name</label>
+                <input type="text" placeholder="Enter Firstname" class="form-control" defaultValue={user.props.lastname} ref={(data) => { this.lastName = data; }} required/> */}
               </div>
               <div class="col-sm-4 form-group">
-                <label>Email</label>
-                <input type="email" placeholder="Enter Email" class="form-control" defaultValue={user.props.email} ref={(data) => { this.email = data; }} required/>
+                <div class="group">
+									<input type="text"  defaultValue={user.props.email} ref={(data) => { this.email = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Email</label>
+								</div>
+                {/* <label>Email</label>
+                <input type="email" placeholder="Enter Email" class="form-control" defaultValue={user.props.email} ref={(data) => { this.email = data; }} required/> */}
               </div>
             </div>
             <div class="row">
               <div class="col-sm-4 form-group">
-                <label>Phone Number</label>
-                <input type="text" placeholder="Enter Phone Number" class="form-control" defaultValue={user.props.phone} ref={(data) => { this.phone = data; }} required/>
+                <div class="group">
+									<input type="text"  defaultValue={user.props.phone} ref={(data) => { this.phone = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Phone Number</label>
+								</div>
+                {/* <label>Phone Number</label>
+                <input type="text" placeholder="Enter Phone Number" class="form-control" defaultValue={user.props.phone} ref={(data) => { this.phone = data; }} required/> */}
               </div>
               <div class="col-sm-4 form-group">
-                <label>Date of Birth</label>
-                <input type="text" placeholder="Enter Date Of Birth" class="form-control" defaultValue={user.props.dob} ref={(data) => { this.dob = data; }} required/>
+                <div class="group">
+									<input type="text"  defaultValue={user.props.dob} ref={(data) => { this.dob = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Date Of Birth</label>
+								</div>
+                {/* <label>Date of Birth</label>
+                <input type="text" placeholder="Enter Date Of Birth" class="form-control" defaultValue={user.props.dob} ref={(data) => { this.dob = data; }} required/> */}
               </div>
               <div class="col-sm-4 form-group">
-                <label>Password</label>
-                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }}/>
+                <div class="group">
+									<input type="password"  ref={(data) => { this.password = data; }}/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Password</label>
+								</div>
+                {/* <label>Password</label>
+                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }}/> */}
               </div>
             </div>
             <div class="text-center" style={{marginBottom:'15px'}}>
@@ -203,42 +239,66 @@ class AddForm extends React.Component {
     return(<div class="container">
     <div class="row">
       <form onSubmit={this.AddUser}>
-        <div class="col-sm-12">
-          <div class="row">
-            <div class="col-sm-4 form-group">
-              <label>First Name</label>
-              <input type="text" placeholder="Enter Firstname" class="form-control"  ref={(data) => { this.firstName = data; }} required/>
-            </div>
-            <div class="col-sm-4 form-group">
-              <label>Last Name</label>
-              <input type="text" placeholder="Enter Firstname" class="form-control" ref={(data) => { this.lastName = data; }} required/>
-            </div>
-            <div class="col-sm-4 form-group">
-              <label>Email</label>
-              <input type="email" placeholder="Enter Email" class="form-control" ref={(data) => { this.email = data; }} required/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-4 form-group">
-              <label>Phone Number</label>
-              <input type="text" placeholder="Enter Phone Number" class="form-control" ref={(data) => { this.phone = data; }} required/>
-            </div>
-            <div class="col-sm-4 form-group">
-              <label>Date of Birth</label>
-              <input type="text" placeholder="Enter Date Of Birth" class="form-control" ref={(data) => { this.dob = data; }} required/>
-            </div>
-            <div class="col-sm-4 form-group">
-                <label>Password</label>
-                <input type="text" placeholder="Enter Password" class="form-control" ref={(data) => { this.password = data; }} required/>
+      <div class="col-sm-12">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="group">
+									<input type="text" ref={(data) => { this.firstName = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Firstname</label>
+								</div>
               </div>
+              <div class="col-sm-4">
+                <div class="group">
+									<input type="text" ref={(data) => { this.lastName = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Lastname</label>
+								</div>
+              </div>
+              <div class="col-sm-4">
+                <div class="group">
+									<input type="text" ref={(data) => { this.email = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Email</label>
+								</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="group">
+									<input type="text"  ref={(data) => { this.phone = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Phone Number</label>
+								</div>
+              </div>
+              <div class="col-sm-4">
+                <div class="group">
+									<input type="text" ref={(data) => { this.dob = data; }} required/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Date Of Birth</label>
+								</div>
+              </div>
+              <div class="col-sm-4">
+                <div class="group">
+									<input type="text"  ref={(data) => { this.password = data; }}/>
+									<span class="highlight"></span>
+									<span class="bar"></span>
+									<label class="labelMaterialButton">Enter Password</label>
+								</div>
+              </div>
+            </div>
+            <div class="text-center" style={{marginBottom:'15px'}}>
+              <button type="submit" class="btn btn-danger">Save</button>
+              <button type="button" class="btn btn-default" onClick={this.Cancel}
+              style={{marginLeft:'10px'}}>Cancel</button>
+            </div>  
+            {this.state.processing==true ? <div class="loader text-center"></div> : ""}
           </div>
-          <div class="text-center" style={{marginBottom:'15px'}}>
-            <button type="submit" class="btn btn-danger">Save</button>
-            <button type="button" class="btn btn-default" onClick={this.Cancel}
-            style={{marginLeft:'10px'}}>Cancel</button>
-          </div>  
-          {this.state.processing==true ? <div class="loader text-center"></div> : ""}
-        </div>
       </form>
     </div>
   </div>)
@@ -448,7 +508,7 @@ class ManageUsers extends React.Component{
                         </div>
                       </div>
                     </div>
-                    <div class="row">
+                    <div class="row" style={{paddingBottom:"10px"}}>
                       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 btnAddUser text-right">
                         <button
                           class="btn btnNewSomething"

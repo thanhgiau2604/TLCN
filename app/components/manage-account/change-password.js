@@ -23,6 +23,7 @@ class PasswordForm extends React.Component{
         this.goLogin = this.goLogin.bind(this);
     }
     handleSubmit(e){
+        e.preventDefault();
         this.setState({processing:true});
         var that=this;
         var email= localStorage.getItem('email');
@@ -35,7 +36,6 @@ class PasswordForm extends React.Component{
                 }
                 that.setState({processing:false});
         })
-        e.preventDefault();
     }
     componentDidMount() {
         var token = localStorage.getItem('token');
@@ -77,7 +77,7 @@ class PasswordForm extends React.Component{
                             <h2 class="page-title text-center">ĐỔI MẬT KHẨU</h2>
                         </div>
                         <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 col-lg-push-4 col-md-push-3 col-sm-push-3">
-                            <form onSubmit={this.handleSubmit}>
+                            <form>
                                 <div class="account-info">
                                     <div class="single-account-info">
                                         <div class="group">
@@ -103,7 +103,9 @@ class PasswordForm extends React.Component{
                                         {this.state.processing==true ? <div class="loader text-center"></div> : ""}
                                         <did class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-                                                <input type="submit" class="btn btn-success text-center submitPass" value="Lưu" />
+                                                <button class="btn btn-success text-center submitPass" onClick={this.handleSubmit}>
+                                                    <i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
+                                                {/* <input type="submit" class="btn btn-success text-center submitPass" value="Lưu" /> */}
                                             </div>
                                         </did>
                                         <div>

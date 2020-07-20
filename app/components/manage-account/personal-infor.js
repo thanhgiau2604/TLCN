@@ -85,7 +85,7 @@ class InforEdit extends React.Component {
 						</div>
 						<div class="row">
 							<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-								<div className="form-group ">
+								<div className="form-group " style={{marginTop:"-20px"}}>
 									<label className="control-label no-lh" for="birthdate">
 										Ngày sinh<span>(Không bắt buộc)</span>
 									</label>
@@ -202,8 +202,8 @@ class InforEdit extends React.Component {
 						{this.state.processing==true ? <div class="loader text-center"></div> : ""}
 						<div class="row">
 							<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-							    <button className="btnHandle btn btn-success" onClick={this.save}>Lưu</button>
-							    <button className="btnHandle btn btn-warning" onClick={this.cancel}>Hủy</button>
+							    <button className="btnHandle btn btn-success" onClick={this.save}><i class="fa fa-floppy-o" aria-hidden="true"></i> Lưu</button>
+							    <button className="btnHandle btn btn-warning" onClick={this.cancel}><i class="fa fa-times" aria-hidden="true"></i> Hủy</button>
 						    </div>	
 						</div>	
 					</div>
@@ -240,8 +240,8 @@ class Infor extends React.Component{
 					</div>
 					<div class="row">
 						<div class="col-xs-10 col-sm-10 col-md-6 col-lg-6 col-md-push-3 col-xs-push-1 col-sm-push-1">
-							<button className="btnHandle btn btn-success" onClick={this.edit}>Thay đổi thông tin</button>
-							<button className="btnHandle btn btn-warning" onClick={this.changePassword}>Đổi mật khẩu</button>
+							<button className="btnHandle btn btn-success" onClick={this.edit}><i class="fa fa-pencil" aria-hidden="true"></i> Thay đổi thông tin</button>
+							<button className="btnHandle btn btn-warning" onClick={this.changePassword}><i class="fa fa-lock" aria-hidden="true"></i> Đổi mật khẩu</button>
 						</div>
 					</div>	
 				</div>
