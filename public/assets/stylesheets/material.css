@@ -348,7 +348,7 @@ label.labelMaterialButton				 {
 }
 
 /* active state */
-input:focus ~ label 		{
+input:focus ~ label, input:valid ~ label 		{
   top: -20px!important;
   font-size: 14px!important;
   color: #5264AE!important;

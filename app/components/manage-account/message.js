@@ -21,8 +21,8 @@ class DetailMessage extends React.Component {
         <div className="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-md-push-2">
             <div className="form-group">
                 <label for="comment">Nội dung tin nhắn:</label>
-                <textarea className="form-control text-center" rows="5" id="comment" value={this.props.content}
-                style={{border: 'solid 2px blue'}} readOnly></textarea>
+                <textarea className="form-control text-center" id="comment" value={this.props.content}
+                style={{border: 'solid 2px #8a8484'}} readOnly onInput='this.style.height = "";this.style.height = this.scrollHeight + 3'></textarea>
             </div>
         </div>
     </div>)
