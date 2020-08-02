@@ -355,7 +355,7 @@ text-transform: uppercase;
 	z-index: 999999;
 }
 a.bstore-scrollertop{
-    background: #3a3d none repeat scroll 0 0;
+    background: #1aa996 none repeat scroll 0 0;
     color: #fff;
     display: block;
     line-height: 44px;
@@ -645,7 +645,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	font-size:14px;
 }
 .search-button{
-	background: green none repeat scroll 0 0;
+	background: #0b665a none repeat scroll 0 0;
 	border: medium none;
 	color: #fff;
 	float: right;
@@ -657,7 +657,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	width: 54px;
 }
 .search-button:hover{
-	background:#3A3D42;
+	background: #084c43;
 	color:#fff;
 }
 .search-button i{
@@ -704,7 +704,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 3.3 mainmenu
 -------------------------*/	
 .main-menu-area{
-	background: #08b926;
+	background: #0b665a;
 	height:55px;
 	position:relative;
 }
@@ -839,7 +839,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 3.4 mainmenu my cart
 -------------------------*/
 .shopping-cart-out{
-	background: #27ad44c4;
+	background: #d03636;
 	height:55px;
 }
 .shopping-cart{
@@ -871,7 +871,7 @@ input.search-form[placeholder]:-ms-input-placeholder {
 	top: 0px;
 }
 .ajax-cart-quantity{
-	background: green none repeat scroll 0 0;
+	background: #a50808 none repeat scroll 0 0;
 	color: #fff;
 	display: inline-block;
 	font-size: 16px;
@@ -990,13 +990,13 @@ span.pro-quality a:hover{
 	/* font-family: 'Fira Sans', sans-serif; */
 	font-size:14px;
 	text-transform:capitalize;
-	background: green none repeat scroll 0 0;
+	background: #0b8c7b none repeat scroll 0 0;
 	color: #fff;
 	padding: 7px 0;
 	transition: all 300ms ease 0s;
 }
 .shipping-checkout-btn a:hover{
-	background: #107718;
+	background: #076558;
 }
 .shipping-checkout-btn a i{}
 /*-----------------------
@@ -1803,22 +1803,26 @@ body.index-2 .welcome-info{
 	cursor: pointer;
 }
 body.index-2 .welcome-info span, body.index-2 .current-currency strong, body.index-2 .current-lang strong, body.index-2 .languages-choose li a:hover, body.index-2 .currency-list li a:hover, body.index-2 .header-right-menu nav ul li a:hover, body.index-2 span.cross-icon:hover, body.index-2 .shipping-item-text span a.pro-cat:hover, body.index-2 span.pro-quality a:hover, body.index-2 .product-info a:hover, body.index-2 h2.left-title a:hover, body.index-2 .latest-news-area .left-title-area h2.left-title a:hover, body.index-2 .single-latest-post h2 a:hover, body.index-2 .read-more a:hover, body.index-2 .single-facality:hover .facality-text h3, body.index-2 .info-text p a:hover, body.index-2 .single-f-widget ul li a:hover, body.index-2 .copy-right address a, body.index-2 .latest-news-row h2.center-title a:hover, body.index-2 .drodown-mega-menu .mega-menu-list a:hover{
-  color: green;
+  color: #FF4F4F;
 }
 body.index-2 .nivo-caption a:hover, body.index-2 div.nivo-controlNav a.active, body.index-2 .slider-bolut:hover, body.index-2 div.nivo-controlNav a.nivo-control:hover, body.index-2 .new-mark-box, body.index-2 .overlay-content ul li a:hover, body.index-2 .single-facality:hover .facality-icon, body.index-2 .bstore-scrollertop:hover{
-	background: green;
+	background: #0b665a;
 }
 body.index-2 .ajax-cart-quantity:hover {
-	background: #17752bc4;
+	background: #a50808;
 }
 body.index-2 .search-button, body.index-2 .ajax-cart-quantity{
-	background: green;
+	background: #0b8c7b;
+}
+
+body.index-2 .ajax-cart-quantity {
+    background: #a50808;
 }
 body.index-2 .newsletter-area {
 	background: #5b9212;
 }
 body.index-2 .search-button:hover{
-	background:#400e84;
+	background: #0a7567;
 }
 body.index-2 .drodown-mega-menu{
 	border-bottom:3px solid #C1A300;

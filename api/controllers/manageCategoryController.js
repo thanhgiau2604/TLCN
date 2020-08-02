@@ -199,6 +199,7 @@ module.exports = function(app){
             };
             loop();
             var index = data.saleEvents.findIndex(item => item.status=="running");
+            data.saleEvents = data.saleEvents.sort((a,b) => (a.end < b.end) ? 1 : ((b.end < a.end) ? -1 : 0)); 
             res.send({data:data,idSale:data.saleEvents[index]._id});
         })
     })
@@ -207,8 +208,10 @@ module.exports = function(app){
         const id = req.body.id;
         ProductCategory.findOne({_id:id},(err,data)=>{
             if (!err&&data){
-                if (data.saleEvents && data.saleEvents.length>0)
-                    res.send(data.saleEvents);
+                if (data.saleEvents && data.saleEvents.length>0){
+                    var arrResult = data.saleEvents.sort((a,b) => (a.end < b.end) ? 1 : ((b.end < a.end) ? -1 : 0)); 
+                    res.send(arrResult);
+                }
                 else res.send([]);
             } else {
                 res.send([]);
@@ -233,6 +236,7 @@ module.exports = function(app){
                         }
                       };
                       loop();
+                    data.saleEvents = data.saleEvents.sort((a,b) => (a.end < b.end) ? 1 : ((b.end < a.end) ? -1 : 0)); 
                     res.send(data);
                 }
             })

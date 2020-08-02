@@ -189,10 +189,13 @@ class RowProduct extends React.Component {
         super(props);
     }
     cancelProduct(){
-        var idProduct = this.props.product.id;
+        var idProduct = this.props.product._id;
+        var quantity = this.props.product.quanty;
+        var cost = this.props.product.cost;
         var email = localStorage.getItem("email");
         var idOrder = this.props.idOrder;
-        $.post("/cancelProduct",{idProduct:idProduct, idOrder:idOrder,email:email},function(data){
+        $.post("/cancelProduct",{idProduct:idProduct, idOrder:idOrder,email:email,
+            quantity:quantity,cost:cost},function(data){
             console.log(data);
             mainOrder.setState({listOrder:data});
         });
@@ -239,7 +242,9 @@ class ListOrders extends React.Component {
         this.state = {
             listOrder: [],
             permission:0,
-            processing:[]
+            processing:[],
+            optionDisplay:1,
+            chooseDate:""
         }
         this.cancelOrder = this.cancelOrder.bind(this);
         mainOrder = this;
@@ -320,10 +325,29 @@ class ListOrders extends React.Component {
         window.location.replace("/");
     }
     changeOptionDisplay(e){
-
+        const option = e.target.value;
+        var that = this;
+        if (option=="all"){
+            this.setState({optionDisplay:1});
+            $.post("/getListOrder",{email:localStorage.getItem('email')},function(data){
+                that.setState({listOrder:data});
+            })
+        } else {
+            this.setState({optionDisplay:2});
+            if (this.state.chooseDate!=""){
+                $.post("/getSpecificDayOrder",{email:localStorage.getItem('email'),date:that.state.chooseDate},function(data){
+                    that.setState({listOrder:data});
+                })
+            }
+        }
     }
     changeDate(e){
-        
+        var that = this;
+        if (this.state.optionDisplay==2){
+            $.post("/getSpecificDayOrder",{email:localStorage.getItem('email'),date:that.refs.specificDate.value},function(data){
+                that.setState({listOrder:data,chooseDate:that.refs.specificDate.value});
+            })
+        }
     }
     render(){
         var that = this;

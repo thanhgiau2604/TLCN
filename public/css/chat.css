@@ -196,7 +196,7 @@ overflow-y: auto;
   text-align: left;
 }
 .sc-message--content.sent {
-  text-align: right;
+  text-align: left;
 }
 .sc-message--content.received {
   text-align: left;

@@ -13,7 +13,7 @@ process.env.PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0B
 process.env.VIEW_ID = "208504637"
 const jwtoken = new google.auth.JWT(process.env.CLIENT_EMAIL, null, process.env.PRIVATE_KEY, scopes);
 function getUsers(res) {
-    User.find({role:'user'},function (err, data) {
+    User.find({role:'user'}).sort({qorder:"descending"}).exec(function (err, data) {
         if (err) {
             console.log(err);
         } else {

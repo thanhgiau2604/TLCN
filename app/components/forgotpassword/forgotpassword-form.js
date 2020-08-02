@@ -65,7 +65,7 @@ class ConfirmCode extends React.Component{
 		const code = this.code.value;
 		const reallyCode = localStorage.getItem('codeInEmail');
 		if (code!=reallyCode){
-			this.setState({err:"Bạn nhập mã code không đúng. Vui lòng kiểm tra lại"})
+			this.setState({err:"Bạn nhập mã xác nhận không đúng. Vui lòng kiểm tra lại"})
 		} else {
 			main.setState({step:3});
 		}

@@ -11,11 +11,21 @@ const Nexmo = require("nexmo");
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+async function checkInfor(email,phone,password){
+        var existUser = await User.findOne({$or:[{email:email},{phoneNumber:phone}]},function(err,data){});
+        if (existUser){
+            return "Tài khoản đã tồn tại. Vui lòng thử email hoặc số điện thoại khác!"
+        } else {
+            if (password.length<6){
+                return "Mật khẩu ít nhất là 6 kí tự. Khuyến khích sự kết hợp giữa in hoa, in thường, kí tự đặc biệt"
+            } else return "OK";
+        }
+}
 module.exports = function(app,apiRouter,jwt){
     var username="", email="",token,role="";
     var superSecret = 'iamastudent';
     app.get("/",(req,res)=> res.render("trangchu",{username:username}))
-    app.post("/signup",parser,(req,res)=>{
+    app.post("/signup",parser,async (req,res)=>{
         const firstName = req.body.firstname;
         const lastName = req.body.lastname;
         const email = req.body.email;
@@ -24,8 +34,13 @@ module.exports = function(app,apiRouter,jwt){
         const repass = req.body.repass;
         const dob = req.body.dob;
         const role='user';
-        console.log(password);
+        
         var err="";
+        var resultCheckInfor = await checkInfor(email,phoneNumber,password);
+        console.log("resultCheckInfor="+resultCheckInfor);
+        if (resultCheckInfor!="OK"){
+            return res.json(resultCheckInfor)
+        } else
         if (!firstName || !lastName || !email || !password || !repass) {
             err = "Không được bỏ trống các trường bắt buộc (*)";
             return res.json(err);
@@ -62,8 +77,9 @@ module.exports = function(app,apiRouter,jwt){
 
 
     apiRouter.post("/login",parser,(req,res)=> {
-        const emailorphone = req.body.EmailOrPhone;
+        const emailorphone = req.body.EmailOrPhone.toString().trim().toLowerCase();
         const password = req.body.password;
+        console.log(emailorphone);
         User.findOne({$or:[
             {email:emailorphone, isDelete:0},
             {numberPhone:emailorphone, isDelete:0}

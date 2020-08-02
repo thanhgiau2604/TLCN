@@ -29,9 +29,10 @@ class RequireAuthentication extends React.Component{
 		this.goAuthen = this.goAuthen.bind(this);
 	}
 	goAuthen(){
-		window.location.replace("/login");
+        console.log("go");
 	}
 	render(){
+        console.log("nè"+window.location.href);
 		return(<div id="modal-authen" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 		  <div class="modal-content">
@@ -198,25 +199,10 @@ class DetailProduct extends React.Component{
         <div class="col-lg-7 col-md-7 col-sm-8 col-xs-12">
             <div class="single-product-descirption">
                 <h2>{this.state.product.name}</h2>
-                <div class="single-product-social-share">
+                {/* <div class="single-product-social-share">
                     <div id="buttons">
                     <FacebookShareButton url={url} />
                     </div>  
-                </div>
-                {/* <div class="single-product-review-box">
-                    <div class="rating-box">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-half-empty"></i>
-                    </div>
-                    <div class="read-reviews">
-                        <a href="#">Xem đánh giá (1)</a>
-                    </div>
-                    <div class="write-review">
-                        <a href="#">Đánh giá</a>
-                    </div>		
                 </div> */}
                 <div class="single-product-price">
                     <h2>{cost}</h2>
@@ -254,7 +240,6 @@ class DetailProduct extends React.Component{
                     <a class="add-cart-text" title="Add to cart" style={{cursor:'pointer'}}
                     onClick={this.addToCart}>Thêm vào giỏ hàng</a>
                 </div>
-                <RequireAuthentication/>
             </div>
         </div>
     </div>)

@@ -6,6 +6,7 @@ const Product = require("../models/Product");
 const Statistic = require("../models/statistic");
 function getCart(data,res){
     var arr = [];
+    if (!data) return res.send(arr);
     if (!data.cart||data.cart.length==0) {
         res.send(arr);
         return;
@@ -104,7 +105,7 @@ module.exports = function(app){
     app.post("/updateProductHistory",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
         const email = req.body.email;
-        if (idproduct){
+        if (idproduct && email){
             User.findOneAndUpdate({email:email},{'$pull':{historylist:{id:idproduct}}},{new:true},function(err,data){
                 if (err){
                     throw err;
@@ -165,15 +166,14 @@ module.exports = function(app){
                 throw err;
             } else {
                 if (user){
-                    var bool = false,quanty;
-                for (var i=0; i<user.cart.length; i++){
-                    if (user.cart[i].idProduct==id){
-                        quanty = user.cart[i].quanty;
-                        bool = true;
-                        break;
-                    }
-                }
-                if (bool==false){
+                //     var bool = false,quanty;
+                // for (var i=0; i<user.cart.length; i++){
+                //     if (user.cart[i].idProduct==id){
+                //         quanty = user.cart[i].quanty;
+                //         bool = true;
+                //         break;
+                //     }
+                // }
                     User.findOneAndUpdate({email:email},{'$push':{cart:{idProduct:id,quanty:quantyProduct,size:size,color:color,status:"processing"}}},{new:true},function(err,data){
                         if (err){
                             throw err;
@@ -182,16 +182,7 @@ module.exports = function(app){
                             getCart(data,res);
                         }
                     })
-                } else {
-                    User.findOneAndUpdate({'email':email,"cart.idProduct":id},{'$set':{"cart.$.quanty":quanty+quantyProduct,"cart.$.size":size,"cart.$.color":color}},{new:true},function(err,data){
-                        if (err){
-                            throw err;
-                        } else {
-                            // console.log(data);
-                            getCart(data,res);
-                        }
-                    })
-                }
+                
                 }
             }
         })

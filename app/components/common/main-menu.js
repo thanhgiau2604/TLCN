@@ -11,7 +11,7 @@ class RequireAuthentication extends React.Component{
 		this.goAuthen = this.goAuthen.bind(this);
 	}
 	goAuthen(){
-		window.location.replace("/login");
+		window.location.replace("/login?continue="+window.location.href);
 	}
 	render(){
 		return(<div id="modal-authen" class="modal fade" role="dialog">

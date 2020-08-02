@@ -172,6 +172,20 @@ module.exports = function(app,apiRouter){
             }
         })
     });
+    app.post("/getSpecificDayOrder",parser,(req,res)=>{
+        const date = req.body.date;
+        const user = req.body.email;
+        const minValue=new Date(date+" 00:00:00").getTime();
+        const maxValue = new Date(date+" 23:59:59").getTime();
+        Order.find({email:user,timestamp:{$gte:minValue,$lte:maxValue}}).sort({timestamp:"descending"}).exec(function(err,listOrder){
+            if (!err&&listOrder){
+                console.log(listOrder);
+                res.send(listOrder);
+            } else {
+                res.send([]);
+            }
+        })
+    })
     app.post('/cancelOrder',parser,(req,res)=>{
         const idOrder = req.body.idOrder;
         const email = req.body.email;
@@ -194,20 +208,22 @@ module.exports = function(app,apiRouter){
         const idProduct = req.body.idProduct;
         const idOrder = req.body.idOrder;
         const email = req.body.email;
-        console.log(idProduct);
-        console.log(idOrder);
-        Order.findOneAndUpdate({_id:idOrder,"listproduct.id":idProduct},
+        const quantity = req.body.quantity;
+        const cost = req.body.cost;
+        Order.findOneAndUpdate({_id:idOrder,"listproduct._id":idProduct},
         {$set:{"listproduct.$.status":"canceled"}},{new:true},function(err,data){
             Order.find({email:email},function(err,data){
                 if (err){
                     throw err;
                 } else {
-                    Order.find({email:email}).sort({timestamp:"descending"}).exec(function(err,listOrder){
-                        if (err){
-                            throw err;
-                        } else {
-                            res.send(listOrder);
-                        }
+                    Order.findOneAndUpdate({_id:idOrder},{$inc:{sumproductcost:-quantity*cost}},{new:true},function(err,data){
+                        Order.find({email:email}).sort({timestamp:"descending"}).exec(function(err,listOrder){
+                            if (err){
+                                throw err;
+                            } else {
+                                res.send(listOrder);
+                            }
+                        })
                     })
                 }
             })
@@ -364,36 +380,38 @@ module.exports = function(app,apiRouter){
     app.post("/updateTopCategory",parser,(req,res)=>{
         let idProduct = req.body.idProduct;
         let email = req.body.email;
-        Product.findOne({_id:idProduct},function(err,product){
-            if (err) console.log(err);
-            else {
-                var category = product.category;
-                User.findOne({email:email},function(err,user){
-                    var topCategory = user.topCategory;
-                    if (category&&category.length>0){
-                        var index = topCategory.findIndex(item => item.id.toString() == category[0].id.toString());
-                        if (index==-1){
-                            User.findOneAndUpdate({email:email},{"$push":{topCategory:{id:category[0].id,count:1}}},{new:true},function(err,data){
-                                if (err) console.log(err); else console.log(data);
-                            });
-                        } else {
-                            User.findOneAndUpdate(
-                              { email: email },
-                              { $inc: { "topCategory.$[filter].count": 1 } },
-                              { arrayFilters: [{ "filter.id": category[0].id }] },
-                              function (err, data) {
-                                if (err) {
-                                  console.log(err);
-                                } else {
-                                  console.log(data);
-                                }
-                              }
-                            );
+        if (email){
+            Product.findOne({_id:idProduct},function(err,product){
+                if (err) console.log(err);
+                else {
+                    var category = product.category;
+                    User.findOne({email:email},function(err,user){
+                        var topCategory = user.topCategory;
+                        if (category&&category.length>0){
+                            var index = topCategory.findIndex(item => item.id.toString() == category[0].id.toString());
+                            if (index==-1){
+                                User.findOneAndUpdate({email:email},{"$push":{topCategory:{id:category[0].id,count:1}}},{new:true},function(err,data){
+                                    if (err) console.log(err); else console.log(data);
+                                });
+                            } else {
+                                User.findOneAndUpdate(
+                                  { email: email },
+                                  { $inc: { "topCategory.$[filter].count": 1 } },
+                                  { arrayFilters: [{ "filter.id": category[0].id }] },
+                                  function (err, data) {
+                                    if (err) {
+                                      console.log(err);
+                                    } else {
+                                      console.log(data);
+                                    }
+                                  }
+                                );
+                            }
                         }
-                    }
-                })
-            }
-        })
+                    })
+                }
+            })
+        }
     })
     app.get("/checkSale",(req,res) => {
         var today = new Date().getTime();
