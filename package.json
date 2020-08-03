@@ -53,6 +53,7 @@
     "popper.js": "^1.16.1",
     "popup": "0.0.3",
     "qrcode": "^1.4.4",
+    "qrcode.react": "^1.0.0",
     "qs": "^6.9.4",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",

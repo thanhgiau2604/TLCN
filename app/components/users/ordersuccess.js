@@ -12,6 +12,7 @@ var store = require("../../store");
 import {connect} from 'react-redux'
 import io from 'socket.io-client'
 import StripeCheckout from 'react-stripe-checkout'
+import QRCode from 'qrcode.react';
 const socket = io('http://localhost:3000');
 var main,editOrder;
 
@@ -126,7 +127,8 @@ class Success extends React.Component {
             voucher: 0,
             amount:0,
             stripeProduct: {name:"",price:0,productBy:""},
-            listValidProduct:[]
+            listValidProduct:[],
+            strInforOrder: ""
         }
         this.makePayment = this.makePayment.bind(this);
         main = this;
@@ -169,9 +171,13 @@ class Success extends React.Component {
                           });
                           amount = amount + ship;
                           if (data.costVoucher) amount -= data.costVoucher;
+                          var strInforOrder = 'Khách hàng: '+data.fullname+"-"+data.phonenumber+"-"+data.email+"; "+"Địa chỉ: "+data.address+
+                          "; Tổng tiền SP: "+formatCurrency(data.sumproductcost)+"; Ship: "+formatCurrency(data.sumshipcost);
+                          if (data.costVoucher>0) strInforOrder += "; voucher: "+formatCurrency(data.costVoucher);
+                          strInforOrder += "; Tổng tiền đơn hàng: "+formatCurrency(amount);
                           that.setState({ listProductOrder: data.listproduct, type:"confirm", ship:ship, code:data.code,
-                          voucher: data.costVoucher,amount:amount,
-                          stripeProduct:{name:"SHOES FROM SHOELG",price:amount,productBy:"SHOELG"}})
+                          voucher: data.costVoucher,amount:amount,strInforOrder:strInforOrder,
+                          stripeProduct:{name:"SHOES FROM SHOELG",price:amount,productBy:"SHOELG"}});
                         });
                       })         
                     })
@@ -284,13 +290,13 @@ class Success extends React.Component {
                           <h3><b>Bạn có thể thanh toán online bằng một trong các cổng bên dưới:</b></h3>
                           <div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                              <img src="../../img/paypal.png" width="160px" onClick={this.paymentPaypal.bind(this)}/>
+                              <img src="../../img/paypal.png" width="180px" onClick={this.paymentPaypal.bind(this)}/>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                              <img src="../../img/vnpay.png" width="120px" onClick={this.vnPayment.bind(this)} />
+                              <img src="../../img/vnpay.png" width="150px" onClick={this.vnPayment.bind(this)} />
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                              <img src="../../img/stripe.png" width="120px" onClick={this.stripePayment.bind(this)} />
+                              <img src="../../img/stripe.png" width="150px" onClick={this.stripePayment.bind(this)} />
                               <StripeCheckout
                                 stripeKey="pk_test_51GxtcJBNzoYoLG3rT8ZmVb5TZvKsUAM1oQSKfhhy0QXFWyssByS7Y0tlXki8tMCulI08lQFLATuHbLrmeBny5o1G00ZdgAv63S"
                                 token={this.makePayment}
@@ -301,8 +307,17 @@ class Success extends React.Component {
                               />
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                              <img src="../../img/zalopay.png" width="120px" onClick={this.zaloPayment.bind(this)}/>
+                              <img src="../../img/zalopay.png" width="150px" onClick={this.zaloPayment.bind(this)}/>
                             </div>
+                          </div>
+                          <div>
+                            <QRCode
+                              id='qrcode'
+                              value={this.state.strInforOrder}
+                              size={200}
+                              level={'H'}
+                              includeMargin={true}
+                            />
                           </div>
                           <h3 class="text-center ordersuccess" style={{paddingTop:"15px"}}>
                           Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.</h3>

@@ -106,7 +106,6 @@ class HomePage extends React.Component{
                 <CompanyFacality/>
                 <Footer/>
                 <CopyRight/>
-                <FormRequireUpdateInfor/>
             </div>
         )
     }
