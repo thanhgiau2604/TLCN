@@ -439,6 +439,9 @@
 	 
 	/* small mobile :320px. */
 	@media (max-width: 767px) {
+	.shopping-cart:hover .shipping-cart-overly{
+		width:100%;
+	}
 	.product-info {
 		text-align: center;
 	}

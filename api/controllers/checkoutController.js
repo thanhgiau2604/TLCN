@@ -10,7 +10,8 @@ var distance = require('google-distance');
 const Nexmo = require("nexmo");
 var _eQuatorialEarthRadius = 6378.1370;
 var _d2r = (Math.PI / 180.0);
-var arrUserOnline = []
+var arrUserOnline = [];
+var arrStateProduct = [];
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
@@ -211,7 +212,7 @@ module.exports = function(app,io){
         let linkXacNhan = "<h4>Link xác nhận đơn hàng: http://localhost:3000/confirm/"+txtTo+"/"+numberRandom+"</h4>";
         //Luu vao databse;
         Order.findOneAndUpdate({_id:id},{$set:{code:numberRandom, time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString())}},function(err,data){
-            let txtContent = donhang+dssp+linkXacNhan;
+            let txtContent = "<div style='color:black'>"+donhang+dssp+linkXacNhan+"</div>"
             sendmail(txtTo,txtSubject,txtContent,function(err,data){
                 if (err){
                     console.log(err);
@@ -224,8 +225,8 @@ module.exports = function(app,io){
         });
     });
     const nexmo = new Nexmo({
-        apiKey: "89d03306",
-        apiSecret: "kP0cq3PjO49r8ht2"
+        apiKey: "19fbc77f",
+        apiSecret: "F0CXdcbSm5KHXec5"
       }, {debug:true});
     app.post("/sendSMS",parser,(req,res)=>{
         var number = req.body.phone;
@@ -250,7 +251,7 @@ module.exports = function(app,io){
                         if (err){
                             console.log(err);
                         } else {
-                             nexmo.message.sendSms("84969315430",number,messageSend,{type: "unicode" },
+                             nexmo.message.sendSms("84965450908",number,messageSend,{type: "unicode" },
                               (err, responseData) => {
                                 if (err) {
                                   res.json({ err: 1 });
@@ -278,7 +279,8 @@ module.exports = function(app,io){
             }
         })
     })
-    app.get("/check/:code",(req,res)=>{
+
+    app.get("/check/:code", (req,res)=>{
         let code = req.params.code;
         var arrErrorProduct = [];
         var arrValidProduct = [];
@@ -288,14 +290,26 @@ module.exports = function(app,io){
                 for (var i=0; i<data.listproduct.length; i++){
                     var pOrder = data.listproduct[i];   
                     var product = await Product.findOne({_id:pOrder.id},function(err,pro){});
+                    var addProduct = product;
                     if (product){
                         let index = product.sizes.findIndex(item => item.size===pOrder.size);
                         if (index!=-1){
+                            var compareQuantity;
+                            var indexProduct = arrStateProduct.findIndex(pro => pro.name == product.name);
                             let pos = product.sizes[index].colors.findIndex(item => item.color===pOrder.color);
-                            if (product.sizes[index].colors[pos].quanty<pOrder.quanty){
+                            if (indexProduct !=-1) compareQuantity = arrStateProduct[indexProduct].sizes[index].colors[pos].quanty;
+                            else compareQuantity = product.sizes[index].colors[pos].quanty;
+                            if (compareQuantity<pOrder.quanty){
                                 arrErrorProduct.push(pOrder);
                             } else {
                                 arrValidProduct.push(pOrder);
+                                addProduct.sizes[index].colors[pos].quanty -=pOrder.quanty;
+                                var vt = arrStateProduct.findIndex(product => product.name==addProduct.name);
+                                if (vt == -1)  {arrStateProduct.push(addProduct)} else
+                                {
+                                    arrStateProduct.splice(vt,1);
+                                    arrStateProduct.push(addProduct)
+                                }
                             }
                         }
                     }
@@ -304,33 +318,6 @@ module.exports = function(app,io){
             res.json({dataErr:arrErrorProduct,dataValid:arrValidProduct,voucher: data.costVoucher});
         }
         loop();
-        // Order.findOne({code:code},function(err,data){
-        //     if (err){
-        //         console.log(err);
-        //     } else {
-        //         if (data&&data.listproduct.length>0){
-        //             const forLoop = async _ => {
-        //                 for (var i=0; i<data.listproduct.length; i++){
-        //                     var pOrder = data.listproduct[i];   
-        //                     var product = await Product.findOne({_id:pOrder.id},function(err,pro){});
-        //                     if (product){
-        //                         let index = product.sizes.findIndex(item => item.size===pOrder.size);
-        //                         if (index!=-1){
-        //                             let pos = product.sizes[index].colors.findIndex(item => item.color===pOrder.color);
-        //                             if (product.sizes[index].colors[pos].quanty<pOrder.quanty){
-        //                                 arrErrorProduct.push(pOrder);
-        //                             } else {
-        //                                 arrValidProduct.push(pOrder);
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //                 res.json({dataErr:arrErrorProduct,dataValid:arrValidProduct,voucher: data.costVoucher});
-        //          }
-        //          forLoop();
-        //         }
-        //     }
-        // })
     })
     app.get("/checkout/:email/:code",(req,res)=>{
         console.log("vô 1");
@@ -394,8 +381,6 @@ module.exports = function(app,io){
                     }
                     //cập nhật vào thống kê
                     await Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
-                        // if (err) console.log(err); else
-                        // console.log(data);
                     });
                     //Tăng số lượt đặt hàng của khách hàng --> để thống kê
                     const dataUser = await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true},function(err,data){
@@ -424,104 +409,7 @@ module.exports = function(app,io){
                 } else res.send("NOT UPDATE");
             }
         }
-        forLoop();
-        // Statistic.findOne({ day: currentDay }, function (err, data) {
-        //     if (data) {
-        //         var listOrderToday = data.orderproduct; //Tất cả order trong ngày
-        //         Order.findOne({code: req.params.code }, function (err, order) {
-        //             if (order && order.status == "unconfirmed") { //nếu trạng thái unconfirmed mới thực hiện cập nhật
-        //                 dataProduct = order.listproduct;
-        //                 var ok;
-        //                 var result = listOrderToday;
-        //                 for (var i = 0; i < dataProduct.length; i++) {
-        //                     ok = false;
-        //                     for (var j = 0; j < listOrderToday.length; j++) {
-        //                         if (dataProduct[i].id.equals(listOrderToday[j].id)) {
-        //                             ok = true;
-        //                             var itemresult = listOrderToday[j];
-        //                             itemresult.count += dataProduct[i].quanty;
-        //                             result[j] = itemresult;
-        //                             break;
-        //                         }
-        //                     }
-        //                     if (ok == false) {
-        //                         var itemresult = {
-        //                             id: dataProduct[i].id,
-        //                             count: dataProduct[i].quanty
-        //                         }
-        //                         result.push(itemresult);
-        //                     }
-        //                 }
-
-        //                 for (var i = 0; i < dataProduct.length; ++i) {
-        //                     Product.findOneAndUpdate(
-        //                         { _id: dataProduct[i].id },
-        //                         { $inc: { "sizes.$[filter1].colors.$[filter2].quanty": -dataProduct[i].quanty } },
-        //                         { arrayFilters: [{ 'filter2.color': dataProduct[i].color }, { 'filter1.size': dataProduct[i].size }] },
-        //                         function (err, data) {})
-        //                 }
-        //                 for (var i = 0; i < dataProduct.length; ++i) {
-        //                     Product.findOneAndUpdate({_id: dataProduct[i].id}, {$inc:{quanty: -dataProduct[i].quanty},$inc:{orders:1}}, 
-        //                     function (err, data) {})
-        //                 }
-        //                 if (order.costVoucher>0){
-        //                     User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
-        //                         {$pull:{currentVoucher:{value:order.costVoucher}}},{new:true},function(err,data){
-        //                             if (err) console.log(err); else
-        //                             console.log(data);
-        //                         })
-        //                 }
-        //                 //cập nhật vào thống kê
-        //                 Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
-        //                     if (err) console.log(err); else
-        //                     console.log(data);
-        //                 });
-        //                 //Tăng số lượt đặt hàng của khách hàng --> để thống kê
-        //                 User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true},function(err,data){
-        //                     if (err) console.log(err);
-        //                     else {
-        //                         if (data){
-        //                             if (data.qorder%5==0){
-        //                                 var value = Math.floor(data.qorder/5)*50000;
-        //                                 User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
-        //                                     {$push:{currentVoucher:{value:value}}},{new:true},function(err,data){
-        //                                         if (err) console.log(err);
-        //                                 })
-        //                             }
-        //                         }
-        //                     }
-        //                 })
-        //                 //Cập nhật trạng thái confirmed
-        //                 Order.update({code: req.params.code }, { $set: { status: "confirmed", time: getCurrentDayTime(), timestamp: parseInt(Date.now().toString()) } }, function (err, data) {
-        //                     if (err) {
-        //                         console.log(err);
-        //                     } else {
-        //                         Order.update({code: req.params.code},
-        //                             {$set:{"listproduct.$[].status":"confirmed"}},function(err,data){
-                                        
-        //                             })
-        //                         if (typeInfor=="email"){
-        //                             let txtTo = req.params.email;
-        //                             let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
-        //                             let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
-        //                             sendmail(txtTo, txtSubject, txtContent);
-        //                         }
-        //                         console.log(req.params.email);
-        //                         User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]}, { $set: { cart: [] } }, function (err, data) {
-        //                             if (err) {
-        //                                 throw err;
-        //                             } else {
-        //                                 res.send("UPDATED");
-        //                             }
-        //                         })
-        //                     }
-        //                 });
-        //             } else {
-        //                 res.send("NOT UPDATE");
-        //             }
-        //         })
-        //     }
-        // });    
+        forLoop();  
     });
     app.post("/updateCart",parser,(req,res)=>{
         const email1 = req.body.email1;
@@ -613,5 +501,5 @@ module.exports = function(app,io){
     })
     app.get("/payment",(req,res)=>{
         res.render("thanhtoan");
-    })
+    });
 }

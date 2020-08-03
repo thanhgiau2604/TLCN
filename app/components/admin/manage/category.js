@@ -276,7 +276,7 @@ class ModalViewCategory extends React.Component{
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="form-group">
-                  <label for="quanty"><b>Quantity: </b>{this.state.quanty}</label>
+                  <label for="quanty"><b>Number of product: </b>{this.state.listProduct.length}</label>
                   {/* <input type="text" class="form-control"  value={this.state.quanty} readonly="true"/> */}
                 </div>
               </div>

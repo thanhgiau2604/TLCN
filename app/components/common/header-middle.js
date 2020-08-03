@@ -36,7 +36,7 @@ class HeaderMiddle extends React.Component{
 						<div className="categorys-product-search">
 							<form method="get" className="search-form-cat" onSubmit={this.actionSearch} >
 								<div className="search-product form-group">
-									<input type="text" className="form-control search-form" name="searchinput" 
+									<input className="form-control search-form" name="searchinput" 
 									placeholder="Nhập từ khóa cần tìm ... " ref={(data) => { this.keysearch = data; }}/>
 									<button className="search-button" value="Search" type="submit">
 										<i className="fa fa-search"></i>

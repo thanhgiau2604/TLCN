@@ -408,7 +408,7 @@ class Success extends React.Component {
                         </ul> : 
                         <div>
                           <button class="btn btn-primary" onClick={this.backHomepage.bind(this)}
-                          style={{paddingTop:"15px"}}>
+                          style={{marginTop:"15px"}}>
                                 <i class="fa fa-reply-all" aria-hidden="true"></i>Về trang chủ</button>
                           </div>}
                       </div>

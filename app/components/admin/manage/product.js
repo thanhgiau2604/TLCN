@@ -321,7 +321,8 @@ class NewProduct extends React.Component {
                 <button className="btn btn-success" onClick={this.AddSize}>Add size</button>
               </div>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="row" style={{marginTop:'10px'}}>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                   <img src={this.state.image1} width="100%"/>
                   <label>Image 1:</label>
@@ -337,6 +338,7 @@ class NewProduct extends React.Component {
                   <label>Image 3:</label>
                   <input type="file" className="form-control" ref="image3" onChange={(e) => this.ChangeImage3(e)} />
                 </div>
+            </div>
             </div>
           </div>
           {notifyAddSuccess}
