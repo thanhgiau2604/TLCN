@@ -240,7 +240,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json({data:arr,category:data[0]});
+                     res.json({data:arr.slice(0,6),category:data[0]});
                  })
              });
          })
@@ -256,7 +256,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json({data:arr,category:data[0]});
+                     res.json({data:arr.slice(0,6),category:data[0]});
                  })
              });
          })
@@ -272,7 +272,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json({data:arr,category:data[0]});
+                     res.json({data:arr.slice(0,6),category:data[0]});
                  })
              });
          })
@@ -288,7 +288,7 @@ module.exports = function(app,apiRouter){
                      index++;
                      arr.push(da);
                      if (index==count)
-                     res.json({data:arr,category:data[0]});
+                     res.json({data:arr.slice(0,6),category:data[0]});
                  })
              });
          })
