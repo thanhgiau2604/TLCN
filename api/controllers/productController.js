@@ -56,7 +56,6 @@ module.exports = function(app){
     });
     app.post("/getDetailProduct",parser,(req,res)=>{
         const idproduct = req.body.idproduct;
-        console.log(idproduct);
         if (!idproduct) {
             res.send("");
         } else {
@@ -239,10 +238,8 @@ module.exports = function(app){
 
     app.post("/updateCountView",parser,(req,res)=>{
         const idProduct = req.body.idProduct;
-        console.log(idProduct);
         if (idProduct) {
             var currentDay = getCurrentDay();
-            console.log(currentDay);
             Product.findOneAndUpdate({_id:idProduct},{$inc:{views:1}},function(err,data){});
             Statistic.findOne({ day: currentDay }, function (err, data) {
                 if (data) {
@@ -353,7 +350,7 @@ module.exports = function(app){
                         arrResult.push({value:star3,percent:percent3});
                         arrResult.push({value:star4,percent:percent4});
                         arrResult.push({value:star5,percent:percent5});
-                        console.log(arrResult);
+                        // console.log(arrResult);
                         res.json({data: arrResult, done:done});
                     }
                 }

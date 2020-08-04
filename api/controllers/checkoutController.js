@@ -64,7 +64,7 @@ module.exports = function(app,io){
         const geocoder = NodeGeocoder(options);
         geocoder.geocode(address)
         .then(result => {
-            console.log(result);
+            // console.log(result);
             if (result.length>0) res.json({err:"",position:{lat:result[0].latitude,lng: result[0].longitude}})
             else res.json({err:"Vui lòng kiểm tra lại địa chỉ!"});
         }, 
@@ -320,7 +320,6 @@ module.exports = function(app,io){
         loop();
     })
     app.get("/checkout/:email/:code",(req,res)=>{
-        console.log("vô 1");
         var currentDay = getCurrentDay();
         var dataProduct=[];
         var infor = req.params.email;
@@ -365,7 +364,7 @@ module.exports = function(app,io){
                             function (err, data) {})
                     }
                     for (var j = 0; j < dataProduct.length; ++j) {
-                        console.log(dataProduct[j]);
+                        // console.log(dataProduct[j]);
                         Product.updateOne({_id: dataProduct[j].id}, {$inc:{quanty: -dataProduct[j].quanty,orders:dataProduct[j].quanty}}, 
                         function (err, data) {
                             if (err) console.log(err);
@@ -469,7 +468,7 @@ module.exports = function(app,io){
     app.post("/getVoucher",parser,(req,res)=>{
         const email = req.body.email;
         const phone = req.body.phone;
-        console.log("email="+email);
+        // console.log("email="+email);
         if (!phone) phone=-1;
         User.findOne({$or:[{email:email},{numberPhone:phone}]},function(err,data){
             if (err) console.log(err);
@@ -491,7 +490,7 @@ module.exports = function(app,io){
             var k = Math.floor(voucher/50000);
             if (productSum<250000+(k*k-k)*50000) voucher = 0;
         }
-        console.log(voucher);
+        // console.log(voucher);
         Order.findOneAndUpdate({code:code},{$set:{listproduct:listProduct,timestamp:parseInt(Date.now().toString()),
         time:getCurrentDayTime(),costVoucher:voucher,sumproductcost:productSum}},(err,data)=>{
             if (!err&&data){

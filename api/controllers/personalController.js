@@ -19,8 +19,7 @@ module.exports = function(app,apiRouter){
         const firstname = req.body.firstname;
         const lastname = req.body.lastname;
         const dob = req.body.day+"/"+req.body.month+"/"+req.body.year;
-
-        console.log(firstname+"/"+lastname+"/"+phone+"/"+email+"/"+dob);
+        // console.log(firstname+"/"+lastname+"/"+phone+"/"+email+"/"+dob);
         User.update({email:email},{$set:{firstName:firstname,lastName:lastname,numberPhone:phone,
         dob:dob}},function(err,data){
             if (err){
@@ -50,7 +49,7 @@ module.exports = function(app,apiRouter){
             const email = req.body.email;
             User.findOne({email:email}).select("email firstName lastName numberPhone dateofBirth password").
             exec(function(err,user){
-                console.log(user);
+                // console.log(user);
                 if (err){
                     res.send({err:err,user:""})
                 } else {

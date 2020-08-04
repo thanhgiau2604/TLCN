@@ -37,7 +37,6 @@ module.exports = function(app,apiRouter,jwt){
         
         var err="";
         var resultCheckInfor = await checkInfor(email,phoneNumber,password);
-        console.log("resultCheckInfor="+resultCheckInfor);
         if (resultCheckInfor!="OK"){
             return res.json(resultCheckInfor)
         } else
@@ -79,7 +78,6 @@ module.exports = function(app,apiRouter,jwt){
     apiRouter.post("/login",parser,(req,res)=> {
         const emailorphone = req.body.EmailOrPhone.toString().trim().toLowerCase();
         const password = req.body.password;
-        console.log(emailorphone);
         User.findOne({$or:[
             {email:emailorphone, isDelete:0},
             {numberPhone:emailorphone, isDelete:0}
@@ -91,7 +89,6 @@ module.exports = function(app,apiRouter,jwt){
                     res.json({err:1,message:"Không đúng Email/SDT hoặc password"});
                 } else {
                     var validPassword = user.comparePassword(password);
-                    console.log(validPassword);
                     if (!validPassword){
                         res.json({err:1,message:"Không đúng Email/SDT hoặc password"});
                     } else {
@@ -317,7 +314,6 @@ module.exports = function(app,apiRouter,jwt){
     app.post("/sendCodeToEmail",parser,(req,res)=>{
         var email = req.body.email;
         if (email[0]=='0'|| email[0]=='8'){
-            console.log("vô sdt");
             if (email[0]=="0"){
                 email = email.replace("0","84");
             }

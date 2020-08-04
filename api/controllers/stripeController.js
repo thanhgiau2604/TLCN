@@ -1,11 +1,10 @@
 
 const bodyParser = require("body-parser");
 const parser = bodyParser.urlencoded({extended:false});
-const stripe = require('stripe')("sk_test_51GxtcJBNzoYoLG3r8ZdoDAmSvQ35jO1ISEtl8ixkFN9jr6BPzP6ScpsQSsUyziSIUhOWLIWo5FyjmR7xBx2tXpXh00zWIgJJts");
+const stripe = require('stripe')("sk_test_51GxtcJBNzoYoLG3rrNMvSQCvclTF91GYb19xF138NpMOYlSPLWc9cJGefiKIs6oiLuI5f8aljAiYaTFcN32iG0hr00aZnJfvyk");
 const { v4: uuidv4 } = require('uuid');
 var Order = require("../models/order");
 module.exports = function(app){
-
     app.post("/checkout/stripe",parser,async (req,res)=>{
       const body = JSON.parse(req.body.data);
       const product = body.product;

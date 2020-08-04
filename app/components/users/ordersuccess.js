@@ -298,7 +298,7 @@ class Success extends React.Component {
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                               <img src="../../img/stripe.png" width="150px" onClick={this.stripePayment.bind(this)} />
                               <StripeCheckout
-                                stripeKey="pk_test_51GxtcJBNzoYoLG3rT8ZmVb5TZvKsUAM1oQSKfhhy0QXFWyssByS7Y0tlXki8tMCulI08lQFLATuHbLrmeBny5o1G00ZdgAv63S"
+                                stripeKey="pk_test_51GxtcJBNzoYoLG3rsURfs8BraQtxCVDT6pZdZpFQxfRg1P81y170m2s3ZNaeBTEgTUPMZdo2CG04qcdprXVjvaky00fz7v6Jpm"
                                 token={this.makePayment}
                                 name={this.state.stripeProduct.name}
                                 amount={this.state.stripeProduct.price}

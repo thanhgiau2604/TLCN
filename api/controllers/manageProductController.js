@@ -38,7 +38,7 @@ module.exports = function(app,io){
         destination: (req, file, cb) => cb(null, "./public/img/product"),
         filename: (req, file, cb) => {
             nameImage = Date.now() + file.originalname;
-            console.log(nameImage);
+            // console.log(nameImage);
             cb(null, nameImage);
         }
     });
@@ -130,7 +130,7 @@ module.exports = function(app,io){
             }
             arr.push(obj);
         }
-        console.log(arr);
+        // console.log(arr);
         Product.insertMany(arr,function(err,data){
             if (err){
                 res.json(0);
@@ -165,7 +165,6 @@ module.exports = function(app,io){
         const sizes = JSON.parse(req.body.sizes);
         const image = JSON.parse(req.body.image);
         const quanty = parseInt(req.body.quanty);
-        console.log("quanty="+quanty)
         var newcosts = new Array();
         newcosts = JSON.parse(oldcost);
         if (cost!=newcosts[newcosts.length-1].cost)

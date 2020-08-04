@@ -84,7 +84,6 @@ module.exports = function(app,adminRouter,jwt){
         const phone = req.body.phone;
         const dob = req.body.dob;
         const password = req.body.password;
-        console.log(password);
         if (password==""){
             User.update({_id:id},{$set:{firstName:firstname, lastName:lastname, email:email, 
                 numberPhone:phone, dob:dob}},function(err,data){
@@ -136,7 +135,6 @@ module.exports = function(app,adminRouter,jwt){
             }
             arr.push(obj);
         }
-        console.log(arr);
         User.insertMany(arr,function(err,data){
             if (err){
                 res.json(0);
@@ -147,7 +145,6 @@ module.exports = function(app,adminRouter,jwt){
     })
     app.post("/restoreUser",parser,(req,res)=>{
         var id = req.body.id;
-        console.log(id);
         User.update({_id:id},{$set:{isDelete:0}},function(err,data){
             if (err) {
                 throw err;
@@ -286,7 +283,7 @@ module.exports = function(app,adminRouter,jwt){
                                         }
                                         arrayResult.push(item);
                                         if (count == list.length) {
-                                            console.log(arrayResult.slice(0,10));
+                                            // console.log(arrayResult.slice(0,10));
                                             return res.send(arrayResult.slice(0,10));
                                         }
                                     }    
@@ -356,7 +353,7 @@ module.exports = function(app,adminRouter,jwt){
             const op = req.body.option;
             var startDate, endDate;
             var startDate1, endDate1;
-            console.log(op);
+            // console.log(op);
             switch (op) {
                 case "today":
                     startDate= "today"; endDate= "today";
@@ -457,7 +454,7 @@ module.exports = function(app,adminRouter,jwt){
         var strYesterday = yesterday.getFullYear().toString()+monthYesterday.toString()+dayYesterday.toString();
         var strThatDay = d.getFullYear().toString()+monthThatDay.toString()+dayThatDay.toString();
         if (option=="today") strYesterday = strThatDay;
-        console.log(strThatDay+"-->" + strYesterday);
+        // console.log(strThatDay+"-->" + strYesterday);
         Statistic.find({ day: { $gte: strThatDay, $lte: strYesterday } }, function (err, data) {
             if (err) console.log(err); else {
                 var resultOrder = [], resultView = [];
@@ -529,7 +526,7 @@ module.exports = function(app,adminRouter,jwt){
     app.post("/getAllSellingProduct",parser,(req,res)=>{
         const optionSort = req.body.optionSort;
         const optionCategory = req.body.optionCategory;
-        console.log(optionCategory);
+        // console.log(optionCategory);
         if (optionCategory!="all"){
             ProductCategory.findOne({name:optionCategory},function(err,category){
                 if (!err&&category){
@@ -572,9 +569,9 @@ module.exports = function(app,adminRouter,jwt){
                 var loop = async _ => {
                     var category = await ProductCategory.findOne({name:optionCategory},(err,cate)=>{})
                     var listProduct;
-                    console.log(category);
+                    // console.log(category);
                     if (category)  listProduct = category.listProduct;
-                    console.log(listProduct);
+                    // console.log(listProduct);
                     for (var i=0; i<statistic.orderproduct.length; i++){
                         var product = statistic.orderproduct[i];
                         if (optionCategory!='all' && listProduct){

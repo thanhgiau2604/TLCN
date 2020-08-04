@@ -39,7 +39,7 @@ module.exports = function(app){
             subtotal += (item.price*item.quantity);
             listItems.push(item);
         }
-        console.log(voucher);
+        // console.log(voucher);
         if (voucher>0){
             var itemDiscount = {
                 "name": "Discount",
@@ -150,8 +150,8 @@ module.exports = function(app){
                 "total": req.body.total
             }
         }
-        console.log(req.body.idSale);
-        console.log(req.body.total);
+        // console.log(req.body.idSale);
+        // console.log(req.body.total);
         paypal.sale.refund(idSale,data,function(err,refund){
             if (err){
                 res.send({success:false});
@@ -160,5 +160,4 @@ module.exports = function(app){
             }
         })
     })
-    console.log(new Date("3 July 2020").getTime());
 }

@@ -1695,6 +1695,7 @@ div.client-carousel .owl-item img {
 	width: 36px;
 }
 .info-text{
+	padding-top: 5px;
 	flex: 1;
 }
 
@@ -1711,7 +1712,7 @@ div.client-carousel .owl-item img {
 	transition: all 0.3s ease 0s;
 	color: #fff;
 	display: block;
-	font-size: 13px;
+	font-size: 15px;
 	line-height:20px;
 	/* text-transform: capitalize; */
 }

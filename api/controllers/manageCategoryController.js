@@ -33,7 +33,7 @@ module.exports = function(app){
     });
     app.post("/getProductCategory",parser,(req,res)=>{
         var category = req.body.category;
-        console.log(category);
+        // console.log(category);
         Category.findOne({_id:category},function(err,data){
             if (err){
                 throw err;
@@ -47,7 +47,7 @@ module.exports = function(app){
                             } else {
                                 arrResult.push(da);
                                 if (data.listProduct.length == arrResult.length){
-                                    console.log(arrResult)
+                                    // console.log(arrResult)
                                     var result = {
                                         name: data.name,
                                         quanty: data.quanty,
@@ -135,7 +135,7 @@ module.exports = function(app){
     app.post("/removeCategory",parser,(req,res)=>{
         const idPro = req.body.idPro;
         const idCategory = req.body.idCategory;
-        console.log(idCategory);
+        // console.log(idCategory);
         Product.findOneAndUpdate({_id:idPro},{$pull:{category:{id:idCategory}}},(err,data)=>{
             if (!err &&data){
                 res.send("OK");
