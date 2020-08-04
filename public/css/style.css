@@ -1713,7 +1713,7 @@ div.client-carousel .owl-item img {
 	display: block;
 	font-size: 13px;
 	line-height:20px;
-	text-transform: capitalize;
+	/* text-transform: capitalize; */
 }
 .info-text p a i{
 	margin-right:7px;
