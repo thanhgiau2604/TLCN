@@ -707,47 +707,12 @@ class Address extends React.Component {
     backStep1(){
         main.setState({curStep:1});
     }
-    // changMethodPayment(e){
-    //     if (!this.refs.fullname.value || !this.refs.phonenumber.value || classLocation.state.address==''){
-    //         alert("Bạn phải nhập đầy đủ thông tin cá nhân trước");
-    //     } else {
-    //         this.setState({methodPayment: e.target.value});
-    //         if (e.target.value == "card") {
-    //             var address = classLocation.state.address;
-    //             var fullname = this.refs.fullname.value;
-    //             var phonenumber = this.refs.phonenumber.value;
-    //             var email = localStorage.getItem("email");
-    //             var voucher = step1.state.costVoucher;
-    //             var that = this;
-    //             var sumCost = 0;
-    //             step1.state.sumcost.forEach(e => {
-    //                 sumCost += e;
-    //             });
-    //             $.post("/updateAddress", {
-    //                 id: localStorage.getItem('curorder'), email: email, address: address, fullname: fullname,
-    //                 phonenumber: phonenumber, sumcost: sumCost, voucher: voucher
-    //             }, function (data) {
-    //                 if (data.err == 0) {
-    //                     dataSendMail = data;
-    //                     $("#modalViewOrder").modal("show");
-    //                     modalViewOrder.setState({ order: data.data, distance: data.distance });
-    //                     let amount = sumCost+data.ship-voucher;
-    //                     that.setState({amount:amount});
-    //                     that.setState({stripeProduct:{name:"SHOES FROM SHOELG",price:amount,productBy:"SHOELG"}})
-    //                 } else {
-    //                     that.setState({ err: "Vui lòng kiểm tra lại địa chỉ" })
-    //                 }
-    //             })
-    //         }
-    //     }
-    // }
     render(){
         if (!localStorage.getItem("curorder")) window.location.replace("/");
         var name="", number="";
         if (this.state.user){
-            if (this.state.user.firstName) name += this.state.user.firstName;
-            if (this.state.user.lastName) name += this.state.user.lastName;
-            if (this.state.user.numberPhone) number = this.state.user.numberPhone;
+            if (this.state.user.fullname) name = this.state.user.fullname;
+            if (this.state.user.phonenumber) number = this.state.user.phonenumber;
         }
         return(<section class="main-content-section">
         <div class="container">

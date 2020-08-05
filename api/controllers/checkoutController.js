@@ -69,21 +69,6 @@ module.exports = function(app,io){
             else res.json({err:"Vui lòng kiểm tra lại địa chỉ!"});
         }, 
         err=> res.json({err:"Vui lòng kiểm tra lại địa chỉ!"}));
-        
-        // opencage.geocode({q: address}).then(data => {
-        //     if (data.status.code == 200) {
-        //       if (data.results.length > 0) {
-        //         var place = data.results[0];
-        //         res.json({err:"",position:place.geometry});
-        //       } else {
-        //           res.json({err:"Vui lòng kiểm tra lại địa chỉ!"})
-        //       }
-        //     } else{
-        //       console.log('have a problem');
-        //     } 
-        //   }).catch(error => {
-        //     console.log('error', error.message);
-        //   });
     })
     app.post("/updateOrder",parser,(req,res)=>{
         const order = JSON.parse(req.body.order);
@@ -382,14 +367,15 @@ module.exports = function(app,io){
                     await Statistic.findOneAndUpdate({ day: currentDay }, { $set: { orderproduct: result } }, function (err, data) {
                     });
                     //Tăng số lượt đặt hàng của khách hàng --> để thống kê
-                    const dataUser = await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true},function(err,data){
-                    });
+                    const dataUser = await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},{$inc:{qorder:1}},{new:true});
+                    var textMailVoucher = "";
                     if (dataUser){
                         if (dataUser.qorder%5==0){
                             var value = Math.floor(dataUser.qorder/5)*50000;
                             await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
                                 {$push:{currentVoucher:{value:value}}},{new:true},function(err,data){
                             })
+                            textMailVoucher = "<h3>Bạn đã nhận được Voucher giảm giá: "+formatCurrency(value) +"</h3>"
                         }
                     }
                     //Cập nhật trạng thái confirmed
@@ -399,7 +385,7 @@ module.exports = function(app,io){
                     if (typeInfor=="email"){
                         let txtTo = req.params.email;
                         let txtSubject = "THÔNG BÁO TỪ SHOELG - SHOP BÁN GIÀY ONLINE";
-                        let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>";
+                        let txtContent = "<h3>Bạn đã xác nhận đơn hàng thành công với mã đơn hàng: " + req.params.code + "</h3>" + textMailVoucher;
                         sendmail(txtTo, txtSubject, txtContent);
                     }
                     await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]}, { $set: { cart: [] } }, function (err, data) {
@@ -458,9 +444,11 @@ module.exports = function(app,io){
     })
     app.post("/getSingleUser",parser,(req,res)=>{
         const email = req.body.email;
-        User.findOne({email:email},function(err,data){
-            if (!err&&data){
-                res.send(data);
+        Order.find({$or:[{email:email},{phonenumber:email}]},function(err,listOrder){
+            if (!err&&listOrder&&listOrder.length>1){
+                res.send(listOrder[listOrder.length-2]);
+            } else {
+                res.send("");
             }
         })
     })

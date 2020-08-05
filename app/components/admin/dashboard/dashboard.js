@@ -560,7 +560,7 @@ class Dashboard extends React.Component{
                           <div class="card-header card-header-tabs card-header-primary">
                             <div class="nav-tabs-navigation">
                               <div class="nav-tabs-wrapper">
-                                <span class="nav-tabs-title">Tasks:</span>
+                                <span class="nav-tabs-title">About:</span>
                                 <ul class="nav nav-tabs" data-tabs="tabs">
                                   <li class="nav-item">
                                     <a
