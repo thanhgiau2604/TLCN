@@ -375,6 +375,22 @@ class MainContentSection1 extends React.Component{
     constructor(props){
 		super(props);
 		main = this;
+		this.state = {
+			componentSale:""
+		}
+	}
+	componentDidMount(){
+		var that = this;
+		var email = localStorage.getItem("email");
+		if (email){
+			$.post('/checkExistRecommend',{email:email},function (data){
+				if (data.exist==false){
+					that.setState({componentSale: <SaleProduct/>})
+				}
+			})
+		} else {
+			that.setState({componentSale: <SaleProduct/>})
+		}
 	}
     render(){
         return(
@@ -387,7 +403,7 @@ class MainContentSection1 extends React.Component{
 						<div className="row">
 							<RecommendationProduct/>
 							<NewProduct/>
-							{!localStorage.getItem("email") ? <SaleProduct/> : <div></div>}
+							{this.state.componentSale}
 						</div>	
 					</div>	
 				</div>

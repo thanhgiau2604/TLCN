@@ -528,6 +528,20 @@ class MainContentSection2 extends React.Component{
     constructor(props){
 		super(props);
 		main = this;
+		this.state = {
+			componentSale:""
+		}
+	}
+	componentDidMount(){
+		var that = this;
+		var email = localStorage.getItem("email");
+		if (email){
+			$.post('/checkExistRecommend',{email:email},function (data){
+				if (data.exist==true){
+					that.setState({componentSale: <SaleProduct/>})
+				}
+			})
+		}
 	}
     render(){
         return(
@@ -536,16 +550,14 @@ class MainContentSection2 extends React.Component{
 			<div className="container">
 				<div className="row">
 				</div>
-				{localStorage.getItem("email") ? <SaleProduct/> : <div></div>}
+				{this.state.componentSale}
 				<Sneaker/>
 				<div className="row">
 					<div className="image-add-area">
-						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-							
+						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">		
 							<div className="onehalf-add-shope zoom-img">
 								<a href="#"><img alt="shope-add" src="img/product/one-helf1.jpg"/></a>
-							</div>
-							
+							</div>	
 						</div>
 						<div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 							

@@ -444,7 +444,6 @@ module.exports = function(app,apiRouter){
                       var currentCost = product.costs[product.costs.length - 1].cost;
                       var discount = currentCost - Math.floor(currentCost * 0.25);
                       if (today - product.createat >= standard2) {
-                          console.log("vô standard 2");
                         await Product.update({ _id: product._id},{$push: { costs:{cost: discount}},$set:{status: 'sale2'}},(err,data)=>{});
                         await ProductCategory.findOneAndUpdate({name:"Sale Product"},{$pull:{listProduct:{_id:product._id}}},(err,data)=>{})
                         await ProductCategory.findOneAndUpdate({name:"Sale Product"},{$push:{listProduct:{_id:product._id}}},(err,data)=>{})
@@ -455,6 +454,22 @@ module.exports = function(app,apiRouter){
             }
         })
     });
+    app.post("/checkExistRecommend",parser,(req,res)=>{
+        let email = req.body.email;
+        User.findOne({$or:[{email:email},{numberPhone:email}]},function(err,user){
+            if (err){
+                console.log(err);
+            } else {
+                if (user){
+                    if (user.topCategory && user.topCategory.length > 0)
+                        res.json({exist:true});
+                    else res.json({exist:false})
+                } else {
+                    res.json({exist:false});
+                }
+            }
+        })
+    })
     //San pham dc tao tu ngay
     // console.log(new Date("Mar 14 2020").getTime());
     //console.log(new Date("Apr 10 2020").getTime());
