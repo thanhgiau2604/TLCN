@@ -8,6 +8,7 @@ const express = require("express");
 const sendmail = require("./mail");
 const time_exprired = "24h";
 const Nexmo = require("nexmo");
+var Chat = require("../models/chat");
 function randomInt(min, max) { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
@@ -18,9 +19,27 @@ async function checkInfor(email,phone,password){
         } else {
             if (password.length<6){
                 return "Mật khẩu ít nhất là 6 kí tự. Khuyến khích sự kết hợp giữa in hoa, in thường, kí tự đặc biệt"
-            } else return "OK";
+            };
+            if (phone.length==10){
+                for (var i = 0; i <phone.length; i++){
+                    if (phone[i]<'0' || phone[i]>'9')
+                        return "Số điện thoại không đúng!"
+                }
+                return "OK"
+            } else {
+                return "Số điện thoại không đúng!"
+            }
         }
 }
+function getCurrentDayTime() {
+    offset = "+7";
+    var d = new Date();
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    var day = new Date(utc + (3600000*offset));
+    var nowday = day.getDate().toString()+"-"+(day.getMonth()+1).toString()+"-"+day.getFullYear().toString()+" "
+    +day.getHours().toString()+":"+day.getMinutes().toString();
+    return nowday;
+  }
 module.exports = function(app,apiRouter,jwt){
     var username="", email="",token,role="";
     var superSecret = 'iamastudent';
@@ -67,7 +86,20 @@ module.exports = function(app,apiRouter,jwt){
                             return res.json(err);
                         }
                     } else {
-                        res.json("success");
+                        var firstMessage = {
+                            "sender" : "admin",
+                            "receiver" : user.email,
+                            "timestamp" : new Date().getTime(),
+                            "content" : "Chúng tôi có thể giúp gì cho bạn?",
+                            "type" : "text",
+                            "day" : getCurrentDayTime(),
+                            "seen" : false,
+                        }
+                        Chat.create(firstMessage,function(err,data){
+                            if (!err) {
+                                res.json("success");
+                            }
+                        })
                     }
                 });
             }

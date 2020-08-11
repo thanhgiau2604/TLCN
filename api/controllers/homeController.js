@@ -6,12 +6,24 @@ const Product = require("../models/Product");
 const ObjectId = require('mongodb').ObjectId;
 const Order = require("../models/order");
 const Contact = require("../models/contact");
+const Statistic = require("../models/statistic");
 function getCurrentDay() {
     var dateObj = new Date();
     var month = dateObj.getMonth() + 1; //months from 1-12
     var day = dateObj.getDate();
     var year = dateObj.getFullYear();
     nowday = day.toString()+month.toString()+year.toString();
+    return nowday;
+}
+//Định dạng ngày
+function getCurrentYMDay() {
+    var dateObj = new Date();
+    var month = dateObj.getMonth() + 1; //months from 1-12
+    var day = dateObj.getDate();
+    var year = dateObj.getFullYear();
+    if (month%10==month) month = '0'+month;
+    if (day%10==day) day='0'+day;
+    nowday = year.toString()+month.toString()+day.toString();
     return nowday;
 }
 module.exports = function(app,apiRouter){
@@ -202,6 +214,35 @@ module.exports = function(app,apiRouter){
                     }
                 })
             }
+            User.findOneAndUpdate({$or:[{email:email},{numberPhone:email}]},{$inc:{qorder:-1}},{new:true},function(err,user){
+                if (!err&&user){
+                    var qorder = user.qorder;
+                    if ((qorder+1)%5==0){
+                        User.findOneAndUpdate({$or:[{email:email},{numberPhone:email}]},{$pop:{currentVoucher:1}},{new:true},function(err,user){                          
+                        })
+                    }
+                }
+            })
+            Statistic.findOne({day:getCurrentYMDay()},function(err,thongke){
+                if (!err && thongke){
+                    console.log(thongke);
+                    var orderList = thongke.orderproduct;
+                    for (var i = 0; i <data.listproduct.length; i++){
+                        var index = orderList.findIndex(item => item.id.toString()==data.listproduct[i].id.toString());
+                        console.log(index);
+                        if (index!=-1){
+                            if (orderList[index].count-data.listproduct[i].quanty>0){
+                                orderList[index].count-=data.listproduct[i].quanty;
+                            } else {
+                                orderList.splice(index,1);
+                            }
+                        }
+                    }
+                    Statistic.findOneAndUpdate({day:getCurrentYMDay()},{$set:{orderproduct:orderList}},function(err,statistic){
+
+                    })
+                }
+            })
         })
     })
     app.post("/cancelProduct",parser,(req,res)=>{

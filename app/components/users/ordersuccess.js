@@ -311,13 +311,13 @@ class Success extends React.Component {
                             </div>
                           </div>
                           <div>
-                            <QRCode
+                            {/* <QRCode
                               id='qrcode'
                               value={this.state.strInforOrder}
                               size={200}
                               level={'H'}
                               includeMargin={true}
-                            />
+                            /> */}
                           </div>
                           <h3 class="text-center ordersuccess" style={{paddingTop:"15px"}}>
                           Hãy vào Danh sách đơn hàng để theo dõi đơn hàng của quý khách.</h3>

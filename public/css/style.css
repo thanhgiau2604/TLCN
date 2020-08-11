@@ -4887,10 +4887,11 @@ td {
 	margin-top:15px
 }
 .singleAdReponse {
+    color: white;
     margin-left: 5%;
-    background: #d5fbd8;
-	border-radius: 10px;
-	margin-top: 7px;
+    background: #0b665ad9;
+    border-radius: 10px;
+    margin-top: 7px;
 }
 .divComment {
     padding: 2px 10px;

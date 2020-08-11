@@ -77,8 +77,8 @@ class OptionUser extends React.Component {
 			role="button"
 			aria-expanded="false"
 		  >
-			<i class="fa fa-user" aria-hidden="true"></i> Chào,
-			 {localStorage.getItem("username")} <span class="caret"></span>
+			<i class="fa fa-user" aria-hidden="true"></i> Chào
+			 {" "+localStorage.getItem("username")} <span class="caret"></span>
 		  </a>
 		  <ul class="dropdown-menu" role="menu">
 			<li>

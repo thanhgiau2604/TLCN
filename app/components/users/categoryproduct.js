@@ -135,7 +135,7 @@ class ProductGird extends React.Component{
                         <i class="fa fa-star-half-empty"></i>
                     </div>
                     <div class="review-box">
-                        <span>1 Review(s)</span>
+                    {this.props.comments.length>0?<span>{this.props.comments.length} bình luận</span> :<span></span>}
                     </div>
                 </div>
                 <a onClick={this.getDetail} style={{cursor:'pointer'}}>{this.props.name}</a>
@@ -441,7 +441,6 @@ class OptionProduct extends React.Component{
     </div>)
     }
 }
-
 class OptionView extends React.Component{
     constructor(props){
         super(props);
@@ -677,8 +676,11 @@ class Category extends React.Component{
                             <ul class="gategory-product">											
                                 {lCurProduct.map(function(pro,index){
                                     if (main.state.display==1){
+                                        var comment = [];
+                                        if (pro.comments) 
+                                           if (pro.comments.length>0) comment = pro.comments;
                                         return <ProductGird key={index} name={pro.name} costs={pro.costs}
-                                            image={pro.image.image1} id={pro._id} size={pro.sizes}/>
+                                            image={pro.image.image1} id={pro._id} size={pro.sizes} comments={comment}/>
                                     } else {
                                         var comment = [];
                                         if (pro.comments) 

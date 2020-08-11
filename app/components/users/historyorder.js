@@ -221,7 +221,7 @@ class RowProduct extends React.Component {
           <div class="col-xs-3 col-sm-3 col-md-2 col-lg-2 wrapper-cancel-product">
                 <div class="cancel-product">
                     {this.props.product.status=="canceled" ? <h4 class="infor-status-product">Đã hủy</h4> :
-                    ( this.props.product.status=="confirmed" &&
+                    ( this.props.product.status=="confirmed" && this.props.number>1 &&
                     (!this.props.paymentMethod || this.props.paymentMethod=="cash")?
                     <button class="btn btn-danger" onClick={this.cancelProduct.bind(this)}>
                         <i class="fa fa-times" aria-hidden="true"></i> Hủy
@@ -386,6 +386,7 @@ class ListOrders extends React.Component {
                 </div>
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="panel-group" id="accordion">
+        {this.state.listOrder.length==0 ? <h3 class="text-center">Chưa có đơn hàng nào</h3> : ""}
         {this.state.listOrder.map(function(order,index){
             return(<div class="panel panel-default" key={index}>
             <div class="panel-heading">
@@ -431,7 +432,7 @@ class ListOrders extends React.Component {
                 <div class="list-product">
                 {order.listproduct.map(function(product,pos){
                     return(<RowProduct key={pos} product={product} idOrder = {order._id}
-                    paymentMethod = {order.paymentMethod}/>)
+                    paymentMethod = {order.paymentMethod} number ={order.listproduct.length}/>)
                 })}  
                 </div>
                   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 infor-cost">

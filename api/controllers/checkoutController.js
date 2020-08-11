@@ -373,7 +373,7 @@ module.exports = function(app,io){
                         if (dataUser.qorder%5==0){
                             var value = Math.floor(dataUser.qorder/5)*50000;
                             await User.findOneAndUpdate({$or:[{email:req.params.email},{numberPhone:req.params.email}]},
-                                {$push:{currentVoucher:{value:value}}},{new:true},function(err,data){
+                                {$addToSet:{currentVoucher:{value:value}}},{new:true},function(err,data){
                             })
                             textMailVoucher = "<h3>Bạn đã nhận được Voucher giảm giá: "+formatCurrency(value) +"</h3>"
                         }

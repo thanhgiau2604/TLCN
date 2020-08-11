@@ -66,7 +66,7 @@ $(document).ready(function(){
 /*---------------------------------------
 	featured  product, bestseller, carousel
 ----------------------------------------- */	
-	$('.feartured-carousel, .bestseller-carousel').owlCarousel({
+	$('.bestseller-carousel').owlCarousel({
 		items : 5,
 		itemsDesktop : [1199,4],
 		itemsDesktopSmall : [991,3],
