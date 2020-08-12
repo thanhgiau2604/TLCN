@@ -180,7 +180,7 @@ class ModalSaleCategory extends React.Component {
             <div class="row">
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="form-group">
-                  <label for="quanty">List events are running:</label>
+                  <label for="quanty">List events:</label>
                   <table class='table'>
                     <thead>
                       <tr>

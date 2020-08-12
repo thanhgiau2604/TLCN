@@ -302,6 +302,22 @@ module.exports = function(app,apiRouter){
              });
          })
     });
+    app.get("/getVans",(req,res)=>{
+        ProductCategory.find({name:"Vans Product"},function(err,data){
+            // res.json(data[0]);
+             var arr = new Array();
+             var count = data[0].listProduct.length;
+             var index = 0;
+             data[0].listProduct.forEach(p=> {
+                 Product.findOne({_id:p._id},function(err,da){
+                     index++;
+                     arr.push(da);
+                     if (index==count)
+                     res.json({data:arr.slice(0,6),category:data[0]});
+                 })
+             });
+         })
+    });
     app.get("/getPump",(req,res)=>{
         ProductCategory.find({name:"Pump Product"},function(err,data){
             // res.json(data[0]);

@@ -282,11 +282,11 @@ class Sneaker extends React.Component {
 	</div>)
 	}
 }
-class Sports extends React.Component {
+class Vans extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			listSport:[],
+			listVans:[],
 			processing: false,
 			saleTime: {ngay:"00",gio:"00",phut:"00",giay:"00"},
 			isSale: false,
@@ -294,35 +294,35 @@ class Sports extends React.Component {
 		}
 	}
 	componentDidMount(){
-		this.setState({processing:true});
 		var that = this;
-		$.get("/getSport",function(data){
+		this.setState({processing:true});
+		$.get("/getVans",function(data){
 			var status = false;
 			if (data.category.status=="sale") status=true;
-			that.setState({listSport:data.data, processing:false,isSale:status,category:data.category});
+			that.setState({listVans:data.data, processing:false,isSale:status,category:data.category});
 		})
-		socket.on("sale-sport-product",function(receive){
-			$.get("/getSport",function(data){
-				that.setState({listSport:data.data,isSale:true});
-				socket.emit("run-time-sport",receive);
+		socket.on("sale-vans-product",function(receive){
+			$.get("/getVans",function(data){
+				that.setState({listVans:data.data,isSale:true});
+				socket.emit("run-time-vans",receive);
 			})
 		});
-		socket.on("running-time-sport",function(data){
+		socket.on("running-time-vans",function(data){
 			that.setState({saleTime:data,isSale:true});
 		})
-		socket.on("stop-sale-sport",function(idSale){
+		socket.on("stop-sale-vans",function(idSale){
 			$.post("/offSale",{id:that.state.category._id,idOff:idSale},function(data){
 				setTimeout(function(){
-					$.get("/getSport",function(data){
-						that.setState({listSport:data.data, processing:false,isSale:false,category:data.category});
+					$.get("/getVans",function(data){
+						that.setState({listVans:data.data, processing:false,isSale:false,category:data.category});
 					})
 				},2000)
 			})
 		})
-		socket.on("stop-sale-sport-from-admin",function(data){
+		socket.on("stop-sale-vans-from-admin",function(data){
 			setTimeout(function(){
-				$.get("/getSport",function(data){
-					that.setState({listSport:data.data, processing:false,isSale:false,category:data.category});
+				$.get("/getVans",function(data){
+					that.setState({listVans:data.data, processing:false,isSale:false,category:data.category});
 				})
 			},2000)
 		})
@@ -333,7 +333,7 @@ class Sports extends React.Component {
 		<div className="col-xs-12">						
 			<div className="featured-products-area">
 				<div className="left-title-area">
-					<h2 className="left-title">Giày thể thao
+					<h2 className="left-title">Giày Vans
 					{this.state.isSale ? <span class="saleProduct">sale</span>: <span></span>}</h2>
 					{this.state.isSale==true ? <h2 class="text-center timersale">
 						Thời gian khuyến mãi còn: {this.state.saleTime.ngay+" ngày "
@@ -344,7 +344,7 @@ class Sports extends React.Component {
 				<div className="row">	
 				{this.state.processing==true ? <div class="loader text-center"></div> : <div></div>}								
 					<div className="feartured-carousel">									
-				       {this.state.listSport.map(function(sport,index){
+				       {this.state.listVans.map(function(sport,index){
 						   var status ="";
 						   if (sport.quanty==0) status = "Hết hàng"; else 
 						   if (that.state.isSale) status="sale"
@@ -406,7 +406,6 @@ class Pumps extends React.Component {
 				})
 			},2000)
 		})
-	
 	}
 	render(){
 		var that = this;
@@ -568,7 +567,7 @@ class MainContentSection2 extends React.Component{
 						</div>						
 					</div>						
 				</div>
-				<Sports/>
+				<Vans/>
 				<Pumps/>
 				<Kids/>
 			</div>

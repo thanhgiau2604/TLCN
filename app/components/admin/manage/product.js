@@ -199,23 +199,26 @@ class NewProduct extends React.Component {
 }
   AddToDatabase(product){
     var that = this;
-    console.log(product);
+    this.setState({addSuccess:0});
     //send request to server to save product
     $.post("/addNewProduct",{product: JSON.stringify(product)},function(data){
       if (data.success==1){
         main.setState({listProduct:data.lProduct});
-        that.setState({addSuccess:1,curSizes:1})
+        that.setState({addSuccess:1,curSizes:1,image1:constImage,image2:constImage,image3:constImage})
         that.refs.name.value = "";
         that.refs.cost.value="";
-        that.refs.image.value="";
         that.refs.description.value="";
         that.refs.size1.value="";
         that.refs.color1.value="";
+        that.refs.image1.value=null;
+        that.refs.image2.value=null;
+        that.refs.image3.value=null;
       }
     })
   }
   submitForm(e) {
     var sizes = [];
+    var countProduct=0;
     for (var i = 1; i <= this.state.curSizes; i++) {
       var cursize = this.refs["size" + i].value;
       var curColorQuanty = this.refs["color" + i].value;
@@ -228,6 +231,7 @@ class NewProduct extends React.Component {
           color: arrcq[0],
           quanty: parseInt(arrcq[1])
         }
+        countProduct+=color.quanty;
         colors.push(color);
       }
       var size = {
@@ -238,7 +242,7 @@ class NewProduct extends React.Component {
     }
     var newP = {
       name: this.refs.name.value,
-      quanty: 0,
+      quanty: countProduct,
       costs: [{cost:this.refs.cost.value}],
       image: {image1:this.state.image1,image2:this.state.image2,image3:this.state.image3},
       description: this.refs.description.value,
@@ -312,7 +316,7 @@ class NewProduct extends React.Component {
             <div className="row">
               <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <label>Description:</label> <br />
-                <textarea rows="5" style={{ width: "100%" }} ref="description"></textarea>
+                <textarea rows="5" style={{ width: "100%" }} ref="description" className="form-control"></textarea>
               </div>
             </div>
             {arrSizes}

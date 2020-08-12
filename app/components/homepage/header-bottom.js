@@ -9,9 +9,9 @@ class HeaderBottom extends React.Component{
 		this.getAddiasCategory = this.getAddiasCategory.bind(this);
 		this.getNikeCategory = this.getNikeCategory.bind(this);
 		this.getSneakerCategory = this.getSneakerCategory.bind(this);
-		this.getJordanCategory = this.getJordanCategory.bind(this);
 		this.getPumpCategory = this.getPumpCategory.bind(this);
 		this.getSaleCategory = this.getSaleCategory.bind(this);
+		this.getVansCategory = this.getVansCategory.bind(this);
 	}
 	getMenCategory(){
 		localStorage.setItem("curcategory","Men Product");
@@ -37,8 +37,8 @@ class HeaderBottom extends React.Component{
 		localStorage.setItem("curcategory","Nike Product");
 		window.location.assign("/categoryProduct");
 	}
-	getJordanCategory(){
-		localStorage.setItem("curcategory","Jordan Product");
+	getVansCategory(){
+		localStorage.setItem("curcategory","Vans Product");
 		window.location.assign("/categoryProduct");
 	}
 	getPumpCategory(){
@@ -62,83 +62,25 @@ class HeaderBottom extends React.Component{
 								</div>
 								<div className="category-menu-list">
 									<ul>
-										<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/2.png" alt="" /></span>GIÀY NAM<i className="fa fa-angle-right"></i></a>
-											
-											<div className="cat-left-drop-menu">
-												<div className="cat-left-drop-menu-left">
-													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nam</a>
-													<ul>
-														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày tây</a></li>
-														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày lười</a></li>
-														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày cao</a></li>
-													</ul>
-												</div>
-												<div className="cat-left-drop-menu-left">
-													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nam</a>
-													<ul>
-														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày sandal</a></li>
-														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày thể thao</a></li>
-														<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}>Giày boot</a></li>
-													</ul>
-												</div>
-											</div>										
+										<li><a style={{cursor:"pointer"}} onClick={this.getMenCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/2.png" alt="" /></span>GIÀY NAM<i className="fa fa-angle-right"></i></a>										
 										</li>
-										<li><a style={{cursor:'pointer'}} onClick={this.getGirlCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/1.png" alt="" /></span>GIÀY NỮ<i className="fa fa-angle-right"></i></a>
-											<div className="cat-left-drop-menu">
-												<div className="cat-left-drop-menu-left">
-													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nữ</a>
-													<ul>
-														<li><a style={{cursor:"pointer"}} onClick={this.getPumpCategory}>Giày cao gót</a></li>
-														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày búp bê</a></li>
-													</ul>
-												</div>
-												<div className="cat-left-drop-menu-left">
-													<a className="menu-item-heading" href="shop-gird.html">Các loại giày nữ</a>
-													<ul>
-														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày boot</a></li>
-														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày sandal</a></li>
-														<li><a style={{cursor:"pointer"}} onClick={this.getGirlCategory}>Giày lười</a></li>
-													</ul>														
-												</div>
-											</div>										
+										<li><a style={{cursor:'pointer'}} onClick={this.getGirlCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/1.png" alt="" /></span>GIÀY NỮ<i className="fa fa-angle-right"></i></a>										
 										</li>
 										<li>
 												<a style={{cursor:'pointer'}} onClick={this.getKidCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs">
-													<img src="img/layout2/8.png" alt="" /></span>TRẺ EM<i className="fa fa-angle-right"></i></a>
-												<div className="cat-left-drop-menu">
-													<div className="cat-left-drop-menu-left text-center">
-														<a className="menu-item-heading" href="shop-gird.html">Các loại giày trẻ em</a>
-														<ul>
-															<li><a style={{cursor:"pointer"}} onClick={this.getKidCategory}>Giày Sandal</a></li>
-															<li><a style={{cursor:"pointer"}} onClick={this.getKidCategory}>Giày Thể thao</a></li>
-															<li><a style={{cursor:"pointer"}} onClick={this.getKidCategory}>Giày Búp bê</a></li>
-														</ul>
-													</div>
-												</div>										
+													<img src="img/layout2/8.png" alt="" /></span>TRẺ EM<i className="fa fa-angle-right"></i></a>									
 										</li>
 										<li>
 											<a style={{cursor:'pointer'}} onClick={this.getSaleCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs">
 											<img src="img/layout2/13.png" alt="" /></span>KHUYẾN MÃI<i className="fa fa-angle-right"></i></a>									
 										</li>
+										<li><a style={{cursor:'pointer'}} onClick={this.getSneakerCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/11.jpg" alt="" /></span>SNEAKER<i className="fa fa-angle-right"></i></a>															
+										</li>
 										<li><a style={{cursor:'pointer'}} onClick={this.getAddiasCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/9.png" alt="" /></span>ADIDAS<i className="fa fa-angle-right"></i></a>
 										</li>
 										<li><a style={{cursor:'pointer'}} onClick={this.getNikeCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/10.png" alt="" /></span>NIKE<i className="fa fa-angle-right"></i></a>
 										</li>
-										<li><a style={{cursor:'pointer'}} onClick={this.getSneakerCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/11.jpg" alt="" /></span>SNEAKER<i className="fa fa-angle-right"></i></a>									
-											{/* <div className="cat-left-drop-menu-single">
-												<ul>
-													<li><a href="/getSneakerProduct">NAM</a></li>
-													<li><a href="/getSneakerProduct">NỮ</a></li>
-												</ul>
-											</div>											 */}
-										</li>
-										<li><a style={{cursor:'pointer'}} onClick={this.getJordanCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/12.png" alt="" /></span>JORDAN<i className="fa fa-angle-right"></i></a>
-											{/* <div className="cat-left-drop-menu-single">
-												<ul>
-													<li><a href="/getJordanProduct">NAM</a></li>
-													<li><a href="/getJordanProduct">NỮ</a></li>
-												</ul>
-											</div> */}
+										<li><a style={{cursor:'pointer'}} onClick={this.getVansCategory}><span className="cat-thumb hidden-md hidden-sm hidden-xs"><img src="img/layout2/14.png" alt="" /></span>VANS<i className="fa fa-angle-right"></i></a>
 										</li>
 									</ul>
 								</div>

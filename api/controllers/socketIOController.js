@@ -27,9 +27,9 @@ module.exports = function(app,io){
                 setTimeout(function(){
                     io.sockets.emit("sale-pump-product",dataSend);
                 },2000)
-            } else if (name=="Sport Product"){
+            } else if (name=="Vans Product"){
                 setTimeout(function(){
-                    io.sockets.emit("sale-sport-product",dataSend);
+                    io.sockets.emit("sale-vans-product",dataSend);
                 },2000)
             } else if (name=="Sneaker Product"){
                 setTimeout(function(){
@@ -92,7 +92,7 @@ module.exports = function(app,io){
                 io.sockets.emit("running-time-kid",objDateTime);
             },1000)
         }) 
-        socket.on("run-time-sport",(data)=>{
+        socket.on("run-time-vans",(data)=>{
             var end = data.end;
             var now = new Date().getTime();
             var distance = end - now+1;
@@ -103,7 +103,7 @@ module.exports = function(app,io){
             console.log(distance);
             z = setInterval(function(){
                 if (distance-1000<=0) {
-                    io.sockets.emit("stop-sale-sport",data.idSale);
+                    io.sockets.emit("stop-sale-vans",data.idSale);
                     clearInterval(z);
                 }
                 distance -= 1000;
@@ -117,7 +117,7 @@ module.exports = function(app,io){
                  if (objDateTime.gio<10) objDateTime.gio = '0'+objDateTime.gio;
                  if (objDateTime.phut<10) objDateTime.phut = '0'+objDateTime.phut;
                  if (objDateTime.giay<10) objDateTime.giay = '0'+objDateTime.giay;
-                io.sockets.emit("running-time-sport",objDateTime);
+                io.sockets.emit("running-time-vans",objDateTime);
             },1000)
         }) 
         socket.on("run-time-sneaker",(data)=>{
@@ -160,9 +160,9 @@ module.exports = function(app,io){
                 clearInterval(y);
                 io.sockets.emit("stop-sale-pump-from-admin",idSale);
                 break;
-              case "Sport Product":
+              case "Vans Product":
                 clearInterval(z);
-                io.sockets.emit("stop-sale-sport-from-admin",idSale);
+                io.sockets.emit("stop-sale-vans-from-admin",idSale);
                 break;
               case "Sneaker Product":
                 clearInterval(t);
