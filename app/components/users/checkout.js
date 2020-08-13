@@ -334,9 +334,8 @@ class Summary extends React.Component {
             var listVoucher = [];
             if (data.voucher.length>0){
                 for (var i=0; i<data.voucher.length; i++){
-                    var k = Math.floor(data.voucher[i].value/50000);
                     var value = data.voucher[i].value;
-                    var valueCondition = (250000+(k*k-k)*50000);
+                    var valueCondition = (value*4);
                     var singleVoucher = {
                         stt: i+1,
                         name: "Mã giảm giá "+ formatCurrency(value),
