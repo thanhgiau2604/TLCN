@@ -62,7 +62,7 @@ class Footer extends React.Component{
 														<i className="fa fa-globe" />
 													</div>
 													<div className="info-text">
-														<p><a href="https://shoelg.herokuapp.com">lgshoe.herokuapp.com</a></p>
+														<p><a href="https://lgshoe.herokuapp.com">lgshoe.herokuapp.com</a></p>
 														
 													</div>
 												</li>
