@@ -37,8 +37,8 @@ app.use(function(req,res,next) {
 app.use(cors());
 //set up database
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost:27017/shoelg",{useNewUrlParser:true});
-// mongoose.connect("mongodb+srv://giauluyen:1234567890@shoelg-h8ups.mongodb.net/shoelg?retryWrites=true&w=majority");
+// mongoose.connect("mongodb://localhost:27017/shoelg",{useNewUrlParser:true});
+mongoose.connect("mongodb+srv://giauluyen:1234567890@shoelg-h8ups.mongodb.net/shoelg?retryWrites=true&w=majority");
 mongoose.set('useCreateIndex',true);
 //set up router
 var apiRouter = express.Router();
