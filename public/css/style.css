@@ -351,7 +351,7 @@ text-transform: uppercase;
 .scroll-to-top{
 	bottom: 25px;
 	position: fixed;
-	right: 25px;
+	right: 22px;
 	z-index: 999999;
 }
 a.bstore-scrollertop{
@@ -5371,4 +5371,34 @@ label.control-label.no-lh {
 }
 .receive-code-forgot h3{
 	padding-top:10px
+}
+.fb_dialog_content iframe {
+	margin: 0px 12px;
+    padding: 0px;
+    position: fixed;
+    z-index: 2147483644;
+    bottom: 215px!important;
+    top: auto;
+    right: 15px!important;
+    height: 60px;
+    width: 60px;
+    border-radius: 29px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 12px 0px;
+    background: none;
+    display: block;
+}
+.fb-customerchat span iframe {
+	padding: 0px;
+    position: fixed;
+    z-index: 2147483646;
+    border-radius: 16px;
+    bottom: 235px!important;
+    top: auto;
+    right: 7px!important;
+    margin: 0px 12px;
+    width: 399px;
+    max-height: calc(100% - 80px);
+    height: 448px;
+    visibility: visible;
+    min-height: 360px;
 }
