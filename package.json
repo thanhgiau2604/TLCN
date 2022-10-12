@@ -70,7 +70,7 @@
     "react-social-buttons": "^1.1.1",
     "react-stripe-checkout": "^2.6.3",
     "react-viewer": "^3.2.1",
-    "read-excel-file": "^4.0.6",
+    "read-excel-file": "^5.5.1",
     "redux": "^4.0.5",
     "sha256": "^0.2.0",
     "socket.io": "^2.3.0",
